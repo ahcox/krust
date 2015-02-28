@@ -1,3 +1,12 @@
+.cproject
+.project
+.*\.swo
+.*\.swp
+.idea
+.un~
+*.un~
+*.txt~
+
 # Compiled Object files
 *.slo
 *.lo
@@ -26,3 +35,4 @@
 *.exe
 *.out
 *.app
+

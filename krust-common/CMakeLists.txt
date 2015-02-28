@@ -1,0 +1,21 @@
+# krust-common
+#
+# A library of utility code common to other Krust modules.
+#
+
+# Make sure Vulkan functions are exposed:
+add_definitions( -DVK_PROTOTYPES )
+
+# public-api/vulkan-utils.cpp
+FILE(GLOB KRUST_COMMON_PUBLIC_API_CXX_FILES "${KRUST_COMMON_PUBLIC_API_DIR}/*.cpp")
+# public-api/vulkan-utils.h
+# public-api/vulkan-logging.h
+FILE(GLOB KRUST_COMMON_PUBLIC_API_HEADER_FILES "${KRUST_COMMON_PUBLIC_API_DIR}/*.h")
+
+FILE(GLOB KRUST_COMMON_INTERNAL_CXX_FILES "${KRUST_COMMON_INTERNAL_DIR}/*.cpp")
+FILE(GLOB KRUST_COMMON_INTERNAL_HEADER_FILES "${KRUST_COMMON_INTERNAL_DIR}/*.h")
+
+SET(KRUST_COMMON_CXX_FILES ${KRUST_COMMON_PUBLIC_API_CXX_FILES} ${KRUST_COMMON_INTERNAL_CXX_FILES})
+
+add_library(krust-common ${KRUST_COMMON_CXX_FILES} ${KRUST_COMMON_PUBLIC_API_HEADER_FILES} ${KRUST_COMMON_INTERNAL_HEADER_FILES})
+target_include_directories(krust-common SYSTEM PRIVATE ${VULKAN_INCLUDE_DIRECTORY})

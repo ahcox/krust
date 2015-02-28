@@ -1,0 +1,2 @@
+include_directories(${KRUST_PUBLIC_API_DIR})
+set(KRUST_INTERNAL_HEADER_FILES ${KRUST_INTERNAL_DIR}/todo-new-header.h PARENT_SCOPE)
