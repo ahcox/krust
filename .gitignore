@@ -1,5 +1,6 @@
 .cproject
 .project
+build/vs15/*
 .*\.swo
 .*\.swp
 .idea
