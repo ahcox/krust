@@ -9,10 +9,9 @@ and the latest available Visual Studio free edition.
 It is intended to be usable on constrained mobile and embedded devices however
 so library and runtime features are chosen with care.
 For example, the error handling strategy is deferred to the client so while
-it is written to be thread-safe using RAII, it does not itself throw any
-exceptions other than standard library ones when compiled with exceptions
-enabled.
-Similarly, with an eye on code size, templates should be used sparingly.
+it is written to be thread-safe using RAII, it does not necessarily throw any
+exceptions itself other than standard library ones.
+Similarly, with an eye to code size, templates should be used sparingly.
 
 File Inclusion
 --------------
@@ -58,7 +57,8 @@ Internal headers are ones in the same module as the file doing the including.
 External headers include system headers and third-party libraries.
 For each Krust module (krust-common, krust-io, krust), headers from other
 modules are also considered external.
-([LLVM ordering](http://llvm.org/docs/CodingStandards.html#include-style) for comaprison)
+See [LLVM ordering](http://llvm.org/docs/CodingStandards.html#include-style)
+for comparison.
 
 ### Include Dependencies
 
@@ -76,7 +76,7 @@ differences:
     are avoided.
 1.  Enumerations in Krust use C++11 enum classes and so a simple naming can be
     used: `EnumerationType::Enumerant` rather than
-    Vk's `VK_ENUMERATION_TYPE_ENUMERANT`. 
+    Vk's `VK_ENUMERATION_TYPE_ENUMERANT`.
 
 Namespaces
 ----------
@@ -88,6 +88,13 @@ A tighter cluster of related functionality is indented however, to make it
 pop out in a file. An example of this is an anonymous namespace holding
 helper functions at the top of a files or a set of string manipulation
 functions.
+
+### Symbol Aliasing
+Certain tools such as Doxygen fail to distinguish symbols that differ only by
+namespace prefix. To combat that, care is taken to avoid repeating the same
+undecorated symbol name in multiple namespaces even if that leads to clumsier
+naming such as `Krust::sysx::Manager` and `Krust::sysy::Manager` becoming
+`Krust::sysx::SysXManager` and `Krust::sysy::SysYManager`.
 
 General Code Layout
 -------------------
