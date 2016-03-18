@@ -63,6 +63,7 @@ public:
 
   T* Get() const { return reinterpret_cast<T*>(mRefObject); }
   T* operator->() const { return Get(); }
+  T& operator*() const { return *Get(); }
 
   void Reset(T* other){ IntrusivePointerBase::Reset(other); }
 };
