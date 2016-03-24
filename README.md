@@ -15,6 +15,6 @@ There are currently four submodules of which only three are yet useful:
   when talking to each other.
 * **krust**: The helpers for working with Vulkan. Currently empty :'(.
 
-Buiding
+Building
 =======
 See BUILD.md in this directory for instructions.
