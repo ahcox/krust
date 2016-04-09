@@ -19,10 +19,13 @@
 // SOFTWARE.
 
 // External includes:
-#include "krust-io.h"
+#include "krust/public-api/krust.h"
+#include "krust-io/public-api/krust-io.h"
 #include "krust-common/public-api/krust-common.h"
 #include "krust-common/public-api/logging.h"
 #include "krust-common/public-api/vulkan-utils.h"
+
+namespace kr = Krust;
 
 namespace
 {
@@ -65,9 +68,7 @@ public:
       return false;
     }
 
-    VkCommandBufferAllocateInfo bufferInfo;
-      bufferInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
-      bufferInfo.pNext = nullptr,
+    auto bufferInfo = kr::CommandBufferAllocateInfo();
       bufferInfo.commandPool = mCommandPool,
       bufferInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
       bufferInfo.commandBufferCount = uint32_t(mSwapChainImageViews.size());
@@ -82,9 +83,7 @@ public:
     }
 
     // Build a command buffer per swapchain entry:
-    VkCommandBufferInheritanceInfo commandBufferInheritanceInfo;
-      commandBufferInheritanceInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO,
-      commandBufferInheritanceInfo.pNext = nullptr,
+    auto commandBufferInheritanceInfo = kr::CommandBufferInheritanceInfo();
       commandBufferInheritanceInfo.renderPass = nullptr,
       commandBufferInheritanceInfo.subpass = 0,
       commandBufferInheritanceInfo.framebuffer = nullptr,
@@ -92,9 +91,7 @@ public:
       commandBufferInheritanceInfo.queryFlags = 0,
       commandBufferInheritanceInfo.pipelineStatistics = 0;
 
-    VkCommandBufferBeginInfo bufferBeginInfo;
-      bufferBeginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
-      bufferBeginInfo.pNext = nullptr,
+    auto bufferBeginInfo = kr::CommandBufferBeginInfo();
       bufferBeginInfo.flags = 0,
       bufferBeginInfo.pInheritanceInfo = &commandBufferInheritanceInfo;
 
@@ -114,9 +111,7 @@ public:
 
       // Assume the image is returned from being presented and fix it up using
       // an image memory barrier:
-      VkImageMemoryBarrier postPresentImageMemoryBarrier;
-      postPresentImageMemoryBarrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
-        postPresentImageMemoryBarrier.pNext = NULL,
+      auto postPresentImageMemoryBarrier = kr::ImageMemoryBarrier();
         postPresentImageMemoryBarrier.srcAccessMask = 0,
         postPresentImageMemoryBarrier.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
         postPresentImageMemoryBarrier.oldLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
@@ -137,16 +132,13 @@ public:
       clearValues[1].depthStencil.depth   = 1.0f;
       clearValues[1].depthStencil.stencil = 0;
 
-      VkRect2D renderArea;
-      renderArea.offset = { 0, 0 },
-      renderArea.extent = {
-        uint32_t(mDefaultWindow->GetPlatformWindow().GetWidth()), 
-        uint32_t(mDefaultWindow->GetPlatformWindow().GetHeight())
-      };
+      auto renderArea = kr::Rect2D(
+        kr::Offset2D(0, 0),
+        kr::Extent2D(
+          mDefaultWindow->GetPlatformWindow().GetWidth(),
+          mDefaultWindow->GetPlatformWindow().GetHeight()));
 
-      VkRenderPassBeginInfo beginRenderPass;
-      beginRenderPass.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
-        beginRenderPass.pNext = nullptr,
+      auto beginRenderPass = kr::RenderPassBeginInfo();
         beginRenderPass.renderPass = mRenderPasses[i],
         beginRenderPass.framebuffer = mSwapChainFramebuffers[i],
         beginRenderPass.renderArea = renderArea,
@@ -161,9 +153,7 @@ public:
 
       // Assume the framebuffer will be presented so insert an image memory
       // barrier here first:
-      VkImageMemoryBarrier presentBarrier;
-        presentBarrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
-        presentBarrier.pNext = NULL,
+      auto presentBarrier = kr::ImageMemoryBarrier();
         presentBarrier.srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
         presentBarrier.dstAccessMask = VK_ACCESS_MEMORY_READ_BIT,
         presentBarrier.oldLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
@@ -205,9 +195,7 @@ public:
     KRUST_LOG_INFO << "   -------------------------- Clear Example draw frame! currImage: " << mCurrentTargetImage << " (handle: " << mSwapChainImages[mCurrentTargetImage] << ")  --------------------------\n";
 
     const VkPipelineStageFlags pipelineFlags = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
-    VkSubmitInfo submitInfo;
-      submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
-      submitInfo.pNext = nullptr,
+    auto submitInfo = kr::SubmitInfo();
       submitInfo.waitSemaphoreCount = 1,
       submitInfo.pWaitSemaphores = &mSwapChainSemaphore,
       submitInfo.pWaitDstStageMask = &pipelineFlags,
