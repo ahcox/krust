@@ -84,9 +84,9 @@ Initialising a simple struct without these helpers:
 
 
 See
-[`krust-examples/clear/clear.cpp`](./`krust-examples/clear/clear.cpp`)
+[`krust-examples/clear/clear.cpp`](./krust-examples/clear/clear.cpp)
 and
-[`krust-examples/clear2/clear2.cpp`](./`krust-examples/clear2/clear2.cpp`)
+[`krust-examples/clear2/clear2.cpp`](./krust-examples/clear2/clear2.cpp)
 for more usage examples.
 
 
