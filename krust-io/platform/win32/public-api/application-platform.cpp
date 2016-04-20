@@ -24,10 +24,10 @@
 #include "krust-io/public-api/application-interface.h"
 
 // External includes:
-#include <krust-common/public-api/krust-common.h>
-#include <krust-common/public-api/vulkan-utils.h>
-#include "krust-common/public-api/scoped-free.h"
-#include "krust-common/public-api/logging.h"
+#include "krust/public-api/compiler.h"
+#include <krust/public-api/vulkan-utils.h>
+#include "krust/public-api/scoped-free.h"
+#include "krust/public-api/logging.h"
 #include <vector>
 #include <utility>
 

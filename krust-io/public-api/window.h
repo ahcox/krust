@@ -25,7 +25,7 @@
 #include "public-api/window-platform.h"
 
 // External includes:
-#include "krust-common/public-api/ref-object.h"
+#include "krust/public-api/ref-object.h"
 
 
 namespace Krust {

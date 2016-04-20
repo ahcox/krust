@@ -23,9 +23,9 @@
 
 // External includes:
 #include <vulkan/vulkan.h>
-#include <krust-common/public-api/krust-assertions.h>
-#include <krust-common/public-api/vulkan-utils.h>
-#include <krust-common/public-api/logging.h>
+#include <krust/public-api/krust-assertions.h>
+#include <krust/public-api/vulkan-utils.h>
+#include <krust/public-api/logging.h>
 // System external includes:
 #include <vector>
 

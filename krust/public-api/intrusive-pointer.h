@@ -21,8 +21,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#include "krust-common/public-api/krust-assertions.h"
-#include "krust-common/public-api/ref-object.h"
+#include "krust/public-api/krust-assertions.h"
+#include "krust/public-api/ref-object.h"
 
 namespace Krust {
 

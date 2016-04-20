@@ -22,14 +22,14 @@
 #include "application.h"
 
 // External headers:
+#include "krust/public-api/compiler.h"
+#include "krust/public-api/logging.h"
+#include "krust/public-api/vulkan-logging.h"
+#include "krust/public-api/vulkan-utils.h"
 #include <vulkan/vulkan.h>
 #include <iostream>
 #include <algorithm>
 #include <string.h> // for memset.
-#include "krust-common/public-api/krust-common.h"
-#include "krust-common/public-api/logging.h"
-#include "krust-common/public-api/vulkan-logging.h"
-#include "krust-common/public-api/vulkan-utils.h"
 
 // Internal headers:
 #include "window.h"
@@ -37,11 +37,16 @@
 
 namespace Krust {
 namespace IO {
+
+const char* const KRUST_ENGINE_NAME = "Krust";
+extern const uint32_t KRUST_ENGINE_VERSION_NUMBER = 0;
+
 namespace {
+
 /// At least this number of images will be requested for the present swapchain.
 const int MIN_NUM_SWAPCHAIN_IMAGES = 1;
 /// The max time to wait to acquire an image to draw to from the WSI presentation engine.
-const uint64_t PRESENT_IMAGE_ACQUIRE_TIMEOUT = UINT64_MAX;//5000;
+const uint64_t PRESENT_IMAGE_ACQUIRE_TIMEOUT = UINT64_MAX;
 
 /// @name Layers Layers to enable.
 /// These are not used yet (turn on layers with env vars at commandline).

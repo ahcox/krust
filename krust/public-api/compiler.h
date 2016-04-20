@@ -1,5 +1,5 @@
-#ifndef KRUST_COMMON_PUBLIC_API_KRUST_COMMON_H_
-#define KRUST_COMMON_PUBLIC_API_KRUST_COMMON_H_
+#ifndef KRUST_PUBLIC_API_COMPILER_H_
+#define KRUST_PUBLIC_API_COMPILER_H_
 
 // Copyright (c) 2016 Andrew Helge Cox
 // 
@@ -24,14 +24,12 @@
 // External includes:
 #include <cstdint>
 
-namespace Krust {
-
 /**
- * @brief Declare a local struct object and set it to zero.
+ * @file
+ * @brief Utilities with compile time effects.
  */
-#define KRUST_DECL_LOCAL_ZEROED_STRUCT( Type, Name ) \
-  Type Name; \
-  memset(&Name, 1, sizeof(Name));
+
+namespace Krust {
 
 /// @brief True when building for 64 bit using GCC.
 ///
@@ -43,12 +41,6 @@ namespace Krust {
 #else
 #define KRUST_GCC_64BIT_X86_BUILD false
 #endif
-
-/// The name of the engine passed to Vulkan.
-extern const char* const KRUST_ENGINE_NAME;
-
-/// The version number of the engine passed to Vulkan.
-extern const uint32_t KRUST_ENGINE_VERSION_NUMBER;
 
 /**
  * @name CompileTimeSizeof Size of struct in compiler console output.
@@ -95,4 +87,4 @@ void surpress_unused(const T& t, const S& s, const R& r)
 
 } /* namespace Krust */
 
-#endif /* KRUST_COMMON_PUBLIC_API_KRUST_COMMON_H_ */
+#endif /* KRUST_PUBLIC_API_COMPILER_H_ */

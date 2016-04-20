@@ -1,3 +1,6 @@
+#ifndef KRUST_PUBLIC_API_REF_OBJECT_H_
+#define KRUST_PUBLIC_API_REF_OBJECT_H_
+
 // Copyright (c) 2016 Andrew Helge Cox
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -18,10 +21,51 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#include "krust-common.h"
-namespace Krust
-{
+// Internal includes:
+#include "krust/public-api/krust-assertions.h"
 
-const char* const KRUST_ENGINE_NAME = "Krust";
-extern const uint32_t KRUST_ENGINE_VERSION_NUMBER = 0;
-}
+// External includes:
+#include <atomic>
+#include <cstddef>
+
+
+namespace Krust {
+
+/**
+ * @brief Base class for reference counted objects.
+ *
+ * Allows reasonably efficient lockless cross-thread sharing using atomics to
+ * maintain the reference count internally.
+ * @note Use virtual inheritance to derive from it if used in a multiple
+ * inheritance.
+ */
+class RefObject
+{
+public:
+  RefObject();
+
+  /**
+   * Increment the counter of references to this object.
+   */
+  void Inc() const;
+
+  /**
+   * Decrement and delete this if there are no more references to it.
+   */
+  void Dec() const;
+
+protected:
+  virtual ~RefObject();
+
+private:
+
+  /**
+   * Number of references to this object.
+   **/
+  typedef size_t Counter;
+  mutable std::atomic<Counter> mCount;
+};
+
+} /* namespace Krust */
+
+#endif /* KRUST_PUBLIC_API_REF_OBJECT_H_ */

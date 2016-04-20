@@ -26,7 +26,7 @@ SET(KRUST_IO_CXX_FILES ${KRUST_IO_PUBLIC_API_CXX_FILES} ${KRUST_IO_PUBLIC_API_PL
 
 add_library(krust-io ${KRUST_IO_CXX_FILES} ${KRUST_IO_PUBLIC_API_HEADER_FILES} ${KRUST_IO_PUBLIC_API_PLATFORM_WINDOWING_HEADER_FILES} ${KRUST_IO_INTERNAL_HEADER_FILES})
 target_include_directories(krust-io SYSTEM PRIVATE ${VULKAN_INCLUDE_DIRECTORY})
-target_link_libraries(krust-io krust-common ${VULKAN_LIBRARY})
+target_link_libraries(krust-io ${VULKAN_LIBRARY})
 
 # Platform detection:
 find_package(XCB)

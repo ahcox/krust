@@ -21,10 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#include "krust-common.h"
-
-// External includes:
 #if !defined(KRUST_BUILD_CONFIG_DISABLE_LOGGING)
+// Internal includes:
+#include "krust/public-api/compiler.h"
+// External includes:
 #include <cstdint>
 #include <iostream>
 #endif

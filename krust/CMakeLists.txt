@@ -30,4 +30,4 @@ FILE(GLOB KRUST_INTERNAL_CXX_FILES "${KRUST_INTERNAL_DIR}/*.cpp")
 
 add_library(krust ${KRUST_PUBLIC_API_CXX_FILES} ${KRUST_INTERNAL_CXX_FILES} ${KRUST_PUBLIC_API_HEADER_FILES})
 target_include_directories(krust SYSTEM PRIVATE ${VULKAN_INCLUDE_DIRECTORY})
-target_link_libraries(krust PRIVATE ${VULKAN_LIBRARY} krust-common )
+target_link_libraries(krust PRIVATE ${VULKAN_LIBRARY} )

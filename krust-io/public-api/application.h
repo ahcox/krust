@@ -28,17 +28,20 @@
 #include "keyboard.h"
 
 // External includes:
-#include "krust-common/public-api/intrusive-pointer.h"
-#include "krust-common/public-api/conditional-value.h"
+#include "krust/public-api/intrusive-pointer.h"
+#include "krust/public-api/conditional-value.h"
 #include <vulkan/vulkan.h>
 #include <vector>
-
-// Special-case, these need to be included late as they ifdef based on platform
-// header include guards of files included before them:
 #include <bitset>
 
 namespace Krust {
 namespace IO {
+
+/// The name of the engine passed to Vulkan.
+extern const char* const KRUST_ENGINE_NAME;
+
+/// The version number of the engine passed to Vulkan.
+extern const uint32_t KRUST_ENGINE_VERSION_NUMBER;
 
 class Window;
 typedef IntrusivePointer<Window> WindowPointer;

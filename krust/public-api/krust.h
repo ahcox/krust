@@ -25,9 +25,9 @@
 #include "krust/public-api/vulkan_struct_init.h"
 
 // External includes:
-#include "krust-common/public-api/ref-object.h"
-#include "krust-common/public-api/intrusive-pointer.h"
-#include "krust-common/public-api/krust-assertions.h"
+#include "krust/public-api/ref-object.h"
+#include "krust/public-api/intrusive-pointer.h"
+#include "krust/public-api/krust-assertions.h"
 
 namespace Krust
 {

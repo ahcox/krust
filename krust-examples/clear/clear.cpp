@@ -19,11 +19,10 @@
 // SOFTWARE.
 
 // External includes:
-#include "krust/public-api/krust.h"
 #include "krust-io/public-api/krust-io.h"
-#include "krust-common/public-api/krust-common.h"
-#include "krust-common/public-api/logging.h"
-#include "krust-common/public-api/vulkan-utils.h"
+#include "krust/public-api/krust.h"
+#include "krust/public-api/logging.h"
+#include "krust/public-api/vulkan-utils.h"
 
 namespace kr = Krust;
 

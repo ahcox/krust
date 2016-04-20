@@ -21,14 +21,13 @@
 #include "vulkan-helpers.h"
 
 // Internal includes
+#include "krust/public-api/compiler.h"
+#include "krust/public-api/krust-assertions.h"
+#include <krust/public-api/logging.h>
+#include <krust/public-api/vulkan-logging.h>
 
 // External includes:
 #include <cstring>
-#include <krust-common/public-api/krust-common.h>
-#include "krust-common/public-api/krust-assertions.h"
-#include <krust-common/public-api/logging.h>
-#include <krust-common/public-api/vulkan-logging.h>
-
 
 namespace Krust
 {

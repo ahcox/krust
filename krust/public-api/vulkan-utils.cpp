@@ -22,9 +22,8 @@
 #include "vulkan-utils.h"
 
 // Internal includes:
-#include "krust-common/public-api/logging.h"
-#include "krust-common/public-api/krust-assertions.h"
-#include "krust-common.h" /// For KRUST_SHOW_UINT_AS_WARNING
+#include "krust/public-api/logging.h"
+#include "krust/public-api/krust-assertions.h"
 
 // External includes:
 #include <algorithm>

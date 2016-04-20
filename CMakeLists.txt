@@ -69,8 +69,6 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${KRUST_CXX_EXTRA_COMPILER_FLAGS}")
 
 # Krust internal build system variables:
 
-SET(KRUST_COMMON_PUBLIC_API_DIR ${PROJECT_SOURCE_DIR}/krust-common/public-api)
-SET(KRUST_COMMON_INTERNAL_DIR ${PROJECT_SOURCE_DIR}/krust-common/internal)
 set(KRUST_PUBLIC_API_DIR ${PROJECT_SOURCE_DIR}/krust/public-api)
 set(KRUST_INTERNAL_DIR ${PROJECT_SOURCE_DIR}/krust/internal)
 set(KRUST_IO_PUBLIC_API_DIR ${PROJECT_SOURCE_DIR}/krust-io/public-api)
@@ -95,9 +93,6 @@ include_directories(${KRUST_IO_PLATFORM_WINDOWING_DIR})
 
 # #defines for all libraries and executables:
 add_definitions(-DKRUST_ASSERT_LEVEL=${KRUST_ASSERT_LEVEL})
-
-# Common Krust library of small utilities:
-add_subdirectory (krust-common)
 
 # Core Krust library:
 add_subdirectory (krust)
