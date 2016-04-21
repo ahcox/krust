@@ -67,22 +67,24 @@ struct DeliberateOverflow{ operator char() { return number + 256; } };
 #define KRUST_SHOW_SIZEOF_STRUCT_AS_WARNING(StructType) KRUST_SHOW_UINT_AS_WARNING(Krust::TemplateParamToEnum<sizeof(StructType)>::value)
 ///@}
 
-/// Surpress unused param warning.
+/// Suppress unused parameter warning.
 template<typename T>
-void surpress_unused(const T&) {}
+void suppress_unused(const T&) {}
 
+/// Suppress unused parameter warning for two parameters.
 template<typename T, typename S>
-void surpress_unused(const T& t, const S& s)
+void suppress_unused(const T& t, const S& s)
 {
-  surpress_unused(t);
-  surpress_unused(s);
+  suppress_unused(t);
+  suppress_unused(s);
 }
 
+/// Suppress unused parameter warning for three parameters.
 template<typename T, typename S, typename R>
-void surpress_unused(const T& t, const S& s, const R& r)
+void suppress_unused(const T& t, const S& s, const R& r)
 {
-  surpress_unused(t, s);
-  surpress_unused(r);
+  suppress_unused(t, s);
+  suppress_unused(r);
 }
 
 } /* namespace Krust */

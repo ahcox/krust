@@ -906,7 +906,7 @@ void Application::OnResize(Window&, unsigned, unsigned) {
 
 void Application::OnRedraw(Window& window) {
   // Verbose: KRUST_LOG_INFO << "Default OnRedraw() called.\n";
-  surpress_unused(&window);
+  suppress_unused(&window);
 
   if(!mAcquireNextImageKHR || !mQueuePresentKHR)
   {
@@ -985,7 +985,7 @@ void Application::OnKey(Window&, bool, KeyCode) {
 
 void Application::OnClose(Window &window)
 {
-  surpress_unused(&window);
+  suppress_unused(&window);
   KRUST_LOG_INFO << "Default OnClose() called.\n";
   mQuit = true;
 }

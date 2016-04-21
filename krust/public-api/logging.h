@@ -167,27 +167,27 @@ class LogBuilderNop
 public:
   LogBuilderNop(std::ostream &channel, const LogLevel = LogLevel::Error)
   {
-    surpress_unused(&channel);
+    suppress_unused(&channel);
   }
 
   template<typename T>
   LogBuilderNop &operator<<(T &t)
   {
-    surpress_unused(&t);
+    suppress_unused(&t);
     return *this;
   }
 
   template<typename T>
   LogBuilderNop &operator<<(T t)
   {
-    surpress_unused(&t);
+    suppress_unused(&t);
     return *this;
   }
 
   template<typename T>
   LogBuilderNop &operator<<(T *t)
   {
-    surpress_unused(&t);
+    suppress_unused(&t);
     return *this;
   }
 

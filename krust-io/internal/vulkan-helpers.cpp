@@ -160,7 +160,7 @@ VkBool32 DebugCallback(
   void* userData
 )
 {
-  surpress_unused(object, objectType, userData);
+  suppress_unused(object, objectType, userData);
   static uint32_t error_count = 0;
   static uint32_t warning_count = 0;
 
