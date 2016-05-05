@@ -495,12 +495,12 @@ const char* FormatToString(const VkFormat format)
 
 const char* KHRColorspaceToString(const VkColorSpaceKHR space)
 {
-  KRUST_ASSERT2(space <= VK_COLORSPACE_END_RANGE, "Out of range color space.");
+  KRUST_ASSERT2(space <= VK_COLOR_SPACE_END_RANGE_KHR, "Out of range color space.");
   const char* string = "<<unkown colorspace>>";
   switch(space){
     case VK_COLORSPACE_SRGB_NONLINEAR_KHR: {string = "VK_COLORSPACE_SRGB_NONLINEAR_WS"; break; };
-    case VK_COLORSPACE_RANGE_SIZE: {string = "<<invalid: VK_COLORSPACE_RANGE_SIZE>>"; break; };
-    case VK_COLORSPACE_MAX_ENUM: {string = "<<invalid: VK_COLORSPACE_MAX_ENUM>>"; break; };
+    case VK_COLOR_SPACE_RANGE_SIZE_KHR: {string = "<<invalid: VK_COLORSPACE_RANGE_SIZE>>"; break; };
+    case VK_COLOR_SPACE_MAX_ENUM_KHR: {string = "<<invalid: VK_COLORSPACE_MAX_ENUM>>"; break; };
   }
   return string;
 }

@@ -177,17 +177,17 @@ const char* ResultToString(const VkResult result)
 
 int SortMetric(const VkPresentModeKHR mode, const bool tearingAllowed)
 {
-  KRUST_COMPILE_ASSERT(VK_PRESENT_MODE_END_RANGE == 3,
+  KRUST_COMPILE_ASSERT(VK_PRESENT_MODE_END_RANGE_KHR == 3,
     "Need to examine VkPresentModeKHR as it has changed since this function was "
     "written. Check if the natural ordering is still of decreasing goodness and if"
     "a new mode was added.");
   // The modes are enumerated from best to worst, with the caveat that the first
-  // will tear. Therefore we use their values as the metric but penalise the tearing
+  // will tear. Therefore we use their values as the metric but penalize the tearing
   // mode if tearing is not allowed.
   int sortKey = mode;
   if(!tearingAllowed && (mode == VK_PRESENT_MODE_IMMEDIATE_KHR))
   {
-    sortKey += int(VK_PRESENT_MODE_END_RANGE) + 1;
+    sortKey += int(VK_PRESENT_MODE_END_RANGE_KHR) + 1;
   }
   return sortKey;
 }

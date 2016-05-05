@@ -145,6 +145,11 @@ bool Application::InitVulkan()
 
   // Get ready for the window / surface binding:
   mSurface = mPlatformApplication.InitSurface(mInstance);
+  if (mSurface == VK_NULL_HANDLE)
+  {
+    KRUST_LOG_ERROR << "Surface init returned a null surface." << endlog;
+    return false;
+  }
 
   if(!InitVulkanGpus())
   {
@@ -196,7 +201,7 @@ bool Application::InitVulkanInstance()
     appInfo.applicationVersion = mAppVersion,
     appInfo.pEngineName = KRUST_ENGINE_NAME,
     appInfo.engineVersion = KRUST_ENGINE_VERSION_NUMBER,
-    appInfo.apiVersion = VK_API_VERSION;
+    appInfo.apiVersion = VK_API_VERSION_1_0;
 
   // Find the extensions to initialise the API instance with:
   std::vector<VkExtensionProperties> extensionProperties = GetGlobalExtensionProperties();
@@ -212,6 +217,7 @@ bool Application::InitVulkanInstance()
   {
     extensionNames.push_back(VK_KHR_SURFACE_EXTENSION_NAME);
   } else {
+    KRUST_LOG_ERROR << "Failed to find extension " << VK_KHR_SURFACE_EXTENSION_NAME << endlog;
     return false;
   }
   const char* platformSurfaceExtensionName = mPlatformApplication.GetPlatformSurfaceExtensionName();
@@ -219,6 +225,7 @@ bool Application::InitVulkanInstance()
   {
     extensionNames.push_back(platformSurfaceExtensionName);
   } else {
+    KRUST_LOG_ERROR << "Failed to find platform surface extension " << platformSurfaceExtensionName << endlog;
     return false;
   }
 
@@ -492,8 +499,8 @@ bool Application::ChoosePresentableSurfaceFormat()
   {
     if((surfaceFormat.format != VK_FORMAT_UNDEFINED) &&
        (surfaceFormat.format <= VK_FORMAT_END_RANGE) &&
-       (surfaceFormat.colorSpace >= VK_COLORSPACE_BEGIN_RANGE &&
-        surfaceFormat.colorSpace <= VK_COLORSPACE_END_RANGE ))
+       (surfaceFormat.colorSpace >= VK_COLOR_SPACE_BEGIN_RANGE_KHR &&
+        surfaceFormat.colorSpace <= VK_COLOR_SPACE_END_RANGE_KHR ))
     {
       // We currently just choose the first okay surfaceFormat we find:
       // (this should be configurable)
