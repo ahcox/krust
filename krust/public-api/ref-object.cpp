@@ -41,6 +41,11 @@ void RefObject::Dec() const {
   }
 }
 
+size_t RefObject::Count() const
+{
+  return mCount.load();
+}
+
 RefObject::~RefObject() {
 }
 

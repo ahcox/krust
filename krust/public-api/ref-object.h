@@ -54,6 +54,11 @@ public:
    */
   void Dec() const;
 
+  /**
+   * @return The value of the internal reference count.
+   */
+  size_t Count() const;
+
 protected:
   virtual ~RefObject();
 
