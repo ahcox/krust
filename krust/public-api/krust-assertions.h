@@ -52,6 +52,11 @@
  * to bounds check an address inside an image processing per-pixel loop.
  * (1) would be used for `ASSERT(Program_init())` and (5) for
  * `ASSERT(shift_width < 32u)` for example.
+ * Within Krust assertions are intended to represent extra checks such as pre
+ * and post conditions for debugging and development.
+ * They should not be used for error checking, parameter validation, etc.
+ * The system and any app built from it should function identically with them
+ * compiled-in or compiled out provided the tests they make do not fail.
  */
 // > Define these according to a config macro (LEVEL).
 ///@{
