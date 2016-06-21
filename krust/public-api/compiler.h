@@ -87,6 +87,20 @@ void suppress_unused(const T& t, const S& s, const R& r)
   suppress_unused(r);
 }
 
+template<typename T, typename S, typename R, typename Q>
+void suppress_unused(const T& t, const S& s, const R& r, const Q q )
+{
+  suppress_unused(t, s);
+  suppress_unused(r, q);
+}
+
+template<typename T, typename S, typename R, typename Q, typename P>
+void suppress_unused(const T& t, const S& s, const R& r, const Q& q, const P& p)
+{
+  suppress_unused(t, s, r, q);
+  suppress_unused(p);
+}
+
 } /* namespace Krust */
 
 #endif /* KRUST_PUBLIC_API_COMPILER_H_ */
