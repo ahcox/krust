@@ -121,8 +121,13 @@ private:
 };
 
 /**
- * Dummied-up to give the same syntax at the call site that there will be when the logging system is implemented.
- * */
+ * @Brief Lightweight object to sit on the stack and build up a log message with
+ * a series of `<<` concatenations before the complete LogEntry is emitted into
+ * a LogChannel in a single step.
+ *
+ * Dummied-up to give the same syntax at the call site that there will be when
+ * the logging system is implemented.
+ */
 class LogBuilder
 {
 public:
@@ -143,13 +148,6 @@ public:
     return *this;
   }
 
-  /*template<typename T>
-  LogBuilder &operator<<(T t)
-  {
-    mChannel.GetStream() << t;
-    return *this;
-  }*/
-
   template<typename T>
   LogBuilder &operator<<(T *t)
   {
@@ -161,7 +159,22 @@ private:
   LogChannel &mChannel;
 };
 
-/** When compiling-out logging, this is targeted */
+/**
+* Example of the template specialisation you may need to write to be able to
+* log user-defined type. Obviously the non-specialised version would work fine
+* for doubles. You only need to do this for your enums, structs and classes.
+*/
+template<>
+inline LogBuilder & LogBuilder::operator<< <double>(const double &t)
+{
+  mChannel.GetStream() << t;
+  return *this;
+}
+
+/**
+ * When compiling-out logging, this is targeted to throw away log output and
+ * let the compiler see that inlined logging code can be eliminated.
+ */
 class LogBuilderNop
 {
 public:
