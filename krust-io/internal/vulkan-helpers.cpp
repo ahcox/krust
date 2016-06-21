@@ -44,7 +44,7 @@ bool FindExtension(const std::vector<VkExtensionProperties> &extensions, const c
   return false;
 }
 
-PFN_vkVoidFunction GetInstanceProcAddr(VkInstance &instance, const char *const name) {
+PFN_vkVoidFunction GetInstanceProcAddr(VkInstance instance, const char *const name) {
   KRUST_ASSERT1(name, "Must pass a name to look up.");
   const PFN_vkVoidFunction address = vkGetInstanceProcAddr(instance, name);
   if (!address) {
@@ -53,7 +53,7 @@ PFN_vkVoidFunction GetInstanceProcAddr(VkInstance &instance, const char *const n
   return address;
 }
 
-PFN_vkVoidFunction GetDeviceProcAddr(VkDevice &device, const char *const name) {
+PFN_vkVoidFunction GetDeviceProcAddr(VkDevice device, const char *const name) {
   KRUST_ASSERT1(name, "Must pass a name to look up.");
   const PFN_vkVoidFunction address = vkGetDeviceProcAddr(device, name);
   if (!address) {

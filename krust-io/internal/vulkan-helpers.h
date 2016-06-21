@@ -48,10 +48,10 @@ namespace IO
 {
 
 /** Get a function pointer for a device extension and log the error if it fails. */
-PFN_vkVoidFunction GetInstanceProcAddr(VkInstance& instance, const char * const name);
+PFN_vkVoidFunction GetInstanceProcAddr(VkInstance instance, const char * const name);
 
 /** Get a function pointer for a device extension and log the error if it fails. */
-PFN_vkVoidFunction GetDeviceProcAddr(VkDevice& device, const char * const name);
+PFN_vkVoidFunction GetDeviceProcAddr(VkDevice device, const char * const name);
 
 /**
  * @brief Find the named extension in the list of extension property structs
