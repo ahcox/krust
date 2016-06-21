@@ -27,7 +27,7 @@
 namespace Krust {
 
 /**
- * Pull common operations out of template to save code bloat and to so one
+ * Pull common operations out of template to save code bloat and to see one
  * profile line for refcount inc and dec.
  */
 class IntrusivePointerBase
@@ -36,6 +36,7 @@ public:
   bool operator!() const { return !mRefObject; }
 
 protected:
+  IntrusivePointerBase() : mRefObject(nullptr) {}
   IntrusivePointerBase(RefObject& refObject);
   IntrusivePointerBase(RefObject* refObject);
   ~IntrusivePointerBase();
@@ -52,6 +53,7 @@ template<class T>
 class IntrusivePointer : public IntrusivePointerBase
 {
 public:
+  IntrusivePointer() {}
   IntrusivePointer(const IntrusivePointer<T>& counted) : IntrusivePointerBase(counted.Get()) {}
   IntrusivePointer(T* counted) : IntrusivePointerBase(counted) {}
   IntrusivePointer(T& counted) : IntrusivePointerBase(counted) {}
