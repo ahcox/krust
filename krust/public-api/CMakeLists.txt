@@ -4,6 +4,7 @@ set(KRUST_PUBLIC_API_HEADER_FILES
   ${KRUST_PUBLIC_API_DIR}/conditional-value.h
   ${KRUST_PUBLIC_API_DIR}/intrusive-pointer.h
   ${KRUST_PUBLIC_API_DIR}/krust-assertions.h
+  ${KRUST_PUBLIC_API_DIR}/krust-errors.h
   ${KRUST_PUBLIC_API_DIR}/logging.h
   ${KRUST_PUBLIC_API_DIR}/ref-object.h
   ${KRUST_PUBLIC_API_DIR}/scoped-free.h
