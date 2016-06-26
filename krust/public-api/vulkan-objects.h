@@ -1,0 +1,91 @@
+#ifndef KRUST_VULKAN_OBJECTS_H_INCLUDED_E26EF
+#define KRUST_VULKAN_OBJECTS_H_INCLUDED_E26EF
+
+// Copyright (c) 2016 Andrew Helge Cox
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+
+// Internal includes
+#include "krust/public-api/intrusive-pointer.h"
+#include "krust/public-api/ref-object.h"
+
+// External includes:
+#include <vulkan/vulkan.h>
+
+namespace Krust
+{
+
+/** 
+ * @defgroup VulkanObjectOwners Vulkan Object Owners
+ *
+ * Reference counted wrappers for Vulkan objects and smart pointers to them that
+ * keep them alive as long as necessary and clean them up when they are no
+ * longer in use.
+ * A reference to an Image, for example, will keep it's associated Device and
+ * Instance alive too.
+ * Submitting command buffers to the GPU keeps all associated API objects and
+ * resources alive until the GPU is using them, as long as the Queue wrapper is
+ * used for submission.
+ * Queue must call `vkQueueWaitIdle` and Device must call `vkDeviceWaitIdle` for
+ * their associated GPU to idle before their destruction can complete but the
+ * majority of Vulkan object owners do not need to block on GPU idle.
+ */
+///@{
+
+/**
+ * Base class for all wrappers for Vulkan API objects.
+ **/
+class VulkanObject : public RefObject
+{
+public:
+  VulkanObject() {}
+private:
+  // Ban copying objects:
+  VulkanObject(const VulkanObject&) = delete;
+  VulkanObject& operator=(const VulkanObject&) = delete;
+};
+
+/**
+ * An owner for a VkInstance Vulkan API object. 
+ */
+class Instance : public VulkanObject
+{
+public:
+  Instance(const VkInstanceCreateInfo& createInfo);
+  ~Instance();
+  /**
+   * Operator to allow the object to be used in raw Vulkan API calls and avoid
+   * having to wrap those too.
+   */
+  operator VkInstance() const { return mInstance; }
+private:
+  VkInstance mInstance = VK_NULL_HANDLE;
+};
+
+/**
+ * Shared pointer to automatically manage the lifetime of an Instance object and
+ * thus the underlying Vulkan API object.
+ */
+typedef IntrusivePointer<Instance> InstancePtr;
+
+///@}
+
+}
+
+#endif // #ifndef KRUST_VULKAN_OBJECTS_H_INCLUDED_E26EF

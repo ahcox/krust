@@ -10,6 +10,7 @@ set(KRUST_PUBLIC_API_HEADER_FILES
   ${KRUST_PUBLIC_API_DIR}/scoped-free.h
   ${KRUST_PUBLIC_API_DIR}/thread-base.h
   ${KRUST_PUBLIC_API_DIR}/vulkan-logging.h
+  ${KRUST_PUBLIC_API_DIR}/vulkan-objects.h
   ${KRUST_PUBLIC_API_DIR}/vulkan-utils.h
   ${KRUST_PUBLIC_API_DIR}/vulkan_struct_init.h)
 # Export the KRUST_PUBLIC_API_HEADER_FILES variable to the parent scope:
