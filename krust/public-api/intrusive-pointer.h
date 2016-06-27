@@ -28,7 +28,7 @@ namespace Krust {
 
 /**
  * Pull common operations out of template to save code bloat and to see one
- * profile line for refcount inc and dec.
+ * profile line each for refcount inc and dec.
  */
 class IntrusivePointerBase
 {

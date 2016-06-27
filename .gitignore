@@ -1,8 +1,12 @@
+*.h~
+*.cpp~
+*.c~
+*.git*~
 .cproject
 .project
 build/vs15/*
-.*\.swo
-.*\.swp
+*.swo
+*.swp
 .idea
 .un~
 *.un~

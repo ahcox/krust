@@ -28,6 +28,12 @@
 // External includes:
 #include <vulkan/vulkan.h>
 
+/**
+* @file
+*
+* Krust implementation of RAII for Vulkan API objects.
+*/
+
 namespace Krust
 {
 

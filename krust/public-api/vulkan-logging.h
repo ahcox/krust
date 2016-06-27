@@ -28,12 +28,18 @@
 #include "logging.h"
 #include "vulkan-utils.h"
 
+/**
+ * @file
+ *
+ * Krust logging helpers for Vulkan types.
+ */
+
 namespace Krust
 
 {
 
 /**
- * @name LoggingOperators Krust log output operators for vulkan types.
+ * @name LoggingOperators Krust log output operators for Vulkan types.
  */
 ///@{
 inline LogBuilder& operator << (LogBuilder& logBuilder, const VkResult& result) { logBuilder << ResultToString(result); return logBuilder; }
