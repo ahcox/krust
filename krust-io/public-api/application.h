@@ -28,6 +28,7 @@
 #include "keyboard.h"
 
 // External includes:
+#include "krust/public-api/krust.h"
 #include "krust/public-api/intrusive-pointer.h"
 #include "krust/public-api/conditional-value.h"
 #include <vulkan/vulkan.h>
@@ -256,7 +257,7 @@ protected:
    * @name VkState Vulkan state.
    */
   ///@{
-  VkInstance mInstance;
+  InstancePtr mInstance;
   VkPhysicalDevice  mGpu; ///< Physical GPU
   VkPhysicalDeviceProperties mGpuProperties;
   VkPhysicalDeviceFeatures mGpuFeatures;
@@ -349,7 +350,7 @@ protected:
   ///@}
 
 private:
-  /// The event loops check this and exits cleanly when it goes to true;
+  /// The event loops check this and exits cleanly when it goes to true.
   bool mQuit = false;
   /// Platform-specific features such as an X11 connection on Linux.
   ApplicationPlatform mPlatformApplication;

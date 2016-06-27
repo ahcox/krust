@@ -110,6 +110,7 @@ bool Application::Init()
     return false;
   }
 
+
   // Setup defaults:
 
   // Create a command pool:
@@ -117,7 +118,7 @@ bool Application::Init()
     poolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,
     poolInfo.pNext = nullptr,
     // Make all command buffers in the default pool resettable:
-    // (create specialised pools in derived apps if necessary)
+    // (create specialized pools in derived apps if necessary)
     poolInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT,
     poolInfo.queueFamilyIndex = 0;
 
@@ -144,7 +145,7 @@ bool Application::InitVulkan()
   }
 
   // Get ready for the window / surface binding:
-  mSurface = mPlatformApplication.InitSurface(mInstance);
+  mSurface = mPlatformApplication.InitSurface(*mInstance);
   if (mSurface == VK_NULL_HANDLE)
   {
     KRUST_LOG_ERROR << "Surface init returned a null surface." << endlog;
@@ -250,30 +251,33 @@ bool Application::InitVulkanInstance()
 
   KRUST_COMPILE_ASSERT(!KRUST_GCC_64BIT_X86_BUILD || sizeof(VkInstanceCreateInfo) == 64U, "VkInstanceCreateInfo size changed: recheck init code.");
 
-  const VkResult result = vkCreateInstance(&instanceInfo, KRUST_DEFAULT_ALLOCATION_CALLBACKS, &mInstance);
-  if(result != VK_SUCCESS)
+  try {
+    mInstance = new kr::Instance(instanceInfo);
+  }
+  catch (kr::KrustVulkanErrorException& ex)
   {
-    KRUST_LOG_ERROR << "vkCreateInstance() failed with result = " << ResultToString(result) <<  endlog;
-    if(result == VK_ERROR_INCOMPATIBLE_DRIVER)
+    const VkResult result = ex.mResult;
+    KRUST_LOG_ERROR << "CreateInstance() failed with result = " << ResultToString(result) << endlog;
+    if (result == VK_ERROR_INCOMPATIBLE_DRIVER)
     {
       KRUST_LOG_ERROR << "No compatible Vulkan driver could be found. Please consult the "
-          "setup instructions that came with your Vulkan implementation or SDK. "
-          "There may be some things you need to do with config files, environment "
-          "variables or commandline voodoo to allow the Vulkan loader to find an ICD." << endlog;
+        "setup instructions that came with your Vulkan implementation or SDK. "
+        "There may be some things you need to do with config files, environment "
+        "variables or commandline voodoo to allow the Vulkan loader to find an ICD." << endlog;
     }
     return false;
   }
 
   // Setup the debug reporting function:
   // This lets us get information out of validation layers.
-  mCreateDebugReportCallback = KRUST_GET_INSTANCE_EXTENSION(mInstance, CreateDebugReportCallbackEXT); //(PFN_vkCreateDebugReportCallbackEXT) vkGetInstanceProcAddr(mInstance, "vkCreateDebugReportCallbackEXT");
-  mDestroyDebugReportCallback = KRUST_GET_INSTANCE_EXTENSION(mInstance, DestroyDebugReportCallbackEXT); //  (PFN_vkDestroyDebugReportCallbackEXT) vkGetInstanceProcAddr(mInstance, "vkDestroyDebugReportCallbackEXT");
+  mCreateDebugReportCallback = KRUST_GET_INSTANCE_EXTENSION((*mInstance), CreateDebugReportCallbackEXT);
+  mDestroyDebugReportCallback = KRUST_GET_INSTANCE_EXTENSION(*mInstance, DestroyDebugReportCallbackEXT);
 
   // Get the instance WSI extension funcions:
-  mGetPhysicalDeviceSurfaceSupportKHR = KRUST_GET_INSTANCE_EXTENSION(mInstance, GetPhysicalDeviceSurfaceSupportKHR);
-  mGetPhysicalDeviceSurfaceCapabilitiesKHR =          KRUST_GET_INSTANCE_EXTENSION(mInstance, GetPhysicalDeviceSurfaceCapabilitiesKHR);
-  mGetSurfaceFormatsKHR =               KRUST_GET_INSTANCE_EXTENSION(mInstance, GetPhysicalDeviceSurfaceFormatsKHR);
-  mGetSurfacePresentModesKHR =          KRUST_GET_INSTANCE_EXTENSION(mInstance, GetPhysicalDeviceSurfacePresentModesKHR);
+  mGetPhysicalDeviceSurfaceSupportKHR = KRUST_GET_INSTANCE_EXTENSION(*mInstance, GetPhysicalDeviceSurfaceSupportKHR);
+  mGetPhysicalDeviceSurfaceCapabilitiesKHR =          KRUST_GET_INSTANCE_EXTENSION(*mInstance, GetPhysicalDeviceSurfaceCapabilitiesKHR);
+  mGetSurfaceFormatsKHR =               KRUST_GET_INSTANCE_EXTENSION(*mInstance, GetPhysicalDeviceSurfaceFormatsKHR);
+  mGetSurfacePresentModesKHR =          KRUST_GET_INSTANCE_EXTENSION(*mInstance, GetPhysicalDeviceSurfacePresentModesKHR);
   if(mGetPhysicalDeviceSurfaceSupportKHR == 0 || mGetPhysicalDeviceSurfaceCapabilitiesKHR == 0 ||
      mGetSurfaceFormatsKHR == 0 || mGetSurfacePresentModesKHR == 0 )
   {
@@ -295,7 +299,7 @@ bool Application::InitVulkanInstance()
       debugCreateInfo.pfnCallback = DebugCallback,
       debugCreateInfo.pUserData = nullptr;
 
-    mCreateDebugReportCallback(mInstance, &debugCreateInfo,
+    mCreateDebugReportCallback(*mInstance, &debugCreateInfo,
                                KRUST_DEFAULT_ALLOCATION_CALLBACKS,
                                &mDebugCallbackHandle);
     if(!mDebugCallbackHandle)
@@ -353,7 +357,7 @@ bool Application::InitQueueInfo()
 }
 
 bool Application::InitVulkanGpus() {
-  std::vector<VkPhysicalDevice> gpus = EnumeratePhysicalDevices(mInstance);
+  std::vector<VkPhysicalDevice> gpus = EnumeratePhysicalDevices(*mInstance);
   KRUST_LOG_INFO << "Number of GPUs: " << gpus.size() << endlog;
   if(gpus.size() < 1u) {
     KRUST_LOG_ERROR << "No GPUs found" << endlog;
@@ -415,9 +419,6 @@ bool Application::InitVulkanGpus() {
     queueCreateInfo.queueFamilyIndex = mDefaultPresentQueueFamily, ///< This is the family chosen after checking it is good for WSI present as well as for graphics.
     queueCreateInfo.queueCount = 1, ///< We only need one queue from the family.
     queueCreateInfo.pQueuePriorities = queuePriorities;
-    // If above causes problems, use: mPhysicalQueueFamilyProperties[mDefaultPresentQueueFamily].queueCount;
-
-
 
   // Turn everything required by application on:
   VkPhysicalDeviceFeatures enabledPhysicalDeviceFeatures = DoDeviceFeatureConfiguration(mGpuFeatures);
@@ -434,8 +435,6 @@ bool Application::InitVulkanGpus() {
     deviceInfo.enabledExtensionCount = static_cast<uint32_t>(extensionNames.size()),
     deviceInfo.ppEnabledExtensionNames = &extensionNames[0],
     deviceInfo.pEnabledFeatures = &enabledPhysicalDeviceFeatures;
-
-
 
   const VkResult result = vkCreateDevice(mGpu, &deviceInfo, KRUST_DEFAULT_ALLOCATION_CALLBACKS, &mGpuInterface);
   if(VK_SUCCESS != result)
@@ -821,7 +820,7 @@ bool Application::DeInit()
   }
   if(mSurface)
   {
-    vkDestroySurfaceKHR(mInstance, mSurface, KRUST_DEFAULT_ALLOCATION_CALLBACKS);
+    vkDestroySurfaceKHR(*mInstance, mSurface, KRUST_DEFAULT_ALLOCATION_CALLBACKS);
   }
   if(mGpuInterface)
   {
@@ -830,13 +829,12 @@ bool Application::DeInit()
 
   if(mDebugCallbackHandle && mDestroyDebugReportCallback)
   {
-    mDestroyDebugReportCallback(mInstance, mDebugCallbackHandle, KRUST_DEFAULT_ALLOCATION_CALLBACKS);
+    mDestroyDebugReportCallback(*mInstance, mDebugCallbackHandle, KRUST_DEFAULT_ALLOCATION_CALLBACKS);
   }
 
-  if(mInstance)
-  {
-    vkDestroyInstance(mInstance, KRUST_DEFAULT_ALLOCATION_CALLBACKS);
-  }
+  // Explicitly release the instance now:
+  KRUST_ASSERT1(mInstance->Count() == 1u, "Only the Application should still hold a reference to the Instance: we are going down.");
+  mInstance.Reset(nullptr);
 
   mPlatformApplication.WindowClosing(*mDefaultWindow.Get());
   mDefaultWindow.Reset(0);
@@ -846,6 +844,12 @@ bool Application::DeInit()
 
 int Application::Run(MainLoopType loopType)
 {
+  // Init the Krust core:
+  kr::InitKrust(/* Default error policy and allocator for CPU structures. */);
+
+  /// Sit on the main thread.
+  ThreadBase threadBase(Krust::GetGlobalErrorPolicy());
+
   if(!Init())
   {
     KRUST_LOG_ERROR <<  "Initialization failed." << endlog;

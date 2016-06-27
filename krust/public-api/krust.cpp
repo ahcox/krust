@@ -18,9 +18,43 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#include "krust.h"
+// Internal includes
+#include "krust/public-api/krust.h"
+#include "krust/internal/krust-internal.h"
 
 namespace Krust
 {
+
+/**
+* @brief The error policy used if the user doesn't set one.
+* Defaults to throwing KrustException on errors.
+*/
+ExceptionsErrorPolicy sDefaultErrorPolicy;
+
+/**
+* @brief The global error policy to use if the user doesn't set a
+* thread-specific one.
+*
+* Set in call to Krust::InitKrust
+*/
+ErrorPolicy* sErrorPolicy = &sDefaultErrorPolicy;
+
+
+bool InitKrust(ErrorPolicy * errorPolicy, VkAllocationCallbacks * allocator)
+{
+  sErrorPolicy = errorPolicy ? errorPolicy : &sDefaultErrorPolicy;
+  Internal::sAllocator = allocator ? allocator : KRUST_DEFAULT_ALLOCATION_CALLBACKS;
+  return false;
+}
+
+ErrorPolicy* GetGlobalErrorPolicy()
+{
+  KRUST_ASSERT1(sErrorPolicy != nullptr, "Null global error policy. Did you call InitKrust()?");
+  if (!sErrorPolicy)
+  {
+    KRUST_LOG_ERROR << "Null global error policy. Did you call InitKrust()?" << endlog;
+  }
+  return sErrorPolicy;
+}
 
 }
