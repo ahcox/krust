@@ -45,6 +45,15 @@ namespace Krust
  * longer in use.
  * A reference to an Image, for example, will keep it's associated Device and
  * Instance alive too.
+ * 
+ * These attempt to solve the single problem of managing the lifetime of Vulkan
+ * API objects in an RAII manner and thus do not wrap every Vulkan API call
+ * associated with a given object in an attempt to provide an OO veneer over the
+ * API. Instead, a conversion operator is provided for each that yields the
+ * underlying Vulkan object handle. This lets them be passed to Vulkan API
+ * functions and random helper code the user may have assembled from various
+ * sources.
+ *
  * Submitting command buffers to the GPU keeps all associated API objects and
  * resources alive until the GPU is using them, as long as the Queue wrapper is
  * used for submission.
@@ -55,7 +64,7 @@ namespace Krust
 ///@{
 
 /**
- * Base class for all wrappers for Vulkan API objects.
+ * Base class for all ownership wrappers for Vulkan API objects.
  **/
 class VulkanObject : public RefObject
 {
@@ -89,6 +98,27 @@ private:
  * thus the underlying Vulkan API object.
  */
 typedef IntrusivePointer<Instance> InstancePtr;
+
+/**
+ * An owner for vkDevice instances.
+ */
+class Device : public VulkanObject
+{
+public:
+  Device(Instance& instance, VkPhysicalDevice physicalDevice, const VkDeviceCreateInfo& createInfo);
+  ~Device();
+  VkPhysicalDevice GetPhysicalDevice() const { return mPhysicalDevice; }
+  operator VkDevice() const { return mDevice; }
+private:
+  /// The instance this Device was created from. We keep it alive as long as this
+  /// device is by holding an owner pointer to it.
+  InstancePtr mInstance;
+  /// The physical device this logical one corresponds to.
+  VkPhysicalDevice mPhysicalDevice;
+  VkDevice mDevice = VK_NULL_HANDLE;
+};
+
+typedef IntrusivePointer<Device> DevicePtr;
 
 ///@}
 

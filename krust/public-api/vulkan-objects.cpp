@@ -45,4 +45,26 @@ Instance::~Instance()
   vkDestroyInstance(mInstance, Internal::sAllocator);
 }
 
+Device::Device(Instance & instance, VkPhysicalDevice physicalDevice, const VkDeviceCreateInfo & createInfo) :
+  mInstance(instance)
+{
+  KRUST_ASSERT1(&instance != 0 && instance != VK_NULL_HANDLE, "Invalid instance.");
+  KRUST_ASSERT1(&physicalDevice != VK_NULL_HANDLE, "Invalid physical device.");
+  KRUST_ASSERT1(&createInfo != 0, "Invalid device create info.");
+
+  mPhysicalDevice = physicalDevice;
+  auto & threadBase = ThreadBase::Get();
+  const VkResult result = vkCreateDevice(physicalDevice, &createInfo, Internal::sAllocator, &mDevice);
+  if (result != VK_SUCCESS)
+  {
+    mDevice = VK_NULL_HANDLE;
+    threadBase.GetErrorPolicy().VulkanError("vkCreateDevice", result, nullptr, __FUNCTION__, __FILE__, __LINE__);
+  }
+}
+
+Device::~Device()
+{
+  vkDestroyDevice(mDevice, Internal::sAllocator);
+}
+
 }

@@ -265,15 +265,15 @@ protected:
   /// Addendum to mPhysicalQueueFamilyProperties: Records whether the
   /// corresponding queue families can present through WSI.
   std::vector<bool> mQueueFamilyPresentFlags;
-  unsigned mDefaultDrawingQueueFamily = 0;
-  unsigned mDefaultPresentQueueFamily = 0;
+  unsigned  mDefaultDrawingQueueFamily = 0;
+  unsigned  mDefaultPresentQueueFamily = 0;
   VkPhysicalDeviceMemoryProperties mGpuMemoryProperties;
-  VkDevice mGpuInterface; ///< Logical GPU.
-  VkQueue  mDefaultQueue;
+  DevicePtr mGpuInterface; ///< Logical GPU.
+  VkQueue   mDefaultQueue;
   /// Draw through this.
-  VkQueue* mDefaultGraphicsQueue = 0;
+  VkQueue*  mDefaultGraphicsQueue = 0;
   /// Present using this.
-  VkQueue* mDefaultPresentQueue = 0;
+  VkQueue*  mDefaultPresentQueue = 0;
   /// Build command buffers to be submitted on the default queue using this pool.
   VkCommandPool mDefaultCommandPool = 0;
   ///@}

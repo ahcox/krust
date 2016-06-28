@@ -122,7 +122,7 @@ bool Application::Init()
     poolInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT,
     poolInfo.queueFamilyIndex = 0;
 
-  const VkResult poolResult = vkCreateCommandPool(mGpuInterface, &poolInfo, KRUST_DEFAULT_ALLOCATION_CALLBACKS, &mCommandPool);
+  const VkResult poolResult = vkCreateCommandPool(*mGpuInterface, &poolInfo, KRUST_DEFAULT_ALLOCATION_CALLBACKS, &mCommandPool);
   if(poolResult != VK_SUCCESS)
   {
     KRUST_LOG_ERROR << "Failed to create command pool. Error: " << poolResult << Krust::endlog;
@@ -436,19 +436,14 @@ bool Application::InitVulkanGpus() {
     deviceInfo.ppEnabledExtensionNames = &extensionNames[0],
     deviceInfo.pEnabledFeatures = &enabledPhysicalDeviceFeatures;
 
-  const VkResult result = vkCreateDevice(mGpu, &deviceInfo, KRUST_DEFAULT_ALLOCATION_CALLBACKS, &mGpuInterface);
-  if(VK_SUCCESS != result)
-  {
-    KRUST_LOG_ERROR << "Failed to create logical GPU. Error: " << ResultToString(result) << endlog;
-    return false;
-  }
+  mGpuInterface = DevicePtr(new Device(*mInstance, mGpu, deviceInfo));
 
   // Get the device WSI extensions:
-  if( 0 == (mAcquireNextImageKHR = KRUST_GET_DEVICE_EXTENSION(mGpuInterface, AcquireNextImageKHR)) ||
-      0 == (mCreateSwapChainKHR = KRUST_GET_DEVICE_EXTENSION(mGpuInterface, CreateSwapchainKHR)) ||
-      0 == (mDestroySwapChainKHR = KRUST_GET_DEVICE_EXTENSION(mGpuInterface, DestroySwapchainKHR)) ||
-      0 == (mGetSwapchainImagesKHR = KRUST_GET_DEVICE_EXTENSION(mGpuInterface, GetSwapchainImagesKHR)) ||
-      0 == (mQueuePresentKHR = KRUST_GET_DEVICE_EXTENSION(mGpuInterface, QueuePresentKHR)) )
+  if( 0 == (mAcquireNextImageKHR = KRUST_GET_DEVICE_EXTENSION(*mGpuInterface, AcquireNextImageKHR)) ||
+      0 == (mCreateSwapChainKHR = KRUST_GET_DEVICE_EXTENSION(*mGpuInterface, CreateSwapchainKHR)) ||
+      0 == (mDestroySwapChainKHR = KRUST_GET_DEVICE_EXTENSION(*mGpuInterface, DestroySwapchainKHR)) ||
+      0 == (mGetSwapchainImagesKHR = KRUST_GET_DEVICE_EXTENSION(*mGpuInterface, GetSwapchainImagesKHR)) ||
+      0 == (mQueuePresentKHR = KRUST_GET_DEVICE_EXTENSION(*mGpuInterface, QueuePresentKHR)) )
   {
     return false;
   }
@@ -464,7 +459,7 @@ bool Application::InitDefaultQueue()
 
   // Create a default queue:
   vkGetDeviceQueue(
-      mGpuInterface,
+      *mGpuInterface,
       queueFamilyIndex, //< queueFamilyIndex
       0, //< [queueindex] Default to using the first queue in the family.
       &mDefaultQueue);
@@ -527,7 +522,7 @@ bool Application::InitDepthBuffer(const VkFormat depthFormat)
   const unsigned width = mDefaultWindow->GetPlatformWindow().GetWidth();
   const unsigned height = mDefaultWindow->GetPlatformWindow().GetHeight();
   VkImage depthImage = CreateDepthImage(
-    mGpuInterface,
+    *mGpuInterface,
     mDefaultPresentQueueFamily,
     depthFormat,
     width,
@@ -538,11 +533,11 @@ bool Application::InitDepthBuffer(const VkFormat depthFormat)
     return false;
   }
   // Make sure we clean up if we exit off the expected path:
-  ScopedImageOwner depthJanitor(mGpuInterface, depthImage);
+  ScopedImageOwner depthJanitor(*mGpuInterface, depthImage);
 
   // Work out how much memory the depth image requires:
   VkMemoryRequirements depthMemoryRequirements;
-  vkGetImageMemoryRequirements(mGpuInterface, depthImage, &depthMemoryRequirements);
+  vkGetImageMemoryRequirements(*mGpuInterface, depthImage, &depthMemoryRequirements);
   KRUST_LOG_INFO << "Depth buffer memory requirements: (Size = " << depthMemoryRequirements.size << ", Alignment = " << depthMemoryRequirements.alignment << ", Flags = " << depthMemoryRequirements.memoryTypeBits << ")." << endlog;
 
   // Work out which memory type we can use:
@@ -560,8 +555,8 @@ bool Application::InitDepthBuffer(const VkFormat depthFormat)
     depthAllocationInfo.allocationSize = depthMemoryRequirements.size,
     depthAllocationInfo.memoryTypeIndex = memoryType.GetValue();
 
-  ScopedDeviceMemoryOwner depthMemory(mGpuInterface, 0);
-  const VkResult allocResult = vkAllocateMemory(mGpuInterface, &depthAllocationInfo, KRUST_DEFAULT_ALLOCATION_CALLBACKS, &depthMemory.memory);
+  ScopedDeviceMemoryOwner depthMemory(*mGpuInterface, 0);
+  const VkResult allocResult = vkAllocateMemory(*mGpuInterface, &depthAllocationInfo, KRUST_DEFAULT_ALLOCATION_CALLBACKS, &depthMemory.memory);
   if(allocResult != VK_SUCCESS)
   {
     KRUST_LOG_ERROR << "Failed to allocate storage for depth buffer. Error: " << allocResult << endlog;
@@ -569,10 +564,10 @@ bool Application::InitDepthBuffer(const VkFormat depthFormat)
   }
 
   // Tie the memory to the image:
-  VK_CALL_RET(vkBindImageMemory, mGpuInterface, depthImage, depthMemory.memory, 0);
+  VK_CALL_RET(vkBindImageMemory, *mGpuInterface, depthImage, depthMemory.memory, 0);
 
   // Create a view for the depth buffer image:
-  VkImageView depthView = CreateDepthImageView(mGpuInterface, depthJanitor.image, depthFormat);
+  VkImageView depthView = CreateDepthImageView(*mGpuInterface, depthJanitor.image, depthFormat);
   if(!depthView)
   {
     return false;
@@ -662,14 +657,14 @@ bool Application::InitDefaultSwapchain()
     swapChainCreateParams.clipped = true,
     swapChainCreateParams.oldSwapchain = 0;
 
-  VkResult swapChainCreated = mCreateSwapChainKHR(mGpuInterface, &swapChainCreateParams, KRUST_DEFAULT_ALLOCATION_CALLBACKS, &mSwapChain);
+  VkResult swapChainCreated = mCreateSwapChainKHR(*mGpuInterface, &swapChainCreateParams, KRUST_DEFAULT_ALLOCATION_CALLBACKS, &mSwapChain);
   if(VK_SUCCESS != swapChainCreated)
   {
     KRUST_LOG_ERROR << "Failed to create swap chain. Error: " << ResultToString(swapChainCreated) << ". Numerical error code: " << int(swapChainCreated) << endlog;
     return false;
   }
 
-  mSwapChainImages = GetSwapChainImages(mGetSwapchainImagesKHR, mGpuInterface, mSwapChain);
+  mSwapChainImages = GetSwapChainImages(mGetSwapchainImagesKHR, *mGpuInterface, mSwapChain);
   if(mSwapChainImages.size() < MIN_NUM_SWAPCHAIN_IMAGES)
   {
     KRUST_LOG_ERROR << "Too few swap chain images. Got " << mSwapChainImages.size()
@@ -704,7 +699,7 @@ bool Application::InitDefaultSwapchain()
     KRUST_LOG_DEBUG << "\tSwap chain image: " << image << endlog;
     chainImageCreate.image = mSwapChainImages[imageIndex++];
     VkImageView view;
-    VK_CALL_RET(vkCreateImageView, mGpuInterface, &chainImageCreate, KRUST_DEFAULT_ALLOCATION_CALLBACKS, &view);
+    VK_CALL_RET(vkCreateImageView, *mGpuInterface, &chainImageCreate, KRUST_DEFAULT_ALLOCATION_CALLBACKS, &view);
     mSwapChainImageViews.push_back(view);
   }
 
@@ -717,7 +712,7 @@ bool Application::InitDefaultSwapchain()
     // in flight for WSI signal on:
     semaphoreCreateInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
 
-  VkResult semaphoreResult = vkCreateSemaphore(mGpuInterface, &semaphoreCreateInfo, KRUST_DEFAULT_ALLOCATION_CALLBACKS, &mSwapChainSemaphore);
+  VkResult semaphoreResult = vkCreateSemaphore(*mGpuInterface, &semaphoreCreateInfo, KRUST_DEFAULT_ALLOCATION_CALLBACKS, &mSwapChainSemaphore);
   if(semaphoreResult != VK_SUCCESS)
   {
     KRUST_LOG_ERROR << "Failed to create the swapchain semaphore." << endlog;
@@ -735,7 +730,7 @@ bool Application::InitDefaultCommandPool()
     poolInfo.flags = 0,
     poolInfo.queueFamilyIndex = mDefaultDrawingQueueFamily;
 
-  VkResult result = vkCreateCommandPool(mGpuInterface, &poolInfo, KRUST_DEFAULT_ALLOCATION_CALLBACKS, &mDefaultCommandPool);
+  VkResult result = vkCreateCommandPool(*mGpuInterface, &poolInfo, KRUST_DEFAULT_ALLOCATION_CALLBACKS, &mDefaultCommandPool);
   if(result != VK_SUCCESS)
   {
     KRUST_LOG_ERROR << "Failed to create command pool. Error: " << result << endlog;
@@ -790,29 +785,29 @@ bool Application::DeInit()
 
   if(mCommandPool)
   {
-    vkDestroyCommandPool(mGpuInterface, mCommandPool, KRUST_DEFAULT_ALLOCATION_CALLBACKS);
+    vkDestroyCommandPool(*mGpuInterface, mCommandPool, KRUST_DEFAULT_ALLOCATION_CALLBACKS);
   }
 
   if(mSwapChainSemaphore)
   {
-    vkDestroySemaphore(mGpuInterface, mSwapChainSemaphore, KRUST_DEFAULT_ALLOCATION_CALLBACKS);
+    vkDestroySemaphore(*mGpuInterface, mSwapChainSemaphore, KRUST_DEFAULT_ALLOCATION_CALLBACKS);
   }
 
   // No need to vkDestroyImage() as these images came from the swapchain extension:
   mSwapChainImages.clear();
-  mDestroySwapChainKHR(mGpuInterface, mSwapChain, KRUST_DEFAULT_ALLOCATION_CALLBACKS);
+  mDestroySwapChainKHR(*mGpuInterface, mSwapChain, KRUST_DEFAULT_ALLOCATION_CALLBACKS);
 
   if(mDepthBufferView)
   {
-    vkDestroyImageView(mGpuInterface, mDepthBufferView, KRUST_DEFAULT_ALLOCATION_CALLBACKS);
+    vkDestroyImageView(*mGpuInterface, mDepthBufferView, KRUST_DEFAULT_ALLOCATION_CALLBACKS);
   }
   if(mDepthBufferImage)
   {
-    vkDestroyImage(mGpuInterface, mDepthBufferImage, KRUST_DEFAULT_ALLOCATION_CALLBACKS);
+    vkDestroyImage(*mGpuInterface, mDepthBufferImage, KRUST_DEFAULT_ALLOCATION_CALLBACKS);
   }
   if(mDepthBufferMemory)
   {
-    vkFreeMemory(mGpuInterface, mDepthBufferMemory, KRUST_DEFAULT_ALLOCATION_CALLBACKS);
+    vkFreeMemory(*mGpuInterface, mDepthBufferMemory, KRUST_DEFAULT_ALLOCATION_CALLBACKS);
   }
   if(mDefaultQueue)
   {
@@ -822,9 +817,9 @@ bool Application::DeInit()
   {
     vkDestroySurfaceKHR(*mInstance, mSurface, KRUST_DEFAULT_ALLOCATION_CALLBACKS);
   }
-  if(mGpuInterface)
+  if(mGpuInterface.Get())
   {
-    vkDestroyDevice(mGpuInterface, KRUST_DEFAULT_ALLOCATION_CALLBACKS);
+    mGpuInterface.Reset(nullptr);
   }
 
   if(mDebugCallbackHandle && mDestroyDebugReportCallback)
@@ -956,7 +951,7 @@ void Application::OnRedraw(Window& window) {
   }
 
   // Acquire an image to draw into from the WSI:
-  const VkResult acquireResult = mAcquireNextImageKHR(mGpuInterface, mSwapChain,
+  const VkResult acquireResult = mAcquireNextImageKHR(*mGpuInterface, mSwapChain,
     PRESENT_IMAGE_ACQUIRE_TIMEOUT, mSwapChainSemaphore,
     nullptr /* no fence used! */, &mCurrentTargetImage);
 

@@ -51,7 +51,7 @@ public:
     // of those now:
 
     if(!Krust::BuildFramebuffersForSwapChain(
-      mGpuInterface,
+      *mGpuInterface,
       mSwapChainImageViews,
       mDepthBufferView,
       mDefaultWindow->GetPlatformWindow().GetWidth(),
@@ -72,7 +72,7 @@ public:
 
     KRUST_ASSERT1(mCommandBuffers.size() == 0, "Double init of command buffers.");
     mCommandBuffers.resize(mSwapChainImageViews.size());
-    const VkResult bufferResult = vkAllocateCommandBuffers(mGpuInterface, &bufferInfo, &mCommandBuffers[0]);
+    const VkResult bufferResult = vkAllocateCommandBuffers(*mGpuInterface, &bufferInfo, &mCommandBuffers[0]);
     if(bufferResult != VK_SUCCESS)
     {
       KRUST_LOG_ERROR << "Failed to allocate command buffers. Error: " << bufferResult << Krust::endlog;
@@ -174,7 +174,7 @@ public:
     // Destroy VK objects:
     for(unsigned i = 0; i < mRenderPasses.size(); ++i)
     {
-      vkDestroyRenderPass(mGpuInterface, mRenderPasses[i], KRUST_DEFAULT_ALLOCATION_CALLBACKS);
+      vkDestroyRenderPass(*mGpuInterface, mRenderPasses[i], KRUST_DEFAULT_ALLOCATION_CALLBACKS);
     }
 
     return true;
