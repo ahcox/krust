@@ -850,43 +850,73 @@ int Application::Run(MainLoopType loopType)
   /// Sit on the main thread.
   ThreadBase threadBase(Krust::GetGlobalErrorPolicy());
 
-  if(!Init())
+  // Init ourselves:
+  bool initialized = false;
+  try {
+    initialized = Init();
+  }
+  catch (KrustException& ex)
+  {
+    auto logBuilder = KRUST_LOG_ERROR;
+    logBuilder << "Application initialization failed with Krust exception: ";
+    ex.Log(logBuilder);
+    logBuilder << endlog;
+  }
+  catch (std::exception& ex)
+  {
+    KRUST_LOG_ERROR << "Application initialization failed with standard exception: " << ex.what() << endlog;
+  }
+  if(!initialized)
   {
     KRUST_LOG_ERROR <<  "Initialization failed." << endlog;
     return -1;
   }
 
-  mPlatformApplication.PreRun();
+  // Lets go:
+  try {
+    mPlatformApplication.PreRun();
 
-  // Pre-pump a few frames before settling down into the event loop:
-  for (unsigned i = 0; i < this->mSwapChainImageViews.size(); ++i)
-  {
-    this->OnRedraw(*mDefaultWindow.Get());
-  }
-
-  if(loopType == MainLoopType::Busy)
-  {
-    // Poll input until no events left, dispatching them, then render:
-    // Note, this busy loop only works properly on Win32 at the moment.
-    KRUST_LOG_INFO << "Running MAIN_LOOP_TYPE::Busy.\n";
-    
-    while (!mQuit) {
-      while(mPlatformApplication.PeekAndDispatchEvent()){
-        // Drain all events so we are up to date before rendering.
-      }
-      // Render:
+    // Pre-pump a few frames before settling down into the event loop:
+    for (unsigned i = 0; i < this->mSwapChainImageViews.size(); ++i)
+    {
       this->OnRedraw(*mDefaultWindow.Get());
     }
-  }
-  else
-  {
-    // Simple loop, receives and dispatches events. Drawing only happens when the
-    // window system prompts it by sending a repaint event.
-    KRUST_LOG_INFO << "Running MAIN_LOOP_TYPE::Reactive.\n";
-  
-    while(!mQuit){
-      mPlatformApplication.WaitForAndDispatchEvent();
+
+    if (loopType == MainLoopType::Busy)
+    {
+      // Poll input until no events left, dispatching them, then render:
+      // Note, this busy loop only works properly on Win32 at the moment.
+      KRUST_LOG_INFO << "Running MAIN_LOOP_TYPE::Busy.\n";
+
+      while (!mQuit) {
+        while (mPlatformApplication.PeekAndDispatchEvent()) {
+          // Drain all events so we are up to date before rendering.
+        }
+        // Render:
+        this->OnRedraw(*mDefaultWindow.Get());
+      }
     }
+    else
+    {
+      // Simple loop, receives and dispatches events. Drawing only happens when the
+      // window system prompts it by sending a repaint event.
+      KRUST_LOG_INFO << "Running MAIN_LOOP_TYPE::Reactive.\n";
+
+      while (!mQuit) {
+        mPlatformApplication.WaitForAndDispatchEvent();
+      }
+    }
+  }
+  catch (KrustException& ex)
+  {
+    auto logBuilder = KRUST_LOG_ERROR;
+    logBuilder << "Krust exception thrown during Application main loop: ";
+    ex.Log(logBuilder);
+    logBuilder << endlog;
+  }
+  catch (std::exception& ex)
+  {
+    KRUST_LOG_ERROR << "Standard exception thrown during Application main loop: " << ex.what() << endlog;
   }
 
   DeInit();

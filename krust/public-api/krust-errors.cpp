@@ -45,6 +45,33 @@ namespace Krust
     return str;
   }
 
+  LogBuilder& KrustException::Log(LogBuilder& logBuilder) const
+  {
+    logBuilder << "[msg = " << mMsg << "] [function = " << mFunction << "] [file = " << mFile << "] [line = " << mLine << "]";
+    return logBuilder;
+  }
+
+  LogBuilder& KrustErrorException::Log(LogBuilder& logBuilder) const
+  {
+    logBuilder << "KrustErrorException: [error = " << mError << "] ";
+    KrustException::Log(logBuilder);
+    return logBuilder;
+  }
+
+  LogBuilder& KrustVulkanErrorException::Log(LogBuilder& logBuilder) const
+  {
+    logBuilder << "KrustVulkanErrorException: [called = " << mApiCalled << "] [result = " << mResult << "] ";
+    KrustException::Log(logBuilder);
+    return logBuilder;
+  }
+
+  LogBuilder& KrustVulkanUnexpectedException::Log(LogBuilder& logBuilder) const
+  {
+    logBuilder << "KrustVulkanUnexpectedException: [called = " << mApiCalled << "] ";
+    KrustException::Log(logBuilder);
+    return logBuilder;
+  }
+
   void ExceptionsErrorPolicy::VulkanError(const char * apiCalled, VkResult result, const char *  msg, const char * function, const char * file, unsigned line)
   {
     KRUST_LOG_ERROR << "Vulkan error (" << result << ") (msg: \"" << msg << "\") reported by " << apiCalled << " in function " << function << " at: " << file << ":" << line << endlog;

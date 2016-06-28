@@ -138,6 +138,10 @@ public:
     mFile(file ? file : mFile),
     mLine(line ? line : mLine)
   {}
+  /**
+   * Dump to log in human-readable form. 
+   */
+  virtual LogBuilder& Log(LogBuilder& log) const;
   const char* mMsg = "";
   const char * mFunction = "";
   const char * mFile = "";
@@ -161,6 +165,10 @@ public:
     mError(error),
     KrustException(msg, function, file, line)
   {}
+  /**
+   * Dump to log in human-readable form.
+   */
+  virtual LogBuilder& Log(LogBuilder& log) const;
   Errors mError = Errors::NoError;
 };
 
@@ -179,6 +187,10 @@ public:
     mResult(result),
     KrustException(msg, function, file, line)
   {}
+  /**
+  * Dump to log in human-readable form.
+  */
+  virtual LogBuilder& Log(LogBuilder& log) const;
   const char* mApiCalled = "";
   VkResult mResult = VK_SUCCESS;
 };
@@ -197,6 +209,10 @@ public:
     mApiCalled(apiCalled ? apiCalled : mApiCalled),
     KrustException(msg, function, file, line)
   {}
+  /**
+  * Dump to log in human-readable form.
+  */
+  virtual LogBuilder& Log(LogBuilder& log) const;
   const char* mApiCalled = "";
 };
 
