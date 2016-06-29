@@ -25,7 +25,9 @@
 
 // External includes:
 #include "krust/public-api/compiler.h"
-#include <krust/public-api/vulkan-utils.h>
+#include "krust/public-api/vulkan-utils.h"
+#define VK_USE_PLATFORM_WIN32_KHR
+#include "krust/public-api/vulkan_struct_init.h"
 #include "krust/public-api/scoped-free.h"
 #include "krust/public-api/logging.h"
 #include <vector>
@@ -215,12 +217,8 @@ bool Krust::IO::ApplicationPlatform::Init()
 
 VkSurfaceKHR Krust::IO::ApplicationPlatform::InitSurface(VkInstance instance)
 {
-  VkWin32SurfaceCreateInfoKHR createInfo;
-    createInfo.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR,
-    createInfo.pNext = nullptr;
-    createInfo.flags = 0;
-    createInfo.hinstance = mInstanceHandle;
-    createInfo.hwnd = this->mDefaultWindow->GetPlatformWindow().mWindow;
+  auto createInfo = Win32SurfaceCreateInfoKHR(0, mInstanceHandle,
+    this->mDefaultWindow->GetPlatformWindow().mWindow);
 
   VkSurfaceKHR surface = VK_NULL_HANDLE;
   const VkResult result = vkCreateWin32SurfaceKHR(instance, &createInfo, KRUST_DEFAULT_ALLOCATION_CALLBACKS, &surface);

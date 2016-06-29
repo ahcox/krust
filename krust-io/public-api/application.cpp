@@ -114,13 +114,8 @@ bool Application::Init()
   // Setup defaults:
 
   // Create a command pool:
-  VkCommandPoolCreateInfo poolInfo;
-    poolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,
-    poolInfo.pNext = nullptr,
-    // Make all command buffers in the default pool resettable:
-    // (create specialized pools in derived apps if necessary)
-    poolInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT,
-    poolInfo.queueFamilyIndex = 0;
+  // (Make all command buffers in the default pool resettable)
+  auto poolInfo = CommandPoolCreateInfo(VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT, 0);
 
   const VkResult poolResult = vkCreateCommandPool(*mGpuInterface, &poolInfo, KRUST_DEFAULT_ALLOCATION_CALLBACKS, &mCommandPool);
   if(poolResult != VK_SUCCESS)
@@ -195,14 +190,12 @@ bool Application::InitVulkan()
 bool Application::InitVulkanInstance()
 {
   // Give Vulkan some basic info about the app:
-  VkApplicationInfo appInfo;
-    appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO,
-    appInfo.pNext = NULL,
-    appInfo.pApplicationName = mAppName,
-    appInfo.applicationVersion = mAppVersion,
-    appInfo.pEngineName = KRUST_ENGINE_NAME,
-    appInfo.engineVersion = KRUST_ENGINE_VERSION_NUMBER,
-    appInfo.apiVersion = VK_API_VERSION_1_0;
+  auto appInfo = ApplicationInfo(
+    mAppName,
+    mAppVersion,
+    KRUST_ENGINE_NAME,
+    KRUST_ENGINE_VERSION_NUMBER,
+    VK_API_VERSION_1_0);
 
   // Find the extensions to initialise the API instance with:
   std::vector<VkExtensionProperties> extensionProperties = GetGlobalExtensionProperties();
@@ -239,15 +232,8 @@ bool Application::InitVulkanInstance()
 
   // Setup the struct telling Vulkan about layers, extensions, and memory allocation
   // callbacks:
-  VkInstanceCreateInfo instanceInfo;
-    instanceInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
-    instanceInfo.pNext = NULL,
-    instanceInfo.flags = 0,
-    instanceInfo.pApplicationInfo = &appInfo,
-    instanceInfo.enabledLayerCount = 0,
-    instanceInfo.ppEnabledLayerNames = 0,
-    instanceInfo.enabledExtensionCount = static_cast<uint32_t>(extensionNames.size()),
-    instanceInfo.ppEnabledExtensionNames = &extensionNames[0];
+  auto instanceInfo = InstanceCreateInfo(0, &appInfo, 0, 0,
+    static_cast<uint32_t>(extensionNames.size()), &extensionNames[0]);
 
   KRUST_COMPILE_ASSERT(!KRUST_GCC_64BIT_X86_BUILD || sizeof(VkInstanceCreateInfo) == 64U, "VkInstanceCreateInfo size changed: recheck init code.");
 
@@ -288,16 +274,14 @@ bool Application::InitVulkanInstance()
   if(mCreateDebugReportCallback)
   {
     // Ask Vulkan to pump errors out our callback function:
-    VkDebugReportCallbackCreateInfoEXT debugCreateInfo;
-    debugCreateInfo.sType = VK_STRUCTURE_TYPE_DEBUG_REPORT_CREATE_INFO_EXT,
-      debugCreateInfo.pNext = nullptr,
-      debugCreateInfo.flags = VK_DEBUG_REPORT_INFORMATION_BIT_EXT |
+    auto debugCreateInfo = DebugReportCallbackCreateInfoEXT(
+      VK_DEBUG_REPORT_INFORMATION_BIT_EXT |
       VK_DEBUG_REPORT_WARNING_BIT_EXT |
       VK_DEBUG_REPORT_PERFORMANCE_WARNING_BIT_EXT |
       VK_DEBUG_REPORT_ERROR_BIT_EXT |
       VK_DEBUG_REPORT_DEBUG_BIT_EXT,
-      debugCreateInfo.pfnCallback = DebugCallback,
-      debugCreateInfo.pUserData = nullptr;
+      PFN_vkDebugReportCallbackEXT(DebugCallback),
+      nullptr);
 
     mCreateDebugReportCallback(*mInstance, &debugCreateInfo,
                                KRUST_DEFAULT_ALLOCATION_CALLBACKS,
@@ -412,29 +396,19 @@ bool Application::InitVulkanGpus() {
 
   /// This should be an array, one per queue family I want.
   const float queuePriorities[1] = { 0.0f };
-  VkDeviceQueueCreateInfo queueCreateInfo;
-  queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
-    queueCreateInfo.pNext = 0,
-    queueCreateInfo.flags = 0,
-    queueCreateInfo.queueFamilyIndex = mDefaultPresentQueueFamily, ///< This is the family chosen after checking it is good for WSI present as well as for graphics.
-    queueCreateInfo.queueCount = 1, ///< We only need one queue from the family.
-    queueCreateInfo.pQueuePriorities = queuePriorities;
+  auto queueCreateInfo = DeviceQueueCreateInfo(
+    0,
+    mDefaultPresentQueueFamily, ///< This is the family chosen after checking it is good for WSI present as well as for graphics.
+    1, ///< We only need one queue from the family.
+    queuePriorities);
 
   // Turn everything required by application on:
   VkPhysicalDeviceFeatures enabledPhysicalDeviceFeatures = DoDeviceFeatureConfiguration(mGpuFeatures);
 
-  // Request a device with one queue, no layers enabled, and the extensions we setup above:
-  VkDeviceCreateInfo deviceInfo;
-    deviceInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
-    deviceInfo.pNext = 0,
-    deviceInfo.flags = 0,
-    deviceInfo.queueCreateInfoCount = 1,
-    deviceInfo.pQueueCreateInfos = &queueCreateInfo,
-    deviceInfo.enabledLayerCount = 0,
-    deviceInfo.ppEnabledLayerNames = 0,
-    deviceInfo.enabledExtensionCount = static_cast<uint32_t>(extensionNames.size()),
-    deviceInfo.ppEnabledExtensionNames = &extensionNames[0],
-    deviceInfo.pEnabledFeatures = &enabledPhysicalDeviceFeatures;
+  // Request a device with one queue, no layers enabled, and the extensions we
+  // setup above:
+  auto deviceInfo = DeviceCreateInfo(0, 1, &queueCreateInfo, 0, 0,
+    static_cast<uint32_t>(extensionNames.size()), &extensionNames[0], &enabledPhysicalDeviceFeatures);
 
   mGpuInterface = DevicePtr(new Device(*mInstance, mGpu, deviceInfo));
 
@@ -549,11 +523,8 @@ bool Application::InitDepthBuffer(const VkFormat depthFormat)
   }
 
   // Allocate the memory to back the depth image:
-  VkMemoryAllocateInfo depthAllocationInfo;
-    depthAllocationInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
-    depthAllocationInfo.pNext = nullptr,
-    depthAllocationInfo.allocationSize = depthMemoryRequirements.size,
-    depthAllocationInfo.memoryTypeIndex = memoryType.GetValue();
+  auto depthAllocationInfo = MemoryAllocateInfo(depthMemoryRequirements.size,
+    memoryType.GetValue());
 
   ScopedDeviceMemoryOwner depthMemory(*mGpuInterface, 0);
   const VkResult allocResult = vkAllocateMemory(*mGpuInterface, &depthAllocationInfo, KRUST_DEFAULT_ALLOCATION_CALLBACKS, &depthMemory.memory);
@@ -636,9 +607,7 @@ bool Application::InitDefaultSwapchain()
   mNumSwapchainFramebuffers = minNumPresentationFramebuffers;
   KRUST_LOG_INFO << "Using " << mNumSwapchainFramebuffers << " swap chain framebuffer images." << endlog;
 
-  VkSwapchainCreateInfoKHR swapChainCreateParams;
-    swapChainCreateParams.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR,
-    swapChainCreateParams.pNext = 0,
+  auto swapChainCreateParams = SwapchainCreateInfoKHR();
     swapChainCreateParams.flags = 0,
     swapChainCreateParams.surface = mSurface,
     swapChainCreateParams.minImageCount = minNumPresentationFramebuffers,
@@ -676,9 +645,7 @@ bool Application::InitDefaultSwapchain()
   // Setup a views for swapchain images so they can be bound to FrameBuffer
   // objects as render targets.
   mSwapChainImageViews.reserve(mSwapChainImages.size());
-  VkImageViewCreateInfo chainImageCreate;
-    chainImageCreate.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
-    chainImageCreate.pNext = nullptr,
+  auto chainImageCreate = ImageViewCreateInfo();
     chainImageCreate.flags = 0,
     chainImageCreate.image = nullptr,
     chainImageCreate.viewType = VK_IMAGE_VIEW_TYPE_2D,
@@ -705,12 +672,9 @@ bool Application::InitDefaultSwapchain()
 
   // Make a semaphore to control the swapchain:
   KRUST_ASSERT1(!mSwapChainSemaphore, "Semaphore already initialised.");
-  VkSemaphoreCreateInfo semaphoreCreateInfo;
-    semaphoreCreateInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO,
-    semaphoreCreateInfo.pNext = nullptr,
-    // Start signalled since the first time we wait, there will be no framebuffer
-    // in flight for WSI signal on:
-    semaphoreCreateInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
+  // Start signaled since the first time we wait, there will be no framebuffer
+  // in flight for WSI signal on:
+  auto semaphoreCreateInfo = SemaphoreCreateInfo(VK_FENCE_CREATE_SIGNALED_BIT);
 
   VkResult semaphoreResult = vkCreateSemaphore(*mGpuInterface, &semaphoreCreateInfo, KRUST_DEFAULT_ALLOCATION_CALLBACKS, &mSwapChainSemaphore);
   if(semaphoreResult != VK_SUCCESS)
@@ -724,12 +688,7 @@ bool Application::InitDefaultSwapchain()
 
 bool Application::InitDefaultCommandPool()
 {
-  VkCommandPoolCreateInfo poolInfo;
-    poolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,
-    poolInfo.pNext = nullptr,
-    poolInfo.flags = 0,
-    poolInfo.queueFamilyIndex = mDefaultDrawingQueueFamily;
-
+  auto poolInfo = CommandPoolCreateInfo(0, mDefaultDrawingQueueFamily);
   VkResult result = vkCreateCommandPool(*mGpuInterface, &poolInfo, KRUST_DEFAULT_ALLOCATION_CALLBACKS, &mDefaultCommandPool);
   if(result != VK_SUCCESS)
   {
@@ -984,9 +943,7 @@ void Application::OnRedraw(Window& window) {
 
   // Hand the finished frame back to the WSI for presentation / display:
   VkResult swapResult = VK_RESULT_MAX_ENUM;
-  VkPresentInfoKHR presentInfo;
-  presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,
-    presentInfo.pNext = nullptr,
+  auto presentInfo = PresentInfoKHR();
     // No need to wait for any
     presentInfo.waitSemaphoreCount = 0,
     presentInfo.pWaitSemaphores = nullptr,

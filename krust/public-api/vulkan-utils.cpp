@@ -24,6 +24,7 @@
 // Internal includes:
 #include "krust/public-api/logging.h"
 #include "krust/public-api/krust-assertions.h"
+#include "krust/public-api/vulkan_struct_init.h"
 
 // External includes:
 #include <algorithm>
@@ -35,10 +36,8 @@ VkImage CreateDepthImage(VkDevice gpuInterface, const uint32_t presentQueueFamil
 {
   KRUST_ASSERT2(gpuInterface, "Invalid device.");
   KRUST_ASSERT2(IsDepthFormat(depthFormat), "Format not useable for a depth buffer.");
-  VkImageCreateInfo info;
-  info.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
-	  info.pNext = nullptr,
-	  info.flags = 0,
+  auto info = ImageCreateInfo();
+    info.flags = 0,
 	  info.imageType = VK_IMAGE_TYPE_2D,
 	  info.format = depthFormat,
 	  info.extent.width = width,
@@ -67,22 +66,20 @@ VkImage CreateDepthImage(VkDevice gpuInterface, const uint32_t presentQueueFamil
 
 VkImageView CreateDepthImageView(VkDevice device, VkImage image, const VkFormat format)
 {
-	VkImageViewCreateInfo viewInfo;
-	viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
-    viewInfo.pNext = nullptr,
+  auto viewInfo = ImageViewCreateInfo();
     viewInfo.flags = 0, //< No flags needed [Could set VK_IMAGE_VIEW_CREATE_READ_ONLY_DEPTH_BIT or VK_IMAGE_VIEW_CREATE_READ_ONLY_STENCIL_BIT for read-only depth buffer.]
     viewInfo.image = image,
     viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D,
     viewInfo.format = format,
-      viewInfo.components.r = VK_COMPONENT_SWIZZLE_ZERO,
-      viewInfo.components.g = VK_COMPONENT_SWIZZLE_ZERO,
-      viewInfo.components.b = VK_COMPONENT_SWIZZLE_ZERO,
-      viewInfo.components.a = VK_COMPONENT_SWIZZLE_ZERO,
-      viewInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT,
-      viewInfo.subresourceRange.baseMipLevel = 0,
-      viewInfo.subresourceRange.levelCount = 1,
-      viewInfo.subresourceRange.baseArrayLayer = 0,
-      viewInfo.subresourceRange.layerCount = 1;
+    viewInfo.components.r = VK_COMPONENT_SWIZZLE_ZERO,
+    viewInfo.components.g = VK_COMPONENT_SWIZZLE_ZERO,
+    viewInfo.components.b = VK_COMPONENT_SWIZZLE_ZERO,
+    viewInfo.components.a = VK_COMPONENT_SWIZZLE_ZERO,
+    viewInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT,
+    viewInfo.subresourceRange.baseMipLevel = 0,
+    viewInfo.subresourceRange.levelCount = 1,
+    viewInfo.subresourceRange.baseArrayLayer = 0,
+    viewInfo.subresourceRange.layerCount = 1;
 
   VkImageView imageView;
   const VkResult result = vkCreateImageView(device, &viewInfo, KRUST_DEFAULT_ALLOCATION_CALLBACKS, &imageView);
@@ -266,9 +263,7 @@ bool BuildFramebuffersForSwapChain(
     subpass.preserveAttachmentCount = 0,
     subpass.pPreserveAttachments = nullptr;
 
-  VkRenderPassCreateInfo renderPassInfo;
-    renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO,
-    renderPassInfo.pNext = nullptr,
+  auto renderPassInfo = RenderPassCreateInfo();
     renderPassInfo.flags = 0,
     renderPassInfo.attachmentCount = 2, // Depth and color.
     renderPassInfo.pAttachments = attachments,
@@ -296,9 +291,7 @@ bool BuildFramebuffersForSwapChain(
   colorDepthViews[1] = depthBufferView;
 
   outSwapChainFramebuffers.resize(swapChainImageViews.size());
-  VkFramebufferCreateInfo framebufferInfo;
-     framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
-    framebufferInfo.pNext = nullptr,
+  auto framebufferInfo = FramebufferCreateInfo();
     framebufferInfo.flags = 0,
     framebufferInfo.renderPass = nullptr, // Init this inside loop below.
     framebufferInfo.attachmentCount = 2,
