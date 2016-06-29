@@ -1,24 +1,27 @@
 Krust
 =====
-
 <img style="width: 90%; max-width: 1006px; margin-left: auto; margin-right: auto;" src="http://cdn.ahcox.com/wp-ahcox.com/wp-content/uploads/2014/10/P1127242-1920x540-banner-top-503x283.jpg"/>
-
 In a layered graphics stack, Krust seeks to solve problems one level up from
 the explicit GPU API Vulkan.
 There are currently three modules:
 
 * **krust**: The helpers for working with Vulkan.
   Functions to initialise most of the structures used in the Vulkan API can be
-  found in [`krust/public-api/vulkan_struct_init.h`](./krust/public-api/vulkan_struct_init.h).
+  found in
+  [`krust/public-api/vulkan_struct_init.h`](./krust/public-api/vulkan_struct_init.h).
   There is currently some reusable Vulkan helper
-  code in [`krust/public-api/vulkan-utils.h`](./krust/public-api/vulkan-utils.h)
+  code in [`krust/public-api/vulkan-utils.h`](./krust/public-api/vulkan-utils.h).
+  Classes implementing RAII for Vulkan API objects are being built in
+  [`krust/public-api/vulkan-objects.h`](./krust/public-api/vulkan-objects.h) and
+  [`krust/public-api/vulkan-objects.cpp`](./krust/public-api/vulkan-objects.cpp).
 * **krust-io**: A windowing and input library for Vulkan apps using
   core Krust.
   This allows very easily opening a window and starting writing Vulkan code on
   Windows or Linux.
   There is some reusable Vulkan code (subject to being rewritten and moved) in
   [`krust-io/internal/vulkan-helpers.h`](./krust-io/internal/vulkan-helpers.h)
-  and Vulkan example code in [`krust-io/public-api/application.cpp`](./krust-io/public-api/application.cpp)
+  and Vulkan example code in
+  [`krust-io/public-api/application.cpp`](./krust-io/public-api/application.cpp)
 * **krust-examples**: Example Vulkan apps using krust-io and krust core.
 
 Building
@@ -80,8 +83,6 @@ Initialising a simple struct without these helpers:
  Usage with these helpers:
 
     auto offset = Offset2D(64, 128)
-
-
 
 See
 [`krust-examples/clear/clear.cpp`](./krust-examples/clear/clear.cpp)
