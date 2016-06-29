@@ -49,17 +49,19 @@ namespace Krust
  * These attempt to solve the single problem of managing the lifetime of Vulkan
  * API objects in an RAII manner and thus do not wrap every Vulkan API call
  * associated with a given object in an attempt to provide an OO veneer over the
- * API. Instead, a conversion operator is provided for each that yields the
+ * API. Instead, a conversion operator is provided for each which yields the
  * underlying Vulkan object handle. This lets them be passed to Vulkan API
  * functions and random helper code the user may have assembled from various
  * sources.
  *
  * Submitting command buffers to the GPU keeps all associated API objects and
- * resources alive until the GPU is using them, as long as the Queue wrapper is
- * used for submission.
- * Queue must call `vkQueueWaitIdle` and Device must call `vkDeviceWaitIdle` for
- * their associated GPU to idle before their destruction can complete but the
- * majority of Vulkan object owners do not need to block on GPU idle.
+ * resources alive until the GPU is finished using them, as long as the Queue
+ * wrapper is used for submission.
+ *
+ * @note While the implementation of Queue must call `vkQueueWaitIdle` and
+ * Device must call `vkDeviceWaitIdle` for their associated GPU to idle before
+ * their destruction can complete, the majority of Vulkan object owners do not
+ * need to block on GPU idle prior to freeing their Vulkan handles.
  */
 ///@{
 
