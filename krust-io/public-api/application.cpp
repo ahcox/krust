@@ -238,9 +238,9 @@ bool Application::InitVulkanInstance()
   KRUST_COMPILE_ASSERT(!KRUST_GCC_64BIT_X86_BUILD || sizeof(VkInstanceCreateInfo) == 64U, "VkInstanceCreateInfo size changed: recheck init code.");
 
   try {
-    mInstance = new kr::Instance(instanceInfo);
+    mInstance = new Instance(instanceInfo);
   }
-  catch (kr::KrustVulkanErrorException& ex)
+  catch (KrustVulkanErrorException& ex)
   {
     const VkResult result = ex.mResult;
     KRUST_LOG_ERROR << "CreateInstance() failed with result = " << ResultToString(result) << endlog;
@@ -799,7 +799,7 @@ bool Application::DeInit()
 int Application::Run(MainLoopType loopType)
 {
   // Init the Krust core:
-  kr::InitKrust(/* Default error policy and allocator for CPU structures. */);
+  InitKrust(/* Default error policy and allocator for CPU structures. */);
 
   /// Sit on the main thread.
   ThreadBase threadBase(Krust::GetGlobalErrorPolicy());

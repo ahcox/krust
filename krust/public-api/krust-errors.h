@@ -30,8 +30,6 @@
 
 namespace Krust
 {
-/** Internal shorthand for Krust namespace. */
-namespace kr = Krust;
 
 /**
  * @brief Errors which can be reported through the configured ErrorPolicy back
