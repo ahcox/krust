@@ -70,31 +70,6 @@ public:
   void Reset(T* other){ IntrusivePointerBase::Reset(other); }
 };
 
-class TestRefObject : public RefObject
-{
-public:
-  TestRefObject() : mInt(32) {}
-  ~TestRefObject() {}
-  int mInt;
-};
-
-namespace
-{
-inline bool temp_test()
-{
-  IntrusivePointer<TestRefObject> tester_ptr = new TestRefObject();
-  IntrusivePointer<TestRefObject> tester_ptr2 = tester_ptr;
-  IntrusivePointer<TestRefObject> tester_ptr3(tester_ptr);
-  tester_ptr->mInt = 64;
-  TestRefObject * pTester = tester_ptr.Get();
-  IntrusivePointer<TestRefObject> tester_ptr4((TestRefObject&) *pTester);
-  tester_ptr2.Reset(pTester);
-  tester_ptr3 = tester_ptr4;
-  bool isNull = (!tester_ptr);
-  return isNull;
-}
-}
-
 } /* namespace Krust */
 
 #endif /* KRUST_PUBLIC_API_INTRUSIVE_POINTER_H_ */
