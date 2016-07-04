@@ -68,7 +68,7 @@ public:
 
     // Allocate a command buffer per swapchain entry:
     auto bufferInfo = kr::CommandBufferAllocateInfo(
-      mCommandPool,
+      *mCommandPool,
       VK_COMMAND_BUFFER_LEVEL_PRIMARY,
       uint32_t(mSwapChainImageViews.size()));
 

@@ -122,6 +122,24 @@ private:
 
 typedef IntrusivePointer<Device> DevicePtr;
 
+/**
+ * An owner for VkCommandPool API objects.
+ */
+class CommandPool : public VulkanObject
+{
+public:
+  CommandPool(Device& device, VkCommandPoolCreateFlags flags, uint32_t queueFamilyIndex);
+  ~CommandPool();
+  operator VkCommandPool() const { return mCommandPool; }
+private:
+  /// The GPU device this CommandPool is tied to. Keep it alive as long as this CommandPool is.
+  DevicePtr mDevice = nullptr;
+  /// The raw Vulkan CommandPool handle.
+  VkCommandPool mCommandPool = VK_NULL_HANDLE;
+};
+
+typedef IntrusivePointer<CommandPool> CommandPoolPtr;
+
 ///@}
 
 }

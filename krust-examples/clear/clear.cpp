@@ -66,7 +66,7 @@ public:
     }
 
     auto bufferInfo = kr::CommandBufferAllocateInfo();
-      bufferInfo.commandPool = mCommandPool,
+      bufferInfo.commandPool = *mCommandPool,
       bufferInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
       bufferInfo.commandBufferCount = uint32_t(mSwapChainImageViews.size());
 

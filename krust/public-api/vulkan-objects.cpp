@@ -20,6 +20,7 @@
 
 // Internal includes
 #include "krust/public-api/vulkan-objects.h"
+#include "krust/public-api/vulkan_struct_init.h"
 #include "krust/public-api/thread-base.h"
 #include "krust/public-api/logging.h"
 #include "krust/public-api/krust-assertions.h"
@@ -65,6 +66,25 @@ Device::Device(Instance & instance, VkPhysicalDevice physicalDevice, const VkDev
 Device::~Device()
 {
   vkDestroyDevice(mDevice, Internal::sAllocator);
+}
+
+CommandPool::CommandPool(Device & device, VkCommandPoolCreateFlags flags, uint32_t queueFamilyIndex) :
+  mDevice(device)
+{
+  auto poolInfo = CommandPoolCreateInfo(flags, queueFamilyIndex);
+  const VkResult result = vkCreateCommandPool(device, &poolInfo, Internal::sAllocator, &mCommandPool);
+  if (result != VK_SUCCESS)
+  {
+    mCommandPool = VK_NULL_HANDLE;
+    auto & threadBase = ThreadBase::Get();
+    threadBase.GetErrorPolicy().VulkanError("vkCreateCommandPool", result, nullptr, __FUNCTION__, __FILE__, __LINE__);
+  }
+
+}
+
+CommandPool::~CommandPool()
+{
+  vkDestroyCommandPool(*mDevice, mCommandPool, Internal::sAllocator);
 }
 
 }

@@ -115,14 +115,7 @@ bool Application::Init()
 
   // Create a command pool:
   // (Make all command buffers in the default pool resettable)
-  auto poolInfo = CommandPoolCreateInfo(VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT, 0);
-
-  const VkResult poolResult = vkCreateCommandPool(*mGpuInterface, &poolInfo, KRUST_DEFAULT_ALLOCATION_CALLBACKS, &mCommandPool);
-  if(poolResult != VK_SUCCESS)
-  {
-    KRUST_LOG_ERROR << "Failed to create command pool. Error: " << poolResult << Krust::endlog;
-    return false;
-  }
+  mCommandPool = new CommandPool(*mGpuInterface, VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT, 0);
 
   // Allow derived application class to do its own setup:
   if(!DoPostInit())
@@ -723,9 +716,9 @@ bool Application::DeInit()
   // Give derived application first chance to cleanup:
   DoPreDeInit();
 
-  if(mCommandPool)
+  if(mCommandPool.Get())
   {
-    vkDestroyCommandPool(*mGpuInterface, mCommandPool, KRUST_DEFAULT_ALLOCATION_CALLBACKS);
+    mCommandPool.Reset(nullptr);
   }
 
   if(mSwapChainSemaphore)

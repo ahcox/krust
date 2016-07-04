@@ -323,7 +323,7 @@ protected:
   /// FrameBuffers for each image in swapchain:
   std::vector<VkFramebuffer> mSwapChainFramebuffers;
   /// Command pool for all command buffers:
-  VkCommandPool mCommandPool = 0;
+  CommandPoolPtr mCommandPool = nullptr;
   /// CommandBuffers for each image in swapchain:
   std::vector<VkCommandBuffer> mCommandBuffers;
   /// Render Passes for each image in the swapchain:
