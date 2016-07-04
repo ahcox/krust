@@ -716,11 +716,8 @@ bool Application::DeInit()
   // Give derived application first chance to cleanup:
   DoPreDeInit();
 
-  if(mCommandPool.Get())
-  {
-    mCommandPool.Reset(nullptr);
-  }
-
+  mCommandPool.Reset(nullptr);
+  
   if(mSwapChainSemaphore)
   {
     vkDestroySemaphore(*mGpuInterface, mSwapChainSemaphore, KRUST_DEFAULT_ALLOCATION_CALLBACKS);
@@ -750,10 +747,9 @@ bool Application::DeInit()
   {
     vkDestroySurfaceKHR(*mInstance, mSurface, KRUST_DEFAULT_ALLOCATION_CALLBACKS);
   }
-  if(mGpuInterface.Get())
-  {
-    mGpuInterface.Reset(nullptr);
-  }
+  
+  mGpuInterface.Reset(nullptr);
+
 
   if(mDebugCallbackHandle && mDestroyDebugReportCallback)
   {
@@ -765,7 +761,7 @@ bool Application::DeInit()
   mInstance.Reset(nullptr);
 
   mPlatformApplication.WindowClosing(*mDefaultWindow.Get());
-  mDefaultWindow.Reset(0);
+  mDefaultWindow.Reset(nullptr);
   mPlatformApplication.DeInit();
   return true;
 }
