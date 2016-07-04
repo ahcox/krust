@@ -157,11 +157,6 @@ protected:
   virtual bool InitDefaultSwapchain();
 
   /**
-   * Get a command pool for simple usage.
-   */
-  virtual bool InitDefaultCommandPool();
-
-  /**
    * Choose a surface format and colorspace.
    */
   bool ChoosePresentableSurfaceFormat();
@@ -274,8 +269,6 @@ protected:
   VkQueue*  mDefaultGraphicsQueue = 0;
   /// Present using this.
   VkQueue*  mDefaultPresentQueue = 0;
-  /// Build command buffers to be submitted on the default queue using this pool.
-  VkCommandPool mDefaultCommandPool = 0;
   ///@}
 
   /**

@@ -178,12 +178,6 @@ bool Application::InitVulkan()
     return false;
   }
 
-  // Build a default commandpool:
-  if(!InitDefaultCommandPool())
-  {
-    return false;
-  }
-
   return true;
 }
 
@@ -680,19 +674,6 @@ bool Application::InitDefaultSwapchain()
   if(semaphoreResult != VK_SUCCESS)
   {
     KRUST_LOG_ERROR << "Failed to create the swapchain semaphore." << endlog;
-    return false;
-  }
-
-  return true;
-}
-
-bool Application::InitDefaultCommandPool()
-{
-  auto poolInfo = CommandPoolCreateInfo(0, mDefaultDrawingQueueFamily);
-  VkResult result = vkCreateCommandPool(*mGpuInterface, &poolInfo, KRUST_DEFAULT_ALLOCATION_CALLBACKS, &mDefaultCommandPool);
-  if(result != VK_SUCCESS)
-  {
-    KRUST_LOG_ERROR << "Failed to create command pool. Error: " << result << endlog;
     return false;
   }
 
