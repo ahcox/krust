@@ -47,7 +47,7 @@ enum class Errors
   // Maybe add later:
   // ArrayIndexOutOfBounds,
   // UnsupportedOperation
-  // Reserve some space to grow into and enforce alignment:
+  // Reserve some space to grow into and enforce a minimum size:
   MaxError = 0x7FFFFFFF
 };
 
@@ -158,7 +158,6 @@ public:
 class KrustErrorException : public KrustException
 {
 public:
-  //KrustErrorException() {}
   KrustErrorException(Errors error, const char* msg, const char * function, const char * file, unsigned line) :
     mError(error),
     KrustException(msg, function, file, line)
@@ -178,8 +177,6 @@ public:
 class KrustVulkanErrorException : public KrustException
 {
 public:
-  //KrustVulkanErrorException() {}
-  // VulkanError(          const char* apiCalled, VkResult result, const char* msg, const char * function, const char * file, unsigned line) = 0;
   KrustVulkanErrorException(const char* apiCalled, VkResult result, const char* msg, const char * function, const char * file, unsigned line) :
     mApiCalled(apiCalled ? apiCalled : mApiCalled),
     mResult(result),
@@ -202,7 +199,6 @@ public:
 class KrustVulkanUnexpectedException : public KrustException
 {
 public:
-  //KrustVulkanErrorException() {}
   KrustVulkanUnexpectedException(const char* apiCalled, const char* msg, const char * function, const char * file, unsigned line) :
     mApiCalled(apiCalled ? apiCalled : mApiCalled),
     KrustException(msg, function, file, line)
