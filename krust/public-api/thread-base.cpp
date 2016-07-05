@@ -21,10 +21,10 @@
 #include "krust/public-api/thread-base.h"
 #include "krust/public-api/logging.h"
 
-#define KRUST_STACK_TAG "cad05be574afec9421590dc141c205e197a1da23c59d821b1d0192a56610f791"
-
 namespace Krust
 {
+
+constexpr const char* STACK_TAG = "cad05be574afec9421590dc141c205e197a1da23c59d821b1d0192a56610f791";
 
 /**
 * Each thread that uses Krust has to have a ThreadBase sitting on its stack
@@ -35,7 +35,7 @@ thread_local ThreadBase* ThreadBase::sThreadBase = 0;
 
 bool ThreadBase::TagValid() const
 {
-  return strcmp(mTag, KRUST_STACK_TAG) == 0;
+  return strcmp(mTag, STACK_TAG) == 0;
 }
 
 ThreadBase::ThreadBase(ErrorPolicy * errorPolicy)
@@ -58,7 +58,7 @@ ThreadBase::ThreadBase(ErrorPolicy * errorPolicy)
   }
 
   mErrorPolicy = errorPolicy;
-  memcpy(&mTag[0], KRUST_STACK_TAG, 64U);
+  memcpy(&mTag[0], STACK_TAG, 64U);
 }
 
 ThreadBase::~ThreadBase()

@@ -39,14 +39,14 @@ namespace Krust {
 namespace IO {
 
 const char* const KRUST_ENGINE_NAME = "Krust";
-extern const uint32_t KRUST_ENGINE_VERSION_NUMBER = 0;
+const uint32_t KRUST_ENGINE_VERSION_NUMBER = 0;
 
 namespace {
 
 /// At least this number of images will be requested for the present swapchain.
-const int MIN_NUM_SWAPCHAIN_IMAGES = 1;
+constexpr int MIN_NUM_SWAPCHAIN_IMAGES = 1;
 /// The max time to wait to acquire an image to draw to from the WSI presentation engine.
-const uint64_t PRESENT_IMAGE_ACQUIRE_TIMEOUT = UINT64_MAX;
+constexpr uint64_t PRESENT_IMAGE_ACQUIRE_TIMEOUT = UINT64_MAX;
 
 /// @name Layers Layers to enable.
 /// These are not used yet (turn on layers with env vars at commandline).
@@ -61,7 +61,7 @@ const char * const DEVICE_LAYERS[] = {
   "ShaderChecker",
   "Threading",
 };
-const size_t NUM_DEVICE_LAYERS = sizeof(DEVICE_LAYERS) / sizeof(DEVICE_LAYERS[0]);
+constexpr size_t NUM_DEVICE_LAYERS = sizeof(DEVICE_LAYERS) / sizeof(DEVICE_LAYERS[0]);
 
 /// Set of layers to enable at the logical device level.
 const char * const INSTANCE_LAYERS[] = {
@@ -72,7 +72,7 @@ const char * const INSTANCE_LAYERS[] = {
   "ShaderChecker",
   "Threading",
 };
-const size_t NUM_INSTANCE_LAYERS = sizeof(INSTANCE_LAYERS) / sizeof(INSTANCE_LAYERS[0]);
+constexpr size_t NUM_INSTANCE_LAYERS = sizeof(INSTANCE_LAYERS) / sizeof(INSTANCE_LAYERS[0]);
 #endif
 ///@}
 }

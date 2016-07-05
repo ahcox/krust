@@ -27,7 +27,7 @@ namespace kr = Krust;
 namespace
 {
 /** Number of samples per framebuffer pixel. */
-const VkSampleCountFlagBits NUM_SAMPLES = VK_SAMPLE_COUNT_1_BIT;
+constexpr VkSampleCountFlagBits NUM_SAMPLES = VK_SAMPLE_COUNT_1_BIT;
 }
 /**
  * Draws an empty frame, clearing the framebuffer and changing the
@@ -110,7 +110,7 @@ public:
     static unsigned frameNumber = 0;
     KRUST_LOG_INFO << "   ------------ Clear Example 2 draw frame! frame: " << frameNumber++ << ". currImage: " << mCurrentTargetImage << ". handle: " << mSwapChainImages[mCurrentTargetImage] << "  ------------\n";
 
-    const VkPipelineStageFlags pipelineFlags = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
+    constexpr VkPipelineStageFlags pipelineFlags = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
     auto submitInfo = kr::SubmitInfo(
       1, &mSwapChainSemaphore,
       &pipelineFlags,
