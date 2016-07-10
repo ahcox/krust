@@ -32,27 +32,34 @@
 namespace Krust
 {
 
-VkImage CreateDepthImage(VkDevice gpuInterface, const uint32_t presentQueueFamily, const VkFormat depthFormat, uint32_t width, uint32_t height)
+VkImageCreateInfo CreateDepthImageInfo(const uint32_t presentQueueFamily, const VkFormat depthFormat, const uint32_t width, const uint32_t height)
+{
+  KRUST_ASSERT2(IsDepthFormat(depthFormat), "Format not usable for a depth buffer.");
+  auto info = ImageCreateInfo();
+  info.flags = 0,
+    info.imageType = VK_IMAGE_TYPE_2D,
+    info.format = depthFormat,
+    info.extent.width = width,
+    info.extent.height = height,
+    info.extent.depth = 1,
+    info.mipLevels = 1,
+    info.arrayLayers = 1,
+    info.samples = VK_SAMPLE_COUNT_1_BIT,
+    info.tiling = VK_IMAGE_TILING_OPTIMAL,
+    info.usage = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
+    info.sharingMode = VK_SHARING_MODE_EXCLUSIVE,
+    info.queueFamilyIndexCount = 1,
+    info.pQueueFamilyIndices = &presentQueueFamily,
+    info.initialLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+
+  return info;
+}
+
+VkImage CreateDepthImage(VkDevice gpuInterface, const uint32_t presentQueueFamily, const VkFormat depthFormat, const uint32_t width, const uint32_t height)
 {
   KRUST_ASSERT2(gpuInterface, "Invalid device.");
-  KRUST_ASSERT2(IsDepthFormat(depthFormat), "Format not useable for a depth buffer.");
-  auto info = ImageCreateInfo();
-    info.flags = 0,
-	  info.imageType = VK_IMAGE_TYPE_2D,
-	  info.format = depthFormat,
-	  info.extent.width = width,
-	  info.extent.height = height,
-	  info.extent.depth = 1,
-	  info.mipLevels = 1,
-	  info.arrayLayers = 1,
-	  info.samples = VK_SAMPLE_COUNT_1_BIT,
-	  info.tiling = VK_IMAGE_TILING_OPTIMAL,
-	  info.usage = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
-	  info.sharingMode = VK_SHARING_MODE_EXCLUSIVE,
-	  info.queueFamilyIndexCount = 1,
-	  info.pQueueFamilyIndices = &presentQueueFamily,
-	  info.initialLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
- 
+
+  auto info = CreateDepthImageInfo(presentQueueFamily, depthFormat, width, height);
   VkImage depthImage = 0;
   const VkResult result = vkCreateImage(gpuInterface, &info, KRUST_DEFAULT_ALLOCATION_CALLBACKS, &depthImage);
   if(result != VK_SUCCESS)

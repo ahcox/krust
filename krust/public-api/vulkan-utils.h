@@ -66,13 +66,20 @@ namespace Krust
 {
 
 /**
+ * @brief Fill out a creation struct suitable for creating an image object
+ * suitable to be used as a depth buffer.
+ * @return The completed struct.
+ */
+VkImageCreateInfo CreateDepthImageInfo(uint32_t presentQueueFamily, VkFormat depthFormat, uint32_t width, uint32_t height);
+
+/**
  * @brief Create an image object suitable to be used as a depth buffer.
  *
  * Backing store and an image view still need to be allocated to the object
  * returned.
  * @return A configured image if successful, or a zero handle if not.
  */
-VkImage CreateDepthImage(VkDevice gpuInterface, const uint32_t presentQueueFamily, const VkFormat depthFormat, uint32_t width, uint32_t height);
+VkImage CreateDepthImage(VkDevice gpuInterface, uint32_t presentQueueFamily, VkFormat depthFormat, uint32_t width, uint32_t height);
 
 /**
  * @returns An image view for the depth buffer image passed in if the creation
