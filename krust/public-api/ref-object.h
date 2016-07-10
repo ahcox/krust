@@ -67,7 +67,7 @@ private:
   /**
    * Number of references to this object.
    **/
-  typedef size_t Counter;
+  using Counter = size_t;
   mutable std::atomic<Counter> mCount;
 };
 

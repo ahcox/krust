@@ -37,7 +37,7 @@ namespace IO {
 extern const char * const KRUST_WINDOW_CLASS_NAME;
 constexpr const char * KRUST_DEFAULT_WINDOW_TITLE = "Krust Application";
 
-typedef std::pair<HWND, std::pair<ApplicationInterface*, Window*> > DispatchEntry;
+using DispatchEntry = std::pair<HWND, std::pair<ApplicationInterface*, Window*> >;
 extern std::vector<DispatchEntry> sDispatchTable;
 extern DispatchEntry MakeEntry(const HWND windowHandle, ApplicationInterface* application, Window* window);
 

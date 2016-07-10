@@ -46,7 +46,7 @@ extern const char * const KRUST_WINDOW_CLASS_NAME = "Krust Window";
 * through this table anyway just so we are not enforcing that restriction
 * artificially.
 */
-typedef std::pair<HWND, std::pair<ApplicationInterface*, Window*> > DispatchEntry;
+using DispatchEntry = std::pair<HWND, std::pair<ApplicationInterface*, Window*> >;
 std::vector<DispatchEntry> sDispatchTable;
 
 DispatchEntry MakeEntry(const HWND windowHandle, ApplicationInterface* application, Window* window)

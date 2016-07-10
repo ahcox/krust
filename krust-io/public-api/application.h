@@ -45,7 +45,7 @@ extern const char* const KRUST_ENGINE_NAME;
 extern const uint32_t KRUST_ENGINE_VERSION_NUMBER;
 
 class Window;
-typedef IntrusivePointer<Window> WindowPointer;
+using WindowPointer = IntrusivePointer<Window>;
 
 enum class MainLoopType
 {
@@ -59,7 +59,7 @@ enum class MainLoopFlagBits
   Redraw = 1,
   Quit = 2,
 };
-typedef uint32_t MainLoopFlags;
+using MainLoopFlags = uint32_t;
 
 /**
  * @brief Krust::IO applications are based on a subclass of this.

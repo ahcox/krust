@@ -99,7 +99,7 @@ private:
  * Shared pointer to automatically manage the lifetime of an Instance object and
  * thus the underlying Vulkan API object.
  */
-typedef IntrusivePointer<Instance> InstancePtr;
+using InstancePtr = IntrusivePointer<Instance>;
 
 /**
  * An owner for vkDevice instances.
@@ -120,7 +120,7 @@ private:
   VkDevice mDevice = VK_NULL_HANDLE;
 };
 
-typedef IntrusivePointer<Device> DevicePtr;
+using DevicePtr = IntrusivePointer<Device>;
 
 /**
  * An owner for VkCommandPool API objects.
@@ -138,7 +138,7 @@ private:
   VkCommandPool mCommandPool = VK_NULL_HANDLE;
 };
 
-typedef IntrusivePointer<CommandPool> CommandPoolPtr;
+using CommandPoolPtr = IntrusivePointer<CommandPool>;
 
 ///@}
 
