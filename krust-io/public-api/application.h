@@ -335,9 +335,9 @@ protected:
   /// render into.
   VkSemaphore mSwapChainSemaphore = 0;
   /** Depth buffer logical image. */
-  VkImage mDepthBufferImage = 0;
+  ImagePtr mDepthBufferImage = 0;
   /** Depth buffer handle for backing device memory storage. */
-  VkDeviceMemory mDepthBufferMemory = 0;
+  DeviceMemoryPtr mDepthBufferMemory = 0;
   /** View of depth buffer image. */
   VkImageView mDepthBufferView = 0;
   ///@}

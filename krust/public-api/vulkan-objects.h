@@ -43,8 +43,8 @@ namespace Krust
  * Reference counted wrappers for Vulkan objects and smart pointers to them that
  * keep them alive as long as necessary and clean them up when they are no
  * longer in use.
- * A reference to an Image, for example, will keep it's associated Device and
- * Instance alive too.
+ * A reference to an Image, for example, will keep it's associated DeviceMemory,
+ * Device and Instance alive too.
  * 
  * These attempt to solve the single problem of managing the lifetime of Vulkan
  * API objects in an RAII manner and thus do not wrap every Vulkan API call
@@ -139,6 +139,51 @@ private:
 };
 
 using CommandPoolPtr = IntrusivePointer<CommandPool>;
+
+/**
+ * @brief A handle to a block of memory on a device.
+ *
+ * Memory is allocated on construction and freed on destruction.
+ * Owns a VkDeviceMemory object and allows its lifetime to be managed in RAII
+ * fashion with shared pointers.
+ */
+class DeviceMemory : public VulkanObject
+{
+public:
+  DeviceMemory(Device& device, const VkMemoryAllocateInfo& info);
+  ~DeviceMemory();
+  operator VkDeviceMemory() const { return mDeviceMemory; }
+private:
+  DevicePtr mDevice;
+  VkDeviceMemory mDeviceMemory = VK_NULL_HANDLE;
+};
+
+using DeviceMemoryPtr = IntrusivePointer<DeviceMemory>;
+
+/**
+ * @brief A handle to an instance of Vulkan's abstract image API object.  
+ */
+class Image : public VulkanObject
+{
+public:
+  Image(Device& device, const VkImageCreateInfo& createInfo);
+  ~Image();
+  operator VkImage() const { return mImage; }
+  /**
+   * @brief Provide a location in a block of device memory to hold the image's
+   * pixels.
+   */
+  void BindMemory(DeviceMemory& memory, VkDeviceSize offset);
+private:
+  /// The GPU device this image is tied to. Keep it alive as long as this image is.
+  DevicePtr mDevice;
+  /// The GPU memory block the image pixels exist in (if any):
+  DeviceMemoryPtr mMemory;
+  /// The raw Vulkan image handle.
+  VkImage mImage = VK_NULL_HANDLE;
+};
+
+using ImagePtr = IntrusivePointer<Image>;
 
 ///@}
 

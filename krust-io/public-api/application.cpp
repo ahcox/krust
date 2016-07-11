@@ -482,23 +482,17 @@ bool Application::InitDepthBuffer(const VkFormat depthFormat)
   // amount of storage required for it from the Vulkan implementation:
   const unsigned width = mDefaultWindow->GetPlatformWindow().GetWidth();
   const unsigned height = mDefaultWindow->GetPlatformWindow().GetHeight();
-  VkImage depthImage = CreateDepthImage(
-    *mGpuInterface,
-    mDefaultPresentQueueFamily,
-    depthFormat,
-    width,
-    height);
 
-  if(!depthImage)
+  ImagePtr depthImage = new Image(*mGpuInterface, CreateDepthImageInfo(mDefaultPresentQueueFamily, depthFormat, width, height));
+
+  if(!depthImage.Get())
   {
     return false;
   }
-  // Make sure we clean up if we exit off the expected path:
-  ScopedImageOwner depthJanitor(*mGpuInterface, depthImage);
 
   // Work out how much memory the depth image requires:
   VkMemoryRequirements depthMemoryRequirements;
-  vkGetImageMemoryRequirements(*mGpuInterface, depthImage, &depthMemoryRequirements);
+  vkGetImageMemoryRequirements(*mGpuInterface, *depthImage, &depthMemoryRequirements);
   KRUST_LOG_INFO << "Depth buffer memory requirements: (Size = " << depthMemoryRequirements.size << ", Alignment = " << depthMemoryRequirements.alignment << ", Flags = " << depthMemoryRequirements.memoryTypeBits << ")." << endlog;
 
   // Work out which memory type we can use:
@@ -512,28 +506,21 @@ bool Application::InitDepthBuffer(const VkFormat depthFormat)
   // Allocate the memory to back the depth image:
   auto depthAllocationInfo = MemoryAllocateInfo(depthMemoryRequirements.size,
     memoryType.GetValue());
-
-  ScopedDeviceMemoryOwner depthMemory(*mGpuInterface, 0);
-  const VkResult allocResult = vkAllocateMemory(*mGpuInterface, &depthAllocationInfo, KRUST_DEFAULT_ALLOCATION_CALLBACKS, &depthMemory.memory);
-  if(allocResult != VK_SUCCESS)
-  {
-    KRUST_LOG_ERROR << "Failed to allocate storage for depth buffer. Error: " << allocResult << endlog;
-    return false;
-  }
+  DeviceMemoryPtr depthMemory = new DeviceMemory(*mGpuInterface, depthAllocationInfo);
 
   // Tie the memory to the image:
-  VK_CALL_RET(vkBindImageMemory, *mGpuInterface, depthImage, depthMemory.memory, 0);
+  depthImage->BindMemory(*depthMemory, 0);
 
   // Create a view for the depth buffer image:
-  VkImageView depthView = CreateDepthImageView(*mGpuInterface, depthJanitor.image, depthFormat);
+  VkImageView depthView = CreateDepthImageView(*mGpuInterface, *depthImage, depthFormat);
   if(!depthView)
   {
     return false;
   }
 
   mDepthBufferView = depthView;
-  mDepthBufferImage = depthJanitor.Release();
-  mDepthBufferMemory = depthMemory.Release();
+  mDepthBufferImage = depthImage;
+  mDepthBufferMemory = depthMemory;
   return true;
 }
 
@@ -731,14 +718,11 @@ bool Application::DeInit()
   {
     vkDestroyImageView(*mGpuInterface, mDepthBufferView, KRUST_DEFAULT_ALLOCATION_CALLBACKS);
   }
-  if(mDepthBufferImage)
-  {
-    vkDestroyImage(*mGpuInterface, mDepthBufferImage, KRUST_DEFAULT_ALLOCATION_CALLBACKS);
-  }
-  if(mDepthBufferMemory)
-  {
-    vkFreeMemory(*mGpuInterface, mDepthBufferMemory, KRUST_DEFAULT_ALLOCATION_CALLBACKS);
-  }
+
+  mDepthBufferImage.Reset(nullptr);
+  
+  mDepthBufferMemory.Reset(nullptr);
+
   if(mDefaultQueue)
   {
     /// No funcion vkDestroyDeviceQueue() [It came from a GetX(), not a CreateX(), so maybe no destruction is required.]

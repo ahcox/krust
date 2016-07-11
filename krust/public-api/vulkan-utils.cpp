@@ -55,22 +55,6 @@ VkImageCreateInfo CreateDepthImageInfo(const uint32_t presentQueueFamily, const 
   return info;
 }
 
-VkImage CreateDepthImage(VkDevice gpuInterface, const uint32_t presentQueueFamily, const VkFormat depthFormat, const uint32_t width, const uint32_t height)
-{
-  KRUST_ASSERT2(gpuInterface, "Invalid device.");
-
-  auto info = CreateDepthImageInfo(presentQueueFamily, depthFormat, width, height);
-  VkImage depthImage = 0;
-  const VkResult result = vkCreateImage(gpuInterface, &info, KRUST_DEFAULT_ALLOCATION_CALLBACKS, &depthImage);
-  if(result != VK_SUCCESS)
-  {
-    KRUST_LOG_ERROR << "Failed to create depth image. Error: " << result << endlog;
-    depthImage = 0;
-  }
-
-  return depthImage;
-}
-
 VkImageView CreateDepthImageView(VkDevice device, VkImage image, const VkFormat format)
 {
   auto viewInfo = ImageViewCreateInfo();

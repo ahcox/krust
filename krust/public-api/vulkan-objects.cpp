@@ -87,4 +87,47 @@ CommandPool::~CommandPool()
   vkDestroyCommandPool(*mDevice, mCommandPool, Internal::sAllocator);
 }
 
+DeviceMemory::DeviceMemory(Device & device, const VkMemoryAllocateInfo & info) :
+  mDevice(&device)
+{
+  const VkResult result = vkAllocateMemory(device, &info, Internal::sAllocator, &mDeviceMemory);
+  if (result != VK_SUCCESS)
+  {
+    mDeviceMemory = VK_NULL_HANDLE;
+    auto & threadBase = ThreadBase::Get();
+    threadBase.GetErrorPolicy().VulkanError("vkAllocateMemory", result, nullptr, __FUNCTION__, __FILE__, __LINE__);
+  }
+}
+
+DeviceMemory::~DeviceMemory()
+{
+  vkFreeMemory(*mDevice, mDeviceMemory, Internal::sAllocator);
+}
+
+Image::Image(Device & device, const VkImageCreateInfo & createInfo) :
+  mDevice(device)
+{
+  const VkResult result = vkCreateImage(device, &createInfo, Internal::sAllocator, &mImage);
+  if (result != VK_SUCCESS)
+  {
+    mImage = VK_NULL_HANDLE;
+    ThreadBase::Get().GetErrorPolicy().VulkanError("vkCreateImage", result, nullptr, __FUNCTION__, __FILE__, __LINE__);
+  }
+}
+
+Image::~Image()
+{
+  vkDestroyImage(*mDevice, mImage, Internal::sAllocator);
+}
+
+void Image::BindMemory(DeviceMemory& memory, VkDeviceSize offset)
+{
+  const VkResult result = vkBindImageMemory(*mDevice, mImage, memory, offset);
+  if (result != VK_SUCCESS)
+  {
+    ThreadBase::Get().GetErrorPolicy().VulkanError("vkBindImageMemory", result, nullptr, __FUNCTION__, __FILE__, __LINE__);
+  }
+  mMemory = DeviceMemoryPtr(&memory);
+}
+
 }
