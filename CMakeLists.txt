@@ -102,3 +102,6 @@ add_subdirectory (krust-io)
 
 # Examples of Krust using Krust-io:
 add_subdirectory (krust-examples)
+
+# Unit tests:
+add_subdirectory (krust-tests)
