@@ -41,6 +41,11 @@ Instance::Instance(const VkInstanceCreateInfo & createInfo)
   }
 }
 
+InstancePtr Instance::New(const VkInstanceCreateInfo & createInfo)
+{
+  return new Instance { createInfo };
+}
+
 Instance::~Instance()
 {
   vkDestroyInstance(mInstance, Internal::sAllocator);
@@ -63,6 +68,11 @@ Device::Device(Instance & instance, VkPhysicalDevice physicalDevice, const VkDev
   }
 }
 
+DevicePtr Device::New(Instance & instance, VkPhysicalDevice physicalDevice, const VkDeviceCreateInfo & createInfo)
+{
+  return new Device{ instance, physicalDevice, createInfo };
+}
+
 Device::~Device()
 {
   vkDestroyDevice(mDevice, Internal::sAllocator);
@@ -82,6 +92,11 @@ CommandPool::CommandPool(Device & device, VkCommandPoolCreateFlags flags, uint32
 
 }
 
+CommandPoolPtr CommandPool::New(Device & device, VkCommandPoolCreateFlags flags, uint32_t queueFamilyIndex)
+{
+  return new CommandPool { device, flags, queueFamilyIndex };
+}
+
 CommandPool::~CommandPool()
 {
   vkDestroyCommandPool(*mDevice, mCommandPool, Internal::sAllocator);
@@ -99,6 +114,11 @@ DeviceMemory::DeviceMemory(Device & device, const VkMemoryAllocateInfo & info) :
   }
 }
 
+DeviceMemoryPtr DeviceMemory::New(Device & device, const VkMemoryAllocateInfo & info)
+{
+  return new DeviceMemory { device, info };
+}
+
 DeviceMemory::~DeviceMemory()
 {
   vkFreeMemory(*mDevice, mDeviceMemory, Internal::sAllocator);
@@ -113,6 +133,11 @@ Image::Image(Device & device, const VkImageCreateInfo & createInfo) :
     mImage = VK_NULL_HANDLE;
     ThreadBase::Get().GetErrorPolicy().VulkanError("vkCreateImage", result, nullptr, __FUNCTION__, __FILE__, __LINE__);
   }
+}
+
+ImagePtr Image::New(Device & device, const VkImageCreateInfo & createInfo)
+{
+  return new Image{ device, createInfo };
 }
 
 Image::~Image()

@@ -78,13 +78,23 @@ private:
   VulkanObject& operator=(const VulkanObject&) = delete;
 };
 
+class Instance;
+/**
+* Shared pointer to automatically manage the lifetime of an Instance object and
+* thus the underlying Vulkan API object.
+*/
+using InstancePtr = IntrusivePointer<Instance>;
+
 /**
  * An owner for a VkInstance Vulkan API object. 
  */
 class Instance : public VulkanObject
 {
-public:
+  /** Hidden constructor to prevent users doing naked `new`s.*/
   Instance(const VkInstanceCreateInfo& createInfo);
+public:
+  /** Creation function to return new Instances via smart pointers. */
+  static InstancePtr New(const VkInstanceCreateInfo& createInfo);
   ~Instance();
   /**
    * Operator to allow the object to be used in raw Vulkan API calls and avoid
@@ -95,19 +105,17 @@ private:
   VkInstance mInstance = VK_NULL_HANDLE;
 };
 
-/**
- * Shared pointer to automatically manage the lifetime of an Instance object and
- * thus the underlying Vulkan API object.
- */
-using InstancePtr = IntrusivePointer<Instance>;
+class Device;
+using DevicePtr = IntrusivePointer<Device>;
 
 /**
  * An owner for vkDevice instances.
  */
 class Device : public VulkanObject
 {
-public:
   Device(Instance& instance, VkPhysicalDevice physicalDevice, const VkDeviceCreateInfo& createInfo);
+public:
+  static DevicePtr New(Instance& instance, VkPhysicalDevice physicalDevice, const VkDeviceCreateInfo& createInfo);
   ~Device();
   VkPhysicalDevice GetPhysicalDevice() const { return mPhysicalDevice; }
   operator VkDevice() const { return mDevice; }
@@ -120,15 +128,17 @@ private:
   VkDevice mDevice = VK_NULL_HANDLE;
 };
 
-using DevicePtr = IntrusivePointer<Device>;
+class CommandPool;
+using CommandPoolPtr = IntrusivePointer<CommandPool>;
 
 /**
  * An owner for VkCommandPool API objects.
  */
 class CommandPool : public VulkanObject
 {
-public:
   CommandPool(Device& device, VkCommandPoolCreateFlags flags, uint32_t queueFamilyIndex);
+public:
+  static CommandPoolPtr New(Device& device, VkCommandPoolCreateFlags flags, uint32_t queueFamilyIndex);
   ~CommandPool();
   operator VkCommandPool() const { return mCommandPool; }
 private:
@@ -138,7 +148,8 @@ private:
   VkCommandPool mCommandPool = VK_NULL_HANDLE;
 };
 
-using CommandPoolPtr = IntrusivePointer<CommandPool>;
+class DeviceMemory;
+using DeviceMemoryPtr = IntrusivePointer<DeviceMemory>;
 
 /**
  * @brief A handle to a block of memory on a device.
@@ -149,8 +160,9 @@ using CommandPoolPtr = IntrusivePointer<CommandPool>;
  */
 class DeviceMemory : public VulkanObject
 {
-public:
   DeviceMemory(Device& device, const VkMemoryAllocateInfo& info);
+public:
+  static DeviceMemoryPtr New(Device& device, const VkMemoryAllocateInfo& info);
   ~DeviceMemory();
   operator VkDeviceMemory() const { return mDeviceMemory; }
 private:
@@ -158,15 +170,22 @@ private:
   VkDeviceMemory mDeviceMemory = VK_NULL_HANDLE;
 };
 
-using DeviceMemoryPtr = IntrusivePointer<DeviceMemory>;
+class Image;
+using ImagePtr = IntrusivePointer<Image>;
 
 /**
  * @brief A handle to an instance of Vulkan's abstract image API object.  
  */
 class Image : public VulkanObject
 {
-public:
+  /** Hidden constructor to prevent users doing naked `new`s.*/
   Image(Device& device, const VkImageCreateInfo& createInfo);
+public:
+  /**
+   * @brief Creator for new Image objects.
+   * @return Smart pointer wrapper to keep the Image alive.
+   */
+  static ImagePtr New(Device& device, const VkImageCreateInfo& createInfo);
   ~Image();
   operator VkImage() const { return mImage; }
   /**
@@ -182,8 +201,6 @@ private:
   /// The raw Vulkan image handle.
   VkImage mImage = VK_NULL_HANDLE;
 };
-
-using ImagePtr = IntrusivePointer<Image>;
 
 ///@}
 

@@ -115,7 +115,7 @@ bool Application::Init()
 
   // Create a command pool:
   // (Make all command buffers in the default pool resettable)
-  mCommandPool = new CommandPool(*mGpuInterface, VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT, 0);
+  mCommandPool = CommandPool::New(*mGpuInterface, VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT, 0);
 
   // Allow derived application class to do its own setup:
   if(!DoPostInit())
@@ -225,7 +225,7 @@ bool Application::InitVulkanInstance()
   KRUST_COMPILE_ASSERT(!KRUST_GCC_64BIT_X86_BUILD || sizeof(VkInstanceCreateInfo) == 64U, "VkInstanceCreateInfo size changed: recheck init code.");
 
   try {
-    mInstance = new Instance(instanceInfo);
+    mInstance = Instance::New(instanceInfo);
   }
   catch (KrustVulkanErrorException& ex)
   {
@@ -397,7 +397,7 @@ bool Application::InitVulkanGpus() {
   auto deviceInfo = DeviceCreateInfo(0, 1, &queueCreateInfo, 0, 0,
     static_cast<uint32_t>(extensionNames.size()), &extensionNames[0], &enabledPhysicalDeviceFeatures);
 
-  mGpuInterface = DevicePtr(new Device(*mInstance, mGpu, deviceInfo));
+  mGpuInterface = Device::New(*mInstance, mGpu, deviceInfo);
 
   // Get the device WSI extensions:
   if( 0 == (mAcquireNextImageKHR = KRUST_GET_DEVICE_EXTENSION(*mGpuInterface, AcquireNextImageKHR)) ||
@@ -483,7 +483,7 @@ bool Application::InitDepthBuffer(const VkFormat depthFormat)
   const unsigned width = mDefaultWindow->GetPlatformWindow().GetWidth();
   const unsigned height = mDefaultWindow->GetPlatformWindow().GetHeight();
 
-  ImagePtr depthImage = new Image(*mGpuInterface, CreateDepthImageInfo(mDefaultPresentQueueFamily, depthFormat, width, height));
+  ImagePtr depthImage = Image::New(*mGpuInterface, CreateDepthImageInfo(mDefaultPresentQueueFamily, depthFormat, width, height));
 
   if(!depthImage.Get())
   {
@@ -506,7 +506,7 @@ bool Application::InitDepthBuffer(const VkFormat depthFormat)
   // Allocate the memory to back the depth image:
   auto depthAllocationInfo = MemoryAllocateInfo(depthMemoryRequirements.size,
     memoryType.GetValue());
-  DeviceMemoryPtr depthMemory = new DeviceMemory(*mGpuInterface, depthAllocationInfo);
+  DeviceMemoryPtr depthMemory{ DeviceMemory::New(*mGpuInterface, depthAllocationInfo) };
 
   // Tie the memory to the image:
   depthImage->BindMemory(*depthMemory, 0);
