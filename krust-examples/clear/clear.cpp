@@ -65,19 +65,9 @@ public:
       return false;
     }
 
-    auto bufferInfo = kr::CommandBufferAllocateInfo();
-      bufferInfo.commandPool = *mCommandPool,
-      bufferInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
-      bufferInfo.commandBufferCount = uint32_t(mSwapChainImageViews.size());
-
+    // Allocate a command buffer per swapchain entry:
     KRUST_ASSERT1(mCommandBuffers.size() == 0, "Double init of command buffers.");
-    mCommandBuffers.resize(mSwapChainImageViews.size());
-    const VkResult bufferResult = vkAllocateCommandBuffers(*mGpuInterface, &bufferInfo, &mCommandBuffers[0]);
-    if(bufferResult != VK_SUCCESS)
-    {
-      KRUST_LOG_ERROR << "Failed to allocate command buffers. Error: " << bufferResult << Krust::endlog;
-      return false;
-    }
+    kr::CommandBuffer::Allocate(*mCommandPool, VK_COMMAND_BUFFER_LEVEL_PRIMARY, unsigned(mSwapChainImageViews.size()), mCommandBuffers);
 
     // Build a command buffer per swapchain entry:
     auto commandBufferInheritanceInfo = kr::CommandBufferInheritanceInfo();
@@ -94,10 +84,10 @@ public:
 
     for(unsigned i = 0; i < mCommandBuffers.size(); ++i)
     {
-      VkCommandBuffer commandBuffer = mCommandBuffers[i];
+      kr::CommandBufferPtr commandBuffer = mCommandBuffers[i];
       VkImage framebufferImage = mSwapChainImages[i];
 
-      const VkResult beginBufferResult = vkBeginCommandBuffer(commandBuffer,
+      const VkResult beginBufferResult = vkBeginCommandBuffer(*commandBuffer,
                                                               &bufferBeginInfo);
 
       if(VK_SUCCESS != beginBufferResult)
@@ -118,7 +108,7 @@ public:
         postPresentImageMemoryBarrier.image = framebufferImage,
         postPresentImageMemoryBarrier.subresourceRange = { VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1 };
 
-      vkCmdPipelineBarrier(commandBuffer, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, 0, 0, nullptr, 0, nullptr, 1, &postPresentImageMemoryBarrier);
+      vkCmdPipelineBarrier(*commandBuffer, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, 0, 0, nullptr, 0, nullptr, 1, &postPresentImageMemoryBarrier);
 
       VkClearValue clearValues[2];
       clearValues[0].color.float32[0] = 0.9f;
@@ -141,12 +131,12 @@ public:
         beginRenderPass.renderArea = renderArea,
         beginRenderPass.clearValueCount = 2U,
         beginRenderPass.pClearValues = clearValues;
-      vkCmdBeginRenderPass(commandBuffer, &beginRenderPass, VK_SUBPASS_CONTENTS_INLINE);
+      vkCmdBeginRenderPass(*commandBuffer, &beginRenderPass, VK_SUBPASS_CONTENTS_INLINE);
 
       // We don't need to execute any explicit command to clear the screen in here.
       // The VK_ATTACHMENT_LOAD_OP_CLEAR of our subpass attachments clears implicitly.
 
-      vkCmdEndRenderPass(commandBuffer);
+      vkCmdEndRenderPass(*commandBuffer);
 
       // Assume the framebuffer will be presented so insert an image memory
       // barrier here first:
@@ -160,10 +150,10 @@ public:
         presentBarrier.image = framebufferImage,
         presentBarrier.subresourceRange = { VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1 };
 
-      vkCmdPipelineBarrier(commandBuffer, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, 0, 0,
+      vkCmdPipelineBarrier(*commandBuffer, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, 0, 0,
                            nullptr, 0, nullptr, 1, &presentBarrier);
 
-      VK_CALL_RET(vkEndCommandBuffer, commandBuffer);
+      VK_CALL_RET(vkEndCommandBuffer, *commandBuffer);
     }
 
     return true;
@@ -198,11 +188,11 @@ public:
       submitInfo.pWaitDstStageMask = &pipelineFlags,
       submitInfo.commandBufferCount = 1,
       // We have one command buffer per presentable image, so submit the right one:
-      submitInfo.pCommandBuffers = &mCommandBuffers[mCurrentTargetImage],
+      submitInfo.pCommandBuffers = mCommandBuffers[mCurrentTargetImage]->GetVkCommandBufferAddress(),
       submitInfo.signalSemaphoreCount = 0,
       submitInfo.pSignalSemaphores = nullptr;
 
-    KRUST_LOG_DEBUG << "Submitting command buffer " << mCurrentTargetImage << "(" << mCommandBuffers[mCurrentTargetImage] << ")." << Krust::endlog;
+    KRUST_LOG_DEBUG << "Submitting command buffer " << mCurrentTargetImage << "(" << *(mCommandBuffers[mCurrentTargetImage]) << ")." << Krust::endlog;
     // Execute command buffer on main queue:
     VK_CALL(vkQueueSubmit, *mDefaultGraphicsQueue, 1, &submitInfo, VK_NULL_HANDLE);
   }

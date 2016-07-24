@@ -704,6 +704,10 @@ bool Application::DeInit()
   DoPreDeInit();
 
   mCommandPool.Reset(nullptr);
+
+  // Eagerly throw away command buffers which may be keeping alive lots of other
+  // Vulkan objects:
+  mCommandBuffers.clear();
   
   if(mSwapChainSemaphore)
   {

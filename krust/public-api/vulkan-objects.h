@@ -27,6 +27,7 @@
 
 // External includes:
 #include <vulkan/vulkan.h>
+#include <vector>
 
 /**
 * @file
@@ -140,12 +141,47 @@ class CommandPool : public VulkanObject
 public:
   static CommandPoolPtr New(Device& device, VkCommandPoolCreateFlags flags, uint32_t queueFamilyIndex);
   ~CommandPool();
+  Device& GetDevice() const { return *mDevice; }
   operator VkCommandPool() const { return mCommandPool; }
 private:
   /// The GPU device this CommandPool is tied to. Keep it alive as long as this CommandPool is.
   DevicePtr mDevice = nullptr;
   /// The raw Vulkan CommandPool handle.
   VkCommandPool mCommandPool = VK_NULL_HANDLE;
+};
+
+class CommandBuffer;
+using CommandBufferPtr = IntrusivePointer<CommandBuffer>;
+
+/**
+ * An owner for VkCommandBuffer API objects.
+ */
+class CommandBuffer : public VulkanObject
+{
+  CommandBuffer(CommandPool& pool, VkCommandBufferLevel level);
+  /// Used in bulk allocation by Allocate.
+  explicit CommandBuffer(CommandPool& pool, VkCommandBuffer vkHandle);
+public:
+  static CommandBufferPtr New(CommandPool& pool, VkCommandBufferLevel level);
+  static void Allocate(CommandPool& pool, VkCommandBufferLevel level, unsigned number, std::vector<CommandBufferPtr>& outCommandBuffers);
+  ~CommandBuffer();
+  operator VkCommandBuffer() const { return mCommandBuffer;  }
+  VkCommandBuffer GetVkCommandBuffer() const { return mCommandBuffer; }
+  const VkCommandBuffer* GetVkCommandBufferAddress() const { return &mCommandBuffer; }
+  /**
+   * Keep the parameter alive as long as this command buffer is.
+   * Use for resources required for the execution of these commands.
+   */
+  void KeepAlive(VulkanObject& needed);
+
+private:
+  /// The command buffer pool this command buffers was allocated out of.
+  CommandPoolPtr mPool;
+  /// A container of all Vulkan objects used by the command buffer that keeps
+  /// them alive as long as this is.  
+  void* mKeepAlives = nullptr;
+  /// The raw Vulkan CommandBuffer handle.
+  VkCommandBuffer mCommandBuffer = VK_NULL_HANDLE;
 };
 
 class DeviceMemory;

@@ -34,6 +34,7 @@ class IntrusivePointerBase
 {
 public:
   bool operator!() const { return !mRefObject; }
+  bool operator==(const IntrusivePointerBase& rhs) const { return mRefObject == rhs.mRefObject; }
 
 protected:
   IntrusivePointerBase() : mRefObject(nullptr) {}

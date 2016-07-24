@@ -325,7 +325,7 @@ protected:
   /// Command pool for all command buffers:
   CommandPoolPtr mCommandPool = nullptr;
   /// CommandBuffers for each image in swapchain:
-  std::vector<VkCommandBuffer> mCommandBuffers;
+  std::vector<CommandBufferPtr> mCommandBuffers;
   /// Render Passes for each image in the swapchain:
   std::vector<VkRenderPass> mRenderPasses;
   /// The entry in the mSwapChainImages array that was most recently acquired

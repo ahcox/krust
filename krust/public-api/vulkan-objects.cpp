@@ -25,10 +25,16 @@
 #include "krust/public-api/logging.h"
 #include "krust/public-api/krust-assertions.h"
 #include "krust/public-api/krust-errors.h"
+#include "krust/internal/keep-alive-set.h"
 #include "krust/internal/krust-internal.h"
+#include "krust/internal/scoped-temp-array.h"
+
 
 namespace Krust
 {
+
+/// Max size for a temporary buffer on the stack (over this and we do a temp heap alloc).
+constexpr unsigned MAX_STACK_BUFFER_BYTES = 4096U;
 
 Instance::Instance(const VkInstanceCreateInfo & createInfo)
 {
@@ -100,6 +106,67 @@ CommandPoolPtr CommandPool::New(Device & device, VkCommandPoolCreateFlags flags,
 CommandPool::~CommandPool()
 {
   vkDestroyCommandPool(*mDevice, mCommandPool, Internal::sAllocator);
+}
+
+CommandBuffer::CommandBuffer(CommandPool& pool, const VkCommandBufferLevel level)
+{
+  auto info = CommandBufferAllocateInfo(pool, level, 1u);
+  const VkResult result = vkAllocateCommandBuffers(pool.GetDevice(), &info, &mCommandBuffer);
+  if (result != VK_SUCCESS)
+  {
+    mCommandBuffer = VK_NULL_HANDLE;
+    auto & threadBase = ThreadBase::Get();
+    threadBase.GetErrorPolicy().VulkanError("vkAllocateCommandBuffers", result, nullptr, __FUNCTION__, __FILE__, __LINE__);
+  }
+}
+
+CommandBuffer::CommandBuffer(CommandPool& pool, VkCommandBuffer vkBuf) : mPool(&pool), mCommandBuffer(vkBuf) {}
+
+CommandBufferPtr CommandBuffer::New(CommandPool & pool, VkCommandBufferLevel level)
+{
+  return CommandBufferPtr{ new CommandBuffer{pool, level} };
+}
+
+void CommandBuffer::Allocate(CommandPool & pool, VkCommandBufferLevel level, unsigned number, std::vector<CommandBufferPtr>& outCommandBuffers)
+{
+  ScopedTempArray<VkCommandBuffer, MAX_STACK_BUFFER_BYTES>  buffers(number);
+  outCommandBuffers.clear();
+  outCommandBuffers.reserve(number); // Do early to throw if going to throw.
+  auto info = CommandBufferAllocateInfo(pool, level, number);
+  const VkResult result = vkAllocateCommandBuffers(pool.GetDevice(), &info, buffers.Get());
+  if (result != VK_SUCCESS)
+  {
+    auto & threadBase = ThreadBase::Get();
+    threadBase.GetErrorPolicy().VulkanError("vkAllocateCommandBuffers", result, nullptr, __FUNCTION__, __FILE__, __LINE__);
+  }
+  try
+  {
+    std::for_each(buffers.Get(), buffers.Get() + number, [&pool, &outCommandBuffers](auto rawCommandBuffer) {
+      outCommandBuffers.push_back(CommandBufferPtr(new CommandBuffer(pool, rawCommandBuffer)));
+    });
+  }
+  catch (...)
+  {
+    vkFreeCommandBuffers(pool.GetDevice(), pool, number, buffers.Get());
+    throw;
+  }
+
+
+}
+
+CommandBuffer::~CommandBuffer()
+{
+  vkFreeCommandBuffers(mPool->GetDevice(), *mPool, 1u, &mCommandBuffer);
+  delete reinterpret_cast<KeepAliveSet*>(mKeepAlives);
+}
+
+void CommandBuffer::KeepAlive(VulkanObject & needed)
+{
+  if (!mKeepAlives)
+  {
+    mKeepAlives = new KeepAliveSet{};
+  }
+  reinterpret_cast<KeepAliveSet*>(mKeepAlives)->Add(needed);
 }
 
 DeviceMemory::DeviceMemory(Device & device, const VkMemoryAllocateInfo & info) :
