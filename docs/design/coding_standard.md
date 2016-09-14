@@ -71,6 +71,7 @@ Naming Conventions
 
 The Vulkan API naming conventions are broadly adopted with some small
 differences:
+
 1.  Non-public class member variables use the common "m" prefix convention.
 1.  Type prefixes on variable names such as "p" for pointers and "s" for structs
     are avoided.
