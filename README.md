@@ -1,7 +1,11 @@
 Krust
 =====
-<img style="width: 90%; max-width: 1006px; margin-left: auto; margin-right: auto;" src="http://cdn.ahcox.com/wp-ahcox.com/wp-content/uploads/2014/10/P1127242-1920x540-banner-top-503x283.jpg"/>
-In a layered graphics stack, Krust seeks to solve problems one level up from
+<img width="100%" style="width: 100%; max-width: 3840px; margin-left: auto; margin-right: auto;" src="http://ahcox.com/wp-ahcox.com/wp-content/uploads/2014/10/P1127242-1920x540-banner-top.jpg"/>
+
+Note that this is a **work in progress** library, not yet ready for users,
+and this github repo is maybe best viewed as off-site backup for the developer
+for now.
+Having noted that, in a layered graphics stack, Krust seeks to solve problems one level up from
 the explicit GPU API Vulkan.
 There are currently three modules:
 
