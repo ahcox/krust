@@ -1,5 +1,5 @@
-Krust::IO components specific to the XCB library for X11
-========================================================
+Krust::IO components specific to the Win32 API
+==============================================
 
 Classes like `WindowPlatform` and `ApplicationPlatform` are intended to
 nestle inside their platform-neutral equivalents.
