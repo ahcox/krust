@@ -271,7 +271,7 @@ bool Application::InitVulkanInstance()
       nullptr);
 
     mCreateDebugReportCallback(*mInstance, &debugCreateInfo,
-                               KRUST_DEFAULT_ALLOCATION_CALLBACKS,
+                               Krust::GetAllocationCallbacks(),
                                &mDebugCallbackHandle);
     if(!mDebugCallbackHandle)
     {
@@ -600,7 +600,7 @@ bool Application::InitDefaultSwapchain()
     swapChainCreateParams.clipped = true,
     swapChainCreateParams.oldSwapchain = 0;
 
-  VkResult swapChainCreated = mCreateSwapChainKHR(*mGpuInterface, &swapChainCreateParams, KRUST_DEFAULT_ALLOCATION_CALLBACKS, &mSwapChain);
+  VkResult swapChainCreated = mCreateSwapChainKHR(*mGpuInterface, &swapChainCreateParams, Krust::GetAllocationCallbacks(), &mSwapChain);
   if(VK_SUCCESS != swapChainCreated)
   {
     KRUST_LOG_ERROR << "Failed to create swap chain. Error: " << ResultToString(swapChainCreated) << ". Numerical error code: " << int(swapChainCreated) << endlog;
@@ -640,7 +640,7 @@ bool Application::InitDefaultSwapchain()
     KRUST_LOG_DEBUG << "\tSwap chain image: " << image << endlog;
     chainImageCreate.image = mSwapChainImages[imageIndex++];
     VkImageView view;
-    VK_CALL_RET(vkCreateImageView, *mGpuInterface, &chainImageCreate, KRUST_DEFAULT_ALLOCATION_CALLBACKS, &view);
+    VK_CALL_RET(vkCreateImageView, *mGpuInterface, &chainImageCreate, Krust::GetAllocationCallbacks(), &view);
     mSwapChainImageViews.push_back(view);
   }
 
@@ -650,7 +650,7 @@ bool Application::InitDefaultSwapchain()
   // in flight for WSI signal on:
   auto semaphoreCreateInfo = SemaphoreCreateInfo(VK_FENCE_CREATE_SIGNALED_BIT);
 
-  VkResult semaphoreResult = vkCreateSemaphore(*mGpuInterface, &semaphoreCreateInfo, KRUST_DEFAULT_ALLOCATION_CALLBACKS, &mSwapChainSemaphore);
+  VkResult semaphoreResult = vkCreateSemaphore(*mGpuInterface, &semaphoreCreateInfo, Krust::GetAllocationCallbacks(), &mSwapChainSemaphore);
   if(semaphoreResult != VK_SUCCESS)
   {
     KRUST_LOG_ERROR << "Failed to create the swapchain semaphore." << endlog;
@@ -711,16 +711,16 @@ bool Application::DeInit()
   
   if(mSwapChainSemaphore)
   {
-    vkDestroySemaphore(*mGpuInterface, mSwapChainSemaphore, KRUST_DEFAULT_ALLOCATION_CALLBACKS);
+    vkDestroySemaphore(*mGpuInterface, mSwapChainSemaphore, Krust::GetAllocationCallbacks());
   }
 
   // No need to vkDestroyImage() as these images came from the swapchain extension:
   mSwapChainImages.clear();
-  mDestroySwapChainKHR(*mGpuInterface, mSwapChain, KRUST_DEFAULT_ALLOCATION_CALLBACKS);
+  mDestroySwapChainKHR(*mGpuInterface, mSwapChain, Krust::GetAllocationCallbacks());
 
   if(mDepthBufferView)
   {
-    vkDestroyImageView(*mGpuInterface, mDepthBufferView, KRUST_DEFAULT_ALLOCATION_CALLBACKS);
+    vkDestroyImageView(*mGpuInterface, mDepthBufferView, Krust::GetAllocationCallbacks());
   }
 
   mDepthBufferImage.Reset(nullptr);
@@ -733,7 +733,7 @@ bool Application::DeInit()
   }
   if(mSurface)
   {
-    vkDestroySurfaceKHR(*mInstance, mSurface, KRUST_DEFAULT_ALLOCATION_CALLBACKS);
+    vkDestroySurfaceKHR(*mInstance, mSurface, Krust::GetAllocationCallbacks());
   }
   
   mGpuInterface.Reset(nullptr);
@@ -741,7 +741,7 @@ bool Application::DeInit()
 
   if(mDebugCallbackHandle && mDestroyDebugReportCallback)
   {
-    mDestroyDebugReportCallback(*mInstance, mDebugCallbackHandle, KRUST_DEFAULT_ALLOCATION_CALLBACKS);
+    mDestroyDebugReportCallback(*mInstance, mDebugCallbackHandle, Krust::GetAllocationCallbacks());
   }
 
   // Explicitly release the instance now:

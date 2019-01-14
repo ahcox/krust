@@ -74,6 +74,11 @@ bool InitKrust(ErrorPolicy* errorPolicy = nullptr, VkAllocationCallbacks* alloca
  */
 ErrorPolicy* GetGlobalErrorPolicy();
 
+/**
+ * Retrieve the allocation callbacks set by Krust::InitKrust().  
+ */
+VkAllocationCallbacks* GetAllocationCallbacks();
+
 }
 
 #endif // #ifndef KRUST_H_INCLUDED_E26EF

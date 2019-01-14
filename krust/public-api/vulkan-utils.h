@@ -21,6 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+/**
+ * @file Helpers and utilities for the Vulkan API.
+ */
+
 // External includes:
 #include "conditional-value.h"
 #include <vulkan/vulkan.h>
@@ -56,9 +60,9 @@ if(FUNC##result != VK_SUCCESS) { \
 }
 
 /**
- * @brief CPU memory allocator to be used by Vulkan implementations.
- *
- * We forego this optimisation for now.
+ * @brief CPU memory allocator to be used by Vulkan implementations
+ * if no better one is passed to Krust::InitKrust().
+ * @todo Move KRUST_DEFAULT_ALLOCATION_CALLBACKS to non-public.
  */
 #define KRUST_DEFAULT_ALLOCATION_CALLBACKS nullptr
 

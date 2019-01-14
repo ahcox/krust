@@ -28,6 +28,7 @@ namespace
 {
 /** Number of samples per framebuffer pixel. */
 constexpr VkSampleCountFlagBits NUM_SAMPLES = VK_SAMPLE_COUNT_1_BIT;
+constexpr VkAllocationCallbacks* ALLOCATION_CALLBACKS = nullptr;
 }
 /**
  * Draws an empty frame, clearing the framebuffer.
@@ -164,7 +165,7 @@ public:
     // Destroy VK objects:
     for(unsigned i = 0; i < mRenderPasses.size(); ++i)
     {
-      vkDestroyRenderPass(*mGpuInterface, mRenderPasses[i], KRUST_DEFAULT_ALLOCATION_CALLBACKS);
+      vkDestroyRenderPass(*mGpuInterface, mRenderPasses[i], ALLOCATION_CALLBACKS);
     }
 
     return true;

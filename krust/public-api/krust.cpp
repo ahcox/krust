@@ -57,4 +57,9 @@ ErrorPolicy* GetGlobalErrorPolicy()
   return sErrorPolicy;
 }
 
+VkAllocationCallbacks * GetAllocationCallbacks()
+{
+  return Krust::Internal::sAllocator;
+}
+
 }

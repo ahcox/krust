@@ -30,6 +30,7 @@
 #include "krust/public-api/vulkan_struct_init.h"
 #include "krust/public-api/scoped-free.h"
 #include "krust/public-api/logging.h"
+#include "krust/public-api/krust.h"
 #include <vector>
 #include <utility>
 
@@ -221,7 +222,7 @@ VkSurfaceKHR Krust::IO::ApplicationPlatform::InitSurface(VkInstance instance)
     this->mDefaultWindow->GetPlatformWindow().mWindow);
 
   VkSurfaceKHR surface = VK_NULL_HANDLE;
-  const VkResult result = vkCreateWin32SurfaceKHR(instance, &createInfo, KRUST_DEFAULT_ALLOCATION_CALLBACKS, &surface);
+  const VkResult result = vkCreateWin32SurfaceKHR(instance, &createInfo, Krust::GetAllocationCallbacks(), &surface);
   if (result != VK_SUCCESS)
   {
     KRUST_LOG_ERROR << "Failed to create Vk surface for window. Result: " << result << "." << endlog;

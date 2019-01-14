@@ -25,6 +25,7 @@
 #include "krust/public-api/logging.h"
 #include "krust/public-api/krust-assertions.h"
 #include "krust/public-api/vulkan_struct_init.h"
+#include "krust/internal/krust-internal.h"
 
 // External includes:
 #include <algorithm>
@@ -73,7 +74,7 @@ VkImageView CreateDepthImageView(VkDevice device, VkImage image, const VkFormat 
     viewInfo.subresourceRange.layerCount = 1;
 
   VkImageView imageView;
-  const VkResult result = vkCreateImageView(device, &viewInfo, KRUST_DEFAULT_ALLOCATION_CALLBACKS, &imageView);
+  const VkResult result = vkCreateImageView(device, &viewInfo, Krust::Internal::sAllocator, &imageView);
   if(result != VK_SUCCESS)
   {
     KRUST_LOG_ERROR << "Failed to create image view for depth buffer. Error: " << result << endlog;
@@ -270,7 +271,7 @@ bool BuildFramebuffersForSwapChain(
   for(unsigned i = 0; i < swapChainImageViews.size(); ++i)
   {
     VkRenderPass renderPass;
-    VK_CALL_RET(vkCreateRenderPass, device, &renderPassInfo, KRUST_DEFAULT_ALLOCATION_CALLBACKS, &renderPass);
+    VK_CALL_RET(vkCreateRenderPass, device, &renderPassInfo, Krust::Internal::sAllocator, &renderPass);
     outRenderPasses.push_back(renderPass);
   }
 
@@ -295,7 +296,7 @@ bool BuildFramebuffersForSwapChain(
   {
     framebufferInfo.renderPass = outRenderPasses[i];
     colorDepthViews[0] = swapChainImageViews[i]; // Reset color buffer, but share depth.
-    VK_CALL_RET(vkCreateFramebuffer, device, &framebufferInfo, KRUST_DEFAULT_ALLOCATION_CALLBACKS, &outSwapChainFramebuffers[i]);
+    VK_CALL_RET(vkCreateFramebuffer, device, &framebufferInfo, Krust::Internal::sAllocator, &outSwapChainFramebuffers[i]);
   }
 
   return true;
@@ -311,7 +312,7 @@ ScopedImageOwner::~ScopedImageOwner()
   if(image)
   {
     KRUST_ASSERT2(device, "No device so can't destroy.");
-    vkDestroyImage(device, image, KRUST_DEFAULT_ALLOCATION_CALLBACKS);
+    vkDestroyImage(device, image, Krust::Internal::sAllocator);
   }
 }
 
@@ -327,7 +328,7 @@ ScopedDeviceMemoryOwner::~ScopedDeviceMemoryOwner()
   if(memory)
   {
     KRUST_ASSERT2(device, "No device so can't free.");
-    vkFreeMemory(device, memory, KRUST_DEFAULT_ALLOCATION_CALLBACKS);
+    vkFreeMemory(device, memory, Krust::Internal::sAllocator);
   }
 }
 
