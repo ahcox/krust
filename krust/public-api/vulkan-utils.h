@@ -149,6 +149,74 @@ bool BuildFramebuffersForSwapChain(
   std::vector<VkFramebuffer>& outSwapChainFramebuffers);
 
 /**
+* @brief Find the named extension in the list of extension property structs
+* passed in.
+*/
+bool FindExtension(const std::vector<VkExtensionProperties>& extensions, const char* const extension);
+
+/**
+* @brief Converts VkDebugReportFlagsEXT with single bit set to all-caps string
+* for human-readable logging.
+*/
+const char * MessageFlagsToLevel(const VkFlags flags);
+
+/**
+* @return a vector of properties for each global layer available.
+*/
+std::vector<VkLayerProperties> EnumerateInstanceLayerProperties();
+
+/**
+* @brief Allows the application to query properties of all extensions.
+* @param[in] layerName The name of the layer to query extions properties from.
+*             If this is null, the extension properties are queried globally.
+* @return a vector of properties for each extension available.
+*/
+std::vector<VkExtensionProperties> GetGlobalExtensionProperties(const char * const layerName = 0);
+
+/**
+* @brief Return a list of handles to physical GPUs known to the loader.
+* @return A vector of GPU handles if successful, or an empty list if there was an error.
+*/
+std::vector<VkPhysicalDevice> EnumeratePhysicalDevices(
+  const VkInstance &instance);
+
+/**
+*
+*/
+std::vector<VkExtensionProperties>
+EnumerateDeviceExtensionProperties(VkPhysicalDevice &gpu,
+  const char *const name);
+
+/**
+* @brief Gets a list of layers for the physical device (GPU) passed in.
+* @return A vector of layer property structs if successful, or an empty vector if there was an error.
+*/
+std::vector<VkLayerProperties>
+EnumerateDeviceLayerProperties(const VkPhysicalDevice &gpu);
+
+/**
+* @brief Gets the properties of all GPU queue families.
+*
+* The properties are a set of flags and a count of the number of queues
+* belonging to the family. The flags are Graphics, Compute, sparse memory,
+* DMA, etc.
+*/
+std::vector<VkQueueFamilyProperties>
+GetPhysicalDeviceQueueFamilyProperties(const VkPhysicalDevice gpu);
+
+/**
+* @brief Converts a Vulkan format to its textual representation.
+*
+* For example: <code>VK_FORMAT_R8_SRGB -> "VK_FORMAT_R8_SRGB"</code>.
+*/
+const char* FormatToString(const VkFormat format);
+
+/**
+* @brief Converts a KHR colorspace enum into a string representation of it.
+*/
+const char* KHRColorspaceToString(const VkColorSpaceKHR space);
+
+/**
  * @name ScopedDestruction Destroy Vulkan objects as they go out of scope.
  * Part of the general strategy of weak exception safety.
  */

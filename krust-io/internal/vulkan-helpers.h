@@ -21,6 +21,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+/**
+* @file Helpers and utilities for the Vulkan API.
+*/
+
 // External includes:
 #include <vulkan/vulkan.h>
 #include <krust/public-api/krust-assertions.h>
@@ -54,67 +58,11 @@ PFN_vkVoidFunction GetInstanceProcAddr(VkInstance instance, const char * const n
 PFN_vkVoidFunction GetDeviceProcAddr(VkDevice device, const char * const name);
 
 /**
- * @brief Find the named extension in the list of extension property structs
- * passed in.
- */
-bool FindExtension(const std::vector<VkExtensionProperties>& extensions, const char* const extension);
-
-/**
  * @brief Can be registered with Vk to output errors.
  */
 VkBool32 DebugCallback(VkFlags flags, VkDebugReportObjectTypeEXT objectType,
   uint64_t object, size_t location, int32_t code, const char *layerPrefix,
   const char *message, void* userData);
-
-/**
- * @brief Converts VkDebugReportFlagsEXT with single bit set to all-caps string
- * for human-readable logging.
- */
-const char * MessageFlagsToLevel(const VkFlags flags);
-
-/**
- * @return a vector of properties for each global layer available.
- */
-std::vector<VkLayerProperties> EnumerateInstanceLayerProperties();
-
-/**
- * @brief Allows the application to query properties of all extensions.
- * @param[in] layerName The name of the layer to query extions properties from.
- *             If this is null, the extension properties are queried globally.
- * @return a vector of properties for each extension available.
- */
-std::vector<VkExtensionProperties> GetGlobalExtensionProperties(const char * const layerName = 0);
-
-/**
- * @brief Return a list of handles to physical GPUs known to the loader.
- * @return A vector of GPU handles if successful, or an empty list if there was an error.
- */
-std::vector<VkPhysicalDevice> EnumeratePhysicalDevices(
-  const VkInstance &instance);
-
-/**
- *
- */
-std::vector<VkExtensionProperties>
-    EnumerateDeviceExtensionProperties(VkPhysicalDevice &gpu,
-                                       const char *const name);
-
-/**
- * @brief Gets a list of layers for the physical device (GPU) passed in.
- * @return A vector of layer property structs if successful, or an empty vector if there was an error.
- */
-std::vector<VkLayerProperties>
-  EnumerateDeviceLayerProperties(const VkPhysicalDevice &gpu);
-
-/**
- * @brief Gets the properties of all GPU queue families.
- *
- * The properties are a set of flags and a count of the number of queues
- * belonging to the family. The flags are Graphics, Compute, sparse memory,
- * DMA, etc.
- */
-std::vector<VkQueueFamilyProperties>
-    GetPhysicalDeviceQueueFamilyProperties(const VkPhysicalDevice gpu);
 
 /**
  * @brief Gets the image formats compatible with the surface.
@@ -139,18 +87,6 @@ std::vector<VkPresentModeKHR>
 std::vector<VkImage> GetSwapChainImages(PFN_vkGetSwapchainImagesKHR getter, VkDevice gpuInterface, VkSwapchainKHR swapChain);
 
 /**
- * @brief Converts a Vulkan format to its textual representation.
- *
- * For example: <code>VK_FORMAT_R8_SRGB -> "VK_FORMAT_R8_SRGB"</code>.
- */
-const char* FormatToString(const VkFormat format);
-
-/**
- * @brief Converts a KHR colorspace enum into a string representation of it.
- */
-const char* KHRColorspaceToString(const VkColorSpaceKHR space);
-
-/**
  * @brief Output device features to info log.
  */
 void LogVkPhysicalDeviceFeatures(const VkPhysicalDeviceFeatures& features);
@@ -166,8 +102,6 @@ void LogVkPhysicalDeviceLimits(const VkPhysicalDeviceLimits &limits);
 void LogVkSurfaceCapabilitiesKHR(const VkSurfaceCapabilitiesKHR &capabilities,
                                  LogChannel &log = Krust::log,
                                  LogLevel level = LogLevel::Info);
-
-
 
 } /* namespace IO */
 } /* namespace Krust */
