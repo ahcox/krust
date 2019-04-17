@@ -28,7 +28,7 @@ namespace Krust
 namespace Internal
 { 
 
-extern VkAllocationCallbacks* sAllocator = nullptr;
+VkAllocationCallbacks* sAllocator = nullptr;
 
 }
 }

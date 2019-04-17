@@ -21,6 +21,8 @@
 #include "krust/public-api/thread-base.h"
 #include "krust/public-api/logging.h"
 
+#include <cstring>
+
 namespace Krust
 {
 

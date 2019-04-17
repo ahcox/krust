@@ -60,9 +60,8 @@ Instance::~Instance()
 Device::Device(Instance & instance, VkPhysicalDevice physicalDevice, const VkDeviceCreateInfo & createInfo) :
   mInstance(instance)
 {
-  KRUST_ASSERT1(&instance != 0 && instance != VK_NULL_HANDLE, "Invalid instance.");
-  KRUST_ASSERT1(&physicalDevice != VK_NULL_HANDLE, "Invalid physical device.");
-  KRUST_ASSERT1(&createInfo != 0, "Invalid device create info.");
+  KRUST_ASSERT1(instance != VK_NULL_HANDLE, "Invalid instance.");
+  KRUST_ASSERT1(physicalDevice != VK_NULL_HANDLE, "Invalid physical device.");
 
   mPhysicalDevice = physicalDevice;
   auto & threadBase = ThreadBase::Get();

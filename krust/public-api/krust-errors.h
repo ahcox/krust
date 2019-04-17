@@ -131,10 +131,10 @@ class KrustException
 public:
   //KrustException() {}
   KrustException(const char* msg, const char * function, const char * file, unsigned line) :
-    mMsg(msg ? msg : mMsg),
-    mFunction(function ? function : mFunction),
-    mFile(file ? file : mFile),
-    mLine(line ? line : mLine)
+    mMsg(msg ? msg : ""),
+    mFunction(function ? function : ""),
+    mFile(file ? file : ""),
+    mLine(line ? line : 0U)
   {}
   /**
    * Dump to log in human-readable form. 
@@ -159,8 +159,8 @@ class KrustErrorException : public KrustException
 {
 public:
   KrustErrorException(Errors error, const char* msg, const char * function, const char * file, unsigned line) :
-    mError(error),
-    KrustException(msg, function, file, line)
+    KrustException(msg, function, file, line),
+    mError(error)
   {}
   /**
    * Dump to log in human-readable form.
@@ -178,9 +178,9 @@ class KrustVulkanErrorException : public KrustException
 {
 public:
   KrustVulkanErrorException(const char* apiCalled, VkResult result, const char* msg, const char * function, const char * file, unsigned line) :
+    KrustException(msg, function, file, line),
     mApiCalled(apiCalled ? apiCalled : mApiCalled),
-    mResult(result),
-    KrustException(msg, function, file, line)
+    mResult(result)
   {}
   /**
   * Dump to log in human-readable form.
@@ -200,8 +200,8 @@ class KrustVulkanUnexpectedException : public KrustException
 {
 public:
   KrustVulkanUnexpectedException(const char* apiCalled, const char* msg, const char * function, const char * file, unsigned line) :
-    mApiCalled(apiCalled ? apiCalled : mApiCalled),
-    KrustException(msg, function, file, line)
+    KrustException(msg, function, file, line),
+    mApiCalled(apiCalled ? apiCalled : mApiCalled)
   {}
   /**
   * Dump to log in human-readable form.
