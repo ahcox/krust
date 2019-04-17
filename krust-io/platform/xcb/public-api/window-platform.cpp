@@ -25,8 +25,8 @@
 #include "application.h"
 
 // External includes:
-#include "krust-common/public-api/scoped-free.h"
-#include "krust-common/public-api/logging.h"
+#include "krust/public-api/scoped-free.h"
+#include "krust/public-api/logging.h"
 #include <string.h>
 
 namespace Krust {

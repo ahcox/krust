@@ -17,17 +17,15 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
-
 #include "application-platform.h"
 
 // Internal includes:
 #include "krust-io/public-api/application-interface.h"
 
 // External includes:
-#include <krust-common/public-api/krust-common.h>
-#include <krust-common/public-api/vulkan-utils.h>
-#include "krust-common/public-api/scoped-free.h"
-#include "krust-common/public-api/logging.h"
+#include "krust/public-api/scoped-free.h"
+#include "krust/public-api/logging.h"
+#include "krust/public-api/krust.h"
 #include <xcb/xcb.h>
 
 namespace Krust {
