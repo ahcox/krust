@@ -58,7 +58,7 @@ WindowPlatform::WindowPlatform(
     mDeleteWindowEventAtom(0)
 {
   KRUST_LOG_INFO << "WindowPlatform created.\n";
-  surpress_unused(&container, &title); ///@ToDo: Set the window title through XCB
+  suppress_unused(&container, &title); ///@ToDo: Set the window title through XCB
 
   // Create the X11 window:
   KRUST_ASSERT1(Connection(), "Null connection.");
