@@ -137,36 +137,40 @@ void LogResultError(const char* message, VkResult result)
 const char* ResultToString(const VkResult result)
 {
   const char *string = "<<Unknown Result Code>>";
+  // Recreate with %s/\(VK_.*\) = .*,$/case \1: { string = "\1"; break; }/
   switch (result) {
-      case VK_SUCCESS: { string = "VK_SUCCESS"; break; }
-      case VK_NOT_READY: { string = "VK_NOT_READY"; break; }
-      case VK_TIMEOUT: { string = "VK_TIMEOUT"; break; }
-      case VK_EVENT_SET: { string = "VK_EVENT_SET"; break; }
-      case VK_EVENT_RESET: { string = "VK_EVENT_RESET"; break; }
-      case VK_INCOMPLETE: { string = "VK_INCOMPLETE"; break; }
-      case VK_ERROR_OUT_OF_HOST_MEMORY: { string = "VK_ERROR_OUT_OF_HOST_MEMORY"; break; }
-      case VK_ERROR_OUT_OF_DEVICE_MEMORY: { string = "VK_ERROR_OUT_OF_DEVICE_MEMORY"; break; }
-      case VK_ERROR_INITIALIZATION_FAILED: { string = "VK_ERROR_INITIALIZATION_FAILED"; break; }
-      case VK_ERROR_DEVICE_LOST: { string = "VK_ERROR_DEVICE_LOST"; break; }
-      case VK_ERROR_MEMORY_MAP_FAILED: { string = "VK_ERROR_MEMORY_MAP_FAILED"; break; }
-      case VK_ERROR_LAYER_NOT_PRESENT: { string = "VK_ERROR_LAYER_NOT_PRESENT"; break; }
-      case VK_ERROR_EXTENSION_NOT_PRESENT: { string = "VK_ERROR_EXTENSION_NOT_PRESENT"; break; }
-      case VK_ERROR_FEATURE_NOT_PRESENT: { string = "VK_ERROR_FEATURE_NOT_PRESENT"; break; }
-      case VK_ERROR_INCOMPATIBLE_DRIVER: { string = "VK_ERROR_INCOMPATIBLE_DRIVER"; break; }
-      case VK_ERROR_TOO_MANY_OBJECTS: { string = "VK_ERROR_TOO_MANY_OBJECTS"; break; }
-      case VK_ERROR_FORMAT_NOT_SUPPORTED: { string = "VK_ERROR_FORMAT_NOT_SUPPORTED"; break; }
-      case VK_ERROR_FRAGMENTED_POOL: { string = "VK_ERROR_FRAGMENTED_POOL"; break; }
-      case VK_ERROR_OUT_OF_POOL_MEMORY: { string = "VK_ERROR_OUT_OF_POOL_MEMORY"; break; }
-      case VK_ERROR_INVALID_EXTERNAL_HANDLE: { string = "VK_ERROR_INVALID_EXTERNAL_HANDLE"; break; }
-      case VK_ERROR_SURFACE_LOST_KHR: { string = "VK_ERROR_SURFACE_LOST_KHR"; break; }
-      case VK_ERROR_NATIVE_WINDOW_IN_USE_KHR: { string = "VK_ERROR_NATIVE_WINDOW_IN_USE_KHR"; break; }
-      case VK_SUBOPTIMAL_KHR: { string = "VK_SUBOPTIMAL_KHR"; break; }
-      case VK_ERROR_OUT_OF_DATE_KHR: { string = "VK_ERROR_OUT_OF_DATE_KHR"; break; }
-      case VK_ERROR_INCOMPATIBLE_DISPLAY_KHR: { string = "VK_ERROR_INCOMPATIBLE_DISPLAY_KHR"; break; }
-      case VK_ERROR_VALIDATION_FAILED_EXT: { string = "VK_ERROR_VALIDATION_FAILED_EXT"; break; }
-      case VK_ERROR_INVALID_SHADER_NV: { string = "VK_ERROR_INVALID_SHADER_NV"; break; }
-      case VK_ERROR_FRAGMENTATION_EXT: { string = "VK_ERROR_FRAGMENTATION_EXT"; break; }
-      case VK_ERROR_NOT_PERMITTED_EXT: { string = "VK_ERROR_NOT_PERMITTED_EXT"; break; }
+    case VK_SUCCESS: { string = "VK_SUCCESS"; break; }
+    case VK_NOT_READY: { string = "VK_NOT_READY"; break; }
+    case VK_TIMEOUT: { string = "VK_TIMEOUT"; break; }
+    case VK_EVENT_SET: { string = "VK_EVENT_SET"; break; }
+    case VK_EVENT_RESET: { string = "VK_EVENT_RESET"; break; }
+    case VK_INCOMPLETE: { string = "VK_INCOMPLETE"; break; }
+    case VK_ERROR_OUT_OF_HOST_MEMORY: { string = "VK_ERROR_OUT_OF_HOST_MEMORY"; break; }
+    case VK_ERROR_OUT_OF_DEVICE_MEMORY: { string = "VK_ERROR_OUT_OF_DEVICE_MEMORY"; break; }
+    case VK_ERROR_INITIALIZATION_FAILED: { string = "VK_ERROR_INITIALIZATION_FAILED"; break; }
+    case VK_ERROR_DEVICE_LOST: { string = "VK_ERROR_DEVICE_LOST"; break; }
+    case VK_ERROR_MEMORY_MAP_FAILED: { string = "VK_ERROR_MEMORY_MAP_FAILED"; break; }
+    case VK_ERROR_LAYER_NOT_PRESENT: { string = "VK_ERROR_LAYER_NOT_PRESENT"; break; }
+    case VK_ERROR_EXTENSION_NOT_PRESENT: { string = "VK_ERROR_EXTENSION_NOT_PRESENT"; break; }
+    case VK_ERROR_FEATURE_NOT_PRESENT: { string = "VK_ERROR_FEATURE_NOT_PRESENT"; break; }
+    case VK_ERROR_INCOMPATIBLE_DRIVER: { string = "VK_ERROR_INCOMPATIBLE_DRIVER"; break; }
+    case VK_ERROR_TOO_MANY_OBJECTS: { string = "VK_ERROR_TOO_MANY_OBJECTS"; break; }
+    case VK_ERROR_FORMAT_NOT_SUPPORTED: { string = "VK_ERROR_FORMAT_NOT_SUPPORTED"; break; }
+    case VK_ERROR_FRAGMENTED_POOL: { string = "VK_ERROR_FRAGMENTED_POOL"; break; }
+    case VK_ERROR_OUT_OF_POOL_MEMORY: { string = "VK_ERROR_OUT_OF_POOL_MEMORY"; break; }
+    case VK_ERROR_INVALID_EXTERNAL_HANDLE: { string = "VK_ERROR_INVALID_EXTERNAL_HANDLE"; break; }
+    case VK_ERROR_SURFACE_LOST_KHR: { string = "VK_ERROR_SURFACE_LOST_KHR"; break; }
+    case VK_ERROR_NATIVE_WINDOW_IN_USE_KHR: { string = "VK_ERROR_NATIVE_WINDOW_IN_USE_KHR"; break; }
+    case VK_SUBOPTIMAL_KHR: { string = "VK_SUBOPTIMAL_KHR"; break; }
+    case VK_ERROR_OUT_OF_DATE_KHR: { string = "VK_ERROR_OUT_OF_DATE_KHR"; break; }
+    case VK_ERROR_INCOMPATIBLE_DISPLAY_KHR: { string = "VK_ERROR_INCOMPATIBLE_DISPLAY_KHR"; break; }
+    case VK_ERROR_VALIDATION_FAILED_EXT: { string = "VK_ERROR_VALIDATION_FAILED_EXT"; break; }
+    case VK_ERROR_INVALID_SHADER_NV: { string = "VK_ERROR_INVALID_SHADER_NV"; break; }
+    case VK_ERROR_INVALID_DRM_FORMAT_MODIFIER_PLANE_LAYOUT_EXT: { string = "VK_ERROR_INVALID_DRM_FORMAT_MODIFIER_PLANE_LAYOUT_EXT"; break; }
+    case VK_ERROR_FRAGMENTATION_EXT: { string = "VK_ERROR_FRAGMENTATION_EXT"; break; }
+    case VK_ERROR_NOT_PERMITTED_EXT: { string = "VK_ERROR_NOT_PERMITTED_EXT"; break; }
+    case VK_ERROR_INVALID_DEVICE_ADDRESS_EXT: { string = "VK_ERROR_INVALID_DEVICE_ADDRESS_EXT"; break; }
+    case VK_ERROR_FULL_SCREEN_EXCLUSIVE_MODE_LOST_EXT: { string = "VK_ERROR_FULL_SCREEN_EXCLUSIVE_MODE_LOST_EXT"; break; }
 
     case VK_RESULT_RANGE_SIZE: { string = "VK_RESULT_RANGE_SIZE"; break; }
     case VK_RESULT_MAX_ENUM: { string = "VK_RESULT_MAX_ENUM"; break; }
@@ -316,6 +320,7 @@ bool BuildFramebuffersForSwapChain(
 const char* FormatToString(const VkFormat format)
 {
   const char *string = "<<Unknown Format>>";
+  // Recreate contents with: %s/\(VK_FORMAT.*\) = .*,$/case \1: { string = "\1"; break; }/
   switch (format) {
     case VK_FORMAT_UNDEFINED: { string = "VK_FORMAT_UNDEFINED"; break; }
     case VK_FORMAT_R4G4_UNORM_PACK8: { string = "VK_FORMAT_R4G4_UNORM_PACK8"; break; }
@@ -544,6 +549,20 @@ const char* FormatToString(const VkFormat format)
     case VK_FORMAT_PVRTC1_4BPP_SRGB_BLOCK_IMG: { string = "VK_FORMAT_PVRTC1_4BPP_SRGB_BLOCK_IMG"; break; }
     case VK_FORMAT_PVRTC2_2BPP_SRGB_BLOCK_IMG: { string = "VK_FORMAT_PVRTC2_2BPP_SRGB_BLOCK_IMG"; break; }
     case VK_FORMAT_PVRTC2_4BPP_SRGB_BLOCK_IMG: { string = "VK_FORMAT_PVRTC2_4BPP_SRGB_BLOCK_IMG"; break; }
+    case VK_FORMAT_ASTC_4x4_SFLOAT_BLOCK_EXT: { string = "VK_FORMAT_ASTC_4x4_SFLOAT_BLOCK_EXT"; break; }
+    case VK_FORMAT_ASTC_5x4_SFLOAT_BLOCK_EXT: { string = "VK_FORMAT_ASTC_5x4_SFLOAT_BLOCK_EXT"; break; }
+    case VK_FORMAT_ASTC_5x5_SFLOAT_BLOCK_EXT: { string = "VK_FORMAT_ASTC_5x5_SFLOAT_BLOCK_EXT"; break; }
+    case VK_FORMAT_ASTC_6x5_SFLOAT_BLOCK_EXT: { string = "VK_FORMAT_ASTC_6x5_SFLOAT_BLOCK_EXT"; break; }
+    case VK_FORMAT_ASTC_6x6_SFLOAT_BLOCK_EXT: { string = "VK_FORMAT_ASTC_6x6_SFLOAT_BLOCK_EXT"; break; }
+    case VK_FORMAT_ASTC_8x5_SFLOAT_BLOCK_EXT: { string = "VK_FORMAT_ASTC_8x5_SFLOAT_BLOCK_EXT"; break; }
+    case VK_FORMAT_ASTC_8x6_SFLOAT_BLOCK_EXT: { string = "VK_FORMAT_ASTC_8x6_SFLOAT_BLOCK_EXT"; break; }
+    case VK_FORMAT_ASTC_8x8_SFLOAT_BLOCK_EXT: { string = "VK_FORMAT_ASTC_8x8_SFLOAT_BLOCK_EXT"; break; }
+    case VK_FORMAT_ASTC_10x5_SFLOAT_BLOCK_EXT: { string = "VK_FORMAT_ASTC_10x5_SFLOAT_BLOCK_EXT"; break; }
+    case VK_FORMAT_ASTC_10x6_SFLOAT_BLOCK_EXT: { string = "VK_FORMAT_ASTC_10x6_SFLOAT_BLOCK_EXT"; break; }
+    case VK_FORMAT_ASTC_10x8_SFLOAT_BLOCK_EXT: { string = "VK_FORMAT_ASTC_10x8_SFLOAT_BLOCK_EXT"; break; }
+    case VK_FORMAT_ASTC_10x10_SFLOAT_BLOCK_EXT: { string = "VK_FORMAT_ASTC_10x10_SFLOAT_BLOCK_EXT"; break; }
+    case VK_FORMAT_ASTC_12x10_SFLOAT_BLOCK_EXT: { string = "VK_FORMAT_ASTC_12x10_SFLOAT_BLOCK_EXT"; break; }
+    case VK_FORMAT_ASTC_12x12_SFLOAT_BLOCK_EXT: { string = "VK_FORMAT_ASTC_12x12_SFLOAT_BLOCK_EXT"; break; }
 
     // Specials (not actually formats):
     case VK_FORMAT_RANGE_SIZE: { string = "VK_FORMAT_RANGE_SIZE"; break; }
@@ -556,11 +575,12 @@ const char* KHRColorspaceToString(const VkColorSpaceKHR space)
 {
   KRUST_ASSERT2(space <= VK_COLOR_SPACE_END_RANGE_KHR, "Out of range color space.");
   const char* string = "<<unkown colorspace>>";
+  // recreate cases below with: %s/\(VK_.*\) = .*,$/case \1: { string = "\1"; break; }/
   switch (space) {
     case VK_COLOR_SPACE_SRGB_NONLINEAR_KHR: { string = "VK_COLOR_SPACE_SRGB_NONLINEAR_KHR"; break; }
     case VK_COLOR_SPACE_DISPLAY_P3_NONLINEAR_EXT: { string = "VK_COLOR_SPACE_DISPLAY_P3_NONLINEAR_EXT"; break; }
     case VK_COLOR_SPACE_EXTENDED_SRGB_LINEAR_EXT: { string = "VK_COLOR_SPACE_EXTENDED_SRGB_LINEAR_EXT"; break; }
-    case VK_COLOR_SPACE_DCI_P3_LINEAR_EXT: { string = "VK_COLOR_SPACE_DCI_P3_LINEAR_EXT"; break; }
+    case VK_COLOR_SPACE_DISPLAY_P3_LINEAR_EXT: { string = "VK_COLOR_SPACE_DISPLAY_P3_LINEAR_EXT"; break; }
     case VK_COLOR_SPACE_DCI_P3_NONLINEAR_EXT: { string = "VK_COLOR_SPACE_DCI_P3_NONLINEAR_EXT"; break; }
     case VK_COLOR_SPACE_BT709_LINEAR_EXT: { string = "VK_COLOR_SPACE_BT709_LINEAR_EXT"; break; }
     case VK_COLOR_SPACE_BT709_NONLINEAR_EXT: { string = "VK_COLOR_SPACE_BT709_NONLINEAR_EXT"; break; }
@@ -572,6 +592,8 @@ const char* KHRColorspaceToString(const VkColorSpaceKHR space)
     case VK_COLOR_SPACE_ADOBERGB_NONLINEAR_EXT: { string = "VK_COLOR_SPACE_ADOBERGB_NONLINEAR_EXT"; break; }
     case VK_COLOR_SPACE_PASS_THROUGH_EXT: { string = "VK_COLOR_SPACE_PASS_THROUGH_EXT"; break; }
     case VK_COLOR_SPACE_EXTENDED_SRGB_NONLINEAR_EXT: { string = "VK_COLOR_SPACE_EXTENDED_SRGB_NONLINEAR_EXT"; break; }
+    case VK_COLOR_SPACE_DISPLAY_NATIVE_AMD: { string = "VK_COLOR_SPACE_DISPLAY_NATIVE_AMD"; break; }
+
     case VK_COLOR_SPACE_RANGE_SIZE_KHR: {string = "<<invalid: VK_COLORSPACE_RANGE_SIZE>>"; break; };
     case VK_COLOR_SPACE_MAX_ENUM_KHR: {string = "<<invalid: VK_COLORSPACE_MAX_ENUM>>"; break; };
   }
