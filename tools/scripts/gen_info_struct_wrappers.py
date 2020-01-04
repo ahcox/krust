@@ -1,101 +1,143 @@
-# Copyright (c) Andrew Helge Cox 2016.
+# Copyright (c) Andrew Helge Cox 2016-2019.
 # All rights reserved worldwide.
 #
-# Parse the vulkan XML specifiction using the standard Python APIs to generate
+# Parse the vulkan XML specifiction using Python XML APIs to generate
 # a file of C++ functions to initialize standard Vulkan API structs.
 #
 # Usage, from project root:
 # 
-#     wget https://raw.githubusercontent.com/KhronosGroup/Vulkan-Docs/1.0/src/spec/vk.xml
+#     wget https://github.com/KhronosGroup/Vulkan-Docs/raw/master/xml/vk.xml
 #     python3 tools/scripts/gen_info_struct_wrappers.py > krust/public-api/vulkan_struct_init.h
 # 
 # The API used:
-# https://docs.python.org/2/library/xml.etree.elementtree.html#elementtree-objects
+# https://docs.python.org/3/library/xml.etree.elementtree.html
 #
 
 import xml.etree.ElementTree
 import re
 
 path_to_spec='./vk.xml'
+
+# Structures to not generate for:
 IGNORED_STRUCTS = {
-  'VkPhysicalDeviceProperties': True,
-  'VkPhysicalDeviceFeatures': True,
-  'VkPhysicalDeviceSparseProperties': True,
-  'VkPhysicalDeviceLimits': True,
-  'VkDisplayPropertiesKHR': True,
-  'VkDisplayPlanePropertiesKHR': True,
-  'VkDisplayModePropertiesKHR': True,
-  'VkDisplayPlaneCapabilitiesKHR': True,
-  'VkSurfaceCapabilitiesKHR': True,
-  'VkSurfaceFormatKHR': True,
-  'VkExtensionProperties': True, # Long char array
-  'VkLayerProperties': True, # Long char arrays
-  'VkPhysicalDeviceMemoryProperties': True # Long int arrays
+  'VkBaseInStructure': True,  # < Because we never make one: it is an "abstract base class".
+  'VkBaseOutStructure': True, # < Because we never make one: it is an "abstract base class".
+  'VkPhysicalDeviceFeatures': True,           # < Because it is big and we will typically query the implementation, change a few fields, and send back the diff.
 }
+
+# Structures to not generate the longer function with parameters for:
+IGNORED_STRUCTS_ALL_PARAMS = {
+  'VkSubpassEndInfoKHR' : True,         # Holds no data so the params init function version duplicates the simple one.
+  'VkPhysicalDeviceProperties2': True,  # < Because it is big and we will typically query the implementation, change a few fields, and send back the diff
+  'VkPhysicalDeviceDescriptorIndexingFeaturesEXT': True,
+}
+
+ARRAY_LEN = "array_len"
 
 root = xml.etree.ElementTree.parse(path_to_spec).getroot()
 
+# Print to standard error for printf debugging.
+import sys
+def eprint(*args, **kwargs):
+    print(*args, file=sys.stderr, **kwargs)
 
 # Convert a structure name into the ALL_UPPER code for it:
+# The RE is fragile and may require updating with new spec versions.
+structNameSplitter = re.compile('(ID|8Bit|16Bit|Float16|Int8|Int64|Uint8|[1-9][1-9]*|[A-Z][a-z]+|[A-Z][^A-Z\d]+|[A-Z][A-Z]+)')
 def StructToCode(name):
-    #pieces = re.findall('[A-Z][^A-Z]*', name)
     name = name[2:len(name)] # Nibble off Vk prefix.
-    pieces = re.findall('([A-Z][A-Z]+|[A-Z][^A-Z]+)', name)
+    pieces = structNameSplitter.findall(name)
     code = "VK_STRUCTURE_TYPE_"
+   
     for piece in pieces:
         upper = piece.upper()
         code = code + upper + "_"
     code = code[0:-1]
+
     # Fixup any special cases that violate the general convention:
     if code == 'VK_STRUCTURE_TYPE_DEBUG_REPORT_CALLBACK_CREATE_INFO_EXT':
-        code = 'VK_STRUCTURE_TYPE_DEBUG_REPORT_CREATE_INFO_EXT'
+      code = 'VK_STRUCTURE_TYPE_DEBUG_REPORT_CREATE_INFO_EXT'
+    elif code == 'VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_WS_STATE_CREATE_INFO_NV':
+      code = 'VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_W_SCALING_STATE_CREATE_INFO_NV'
+    elif code == 'VK_STRUCTURE_TYPE_TEXTURE_LODG_FORMAT_PROPERTIES_AMD':
+      code = 'VK_STRUCTURE_TYPE_TEXTURE_LOD_GATHER_FORMAT_PROPERTIES_AMD'
+    elif code == 'VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PCIB_INFO_PROPERTIES_EXT':
+      code = 'VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PCI_BUS_INFO_PROPERTIES_EXT'
+    elif code == 'VK_STRUCTURE_TYPE_IMAGE_VIEW_ASTCD_MODE_EXT':
+      code = 'VK_STRUCTURE_TYPE_IMAGE_VIEW_ASTC_DECODE_MODE_EXT'
+    elif code == 'VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ASTCD_FEATURES_EXT':
+      code = 'VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ASTC_DECODE_FEATURES_EXT'
+    elif code == 'VK_STRUCTURE_TYPE_GEOMETRY_AABBNV':
+      code = 'VK_STRUCTURE_TYPE_GEOMETRY_AABB_NV'
+    elif code == 'VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TEXTURE_COMPRESSION_ASTCHDRF_EXT':
+      code = 'VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TEXTURE_COMPRESSION_ASTC_HDR_FEATURES_EXT'
+    elif code == 'VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_SMB_PROPERTIES_NV':
+      code = 'VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_SM_BUILTINS_PROPERTIES_NV'
+    elif code == 'VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_SMB_FEATURES_NV':
+      code = 'VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_SM_BUILTINS_FEATURES_NV'
+
     return code
 
-# Adjust types using clues in type and variable name since XML is not
-# well-formed and has parts of some types outside the type tag in free
-# text:
-def FixType(inType, name):
-  outType = inType
-  if len(name) > 1:
-    if (inType == 'char') & (name[0] == 'p') & (name[1] == 'p'):
-      outType = 'const char * const *'
-    elif (inType == 'char') & (name[0] == 'p'):
-      outType = 'const char *'
-    elif (name == 'pResults') | (name == 'pUserData'):
-      outType = inType + ' *'
-    elif (name[0] == 'p') & ('*' not in inType) & (name[1:2].isupper()):
-      outType = 'const ' + inType + ' *'
-  return outType
-
-# Adjust names with array dimensions:
-def AppendArrayToName(name):
-  outName = name
-  if name == 'blendConstants':
-    outName = name + '[4]'
-  return outName
-
-
 # Capture the info we need out of the DOM:
+arrayCapture  = re.compile(r"\s*\[(\d+)\]\s*");
+nonWhitespace = re.compile(r"[^\s]")
+constKeyword  = re.compile(r"\bconst\b")
+structs = []           # < For reach struct we generate wrappers for, the data captured from the xml tree to let us generate the wrapper for it.
+platform_to_macro = {} # < For each plaform, the associated macro for ifdefs
+type_macros = {}       # < For each type the macro which ifdefs its use, else None.
 
-structs = []
+# Find all the platforms so we can use the macros defined in here for ifdefing
+# rather than hard-coding them:
+platforms = root.find('platforms')
+for platform in platforms.findall('platform'):
+  name = platform.get('name')
+  protect = platform.get('protect')
+  platform_to_macro[name] = protect
 
+# Find all the extensions which are platform-specific so we can wrap their
+# struct creation functions in platform macro ifdefs:
+extensions = root.find('extensions')
+for extension in extensions.findall('extension'):
+  platform = extension.get('platform')
+  if(platform != None):
+    for atype in extension.iter('type'):
+      type_name = atype.get('name')
+      type_macros[type_name] = platform_to_macro[platform]
+
+# Grab the structs we want to wrap:
 for atype in root.iter('type'):
     name = atype.get('name')
     if (atype.get('category') == 'struct') & (name != None):
-      if name not in IGNORED_STRUCTS:
-        #print(name)
-        #if (name.find('CreateInfo') > -1): 
-        #print(atype.tag, name, "attrib:", atype.attrib, "category:", atype.get('category')) # , "text:", atype.text, "tail:", atype.tail)
+      if (name not in IGNORED_STRUCTS) and (atype.get('alias') == None) and (atype.get('returnedonly') != 'true'):
         members = []
         member_names = {}
         for amember in atype.findall('member'):
             member = {}
-            #print("\t", amember.tag, amember.attrib)# , amember.text, amember.tail)
             for aelem in list(amember):
-                #print("\t\t", aelem.tag, aelem.text)
-                member[aelem.tag] = aelem.text
-                if(aelem.tag == 'name'):
+                member[aelem.tag] = aelem.text # < this includes name and type nested elements
+                if(aelem.tag == 'type'):
+                  # Add const to front of type if it is floating in member text:
+                  if(amember.text != None):
+                    if(constKeyword.search(amember.text) != None):
+                      member[aelem.tag] = "const " + member[aelem.tag]
+
+                  if (aelem.tail != None):
+                    if (nonWhitespace.search(aelem.tail) != None):
+                      type_suffix = aelem.tail.strip()
+                      member[aelem.tag] += type_suffix
+                elif(aelem.tag == 'name'):
                     member_names[aelem.text] = True
+                    # Look for and array size in the tail text of this name element inside the member element:
+                    if(aelem.tail != None):
+                      array_size_enum = amember.find('enum')
+                      if(array_size_enum == None):
+                        m = arrayCapture.search(aelem.tail);
+                        if(m != None):
+                          member[ARRAY_LEN] = int(m.group(1))
+                      else:
+                        member[ARRAY_LEN] = array_size_enum.text
+                        #eprint(name, "member", aelem.text, "array size =", array_size_enum.text)
+                    
             members.append(member)
         #print(members)
         struct = {}
@@ -108,13 +150,15 @@ for atype in root.iter('type'):
         else:
           struct['tagged'] = False
         structs.append(struct)
+      #else:
+        #eprint("Ignoring", name, ", alias", atype.get('alias'))
   
-# Free memory ASAP:
+# Free memory of the DOM ASAP:
 root = None
 
 # Big strings to include in generated code:
 
-COPYRIGHT = '''// Copyright (c) 2016 Andrew Helge Cox
+COPYRIGHT = '''// Copyright (c) 2016-2020 Andrew Helge Cox
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -267,33 +311,26 @@ FILE_BOTTOM = '''///@}
 # Don't forget to print the #endif after the function too.
 def PrintPlatformIfdef(name):
     ifdefed = False
-    if name == 'VkAndroidSurfaceCreateInfoKHR':
-        ifdefed = True
-        print("#ifdef VK_USE_PLATFORM_ANDROID_KHR")
-    if name == 'VkMirSurfaceCreateInfoKHR':
-        ifdefed = True
-        print("#ifdef VK_USE_PLATFORM_MIR_KHR")
-    if name == 'VkWaylandSurfaceCreateInfoKHR':
-        ifdefed = True
-        print("#ifdef VK_USE_PLATFORM_WAYLAND_KHR")
-    if name == 'VkWin32SurfaceCreateInfoKHR':
-        ifdefed = True
-        print("#ifdef VK_USE_PLATFORM_WIN32_KHR")
-    if name == 'VkXlibSurfaceCreateInfoKHR':
-        ifdefed = True
-        print("#ifdef VK_USE_PLATFORM_XLIB_KHR")
-    if name == 'VkXcbSurfaceCreateInfoKHR':
-        ifdefed = True
-        print("#ifdef VK_USE_PLATFORM_XCB_KHR")
+    platform_macro = type_macros.get(name)
+    if platform_macro != None:
+      ifdefed = True
+      print("#ifdef ", platform_macro)
     return ifdefed
 
 def PrintParameterList(members):
     parameter_list = ""
     for member in members:
         member_name = member['name']
-        member_type = FixType(member['type'], member_name);
+        member_type = member['type']
+        
         if (member_name != "sType") & (member_name != "pNext"):
-          parameter_list += "  " + member_type + " " + AppendArrayToName(member_name) + ",\n"
+          member_array_len = None
+          if ARRAY_LEN in member:
+            member_array_len = member[ARRAY_LEN]
+          parameter_list += "  " + member_type + " " + member_name
+          if member_array_len != None:
+            parameter_list += "[" + str(member_array_len) + "]"
+          parameter_list += ",\n"
     # Trim training "," and newline:
     if len(parameter_list) > 0:
         parameter_list = parameter_list[0:len(parameter_list) - 2]
@@ -304,12 +341,14 @@ def PrintMemberAssignments(local, members):
     for member in members:
         member_name = member['name']
         member_type = member['type'];
+        
         if (member_name != "sType") & (member_name != "pNext"):
-          array_name = AppendArrayToName(member_name)
-          if array_name != member_name:
-            array_len = int(array_name[len(array_name) - 2: len(array_name) - 1])
-            for i in range(0, array_len):
-              assignments += "  " + local + "." + member_name + "[" + str(i) + "] = " + member_name + "[" + str(i) + "]" + ";\n"
+          member_array_len = None
+          if ARRAY_LEN in member:
+            member_array_len = member[ARRAY_LEN]
+          if member_array_len != None:
+            assignments += "  for(size_t i = 0; i < " + str(member_array_len) + "; ++i){\n"
+            assignments += "    " + local + "." + member_name + "[i] = " + member_name + "[i];\n  }\n"
           else:
             assignments += "  " + local + "." + member_name + " = " + member_name + ";\n"
     print(assignments)
@@ -319,7 +358,6 @@ print(FILE_TOP)
 
 # Generate the simple wrappers for tagged sructs that save the user from sType
 # and pNext init:
-#print(structs)
 print(SIMPLE_TOP)
 if 1 == 1:
   for struct in structs:
@@ -349,6 +387,8 @@ for struct in structs:
     if struct['tagged'] != True:
       continue;
     name = struct['name']
+    if name in IGNORED_STRUCTS_ALL_PARAMS:
+      continue
     funcName = name[2:len(name)]
     # generate platform-specific ifdefs if required:
     ifdefed = PrintPlatformIfdef(name)
@@ -358,12 +398,12 @@ for struct in structs:
     PrintParameterList(members)
     print(")")
     print("{")
-    print("  " + name, "info;")
-    print("  info.sType =", struct['STRUCT_TYPE'] + ";")
-    print("  info.pNext = nullptr;")
+    print("  " + name, "temp;")
+    print("  temp.sType =", struct['STRUCT_TYPE'] + ";")
+    print("  temp.pNext = nullptr;")
     # Generate member initialisations:
-    PrintMemberAssignments("info", members)
-    print("  return info;")
+    PrintMemberAssignments("temp", members)
+    print("  return temp;")
     print("}")
     if ifdefed:
         print('#endif')
@@ -380,10 +420,10 @@ if 1 == 1:
       if name == "VkRect3D":
         continue
       funcName = name[2:len(name)]
+      # generate platform-specific ifdefs if required:
+      ifdefed = PrintPlatformIfdef(name)
       print("inline " + name, funcName + "(")
       members = struct['members']
-      #print(struct)
-      #print(members)
       PrintParameterList(members)
       print(")")
       print("{")
@@ -391,7 +431,8 @@ if 1 == 1:
       PrintMemberAssignments("temp", members)
       print("  return temp;")
       print("}")
+      if ifdefed:
+        print('#endif')
       print("")
 
 print(FILE_BOTTOM)
-

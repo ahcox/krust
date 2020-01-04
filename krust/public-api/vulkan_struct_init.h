@@ -1,7 +1,7 @@
 #ifndef KRUST_STRUCT_INIT_H_INCLUDED_E26EF
 #define KRUST_STRUCT_INIT_H_INCLUDED_E26EF
 
-// Copyright (c) 2016 Andrew Helge Cox
+// Copyright (c) 2016-2020 Andrew Helge Cox
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -474,7 +474,7 @@ inline VkDisplayPresentInfoKHR DisplayPresentInfoKHR()
   return info;
 }
 
-#ifdef VK_USE_PLATFORM_ANDROID_KHR
+#ifdef  VK_USE_PLATFORM_ANDROID_KHR
 inline VkAndroidSurfaceCreateInfoKHR AndroidSurfaceCreateInfoKHR()
 {
   VkAndroidSurfaceCreateInfoKHR info;
@@ -484,17 +484,17 @@ inline VkAndroidSurfaceCreateInfoKHR AndroidSurfaceCreateInfoKHR()
 }
 #endif
 
-#ifdef VK_USE_PLATFORM_MIR_KHR
-inline VkMirSurfaceCreateInfoKHR MirSurfaceCreateInfoKHR()
+#ifdef  VK_USE_PLATFORM_VI_NN
+inline VkViSurfaceCreateInfoNN ViSurfaceCreateInfoNN()
 {
-  VkMirSurfaceCreateInfoKHR info;
-  info.sType = VK_STRUCTURE_TYPE_MIR_SURFACE_CREATE_INFO_KHR;
+  VkViSurfaceCreateInfoNN info;
+  info.sType = VK_STRUCTURE_TYPE_VI_SURFACE_CREATE_INFO_NN;
   info.pNext = nullptr;
   return info;
 }
 #endif
 
-#ifdef VK_USE_PLATFORM_WAYLAND_KHR
+#ifdef  VK_USE_PLATFORM_WAYLAND_KHR
 inline VkWaylandSurfaceCreateInfoKHR WaylandSurfaceCreateInfoKHR()
 {
   VkWaylandSurfaceCreateInfoKHR info;
@@ -504,17 +504,17 @@ inline VkWaylandSurfaceCreateInfoKHR WaylandSurfaceCreateInfoKHR()
 }
 #endif
 
-#ifdef VK_USE_PLATFORM_WIN32_KHR
+#ifdef  VK_USE_PLATFORM_WIN32_KHR
 inline VkWin32SurfaceCreateInfoKHR Win32SurfaceCreateInfoKHR()
 {
   VkWin32SurfaceCreateInfoKHR info;
-  info.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
+  info.sType = VK_STRUCTURE_TYPE_WIN_32_SURFACE_CREATE_INFO_KHR;
   info.pNext = nullptr;
   return info;
 }
 #endif
 
-#ifdef VK_USE_PLATFORM_XLIB_KHR
+#ifdef  VK_USE_PLATFORM_XLIB_KHR
 inline VkXlibSurfaceCreateInfoKHR XlibSurfaceCreateInfoKHR()
 {
   VkXlibSurfaceCreateInfoKHR info;
@@ -524,11 +524,31 @@ inline VkXlibSurfaceCreateInfoKHR XlibSurfaceCreateInfoKHR()
 }
 #endif
 
-#ifdef VK_USE_PLATFORM_XCB_KHR
+#ifdef  VK_USE_PLATFORM_XCB_KHR
 inline VkXcbSurfaceCreateInfoKHR XcbSurfaceCreateInfoKHR()
 {
   VkXcbSurfaceCreateInfoKHR info;
   info.sType = VK_STRUCTURE_TYPE_XCB_SURFACE_CREATE_INFO_KHR;
+  info.pNext = nullptr;
+  return info;
+}
+#endif
+
+#ifdef  VK_USE_PLATFORM_FUCHSIA
+inline VkImagePipeSurfaceCreateInfoFUCHSIA ImagePipeSurfaceCreateInfoFUCHSIA()
+{
+  VkImagePipeSurfaceCreateInfoFUCHSIA info;
+  info.sType = VK_STRUCTURE_TYPE_IMAGE_PIPE_SURFACE_CREATE_INFO_FUCHSIA;
+  info.pNext = nullptr;
+  return info;
+}
+#endif
+
+#ifdef  VK_USE_PLATFORM_GGP
+inline VkStreamDescriptorSurfaceCreateInfoGGP StreamDescriptorSurfaceCreateInfoGGP()
+{
+  VkStreamDescriptorSurfaceCreateInfoGGP info;
+  info.sType = VK_STRUCTURE_TYPE_STREAM_DESCRIPTOR_SURFACE_CREATE_INFO_GGP;
   info.pNext = nullptr;
   return info;
 }
@@ -554,6 +574,2060 @@ inline VkDebugReportCallbackCreateInfoEXT DebugReportCallbackCreateInfoEXT()
 {
   VkDebugReportCallbackCreateInfoEXT info;
   info.sType = VK_STRUCTURE_TYPE_DEBUG_REPORT_CREATE_INFO_EXT;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkValidationFlagsEXT ValidationFlagsEXT()
+{
+  VkValidationFlagsEXT info;
+  info.sType = VK_STRUCTURE_TYPE_VALIDATION_FLAGS_EXT;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkValidationFeaturesEXT ValidationFeaturesEXT()
+{
+  VkValidationFeaturesEXT info;
+  info.sType = VK_STRUCTURE_TYPE_VALIDATION_FEATURES_EXT;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkPipelineRasterizationStateRasterizationOrderAMD PipelineRasterizationStateRasterizationOrderAMD()
+{
+  VkPipelineRasterizationStateRasterizationOrderAMD info;
+  info.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_RASTERIZATION_ORDER_AMD;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkDebugMarkerObjectNameInfoEXT DebugMarkerObjectNameInfoEXT()
+{
+  VkDebugMarkerObjectNameInfoEXT info;
+  info.sType = VK_STRUCTURE_TYPE_DEBUG_MARKER_OBJECT_NAME_INFO_EXT;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkDebugMarkerObjectTagInfoEXT DebugMarkerObjectTagInfoEXT()
+{
+  VkDebugMarkerObjectTagInfoEXT info;
+  info.sType = VK_STRUCTURE_TYPE_DEBUG_MARKER_OBJECT_TAG_INFO_EXT;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkDebugMarkerMarkerInfoEXT DebugMarkerMarkerInfoEXT()
+{
+  VkDebugMarkerMarkerInfoEXT info;
+  info.sType = VK_STRUCTURE_TYPE_DEBUG_MARKER_MARKER_INFO_EXT;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkDedicatedAllocationImageCreateInfoNV DedicatedAllocationImageCreateInfoNV()
+{
+  VkDedicatedAllocationImageCreateInfoNV info;
+  info.sType = VK_STRUCTURE_TYPE_DEDICATED_ALLOCATION_IMAGE_CREATE_INFO_NV;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkDedicatedAllocationBufferCreateInfoNV DedicatedAllocationBufferCreateInfoNV()
+{
+  VkDedicatedAllocationBufferCreateInfoNV info;
+  info.sType = VK_STRUCTURE_TYPE_DEDICATED_ALLOCATION_BUFFER_CREATE_INFO_NV;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkDedicatedAllocationMemoryAllocateInfoNV DedicatedAllocationMemoryAllocateInfoNV()
+{
+  VkDedicatedAllocationMemoryAllocateInfoNV info;
+  info.sType = VK_STRUCTURE_TYPE_DEDICATED_ALLOCATION_MEMORY_ALLOCATE_INFO_NV;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkExternalMemoryImageCreateInfoNV ExternalMemoryImageCreateInfoNV()
+{
+  VkExternalMemoryImageCreateInfoNV info;
+  info.sType = VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_IMAGE_CREATE_INFO_NV;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkExportMemoryAllocateInfoNV ExportMemoryAllocateInfoNV()
+{
+  VkExportMemoryAllocateInfoNV info;
+  info.sType = VK_STRUCTURE_TYPE_EXPORT_MEMORY_ALLOCATE_INFO_NV;
+  info.pNext = nullptr;
+  return info;
+}
+
+#ifdef  VK_USE_PLATFORM_WIN32_KHR
+inline VkImportMemoryWin32HandleInfoNV ImportMemoryWin32HandleInfoNV()
+{
+  VkImportMemoryWin32HandleInfoNV info;
+  info.sType = VK_STRUCTURE_TYPE_IMPORT_MEMORY_WIN_32_HANDLE_INFO_NV;
+  info.pNext = nullptr;
+  return info;
+}
+#endif
+
+#ifdef  VK_USE_PLATFORM_WIN32_KHR
+inline VkExportMemoryWin32HandleInfoNV ExportMemoryWin32HandleInfoNV()
+{
+  VkExportMemoryWin32HandleInfoNV info;
+  info.sType = VK_STRUCTURE_TYPE_EXPORT_MEMORY_WIN_32_HANDLE_INFO_NV;
+  info.pNext = nullptr;
+  return info;
+}
+#endif
+
+#ifdef  VK_USE_PLATFORM_WIN32_KHR
+inline VkWin32KeyedMutexAcquireReleaseInfoNV Win32KeyedMutexAcquireReleaseInfoNV()
+{
+  VkWin32KeyedMutexAcquireReleaseInfoNV info;
+  info.sType = VK_STRUCTURE_TYPE_WIN_32_KEYED_MUTEX_ACQUIRE_RELEASE_INFO_NV;
+  info.pNext = nullptr;
+  return info;
+}
+#endif
+
+inline VkDeviceGeneratedCommandsFeaturesNVX DeviceGeneratedCommandsFeaturesNVX()
+{
+  VkDeviceGeneratedCommandsFeaturesNVX info;
+  info.sType = VK_STRUCTURE_TYPE_DEVICE_GENERATED_COMMANDS_FEATURES_NVX;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkDeviceGeneratedCommandsLimitsNVX DeviceGeneratedCommandsLimitsNVX()
+{
+  VkDeviceGeneratedCommandsLimitsNVX info;
+  info.sType = VK_STRUCTURE_TYPE_DEVICE_GENERATED_COMMANDS_LIMITS_NVX;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkIndirectCommandsLayoutCreateInfoNVX IndirectCommandsLayoutCreateInfoNVX()
+{
+  VkIndirectCommandsLayoutCreateInfoNVX info;
+  info.sType = VK_STRUCTURE_TYPE_INDIRECT_COMMANDS_LAYOUT_CREATE_INFO_NVX;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkCmdProcessCommandsInfoNVX CmdProcessCommandsInfoNVX()
+{
+  VkCmdProcessCommandsInfoNVX info;
+  info.sType = VK_STRUCTURE_TYPE_CMD_PROCESS_COMMANDS_INFO_NVX;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkCmdReserveSpaceForCommandsInfoNVX CmdReserveSpaceForCommandsInfoNVX()
+{
+  VkCmdReserveSpaceForCommandsInfoNVX info;
+  info.sType = VK_STRUCTURE_TYPE_CMD_RESERVE_SPACE_FOR_COMMANDS_INFO_NVX;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkObjectTableCreateInfoNVX ObjectTableCreateInfoNVX()
+{
+  VkObjectTableCreateInfoNVX info;
+  info.sType = VK_STRUCTURE_TYPE_OBJECT_TABLE_CREATE_INFO_NVX;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkPhysicalDeviceFeatures2 PhysicalDeviceFeatures2()
+{
+  VkPhysicalDeviceFeatures2 info;
+  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkPhysicalDeviceImageFormatInfo2 PhysicalDeviceImageFormatInfo2()
+{
+  VkPhysicalDeviceImageFormatInfo2 info;
+  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_FORMAT_INFO_2;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkPhysicalDeviceSparseImageFormatInfo2 PhysicalDeviceSparseImageFormatInfo2()
+{
+  VkPhysicalDeviceSparseImageFormatInfo2 info;
+  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SPARSE_IMAGE_FORMAT_INFO_2;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkPresentRegionsKHR PresentRegionsKHR()
+{
+  VkPresentRegionsKHR info;
+  info.sType = VK_STRUCTURE_TYPE_PRESENT_REGIONS_KHR;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkPhysicalDeviceVariablePointersFeatures PhysicalDeviceVariablePointersFeatures()
+{
+  VkPhysicalDeviceVariablePointersFeatures info;
+  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VARIABLE_POINTERS_FEATURES;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkPhysicalDeviceExternalImageFormatInfo PhysicalDeviceExternalImageFormatInfo()
+{
+  VkPhysicalDeviceExternalImageFormatInfo info;
+  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_IMAGE_FORMAT_INFO;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkPhysicalDeviceExternalBufferInfo PhysicalDeviceExternalBufferInfo()
+{
+  VkPhysicalDeviceExternalBufferInfo info;
+  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_BUFFER_INFO;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkExternalMemoryImageCreateInfo ExternalMemoryImageCreateInfo()
+{
+  VkExternalMemoryImageCreateInfo info;
+  info.sType = VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_IMAGE_CREATE_INFO;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkExternalMemoryBufferCreateInfo ExternalMemoryBufferCreateInfo()
+{
+  VkExternalMemoryBufferCreateInfo info;
+  info.sType = VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_BUFFER_CREATE_INFO;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkExportMemoryAllocateInfo ExportMemoryAllocateInfo()
+{
+  VkExportMemoryAllocateInfo info;
+  info.sType = VK_STRUCTURE_TYPE_EXPORT_MEMORY_ALLOCATE_INFO;
+  info.pNext = nullptr;
+  return info;
+}
+
+#ifdef  VK_USE_PLATFORM_WIN32_KHR
+inline VkImportMemoryWin32HandleInfoKHR ImportMemoryWin32HandleInfoKHR()
+{
+  VkImportMemoryWin32HandleInfoKHR info;
+  info.sType = VK_STRUCTURE_TYPE_IMPORT_MEMORY_WIN_32_HANDLE_INFO_KHR;
+  info.pNext = nullptr;
+  return info;
+}
+#endif
+
+#ifdef  VK_USE_PLATFORM_WIN32_KHR
+inline VkExportMemoryWin32HandleInfoKHR ExportMemoryWin32HandleInfoKHR()
+{
+  VkExportMemoryWin32HandleInfoKHR info;
+  info.sType = VK_STRUCTURE_TYPE_EXPORT_MEMORY_WIN_32_HANDLE_INFO_KHR;
+  info.pNext = nullptr;
+  return info;
+}
+#endif
+
+#ifdef  VK_USE_PLATFORM_WIN32_KHR
+inline VkMemoryGetWin32HandleInfoKHR MemoryGetWin32HandleInfoKHR()
+{
+  VkMemoryGetWin32HandleInfoKHR info;
+  info.sType = VK_STRUCTURE_TYPE_MEMORY_GET_WIN_32_HANDLE_INFO_KHR;
+  info.pNext = nullptr;
+  return info;
+}
+#endif
+
+inline VkImportMemoryFdInfoKHR ImportMemoryFdInfoKHR()
+{
+  VkImportMemoryFdInfoKHR info;
+  info.sType = VK_STRUCTURE_TYPE_IMPORT_MEMORY_FD_INFO_KHR;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkMemoryGetFdInfoKHR MemoryGetFdInfoKHR()
+{
+  VkMemoryGetFdInfoKHR info;
+  info.sType = VK_STRUCTURE_TYPE_MEMORY_GET_FD_INFO_KHR;
+  info.pNext = nullptr;
+  return info;
+}
+
+#ifdef  VK_USE_PLATFORM_WIN32_KHR
+inline VkWin32KeyedMutexAcquireReleaseInfoKHR Win32KeyedMutexAcquireReleaseInfoKHR()
+{
+  VkWin32KeyedMutexAcquireReleaseInfoKHR info;
+  info.sType = VK_STRUCTURE_TYPE_WIN_32_KEYED_MUTEX_ACQUIRE_RELEASE_INFO_KHR;
+  info.pNext = nullptr;
+  return info;
+}
+#endif
+
+inline VkPhysicalDeviceExternalSemaphoreInfo PhysicalDeviceExternalSemaphoreInfo()
+{
+  VkPhysicalDeviceExternalSemaphoreInfo info;
+  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_SEMAPHORE_INFO;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkExportSemaphoreCreateInfo ExportSemaphoreCreateInfo()
+{
+  VkExportSemaphoreCreateInfo info;
+  info.sType = VK_STRUCTURE_TYPE_EXPORT_SEMAPHORE_CREATE_INFO;
+  info.pNext = nullptr;
+  return info;
+}
+
+#ifdef  VK_USE_PLATFORM_WIN32_KHR
+inline VkImportSemaphoreWin32HandleInfoKHR ImportSemaphoreWin32HandleInfoKHR()
+{
+  VkImportSemaphoreWin32HandleInfoKHR info;
+  info.sType = VK_STRUCTURE_TYPE_IMPORT_SEMAPHORE_WIN_32_HANDLE_INFO_KHR;
+  info.pNext = nullptr;
+  return info;
+}
+#endif
+
+#ifdef  VK_USE_PLATFORM_WIN32_KHR
+inline VkExportSemaphoreWin32HandleInfoKHR ExportSemaphoreWin32HandleInfoKHR()
+{
+  VkExportSemaphoreWin32HandleInfoKHR info;
+  info.sType = VK_STRUCTURE_TYPE_EXPORT_SEMAPHORE_WIN_32_HANDLE_INFO_KHR;
+  info.pNext = nullptr;
+  return info;
+}
+#endif
+
+#ifdef  VK_USE_PLATFORM_WIN32_KHR
+inline VkD3D12FenceSubmitInfoKHR D3D12FenceSubmitInfoKHR()
+{
+  VkD3D12FenceSubmitInfoKHR info;
+  info.sType = VK_STRUCTURE_TYPE_3_12_FENCE_SUBMIT_INFO_KHR;
+  info.pNext = nullptr;
+  return info;
+}
+#endif
+
+#ifdef  VK_USE_PLATFORM_WIN32_KHR
+inline VkSemaphoreGetWin32HandleInfoKHR SemaphoreGetWin32HandleInfoKHR()
+{
+  VkSemaphoreGetWin32HandleInfoKHR info;
+  info.sType = VK_STRUCTURE_TYPE_SEMAPHORE_GET_WIN_32_HANDLE_INFO_KHR;
+  info.pNext = nullptr;
+  return info;
+}
+#endif
+
+inline VkImportSemaphoreFdInfoKHR ImportSemaphoreFdInfoKHR()
+{
+  VkImportSemaphoreFdInfoKHR info;
+  info.sType = VK_STRUCTURE_TYPE_IMPORT_SEMAPHORE_FD_INFO_KHR;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkSemaphoreGetFdInfoKHR SemaphoreGetFdInfoKHR()
+{
+  VkSemaphoreGetFdInfoKHR info;
+  info.sType = VK_STRUCTURE_TYPE_SEMAPHORE_GET_FD_INFO_KHR;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkPhysicalDeviceExternalFenceInfo PhysicalDeviceExternalFenceInfo()
+{
+  VkPhysicalDeviceExternalFenceInfo info;
+  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_FENCE_INFO;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkExportFenceCreateInfo ExportFenceCreateInfo()
+{
+  VkExportFenceCreateInfo info;
+  info.sType = VK_STRUCTURE_TYPE_EXPORT_FENCE_CREATE_INFO;
+  info.pNext = nullptr;
+  return info;
+}
+
+#ifdef  VK_USE_PLATFORM_WIN32_KHR
+inline VkImportFenceWin32HandleInfoKHR ImportFenceWin32HandleInfoKHR()
+{
+  VkImportFenceWin32HandleInfoKHR info;
+  info.sType = VK_STRUCTURE_TYPE_IMPORT_FENCE_WIN_32_HANDLE_INFO_KHR;
+  info.pNext = nullptr;
+  return info;
+}
+#endif
+
+#ifdef  VK_USE_PLATFORM_WIN32_KHR
+inline VkExportFenceWin32HandleInfoKHR ExportFenceWin32HandleInfoKHR()
+{
+  VkExportFenceWin32HandleInfoKHR info;
+  info.sType = VK_STRUCTURE_TYPE_EXPORT_FENCE_WIN_32_HANDLE_INFO_KHR;
+  info.pNext = nullptr;
+  return info;
+}
+#endif
+
+#ifdef  VK_USE_PLATFORM_WIN32_KHR
+inline VkFenceGetWin32HandleInfoKHR FenceGetWin32HandleInfoKHR()
+{
+  VkFenceGetWin32HandleInfoKHR info;
+  info.sType = VK_STRUCTURE_TYPE_FENCE_GET_WIN_32_HANDLE_INFO_KHR;
+  info.pNext = nullptr;
+  return info;
+}
+#endif
+
+inline VkImportFenceFdInfoKHR ImportFenceFdInfoKHR()
+{
+  VkImportFenceFdInfoKHR info;
+  info.sType = VK_STRUCTURE_TYPE_IMPORT_FENCE_FD_INFO_KHR;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkFenceGetFdInfoKHR FenceGetFdInfoKHR()
+{
+  VkFenceGetFdInfoKHR info;
+  info.sType = VK_STRUCTURE_TYPE_FENCE_GET_FD_INFO_KHR;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkPhysicalDeviceMultiviewFeatures PhysicalDeviceMultiviewFeatures()
+{
+  VkPhysicalDeviceMultiviewFeatures info;
+  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_FEATURES;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkRenderPassMultiviewCreateInfo RenderPassMultiviewCreateInfo()
+{
+  VkRenderPassMultiviewCreateInfo info;
+  info.sType = VK_STRUCTURE_TYPE_RENDER_PASS_MULTIVIEW_CREATE_INFO;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkDisplayPowerInfoEXT DisplayPowerInfoEXT()
+{
+  VkDisplayPowerInfoEXT info;
+  info.sType = VK_STRUCTURE_TYPE_DISPLAY_POWER_INFO_EXT;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkDeviceEventInfoEXT DeviceEventInfoEXT()
+{
+  VkDeviceEventInfoEXT info;
+  info.sType = VK_STRUCTURE_TYPE_DEVICE_EVENT_INFO_EXT;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkDisplayEventInfoEXT DisplayEventInfoEXT()
+{
+  VkDisplayEventInfoEXT info;
+  info.sType = VK_STRUCTURE_TYPE_DISPLAY_EVENT_INFO_EXT;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkSwapchainCounterCreateInfoEXT SwapchainCounterCreateInfoEXT()
+{
+  VkSwapchainCounterCreateInfoEXT info;
+  info.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_COUNTER_CREATE_INFO_EXT;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkMemoryAllocateFlagsInfo MemoryAllocateFlagsInfo()
+{
+  VkMemoryAllocateFlagsInfo info;
+  info.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_FLAGS_INFO;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkBindBufferMemoryInfo BindBufferMemoryInfo()
+{
+  VkBindBufferMemoryInfo info;
+  info.sType = VK_STRUCTURE_TYPE_BIND_BUFFER_MEMORY_INFO;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkBindBufferMemoryDeviceGroupInfo BindBufferMemoryDeviceGroupInfo()
+{
+  VkBindBufferMemoryDeviceGroupInfo info;
+  info.sType = VK_STRUCTURE_TYPE_BIND_BUFFER_MEMORY_DEVICE_GROUP_INFO;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkBindImageMemoryInfo BindImageMemoryInfo()
+{
+  VkBindImageMemoryInfo info;
+  info.sType = VK_STRUCTURE_TYPE_BIND_IMAGE_MEMORY_INFO;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkBindImageMemoryDeviceGroupInfo BindImageMemoryDeviceGroupInfo()
+{
+  VkBindImageMemoryDeviceGroupInfo info;
+  info.sType = VK_STRUCTURE_TYPE_BIND_IMAGE_MEMORY_DEVICE_GROUP_INFO;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkDeviceGroupRenderPassBeginInfo DeviceGroupRenderPassBeginInfo()
+{
+  VkDeviceGroupRenderPassBeginInfo info;
+  info.sType = VK_STRUCTURE_TYPE_DEVICE_GROUP_RENDER_PASS_BEGIN_INFO;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkDeviceGroupCommandBufferBeginInfo DeviceGroupCommandBufferBeginInfo()
+{
+  VkDeviceGroupCommandBufferBeginInfo info;
+  info.sType = VK_STRUCTURE_TYPE_DEVICE_GROUP_COMMAND_BUFFER_BEGIN_INFO;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkDeviceGroupSubmitInfo DeviceGroupSubmitInfo()
+{
+  VkDeviceGroupSubmitInfo info;
+  info.sType = VK_STRUCTURE_TYPE_DEVICE_GROUP_SUBMIT_INFO;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkDeviceGroupBindSparseInfo DeviceGroupBindSparseInfo()
+{
+  VkDeviceGroupBindSparseInfo info;
+  info.sType = VK_STRUCTURE_TYPE_DEVICE_GROUP_BIND_SPARSE_INFO;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkImageSwapchainCreateInfoKHR ImageSwapchainCreateInfoKHR()
+{
+  VkImageSwapchainCreateInfoKHR info;
+  info.sType = VK_STRUCTURE_TYPE_IMAGE_SWAPCHAIN_CREATE_INFO_KHR;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkBindImageMemorySwapchainInfoKHR BindImageMemorySwapchainInfoKHR()
+{
+  VkBindImageMemorySwapchainInfoKHR info;
+  info.sType = VK_STRUCTURE_TYPE_BIND_IMAGE_MEMORY_SWAPCHAIN_INFO_KHR;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkAcquireNextImageInfoKHR AcquireNextImageInfoKHR()
+{
+  VkAcquireNextImageInfoKHR info;
+  info.sType = VK_STRUCTURE_TYPE_ACQUIRE_NEXT_IMAGE_INFO_KHR;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkDeviceGroupPresentInfoKHR DeviceGroupPresentInfoKHR()
+{
+  VkDeviceGroupPresentInfoKHR info;
+  info.sType = VK_STRUCTURE_TYPE_DEVICE_GROUP_PRESENT_INFO_KHR;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkDeviceGroupDeviceCreateInfo DeviceGroupDeviceCreateInfo()
+{
+  VkDeviceGroupDeviceCreateInfo info;
+  info.sType = VK_STRUCTURE_TYPE_DEVICE_GROUP_DEVICE_CREATE_INFO;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkDeviceGroupSwapchainCreateInfoKHR DeviceGroupSwapchainCreateInfoKHR()
+{
+  VkDeviceGroupSwapchainCreateInfoKHR info;
+  info.sType = VK_STRUCTURE_TYPE_DEVICE_GROUP_SWAPCHAIN_CREATE_INFO_KHR;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkDescriptorUpdateTemplateCreateInfo DescriptorUpdateTemplateCreateInfo()
+{
+  VkDescriptorUpdateTemplateCreateInfo info;
+  info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_UPDATE_TEMPLATE_CREATE_INFO;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkHdrMetadataEXT HdrMetadataEXT()
+{
+  VkHdrMetadataEXT info;
+  info.sType = VK_STRUCTURE_TYPE_HDR_METADATA_EXT;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkSwapchainDisplayNativeHdrCreateInfoAMD SwapchainDisplayNativeHdrCreateInfoAMD()
+{
+  VkSwapchainDisplayNativeHdrCreateInfoAMD info;
+  info.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_DISPLAY_NATIVE_HDR_CREATE_INFO_AMD;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkPresentTimesInfoGOOGLE PresentTimesInfoGOOGLE()
+{
+  VkPresentTimesInfoGOOGLE info;
+  info.sType = VK_STRUCTURE_TYPE_PRESENT_TIMES_INFO_GOOGLE;
+  info.pNext = nullptr;
+  return info;
+}
+
+#ifdef  VK_USE_PLATFORM_IOS_MVK
+inline VkIOSSurfaceCreateInfoMVK IOSSurfaceCreateInfoMVK()
+{
+  VkIOSSurfaceCreateInfoMVK info;
+  info.sType = VK_STRUCTURE_TYPE_IOSS_CREATE_INFO_MVK;
+  info.pNext = nullptr;
+  return info;
+}
+#endif
+
+#ifdef  VK_USE_PLATFORM_MACOS_MVK
+inline VkMacOSSurfaceCreateInfoMVK MacOSSurfaceCreateInfoMVK()
+{
+  VkMacOSSurfaceCreateInfoMVK info;
+  info.sType = VK_STRUCTURE_TYPE_MAC_OSS_CREATE_INFO_MVK;
+  info.pNext = nullptr;
+  return info;
+}
+#endif
+
+#ifdef  VK_USE_PLATFORM_METAL_EXT
+inline VkMetalSurfaceCreateInfoEXT MetalSurfaceCreateInfoEXT()
+{
+  VkMetalSurfaceCreateInfoEXT info;
+  info.sType = VK_STRUCTURE_TYPE_METAL_SURFACE_CREATE_INFO_EXT;
+  info.pNext = nullptr;
+  return info;
+}
+#endif
+
+inline VkPipelineViewportWScalingStateCreateInfoNV PipelineViewportWScalingStateCreateInfoNV()
+{
+  VkPipelineViewportWScalingStateCreateInfoNV info;
+  info.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_W_SCALING_STATE_CREATE_INFO_NV;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkPipelineViewportSwizzleStateCreateInfoNV PipelineViewportSwizzleStateCreateInfoNV()
+{
+  VkPipelineViewportSwizzleStateCreateInfoNV info;
+  info.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_SWIZZLE_STATE_CREATE_INFO_NV;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkPipelineDiscardRectangleStateCreateInfoEXT PipelineDiscardRectangleStateCreateInfoEXT()
+{
+  VkPipelineDiscardRectangleStateCreateInfoEXT info;
+  info.sType = VK_STRUCTURE_TYPE_PIPELINE_DISCARD_RECTANGLE_STATE_CREATE_INFO_EXT;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkRenderPassInputAttachmentAspectCreateInfo RenderPassInputAttachmentAspectCreateInfo()
+{
+  VkRenderPassInputAttachmentAspectCreateInfo info;
+  info.sType = VK_STRUCTURE_TYPE_RENDER_PASS_INPUT_ATTACHMENT_ASPECT_CREATE_INFO;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkPhysicalDeviceSurfaceInfo2KHR PhysicalDeviceSurfaceInfo2KHR()
+{
+  VkPhysicalDeviceSurfaceInfo2KHR info;
+  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SURFACE_INFO_2_KHR;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkDisplayPlaneInfo2KHR DisplayPlaneInfo2KHR()
+{
+  VkDisplayPlaneInfo2KHR info;
+  info.sType = VK_STRUCTURE_TYPE_DISPLAY_PLANE_INFO_2_KHR;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkPhysicalDevice16BitStorageFeatures PhysicalDevice16BitStorageFeatures()
+{
+  VkPhysicalDevice16BitStorageFeatures info;
+  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_16BIT_STORAGE_FEATURES;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkPhysicalDeviceShaderSubgroupExtendedTypesFeaturesKHR PhysicalDeviceShaderSubgroupExtendedTypesFeaturesKHR()
+{
+  VkPhysicalDeviceShaderSubgroupExtendedTypesFeaturesKHR info;
+  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_SUBGROUP_EXTENDED_TYPES_FEATURES_KHR;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkBufferMemoryRequirementsInfo2 BufferMemoryRequirementsInfo2()
+{
+  VkBufferMemoryRequirementsInfo2 info;
+  info.sType = VK_STRUCTURE_TYPE_BUFFER_MEMORY_REQUIREMENTS_INFO_2;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkImageMemoryRequirementsInfo2 ImageMemoryRequirementsInfo2()
+{
+  VkImageMemoryRequirementsInfo2 info;
+  info.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_REQUIREMENTS_INFO_2;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkImageSparseMemoryRequirementsInfo2 ImageSparseMemoryRequirementsInfo2()
+{
+  VkImageSparseMemoryRequirementsInfo2 info;
+  info.sType = VK_STRUCTURE_TYPE_IMAGE_SPARSE_MEMORY_REQUIREMENTS_INFO_2;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkMemoryDedicatedAllocateInfo MemoryDedicatedAllocateInfo()
+{
+  VkMemoryDedicatedAllocateInfo info;
+  info.sType = VK_STRUCTURE_TYPE_MEMORY_DEDICATED_ALLOCATE_INFO;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkImageViewUsageCreateInfo ImageViewUsageCreateInfo()
+{
+  VkImageViewUsageCreateInfo info;
+  info.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_USAGE_CREATE_INFO;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkPipelineTessellationDomainOriginStateCreateInfo PipelineTessellationDomainOriginStateCreateInfo()
+{
+  VkPipelineTessellationDomainOriginStateCreateInfo info;
+  info.sType = VK_STRUCTURE_TYPE_PIPELINE_TESSELLATION_DOMAIN_ORIGIN_STATE_CREATE_INFO;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkSamplerYcbcrConversionInfo SamplerYcbcrConversionInfo()
+{
+  VkSamplerYcbcrConversionInfo info;
+  info.sType = VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_INFO;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkSamplerYcbcrConversionCreateInfo SamplerYcbcrConversionCreateInfo()
+{
+  VkSamplerYcbcrConversionCreateInfo info;
+  info.sType = VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_CREATE_INFO;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkBindImagePlaneMemoryInfo BindImagePlaneMemoryInfo()
+{
+  VkBindImagePlaneMemoryInfo info;
+  info.sType = VK_STRUCTURE_TYPE_BIND_IMAGE_PLANE_MEMORY_INFO;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkImagePlaneMemoryRequirementsInfo ImagePlaneMemoryRequirementsInfo()
+{
+  VkImagePlaneMemoryRequirementsInfo info;
+  info.sType = VK_STRUCTURE_TYPE_IMAGE_PLANE_MEMORY_REQUIREMENTS_INFO;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkPhysicalDeviceSamplerYcbcrConversionFeatures PhysicalDeviceSamplerYcbcrConversionFeatures()
+{
+  VkPhysicalDeviceSamplerYcbcrConversionFeatures info;
+  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLER_YCBCR_CONVERSION_FEATURES;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkConditionalRenderingBeginInfoEXT ConditionalRenderingBeginInfoEXT()
+{
+  VkConditionalRenderingBeginInfoEXT info;
+  info.sType = VK_STRUCTURE_TYPE_CONDITIONAL_RENDERING_BEGIN_INFO_EXT;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkProtectedSubmitInfo ProtectedSubmitInfo()
+{
+  VkProtectedSubmitInfo info;
+  info.sType = VK_STRUCTURE_TYPE_PROTECTED_SUBMIT_INFO;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkPhysicalDeviceProtectedMemoryFeatures PhysicalDeviceProtectedMemoryFeatures()
+{
+  VkPhysicalDeviceProtectedMemoryFeatures info;
+  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROTECTED_MEMORY_FEATURES;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkDeviceQueueInfo2 DeviceQueueInfo2()
+{
+  VkDeviceQueueInfo2 info;
+  info.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_INFO_2;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkPipelineCoverageToColorStateCreateInfoNV PipelineCoverageToColorStateCreateInfoNV()
+{
+  VkPipelineCoverageToColorStateCreateInfoNV info;
+  info.sType = VK_STRUCTURE_TYPE_PIPELINE_COVERAGE_TO_COLOR_STATE_CREATE_INFO_NV;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkSampleLocationsInfoEXT SampleLocationsInfoEXT()
+{
+  VkSampleLocationsInfoEXT info;
+  info.sType = VK_STRUCTURE_TYPE_SAMPLE_LOCATIONS_INFO_EXT;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkRenderPassSampleLocationsBeginInfoEXT RenderPassSampleLocationsBeginInfoEXT()
+{
+  VkRenderPassSampleLocationsBeginInfoEXT info;
+  info.sType = VK_STRUCTURE_TYPE_RENDER_PASS_SAMPLE_LOCATIONS_BEGIN_INFO_EXT;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkPipelineSampleLocationsStateCreateInfoEXT PipelineSampleLocationsStateCreateInfoEXT()
+{
+  VkPipelineSampleLocationsStateCreateInfoEXT info;
+  info.sType = VK_STRUCTURE_TYPE_PIPELINE_SAMPLE_LOCATIONS_STATE_CREATE_INFO_EXT;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkSamplerReductionModeCreateInfoEXT SamplerReductionModeCreateInfoEXT()
+{
+  VkSamplerReductionModeCreateInfoEXT info;
+  info.sType = VK_STRUCTURE_TYPE_SAMPLER_REDUCTION_MODE_CREATE_INFO_EXT;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkPhysicalDeviceBlendOperationAdvancedFeaturesEXT PhysicalDeviceBlendOperationAdvancedFeaturesEXT()
+{
+  VkPhysicalDeviceBlendOperationAdvancedFeaturesEXT info;
+  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BLEND_OPERATION_ADVANCED_FEATURES_EXT;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkPipelineColorBlendAdvancedStateCreateInfoEXT PipelineColorBlendAdvancedStateCreateInfoEXT()
+{
+  VkPipelineColorBlendAdvancedStateCreateInfoEXT info;
+  info.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_ADVANCED_STATE_CREATE_INFO_EXT;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkPhysicalDeviceInlineUniformBlockFeaturesEXT PhysicalDeviceInlineUniformBlockFeaturesEXT()
+{
+  VkPhysicalDeviceInlineUniformBlockFeaturesEXT info;
+  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_INLINE_UNIFORM_BLOCK_FEATURES_EXT;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkWriteDescriptorSetInlineUniformBlockEXT WriteDescriptorSetInlineUniformBlockEXT()
+{
+  VkWriteDescriptorSetInlineUniformBlockEXT info;
+  info.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET_INLINE_UNIFORM_BLOCK_EXT;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkDescriptorPoolInlineUniformBlockCreateInfoEXT DescriptorPoolInlineUniformBlockCreateInfoEXT()
+{
+  VkDescriptorPoolInlineUniformBlockCreateInfoEXT info;
+  info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_INLINE_UNIFORM_BLOCK_CREATE_INFO_EXT;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkPipelineCoverageModulationStateCreateInfoNV PipelineCoverageModulationStateCreateInfoNV()
+{
+  VkPipelineCoverageModulationStateCreateInfoNV info;
+  info.sType = VK_STRUCTURE_TYPE_PIPELINE_COVERAGE_MODULATION_STATE_CREATE_INFO_NV;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkImageFormatListCreateInfoKHR ImageFormatListCreateInfoKHR()
+{
+  VkImageFormatListCreateInfoKHR info;
+  info.sType = VK_STRUCTURE_TYPE_IMAGE_FORMAT_LIST_CREATE_INFO_KHR;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkValidationCacheCreateInfoEXT ValidationCacheCreateInfoEXT()
+{
+  VkValidationCacheCreateInfoEXT info;
+  info.sType = VK_STRUCTURE_TYPE_VALIDATION_CACHE_CREATE_INFO_EXT;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkShaderModuleValidationCacheCreateInfoEXT ShaderModuleValidationCacheCreateInfoEXT()
+{
+  VkShaderModuleValidationCacheCreateInfoEXT info;
+  info.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_VALIDATION_CACHE_CREATE_INFO_EXT;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkPhysicalDeviceShaderDrawParametersFeatures PhysicalDeviceShaderDrawParametersFeatures()
+{
+  VkPhysicalDeviceShaderDrawParametersFeatures info;
+  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_DRAW_PARAMETERS_FEATURES;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkPhysicalDeviceShaderFloat16Int8FeaturesKHR PhysicalDeviceShaderFloat16Int8FeaturesKHR()
+{
+  VkPhysicalDeviceShaderFloat16Int8FeaturesKHR info;
+  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_FLOAT16_INT8_FEATURES_KHR;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkPhysicalDeviceHostQueryResetFeaturesEXT PhysicalDeviceHostQueryResetFeaturesEXT()
+{
+  VkPhysicalDeviceHostQueryResetFeaturesEXT info;
+  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_HOST_QUERY_RESET_FEATURES_EXT;
+  info.pNext = nullptr;
+  return info;
+}
+
+#ifdef  VK_USE_PLATFORM_ANDROID_KHR
+inline VkNativeBufferANDROID NativeBufferANDROID()
+{
+  VkNativeBufferANDROID info;
+  info.sType = VK_STRUCTURE_TYPE_NATIVE_BUFFER_ANDROID;
+  info.pNext = nullptr;
+  return info;
+}
+#endif
+
+#ifdef  VK_USE_PLATFORM_ANDROID_KHR
+inline VkSwapchainImageCreateInfoANDROID SwapchainImageCreateInfoANDROID()
+{
+  VkSwapchainImageCreateInfoANDROID info;
+  info.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_IMAGE_CREATE_INFO_ANDROID;
+  info.pNext = nullptr;
+  return info;
+}
+#endif
+
+#ifdef  VK_USE_PLATFORM_ANDROID_KHR
+inline VkPhysicalDevicePresentationPropertiesANDROID PhysicalDevicePresentationPropertiesANDROID()
+{
+  VkPhysicalDevicePresentationPropertiesANDROID info;
+  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRESENTATION_PROPERTIES_ANDROID;
+  info.pNext = nullptr;
+  return info;
+}
+#endif
+
+inline VkDeviceQueueGlobalPriorityCreateInfoEXT DeviceQueueGlobalPriorityCreateInfoEXT()
+{
+  VkDeviceQueueGlobalPriorityCreateInfoEXT info;
+  info.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_GLOBAL_PRIORITY_CREATE_INFO_EXT;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkDebugUtilsObjectNameInfoEXT DebugUtilsObjectNameInfoEXT()
+{
+  VkDebugUtilsObjectNameInfoEXT info;
+  info.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkDebugUtilsObjectTagInfoEXT DebugUtilsObjectTagInfoEXT()
+{
+  VkDebugUtilsObjectTagInfoEXT info;
+  info.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_TAG_INFO_EXT;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkDebugUtilsLabelEXT DebugUtilsLabelEXT()
+{
+  VkDebugUtilsLabelEXT info;
+  info.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkDebugUtilsMessengerCreateInfoEXT DebugUtilsMessengerCreateInfoEXT()
+{
+  VkDebugUtilsMessengerCreateInfoEXT info;
+  info.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkDebugUtilsMessengerCallbackDataEXT DebugUtilsMessengerCallbackDataEXT()
+{
+  VkDebugUtilsMessengerCallbackDataEXT info;
+  info.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CALLBACK_DATA_EXT;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkImportMemoryHostPointerInfoEXT ImportMemoryHostPointerInfoEXT()
+{
+  VkImportMemoryHostPointerInfoEXT info;
+  info.sType = VK_STRUCTURE_TYPE_IMPORT_MEMORY_HOST_POINTER_INFO_EXT;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkCalibratedTimestampInfoEXT CalibratedTimestampInfoEXT()
+{
+  VkCalibratedTimestampInfoEXT info;
+  info.sType = VK_STRUCTURE_TYPE_CALIBRATED_TIMESTAMP_INFO_EXT;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkPipelineRasterizationConservativeStateCreateInfoEXT PipelineRasterizationConservativeStateCreateInfoEXT()
+{
+  VkPipelineRasterizationConservativeStateCreateInfoEXT info;
+  info.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_CONSERVATIVE_STATE_CREATE_INFO_EXT;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkPhysicalDeviceDescriptorIndexingFeaturesEXT PhysicalDeviceDescriptorIndexingFeaturesEXT()
+{
+  VkPhysicalDeviceDescriptorIndexingFeaturesEXT info;
+  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES_EXT;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkDescriptorSetLayoutBindingFlagsCreateInfoEXT DescriptorSetLayoutBindingFlagsCreateInfoEXT()
+{
+  VkDescriptorSetLayoutBindingFlagsCreateInfoEXT info;
+  info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_BINDING_FLAGS_CREATE_INFO_EXT;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkDescriptorSetVariableDescriptorCountAllocateInfoEXT DescriptorSetVariableDescriptorCountAllocateInfoEXT()
+{
+  VkDescriptorSetVariableDescriptorCountAllocateInfoEXT info;
+  info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_VARIABLE_DESCRIPTOR_COUNT_ALLOCATE_INFO_EXT;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkAttachmentDescription2KHR AttachmentDescription2KHR()
+{
+  VkAttachmentDescription2KHR info;
+  info.sType = VK_STRUCTURE_TYPE_ATTACHMENT_DESCRIPTION_2_KHR;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkAttachmentReference2KHR AttachmentReference2KHR()
+{
+  VkAttachmentReference2KHR info;
+  info.sType = VK_STRUCTURE_TYPE_ATTACHMENT_REFERENCE_2_KHR;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkSubpassDescription2KHR SubpassDescription2KHR()
+{
+  VkSubpassDescription2KHR info;
+  info.sType = VK_STRUCTURE_TYPE_SUBPASS_DESCRIPTION_2_KHR;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkSubpassDependency2KHR SubpassDependency2KHR()
+{
+  VkSubpassDependency2KHR info;
+  info.sType = VK_STRUCTURE_TYPE_SUBPASS_DEPENDENCY_2_KHR;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkRenderPassCreateInfo2KHR RenderPassCreateInfo2KHR()
+{
+  VkRenderPassCreateInfo2KHR info;
+  info.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO_2_KHR;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkSubpassBeginInfoKHR SubpassBeginInfoKHR()
+{
+  VkSubpassBeginInfoKHR info;
+  info.sType = VK_STRUCTURE_TYPE_SUBPASS_BEGIN_INFO_KHR;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkSubpassEndInfoKHR SubpassEndInfoKHR()
+{
+  VkSubpassEndInfoKHR info;
+  info.sType = VK_STRUCTURE_TYPE_SUBPASS_END_INFO_KHR;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkPhysicalDeviceTimelineSemaphoreFeaturesKHR PhysicalDeviceTimelineSemaphoreFeaturesKHR()
+{
+  VkPhysicalDeviceTimelineSemaphoreFeaturesKHR info;
+  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_FEATURES_KHR;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkSemaphoreTypeCreateInfoKHR SemaphoreTypeCreateInfoKHR()
+{
+  VkSemaphoreTypeCreateInfoKHR info;
+  info.sType = VK_STRUCTURE_TYPE_SEMAPHORE_TYPE_CREATE_INFO_KHR;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkTimelineSemaphoreSubmitInfoKHR TimelineSemaphoreSubmitInfoKHR()
+{
+  VkTimelineSemaphoreSubmitInfoKHR info;
+  info.sType = VK_STRUCTURE_TYPE_TIMELINE_SEMAPHORE_SUBMIT_INFO_KHR;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkSemaphoreWaitInfoKHR SemaphoreWaitInfoKHR()
+{
+  VkSemaphoreWaitInfoKHR info;
+  info.sType = VK_STRUCTURE_TYPE_SEMAPHORE_WAIT_INFO_KHR;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkSemaphoreSignalInfoKHR SemaphoreSignalInfoKHR()
+{
+  VkSemaphoreSignalInfoKHR info;
+  info.sType = VK_STRUCTURE_TYPE_SEMAPHORE_SIGNAL_INFO_KHR;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkPipelineVertexInputDivisorStateCreateInfoEXT PipelineVertexInputDivisorStateCreateInfoEXT()
+{
+  VkPipelineVertexInputDivisorStateCreateInfoEXT info;
+  info.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_DIVISOR_STATE_CREATE_INFO_EXT;
+  info.pNext = nullptr;
+  return info;
+}
+
+#ifdef  VK_USE_PLATFORM_ANDROID_KHR
+inline VkImportAndroidHardwareBufferInfoANDROID ImportAndroidHardwareBufferInfoANDROID()
+{
+  VkImportAndroidHardwareBufferInfoANDROID info;
+  info.sType = VK_STRUCTURE_TYPE_IMPORT_ANDROID_HARDWARE_BUFFER_INFO_ANDROID;
+  info.pNext = nullptr;
+  return info;
+}
+#endif
+
+#ifdef  VK_USE_PLATFORM_ANDROID_KHR
+inline VkMemoryGetAndroidHardwareBufferInfoANDROID MemoryGetAndroidHardwareBufferInfoANDROID()
+{
+  VkMemoryGetAndroidHardwareBufferInfoANDROID info;
+  info.sType = VK_STRUCTURE_TYPE_MEMORY_GET_ANDROID_HARDWARE_BUFFER_INFO_ANDROID;
+  info.pNext = nullptr;
+  return info;
+}
+#endif
+
+inline VkCommandBufferInheritanceConditionalRenderingInfoEXT CommandBufferInheritanceConditionalRenderingInfoEXT()
+{
+  VkCommandBufferInheritanceConditionalRenderingInfoEXT info;
+  info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_CONDITIONAL_RENDERING_INFO_EXT;
+  info.pNext = nullptr;
+  return info;
+}
+
+#ifdef  VK_USE_PLATFORM_ANDROID_KHR
+inline VkExternalFormatANDROID ExternalFormatANDROID()
+{
+  VkExternalFormatANDROID info;
+  info.sType = VK_STRUCTURE_TYPE_EXTERNAL_FORMAT_ANDROID;
+  info.pNext = nullptr;
+  return info;
+}
+#endif
+
+inline VkPhysicalDevice8BitStorageFeaturesKHR PhysicalDevice8BitStorageFeaturesKHR()
+{
+  VkPhysicalDevice8BitStorageFeaturesKHR info;
+  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_8BIT_STORAGE_FEATURES_KHR;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkPhysicalDeviceConditionalRenderingFeaturesEXT PhysicalDeviceConditionalRenderingFeaturesEXT()
+{
+  VkPhysicalDeviceConditionalRenderingFeaturesEXT info;
+  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CONDITIONAL_RENDERING_FEATURES_EXT;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkPhysicalDeviceVulkanMemoryModelFeaturesKHR PhysicalDeviceVulkanMemoryModelFeaturesKHR()
+{
+  VkPhysicalDeviceVulkanMemoryModelFeaturesKHR info;
+  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_MEMORY_MODEL_FEATURES_KHR;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkPhysicalDeviceShaderAtomicInt64FeaturesKHR PhysicalDeviceShaderAtomicInt64FeaturesKHR()
+{
+  VkPhysicalDeviceShaderAtomicInt64FeaturesKHR info;
+  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_ATOMIC_INT64_FEATURES_KHR;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkPhysicalDeviceVertexAttributeDivisorFeaturesEXT PhysicalDeviceVertexAttributeDivisorFeaturesEXT()
+{
+  VkPhysicalDeviceVertexAttributeDivisorFeaturesEXT info;
+  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_ATTRIBUTE_DIVISOR_FEATURES_EXT;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkSubpassDescriptionDepthStencilResolveKHR SubpassDescriptionDepthStencilResolveKHR()
+{
+  VkSubpassDescriptionDepthStencilResolveKHR info;
+  info.sType = VK_STRUCTURE_TYPE_SUBPASS_DESCRIPTION_DEPTH_STENCIL_RESOLVE_KHR;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkImageViewASTCDecodeModeEXT ImageViewASTCDecodeModeEXT()
+{
+  VkImageViewASTCDecodeModeEXT info;
+  info.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_ASTC_DECODE_MODE_EXT;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkPhysicalDeviceASTCDecodeFeaturesEXT PhysicalDeviceASTCDecodeFeaturesEXT()
+{
+  VkPhysicalDeviceASTCDecodeFeaturesEXT info;
+  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ASTC_DECODE_FEATURES_EXT;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkPhysicalDeviceTransformFeedbackFeaturesEXT PhysicalDeviceTransformFeedbackFeaturesEXT()
+{
+  VkPhysicalDeviceTransformFeedbackFeaturesEXT info;
+  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TRANSFORM_FEEDBACK_FEATURES_EXT;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkPipelineRasterizationStateStreamCreateInfoEXT PipelineRasterizationStateStreamCreateInfoEXT()
+{
+  VkPipelineRasterizationStateStreamCreateInfoEXT info;
+  info.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_STREAM_CREATE_INFO_EXT;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkPhysicalDeviceRepresentativeFragmentTestFeaturesNV PhysicalDeviceRepresentativeFragmentTestFeaturesNV()
+{
+  VkPhysicalDeviceRepresentativeFragmentTestFeaturesNV info;
+  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_REPRESENTATIVE_FRAGMENT_TEST_FEATURES_NV;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkPipelineRepresentativeFragmentTestStateCreateInfoNV PipelineRepresentativeFragmentTestStateCreateInfoNV()
+{
+  VkPipelineRepresentativeFragmentTestStateCreateInfoNV info;
+  info.sType = VK_STRUCTURE_TYPE_PIPELINE_REPRESENTATIVE_FRAGMENT_TEST_STATE_CREATE_INFO_NV;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkPhysicalDeviceExclusiveScissorFeaturesNV PhysicalDeviceExclusiveScissorFeaturesNV()
+{
+  VkPhysicalDeviceExclusiveScissorFeaturesNV info;
+  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXCLUSIVE_SCISSOR_FEATURES_NV;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkPipelineViewportExclusiveScissorStateCreateInfoNV PipelineViewportExclusiveScissorStateCreateInfoNV()
+{
+  VkPipelineViewportExclusiveScissorStateCreateInfoNV info;
+  info.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_EXCLUSIVE_SCISSOR_STATE_CREATE_INFO_NV;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkPhysicalDeviceCornerSampledImageFeaturesNV PhysicalDeviceCornerSampledImageFeaturesNV()
+{
+  VkPhysicalDeviceCornerSampledImageFeaturesNV info;
+  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CORNER_SAMPLED_IMAGE_FEATURES_NV;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkPhysicalDeviceComputeShaderDerivativesFeaturesNV PhysicalDeviceComputeShaderDerivativesFeaturesNV()
+{
+  VkPhysicalDeviceComputeShaderDerivativesFeaturesNV info;
+  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COMPUTE_SHADER_DERIVATIVES_FEATURES_NV;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkPhysicalDeviceFragmentShaderBarycentricFeaturesNV PhysicalDeviceFragmentShaderBarycentricFeaturesNV()
+{
+  VkPhysicalDeviceFragmentShaderBarycentricFeaturesNV info;
+  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_SHADER_BARYCENTRIC_FEATURES_NV;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkPhysicalDeviceShaderImageFootprintFeaturesNV PhysicalDeviceShaderImageFootprintFeaturesNV()
+{
+  VkPhysicalDeviceShaderImageFootprintFeaturesNV info;
+  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_IMAGE_FOOTPRINT_FEATURES_NV;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkPhysicalDeviceDedicatedAllocationImageAliasingFeaturesNV PhysicalDeviceDedicatedAllocationImageAliasingFeaturesNV()
+{
+  VkPhysicalDeviceDedicatedAllocationImageAliasingFeaturesNV info;
+  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEDICATED_ALLOCATION_IMAGE_ALIASING_FEATURES_NV;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkPipelineViewportShadingRateImageStateCreateInfoNV PipelineViewportShadingRateImageStateCreateInfoNV()
+{
+  VkPipelineViewportShadingRateImageStateCreateInfoNV info;
+  info.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_SHADING_RATE_IMAGE_STATE_CREATE_INFO_NV;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkPhysicalDeviceShadingRateImageFeaturesNV PhysicalDeviceShadingRateImageFeaturesNV()
+{
+  VkPhysicalDeviceShadingRateImageFeaturesNV info;
+  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADING_RATE_IMAGE_FEATURES_NV;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkPipelineViewportCoarseSampleOrderStateCreateInfoNV PipelineViewportCoarseSampleOrderStateCreateInfoNV()
+{
+  VkPipelineViewportCoarseSampleOrderStateCreateInfoNV info;
+  info.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_COARSE_SAMPLE_ORDER_STATE_CREATE_INFO_NV;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkPhysicalDeviceMeshShaderFeaturesNV PhysicalDeviceMeshShaderFeaturesNV()
+{
+  VkPhysicalDeviceMeshShaderFeaturesNV info;
+  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MESH_SHADER_FEATURES_NV;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkRayTracingShaderGroupCreateInfoNV RayTracingShaderGroupCreateInfoNV()
+{
+  VkRayTracingShaderGroupCreateInfoNV info;
+  info.sType = VK_STRUCTURE_TYPE_RAY_TRACING_SHADER_GROUP_CREATE_INFO_NV;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkRayTracingPipelineCreateInfoNV RayTracingPipelineCreateInfoNV()
+{
+  VkRayTracingPipelineCreateInfoNV info;
+  info.sType = VK_STRUCTURE_TYPE_RAY_TRACING_PIPELINE_CREATE_INFO_NV;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkGeometryTrianglesNV GeometryTrianglesNV()
+{
+  VkGeometryTrianglesNV info;
+  info.sType = VK_STRUCTURE_TYPE_GEOMETRY_TRIANGLES_NV;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkGeometryAABBNV GeometryAABBNV()
+{
+  VkGeometryAABBNV info;
+  info.sType = VK_STRUCTURE_TYPE_GEOMETRY_AABB_NV;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkGeometryNV GeometryNV()
+{
+  VkGeometryNV info;
+  info.sType = VK_STRUCTURE_TYPE_GEOMETRY_NV;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkAccelerationStructureInfoNV AccelerationStructureInfoNV()
+{
+  VkAccelerationStructureInfoNV info;
+  info.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_INFO_NV;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkAccelerationStructureCreateInfoNV AccelerationStructureCreateInfoNV()
+{
+  VkAccelerationStructureCreateInfoNV info;
+  info.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_CREATE_INFO_NV;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkBindAccelerationStructureMemoryInfoNV BindAccelerationStructureMemoryInfoNV()
+{
+  VkBindAccelerationStructureMemoryInfoNV info;
+  info.sType = VK_STRUCTURE_TYPE_BIND_ACCELERATION_STRUCTURE_MEMORY_INFO_NV;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkWriteDescriptorSetAccelerationStructureNV WriteDescriptorSetAccelerationStructureNV()
+{
+  VkWriteDescriptorSetAccelerationStructureNV info;
+  info.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET_ACCELERATION_STRUCTURE_NV;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkAccelerationStructureMemoryRequirementsInfoNV AccelerationStructureMemoryRequirementsInfoNV()
+{
+  VkAccelerationStructureMemoryRequirementsInfoNV info;
+  info.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_MEMORY_REQUIREMENTS_INFO_NV;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkPhysicalDeviceImageDrmFormatModifierInfoEXT PhysicalDeviceImageDrmFormatModifierInfoEXT()
+{
+  VkPhysicalDeviceImageDrmFormatModifierInfoEXT info;
+  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_DRM_FORMAT_MODIFIER_INFO_EXT;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkImageDrmFormatModifierListCreateInfoEXT ImageDrmFormatModifierListCreateInfoEXT()
+{
+  VkImageDrmFormatModifierListCreateInfoEXT info;
+  info.sType = VK_STRUCTURE_TYPE_IMAGE_DRM_FORMAT_MODIFIER_LIST_CREATE_INFO_EXT;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkImageDrmFormatModifierExplicitCreateInfoEXT ImageDrmFormatModifierExplicitCreateInfoEXT()
+{
+  VkImageDrmFormatModifierExplicitCreateInfoEXT info;
+  info.sType = VK_STRUCTURE_TYPE_IMAGE_DRM_FORMAT_MODIFIER_EXPLICIT_CREATE_INFO_EXT;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkImageStencilUsageCreateInfoEXT ImageStencilUsageCreateInfoEXT()
+{
+  VkImageStencilUsageCreateInfoEXT info;
+  info.sType = VK_STRUCTURE_TYPE_IMAGE_STENCIL_USAGE_CREATE_INFO_EXT;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkDeviceMemoryOverallocationCreateInfoAMD DeviceMemoryOverallocationCreateInfoAMD()
+{
+  VkDeviceMemoryOverallocationCreateInfoAMD info;
+  info.sType = VK_STRUCTURE_TYPE_DEVICE_MEMORY_OVERALLOCATION_CREATE_INFO_AMD;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkRenderPassFragmentDensityMapCreateInfoEXT RenderPassFragmentDensityMapCreateInfoEXT()
+{
+  VkRenderPassFragmentDensityMapCreateInfoEXT info;
+  info.sType = VK_STRUCTURE_TYPE_RENDER_PASS_FRAGMENT_DENSITY_MAP_CREATE_INFO_EXT;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkPhysicalDeviceScalarBlockLayoutFeaturesEXT PhysicalDeviceScalarBlockLayoutFeaturesEXT()
+{
+  VkPhysicalDeviceScalarBlockLayoutFeaturesEXT info;
+  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SCALAR_BLOCK_LAYOUT_FEATURES_EXT;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkSurfaceProtectedCapabilitiesKHR SurfaceProtectedCapabilitiesKHR()
+{
+  VkSurfaceProtectedCapabilitiesKHR info;
+  info.sType = VK_STRUCTURE_TYPE_SURFACE_PROTECTED_CAPABILITIES_KHR;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkPhysicalDeviceUniformBufferStandardLayoutFeaturesKHR PhysicalDeviceUniformBufferStandardLayoutFeaturesKHR()
+{
+  VkPhysicalDeviceUniformBufferStandardLayoutFeaturesKHR info;
+  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_UNIFORM_BUFFER_STANDARD_LAYOUT_FEATURES_KHR;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkPhysicalDeviceDepthClipEnableFeaturesEXT PhysicalDeviceDepthClipEnableFeaturesEXT()
+{
+  VkPhysicalDeviceDepthClipEnableFeaturesEXT info;
+  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEPTH_CLIP_ENABLE_FEATURES_EXT;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkPipelineRasterizationDepthClipStateCreateInfoEXT PipelineRasterizationDepthClipStateCreateInfoEXT()
+{
+  VkPipelineRasterizationDepthClipStateCreateInfoEXT info;
+  info.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_DEPTH_CLIP_STATE_CREATE_INFO_EXT;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkPhysicalDeviceMemoryPriorityFeaturesEXT PhysicalDeviceMemoryPriorityFeaturesEXT()
+{
+  VkPhysicalDeviceMemoryPriorityFeaturesEXT info;
+  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_PRIORITY_FEATURES_EXT;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkMemoryPriorityAllocateInfoEXT MemoryPriorityAllocateInfoEXT()
+{
+  VkMemoryPriorityAllocateInfoEXT info;
+  info.sType = VK_STRUCTURE_TYPE_MEMORY_PRIORITY_ALLOCATE_INFO_EXT;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkPhysicalDeviceBufferDeviceAddressFeaturesKHR PhysicalDeviceBufferDeviceAddressFeaturesKHR()
+{
+  VkPhysicalDeviceBufferDeviceAddressFeaturesKHR info;
+  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BUFFER_DEVICE_ADDRESS_FEATURES_KHR;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkPhysicalDeviceBufferDeviceAddressFeaturesEXT PhysicalDeviceBufferDeviceAddressFeaturesEXT()
+{
+  VkPhysicalDeviceBufferDeviceAddressFeaturesEXT info;
+  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BUFFER_DEVICE_ADDRESS_FEATURES_EXT;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkBufferDeviceAddressInfoKHR BufferDeviceAddressInfoKHR()
+{
+  VkBufferDeviceAddressInfoKHR info;
+  info.sType = VK_STRUCTURE_TYPE_BUFFER_DEVICE_ADDRESS_INFO_KHR;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkBufferOpaqueCaptureAddressCreateInfoKHR BufferOpaqueCaptureAddressCreateInfoKHR()
+{
+  VkBufferOpaqueCaptureAddressCreateInfoKHR info;
+  info.sType = VK_STRUCTURE_TYPE_BUFFER_OPAQUE_CAPTURE_ADDRESS_CREATE_INFO_KHR;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkBufferDeviceAddressCreateInfoEXT BufferDeviceAddressCreateInfoEXT()
+{
+  VkBufferDeviceAddressCreateInfoEXT info;
+  info.sType = VK_STRUCTURE_TYPE_BUFFER_DEVICE_ADDRESS_CREATE_INFO_EXT;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkPhysicalDeviceImageViewImageFormatInfoEXT PhysicalDeviceImageViewImageFormatInfoEXT()
+{
+  VkPhysicalDeviceImageViewImageFormatInfoEXT info;
+  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_VIEW_IMAGE_FORMAT_INFO_EXT;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkPhysicalDeviceImagelessFramebufferFeaturesKHR PhysicalDeviceImagelessFramebufferFeaturesKHR()
+{
+  VkPhysicalDeviceImagelessFramebufferFeaturesKHR info;
+  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGELESS_FRAMEBUFFER_FEATURES_KHR;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkFramebufferAttachmentsCreateInfoKHR FramebufferAttachmentsCreateInfoKHR()
+{
+  VkFramebufferAttachmentsCreateInfoKHR info;
+  info.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_ATTACHMENTS_CREATE_INFO_KHR;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkFramebufferAttachmentImageInfoKHR FramebufferAttachmentImageInfoKHR()
+{
+  VkFramebufferAttachmentImageInfoKHR info;
+  info.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_ATTACHMENT_IMAGE_INFO_KHR;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkRenderPassAttachmentBeginInfoKHR RenderPassAttachmentBeginInfoKHR()
+{
+  VkRenderPassAttachmentBeginInfoKHR info;
+  info.sType = VK_STRUCTURE_TYPE_RENDER_PASS_ATTACHMENT_BEGIN_INFO_KHR;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkPhysicalDeviceTextureCompressionASTCHDRFeaturesEXT PhysicalDeviceTextureCompressionASTCHDRFeaturesEXT()
+{
+  VkPhysicalDeviceTextureCompressionASTCHDRFeaturesEXT info;
+  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TEXTURE_COMPRESSION_ASTC_HDR_FEATURES_EXT;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkPhysicalDeviceCooperativeMatrixFeaturesNV PhysicalDeviceCooperativeMatrixFeaturesNV()
+{
+  VkPhysicalDeviceCooperativeMatrixFeaturesNV info;
+  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COOPERATIVE_MATRIX_FEATURES_NV;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkCooperativeMatrixPropertiesNV CooperativeMatrixPropertiesNV()
+{
+  VkCooperativeMatrixPropertiesNV info;
+  info.sType = VK_STRUCTURE_TYPE_COOPERATIVE_MATRIX_PROPERTIES_NV;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkPhysicalDeviceYcbcrImageArraysFeaturesEXT PhysicalDeviceYcbcrImageArraysFeaturesEXT()
+{
+  VkPhysicalDeviceYcbcrImageArraysFeaturesEXT info;
+  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_YCBCR_IMAGE_ARRAYS_FEATURES_EXT;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkImageViewHandleInfoNVX ImageViewHandleInfoNVX()
+{
+  VkImageViewHandleInfoNVX info;
+  info.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_HANDLE_INFO_NVX;
+  info.pNext = nullptr;
+  return info;
+}
+
+#ifdef  VK_USE_PLATFORM_GGP
+inline VkPresentFrameTokenGGP PresentFrameTokenGGP()
+{
+  VkPresentFrameTokenGGP info;
+  info.sType = VK_STRUCTURE_TYPE_PRESENT_FRAME_TOKEN_GGP;
+  info.pNext = nullptr;
+  return info;
+}
+#endif
+
+inline VkPipelineCreationFeedbackCreateInfoEXT PipelineCreationFeedbackCreateInfoEXT()
+{
+  VkPipelineCreationFeedbackCreateInfoEXT info;
+  info.sType = VK_STRUCTURE_TYPE_PIPELINE_CREATION_FEEDBACK_CREATE_INFO_EXT;
+  info.pNext = nullptr;
+  return info;
+}
+
+#ifdef  VK_USE_PLATFORM_WIN32_KHR
+inline VkSurfaceFullScreenExclusiveInfoEXT SurfaceFullScreenExclusiveInfoEXT()
+{
+  VkSurfaceFullScreenExclusiveInfoEXT info;
+  info.sType = VK_STRUCTURE_TYPE_SURFACE_FULL_SCREEN_EXCLUSIVE_INFO_EXT;
+  info.pNext = nullptr;
+  return info;
+}
+#endif
+
+#ifdef  VK_USE_PLATFORM_WIN32_KHR
+inline VkSurfaceFullScreenExclusiveWin32InfoEXT SurfaceFullScreenExclusiveWin32InfoEXT()
+{
+  VkSurfaceFullScreenExclusiveWin32InfoEXT info;
+  info.sType = VK_STRUCTURE_TYPE_SURFACE_FULL_SCREEN_EXCLUSIVE_WIN_32_INFO_EXT;
+  info.pNext = nullptr;
+  return info;
+}
+#endif
+
+#ifdef  VK_USE_PLATFORM_WIN32_KHR
+inline VkSurfaceCapabilitiesFullScreenExclusiveEXT SurfaceCapabilitiesFullScreenExclusiveEXT()
+{
+  VkSurfaceCapabilitiesFullScreenExclusiveEXT info;
+  info.sType = VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_FULL_SCREEN_EXCLUSIVE_EXT;
+  info.pNext = nullptr;
+  return info;
+}
+#endif
+
+inline VkPhysicalDevicePerformanceQueryFeaturesKHR PhysicalDevicePerformanceQueryFeaturesKHR()
+{
+  VkPhysicalDevicePerformanceQueryFeaturesKHR info;
+  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PERFORMANCE_QUERY_FEATURES_KHR;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkQueryPoolPerformanceCreateInfoKHR QueryPoolPerformanceCreateInfoKHR()
+{
+  VkQueryPoolPerformanceCreateInfoKHR info;
+  info.sType = VK_STRUCTURE_TYPE_QUERY_POOL_PERFORMANCE_CREATE_INFO_KHR;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkAcquireProfilingLockInfoKHR AcquireProfilingLockInfoKHR()
+{
+  VkAcquireProfilingLockInfoKHR info;
+  info.sType = VK_STRUCTURE_TYPE_ACQUIRE_PROFILING_LOCK_INFO_KHR;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkPerformanceQuerySubmitInfoKHR PerformanceQuerySubmitInfoKHR()
+{
+  VkPerformanceQuerySubmitInfoKHR info;
+  info.sType = VK_STRUCTURE_TYPE_PERFORMANCE_QUERY_SUBMIT_INFO_KHR;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkHeadlessSurfaceCreateInfoEXT HeadlessSurfaceCreateInfoEXT()
+{
+  VkHeadlessSurfaceCreateInfoEXT info;
+  info.sType = VK_STRUCTURE_TYPE_HEADLESS_SURFACE_CREATE_INFO_EXT;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkPhysicalDeviceCoverageReductionModeFeaturesNV PhysicalDeviceCoverageReductionModeFeaturesNV()
+{
+  VkPhysicalDeviceCoverageReductionModeFeaturesNV info;
+  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COVERAGE_REDUCTION_MODE_FEATURES_NV;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkPipelineCoverageReductionStateCreateInfoNV PipelineCoverageReductionStateCreateInfoNV()
+{
+  VkPipelineCoverageReductionStateCreateInfoNV info;
+  info.sType = VK_STRUCTURE_TYPE_PIPELINE_COVERAGE_REDUCTION_STATE_CREATE_INFO_NV;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkPhysicalDeviceShaderIntegerFunctions2FeaturesINTEL PhysicalDeviceShaderIntegerFunctions2FeaturesINTEL()
+{
+  VkPhysicalDeviceShaderIntegerFunctions2FeaturesINTEL info;
+  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_INTEGER_FUNCTIONS_2_FEATURES_INTEL;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkInitializePerformanceApiInfoINTEL InitializePerformanceApiInfoINTEL()
+{
+  VkInitializePerformanceApiInfoINTEL info;
+  info.sType = VK_STRUCTURE_TYPE_INITIALIZE_PERFORMANCE_API_INFO_INTEL;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkQueryPoolCreateInfoINTEL QueryPoolCreateInfoINTEL()
+{
+  VkQueryPoolCreateInfoINTEL info;
+  info.sType = VK_STRUCTURE_TYPE_QUERY_POOL_CREATE_INFO_INTEL;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkPerformanceMarkerInfoINTEL PerformanceMarkerInfoINTEL()
+{
+  VkPerformanceMarkerInfoINTEL info;
+  info.sType = VK_STRUCTURE_TYPE_PERFORMANCE_MARKER_INFO_INTEL;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkPerformanceStreamMarkerInfoINTEL PerformanceStreamMarkerInfoINTEL()
+{
+  VkPerformanceStreamMarkerInfoINTEL info;
+  info.sType = VK_STRUCTURE_TYPE_PERFORMANCE_STREAM_MARKER_INFO_INTEL;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkPerformanceOverrideInfoINTEL PerformanceOverrideInfoINTEL()
+{
+  VkPerformanceOverrideInfoINTEL info;
+  info.sType = VK_STRUCTURE_TYPE_PERFORMANCE_OVERRIDE_INFO_INTEL;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkPerformanceConfigurationAcquireInfoINTEL PerformanceConfigurationAcquireInfoINTEL()
+{
+  VkPerformanceConfigurationAcquireInfoINTEL info;
+  info.sType = VK_STRUCTURE_TYPE_PERFORMANCE_CONFIGURATION_ACQUIRE_INFO_INTEL;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkPhysicalDeviceShaderClockFeaturesKHR PhysicalDeviceShaderClockFeaturesKHR()
+{
+  VkPhysicalDeviceShaderClockFeaturesKHR info;
+  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_CLOCK_FEATURES_KHR;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkPhysicalDeviceIndexTypeUint8FeaturesEXT PhysicalDeviceIndexTypeUint8FeaturesEXT()
+{
+  VkPhysicalDeviceIndexTypeUint8FeaturesEXT info;
+  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_INDEX_TYPE_UINT8_FEATURES_EXT;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkPhysicalDeviceShaderSMBuiltinsFeaturesNV PhysicalDeviceShaderSMBuiltinsFeaturesNV()
+{
+  VkPhysicalDeviceShaderSMBuiltinsFeaturesNV info;
+  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_SM_BUILTINS_FEATURES_NV;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkPhysicalDeviceFragmentShaderInterlockFeaturesEXT PhysicalDeviceFragmentShaderInterlockFeaturesEXT()
+{
+  VkPhysicalDeviceFragmentShaderInterlockFeaturesEXT info;
+  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_SHADER_INTERLOCK_FEATURES_EXT;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkPhysicalDeviceSeparateDepthStencilLayoutsFeaturesKHR PhysicalDeviceSeparateDepthStencilLayoutsFeaturesKHR()
+{
+  VkPhysicalDeviceSeparateDepthStencilLayoutsFeaturesKHR info;
+  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SEPARATE_DEPTH_STENCIL_LAYOUTS_FEATURES_KHR;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkAttachmentReferenceStencilLayoutKHR AttachmentReferenceStencilLayoutKHR()
+{
+  VkAttachmentReferenceStencilLayoutKHR info;
+  info.sType = VK_STRUCTURE_TYPE_ATTACHMENT_REFERENCE_STENCIL_LAYOUT_KHR;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkAttachmentDescriptionStencilLayoutKHR AttachmentDescriptionStencilLayoutKHR()
+{
+  VkAttachmentDescriptionStencilLayoutKHR info;
+  info.sType = VK_STRUCTURE_TYPE_ATTACHMENT_DESCRIPTION_STENCIL_LAYOUT_KHR;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkPhysicalDevicePipelineExecutablePropertiesFeaturesKHR PhysicalDevicePipelineExecutablePropertiesFeaturesKHR()
+{
+  VkPhysicalDevicePipelineExecutablePropertiesFeaturesKHR info;
+  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_EXECUTABLE_PROPERTIES_FEATURES_KHR;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkPipelineInfoKHR PipelineInfoKHR()
+{
+  VkPipelineInfoKHR info;
+  info.sType = VK_STRUCTURE_TYPE_PIPELINE_INFO_KHR;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkPipelineExecutableInfoKHR PipelineExecutableInfoKHR()
+{
+  VkPipelineExecutableInfoKHR info;
+  info.sType = VK_STRUCTURE_TYPE_PIPELINE_EXECUTABLE_INFO_KHR;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkPhysicalDeviceShaderDemoteToHelperInvocationFeaturesEXT PhysicalDeviceShaderDemoteToHelperInvocationFeaturesEXT()
+{
+  VkPhysicalDeviceShaderDemoteToHelperInvocationFeaturesEXT info;
+  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_DEMOTE_TO_HELPER_INVOCATION_FEATURES_EXT;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkPhysicalDeviceTexelBufferAlignmentFeaturesEXT PhysicalDeviceTexelBufferAlignmentFeaturesEXT()
+{
+  VkPhysicalDeviceTexelBufferAlignmentFeaturesEXT info;
+  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TEXEL_BUFFER_ALIGNMENT_FEATURES_EXT;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkPhysicalDeviceSubgroupSizeControlFeaturesEXT PhysicalDeviceSubgroupSizeControlFeaturesEXT()
+{
+  VkPhysicalDeviceSubgroupSizeControlFeaturesEXT info;
+  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SUBGROUP_SIZE_CONTROL_FEATURES_EXT;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkMemoryOpaqueCaptureAddressAllocateInfoKHR MemoryOpaqueCaptureAddressAllocateInfoKHR()
+{
+  VkMemoryOpaqueCaptureAddressAllocateInfoKHR info;
+  info.sType = VK_STRUCTURE_TYPE_MEMORY_OPAQUE_CAPTURE_ADDRESS_ALLOCATE_INFO_KHR;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkDeviceMemoryOpaqueCaptureAddressInfoKHR DeviceMemoryOpaqueCaptureAddressInfoKHR()
+{
+  VkDeviceMemoryOpaqueCaptureAddressInfoKHR info;
+  info.sType = VK_STRUCTURE_TYPE_DEVICE_MEMORY_OPAQUE_CAPTURE_ADDRESS_INFO_KHR;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkPhysicalDeviceLineRasterizationFeaturesEXT PhysicalDeviceLineRasterizationFeaturesEXT()
+{
+  VkPhysicalDeviceLineRasterizationFeaturesEXT info;
+  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LINE_RASTERIZATION_FEATURES_EXT;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkPipelineRasterizationLineStateCreateInfoEXT PipelineRasterizationLineStateCreateInfoEXT()
+{
+  VkPipelineRasterizationLineStateCreateInfoEXT info;
+  info.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_LINE_STATE_CREATE_INFO_EXT;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkPipelineCompilerControlCreateInfoAMD PipelineCompilerControlCreateInfoAMD()
+{
+  VkPipelineCompilerControlCreateInfoAMD info;
+  info.sType = VK_STRUCTURE_TYPE_PIPELINE_COMPILER_CONTROL_CREATE_INFO_AMD;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkPhysicalDeviceCoherentMemoryFeaturesAMD PhysicalDeviceCoherentMemoryFeaturesAMD()
+{
+  VkPhysicalDeviceCoherentMemoryFeaturesAMD info;
+  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COHERENT_MEMORY_FEATURES_AMD;
   info.pNext = nullptr;
   return info;
 }
@@ -591,89 +2665,89 @@ inline VkDebugReportCallbackCreateInfoEXT DebugReportCallbackCreateInfoEXT()
  ///@{
 
 inline VkApplicationInfo ApplicationInfo(
-  const char * pApplicationName,
+  const char* pApplicationName,
   uint32_t applicationVersion,
-  const char * pEngineName,
+  const char* pEngineName,
   uint32_t engineVersion,
   uint32_t apiVersion
 )
 {
-  VkApplicationInfo info;
-  info.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
-  info.pNext = nullptr;
-  info.pApplicationName = pApplicationName;
-  info.applicationVersion = applicationVersion;
-  info.pEngineName = pEngineName;
-  info.engineVersion = engineVersion;
-  info.apiVersion = apiVersion;
+  VkApplicationInfo temp;
+  temp.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
+  temp.pNext = nullptr;
+  temp.pApplicationName = pApplicationName;
+  temp.applicationVersion = applicationVersion;
+  temp.pEngineName = pEngineName;
+  temp.engineVersion = engineVersion;
+  temp.apiVersion = apiVersion;
 
-  return info;
+  return temp;
 }
 
 inline VkDeviceQueueCreateInfo DeviceQueueCreateInfo(
   VkDeviceQueueCreateFlags flags,
   uint32_t queueFamilyIndex,
   uint32_t queueCount,
-  const float * pQueuePriorities
+  const float* pQueuePriorities
 )
 {
-  VkDeviceQueueCreateInfo info;
-  info.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-  info.pNext = nullptr;
-  info.flags = flags;
-  info.queueFamilyIndex = queueFamilyIndex;
-  info.queueCount = queueCount;
-  info.pQueuePriorities = pQueuePriorities;
+  VkDeviceQueueCreateInfo temp;
+  temp.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+  temp.pNext = nullptr;
+  temp.flags = flags;
+  temp.queueFamilyIndex = queueFamilyIndex;
+  temp.queueCount = queueCount;
+  temp.pQueuePriorities = pQueuePriorities;
 
-  return info;
+  return temp;
 }
 
 inline VkDeviceCreateInfo DeviceCreateInfo(
   VkDeviceCreateFlags flags,
   uint32_t queueCreateInfoCount,
-  const VkDeviceQueueCreateInfo * pQueueCreateInfos,
+  const VkDeviceQueueCreateInfo* pQueueCreateInfos,
   uint32_t enabledLayerCount,
-  const char * const * ppEnabledLayerNames,
+  const char* const* ppEnabledLayerNames,
   uint32_t enabledExtensionCount,
-  const char * const * ppEnabledExtensionNames,
-  const VkPhysicalDeviceFeatures * pEnabledFeatures
+  const char* const* ppEnabledExtensionNames,
+  const VkPhysicalDeviceFeatures* pEnabledFeatures
 )
 {
-  VkDeviceCreateInfo info;
-  info.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-  info.pNext = nullptr;
-  info.flags = flags;
-  info.queueCreateInfoCount = queueCreateInfoCount;
-  info.pQueueCreateInfos = pQueueCreateInfos;
-  info.enabledLayerCount = enabledLayerCount;
-  info.ppEnabledLayerNames = ppEnabledLayerNames;
-  info.enabledExtensionCount = enabledExtensionCount;
-  info.ppEnabledExtensionNames = ppEnabledExtensionNames;
-  info.pEnabledFeatures = pEnabledFeatures;
+  VkDeviceCreateInfo temp;
+  temp.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+  temp.pNext = nullptr;
+  temp.flags = flags;
+  temp.queueCreateInfoCount = queueCreateInfoCount;
+  temp.pQueueCreateInfos = pQueueCreateInfos;
+  temp.enabledLayerCount = enabledLayerCount;
+  temp.ppEnabledLayerNames = ppEnabledLayerNames;
+  temp.enabledExtensionCount = enabledExtensionCount;
+  temp.ppEnabledExtensionNames = ppEnabledExtensionNames;
+  temp.pEnabledFeatures = pEnabledFeatures;
 
-  return info;
+  return temp;
 }
 
 inline VkInstanceCreateInfo InstanceCreateInfo(
   VkInstanceCreateFlags flags,
-  const VkApplicationInfo * pApplicationInfo,
+  const VkApplicationInfo* pApplicationInfo,
   uint32_t enabledLayerCount,
-  const char * const * ppEnabledLayerNames,
+  const char* const* ppEnabledLayerNames,
   uint32_t enabledExtensionCount,
-  const char * const * ppEnabledExtensionNames
+  const char* const* ppEnabledExtensionNames
 )
 {
-  VkInstanceCreateInfo info;
-  info.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
-  info.pNext = nullptr;
-  info.flags = flags;
-  info.pApplicationInfo = pApplicationInfo;
-  info.enabledLayerCount = enabledLayerCount;
-  info.ppEnabledLayerNames = ppEnabledLayerNames;
-  info.enabledExtensionCount = enabledExtensionCount;
-  info.ppEnabledExtensionNames = ppEnabledExtensionNames;
+  VkInstanceCreateInfo temp;
+  temp.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
+  temp.pNext = nullptr;
+  temp.flags = flags;
+  temp.pApplicationInfo = pApplicationInfo;
+  temp.enabledLayerCount = enabledLayerCount;
+  temp.ppEnabledLayerNames = ppEnabledLayerNames;
+  temp.enabledExtensionCount = enabledExtensionCount;
+  temp.ppEnabledExtensionNames = ppEnabledExtensionNames;
 
-  return info;
+  return temp;
 }
 
 inline VkMemoryAllocateInfo MemoryAllocateInfo(
@@ -681,13 +2755,13 @@ inline VkMemoryAllocateInfo MemoryAllocateInfo(
   uint32_t memoryTypeIndex
 )
 {
-  VkMemoryAllocateInfo info;
-  info.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-  info.pNext = nullptr;
-  info.allocationSize = allocationSize;
-  info.memoryTypeIndex = memoryTypeIndex;
+  VkMemoryAllocateInfo temp;
+  temp.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+  temp.pNext = nullptr;
+  temp.allocationSize = allocationSize;
+  temp.memoryTypeIndex = memoryTypeIndex;
 
-  return info;
+  return temp;
 }
 
 inline VkMappedMemoryRange MappedMemoryRange(
@@ -696,14 +2770,14 @@ inline VkMappedMemoryRange MappedMemoryRange(
   VkDeviceSize size
 )
 {
-  VkMappedMemoryRange info;
-  info.sType = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE;
-  info.pNext = nullptr;
-  info.memory = memory;
-  info.offset = offset;
-  info.size = size;
+  VkMappedMemoryRange temp;
+  temp.sType = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE;
+  temp.pNext = nullptr;
+  temp.memory = memory;
+  temp.offset = offset;
+  temp.size = size;
 
-  return info;
+  return temp;
 }
 
 inline VkWriteDescriptorSet WriteDescriptorSet(
@@ -712,24 +2786,24 @@ inline VkWriteDescriptorSet WriteDescriptorSet(
   uint32_t dstArrayElement,
   uint32_t descriptorCount,
   VkDescriptorType descriptorType,
-  const VkDescriptorImageInfo * pImageInfo,
-  const VkDescriptorBufferInfo * pBufferInfo,
-  const VkBufferView * pTexelBufferView
+  const VkDescriptorImageInfo* pImageInfo,
+  const VkDescriptorBufferInfo* pBufferInfo,
+  const VkBufferView* pTexelBufferView
 )
 {
-  VkWriteDescriptorSet info;
-  info.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-  info.pNext = nullptr;
-  info.dstSet = dstSet;
-  info.dstBinding = dstBinding;
-  info.dstArrayElement = dstArrayElement;
-  info.descriptorCount = descriptorCount;
-  info.descriptorType = descriptorType;
-  info.pImageInfo = pImageInfo;
-  info.pBufferInfo = pBufferInfo;
-  info.pTexelBufferView = pTexelBufferView;
+  VkWriteDescriptorSet temp;
+  temp.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+  temp.pNext = nullptr;
+  temp.dstSet = dstSet;
+  temp.dstBinding = dstBinding;
+  temp.dstArrayElement = dstArrayElement;
+  temp.descriptorCount = descriptorCount;
+  temp.descriptorType = descriptorType;
+  temp.pImageInfo = pImageInfo;
+  temp.pBufferInfo = pBufferInfo;
+  temp.pTexelBufferView = pTexelBufferView;
 
-  return info;
+  return temp;
 }
 
 inline VkCopyDescriptorSet CopyDescriptorSet(
@@ -742,18 +2816,18 @@ inline VkCopyDescriptorSet CopyDescriptorSet(
   uint32_t descriptorCount
 )
 {
-  VkCopyDescriptorSet info;
-  info.sType = VK_STRUCTURE_TYPE_COPY_DESCRIPTOR_SET;
-  info.pNext = nullptr;
-  info.srcSet = srcSet;
-  info.srcBinding = srcBinding;
-  info.srcArrayElement = srcArrayElement;
-  info.dstSet = dstSet;
-  info.dstBinding = dstBinding;
-  info.dstArrayElement = dstArrayElement;
-  info.descriptorCount = descriptorCount;
+  VkCopyDescriptorSet temp;
+  temp.sType = VK_STRUCTURE_TYPE_COPY_DESCRIPTOR_SET;
+  temp.pNext = nullptr;
+  temp.srcSet = srcSet;
+  temp.srcBinding = srcBinding;
+  temp.srcArrayElement = srcArrayElement;
+  temp.dstSet = dstSet;
+  temp.dstBinding = dstBinding;
+  temp.dstArrayElement = dstArrayElement;
+  temp.descriptorCount = descriptorCount;
 
-  return info;
+  return temp;
 }
 
 inline VkBufferCreateInfo BufferCreateInfo(
@@ -762,20 +2836,20 @@ inline VkBufferCreateInfo BufferCreateInfo(
   VkBufferUsageFlags usage,
   VkSharingMode sharingMode,
   uint32_t queueFamilyIndexCount,
-  const uint32_t * pQueueFamilyIndices
+  const uint32_t* pQueueFamilyIndices
 )
 {
-  VkBufferCreateInfo info;
-  info.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
-  info.pNext = nullptr;
-  info.flags = flags;
-  info.size = size;
-  info.usage = usage;
-  info.sharingMode = sharingMode;
-  info.queueFamilyIndexCount = queueFamilyIndexCount;
-  info.pQueueFamilyIndices = pQueueFamilyIndices;
+  VkBufferCreateInfo temp;
+  temp.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+  temp.pNext = nullptr;
+  temp.flags = flags;
+  temp.size = size;
+  temp.usage = usage;
+  temp.sharingMode = sharingMode;
+  temp.queueFamilyIndexCount = queueFamilyIndexCount;
+  temp.pQueueFamilyIndices = pQueueFamilyIndices;
 
-  return info;
+  return temp;
 }
 
 inline VkBufferViewCreateInfo BufferViewCreateInfo(
@@ -786,16 +2860,16 @@ inline VkBufferViewCreateInfo BufferViewCreateInfo(
   VkDeviceSize range
 )
 {
-  VkBufferViewCreateInfo info;
-  info.sType = VK_STRUCTURE_TYPE_BUFFER_VIEW_CREATE_INFO;
-  info.pNext = nullptr;
-  info.flags = flags;
-  info.buffer = buffer;
-  info.format = format;
-  info.offset = offset;
-  info.range = range;
+  VkBufferViewCreateInfo temp;
+  temp.sType = VK_STRUCTURE_TYPE_BUFFER_VIEW_CREATE_INFO;
+  temp.pNext = nullptr;
+  temp.flags = flags;
+  temp.buffer = buffer;
+  temp.format = format;
+  temp.offset = offset;
+  temp.range = range;
 
-  return info;
+  return temp;
 }
 
 inline VkMemoryBarrier MemoryBarrier(
@@ -803,13 +2877,13 @@ inline VkMemoryBarrier MemoryBarrier(
   VkAccessFlags dstAccessMask
 )
 {
-  VkMemoryBarrier info;
-  info.sType = VK_STRUCTURE_TYPE_MEMORY_BARRIER;
-  info.pNext = nullptr;
-  info.srcAccessMask = srcAccessMask;
-  info.dstAccessMask = dstAccessMask;
+  VkMemoryBarrier temp;
+  temp.sType = VK_STRUCTURE_TYPE_MEMORY_BARRIER;
+  temp.pNext = nullptr;
+  temp.srcAccessMask = srcAccessMask;
+  temp.dstAccessMask = dstAccessMask;
 
-  return info;
+  return temp;
 }
 
 inline VkBufferMemoryBarrier BufferMemoryBarrier(
@@ -822,18 +2896,18 @@ inline VkBufferMemoryBarrier BufferMemoryBarrier(
   VkDeviceSize size
 )
 {
-  VkBufferMemoryBarrier info;
-  info.sType = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER;
-  info.pNext = nullptr;
-  info.srcAccessMask = srcAccessMask;
-  info.dstAccessMask = dstAccessMask;
-  info.srcQueueFamilyIndex = srcQueueFamilyIndex;
-  info.dstQueueFamilyIndex = dstQueueFamilyIndex;
-  info.buffer = buffer;
-  info.offset = offset;
-  info.size = size;
+  VkBufferMemoryBarrier temp;
+  temp.sType = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER;
+  temp.pNext = nullptr;
+  temp.srcAccessMask = srcAccessMask;
+  temp.dstAccessMask = dstAccessMask;
+  temp.srcQueueFamilyIndex = srcQueueFamilyIndex;
+  temp.dstQueueFamilyIndex = dstQueueFamilyIndex;
+  temp.buffer = buffer;
+  temp.offset = offset;
+  temp.size = size;
 
-  return info;
+  return temp;
 }
 
 inline VkImageMemoryBarrier ImageMemoryBarrier(
@@ -847,19 +2921,19 @@ inline VkImageMemoryBarrier ImageMemoryBarrier(
   VkImageSubresourceRange subresourceRange
 )
 {
-  VkImageMemoryBarrier info;
-  info.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-  info.pNext = nullptr;
-  info.srcAccessMask = srcAccessMask;
-  info.dstAccessMask = dstAccessMask;
-  info.oldLayout = oldLayout;
-  info.newLayout = newLayout;
-  info.srcQueueFamilyIndex = srcQueueFamilyIndex;
-  info.dstQueueFamilyIndex = dstQueueFamilyIndex;
-  info.image = image;
-  info.subresourceRange = subresourceRange;
+  VkImageMemoryBarrier temp;
+  temp.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+  temp.pNext = nullptr;
+  temp.srcAccessMask = srcAccessMask;
+  temp.dstAccessMask = dstAccessMask;
+  temp.oldLayout = oldLayout;
+  temp.newLayout = newLayout;
+  temp.srcQueueFamilyIndex = srcQueueFamilyIndex;
+  temp.dstQueueFamilyIndex = dstQueueFamilyIndex;
+  temp.image = image;
+  temp.subresourceRange = subresourceRange;
 
-  return info;
+  return temp;
 }
 
 inline VkImageCreateInfo ImageCreateInfo(
@@ -874,28 +2948,28 @@ inline VkImageCreateInfo ImageCreateInfo(
   VkImageUsageFlags usage,
   VkSharingMode sharingMode,
   uint32_t queueFamilyIndexCount,
-  const uint32_t * pQueueFamilyIndices,
+  const uint32_t* pQueueFamilyIndices,
   VkImageLayout initialLayout
 )
 {
-  VkImageCreateInfo info;
-  info.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
-  info.pNext = nullptr;
-  info.flags = flags;
-  info.imageType = imageType;
-  info.format = format;
-  info.extent = extent;
-  info.mipLevels = mipLevels;
-  info.arrayLayers = arrayLayers;
-  info.samples = samples;
-  info.tiling = tiling;
-  info.usage = usage;
-  info.sharingMode = sharingMode;
-  info.queueFamilyIndexCount = queueFamilyIndexCount;
-  info.pQueueFamilyIndices = pQueueFamilyIndices;
-  info.initialLayout = initialLayout;
+  VkImageCreateInfo temp;
+  temp.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+  temp.pNext = nullptr;
+  temp.flags = flags;
+  temp.imageType = imageType;
+  temp.format = format;
+  temp.extent = extent;
+  temp.mipLevels = mipLevels;
+  temp.arrayLayers = arrayLayers;
+  temp.samples = samples;
+  temp.tiling = tiling;
+  temp.usage = usage;
+  temp.sharingMode = sharingMode;
+  temp.queueFamilyIndexCount = queueFamilyIndexCount;
+  temp.pQueueFamilyIndices = pQueueFamilyIndices;
+  temp.initialLayout = initialLayout;
 
-  return info;
+  return temp;
 }
 
 inline VkImageViewCreateInfo ImageViewCreateInfo(
@@ -907,133 +2981,133 @@ inline VkImageViewCreateInfo ImageViewCreateInfo(
   VkImageSubresourceRange subresourceRange
 )
 {
-  VkImageViewCreateInfo info;
-  info.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
-  info.pNext = nullptr;
-  info.flags = flags;
-  info.image = image;
-  info.viewType = viewType;
-  info.format = format;
-  info.components = components;
-  info.subresourceRange = subresourceRange;
+  VkImageViewCreateInfo temp;
+  temp.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+  temp.pNext = nullptr;
+  temp.flags = flags;
+  temp.image = image;
+  temp.viewType = viewType;
+  temp.format = format;
+  temp.components = components;
+  temp.subresourceRange = subresourceRange;
 
-  return info;
+  return temp;
 }
 
 inline VkBindSparseInfo BindSparseInfo(
   uint32_t waitSemaphoreCount,
-  const VkSemaphore * pWaitSemaphores,
+  const VkSemaphore* pWaitSemaphores,
   uint32_t bufferBindCount,
-  const VkSparseBufferMemoryBindInfo * pBufferBinds,
+  const VkSparseBufferMemoryBindInfo* pBufferBinds,
   uint32_t imageOpaqueBindCount,
-  const VkSparseImageOpaqueMemoryBindInfo * pImageOpaqueBinds,
+  const VkSparseImageOpaqueMemoryBindInfo* pImageOpaqueBinds,
   uint32_t imageBindCount,
-  const VkSparseImageMemoryBindInfo * pImageBinds,
+  const VkSparseImageMemoryBindInfo* pImageBinds,
   uint32_t signalSemaphoreCount,
-  const VkSemaphore * pSignalSemaphores
+  const VkSemaphore* pSignalSemaphores
 )
 {
-  VkBindSparseInfo info;
-  info.sType = VK_STRUCTURE_TYPE_BIND_SPARSE_INFO;
-  info.pNext = nullptr;
-  info.waitSemaphoreCount = waitSemaphoreCount;
-  info.pWaitSemaphores = pWaitSemaphores;
-  info.bufferBindCount = bufferBindCount;
-  info.pBufferBinds = pBufferBinds;
-  info.imageOpaqueBindCount = imageOpaqueBindCount;
-  info.pImageOpaqueBinds = pImageOpaqueBinds;
-  info.imageBindCount = imageBindCount;
-  info.pImageBinds = pImageBinds;
-  info.signalSemaphoreCount = signalSemaphoreCount;
-  info.pSignalSemaphores = pSignalSemaphores;
+  VkBindSparseInfo temp;
+  temp.sType = VK_STRUCTURE_TYPE_BIND_SPARSE_INFO;
+  temp.pNext = nullptr;
+  temp.waitSemaphoreCount = waitSemaphoreCount;
+  temp.pWaitSemaphores = pWaitSemaphores;
+  temp.bufferBindCount = bufferBindCount;
+  temp.pBufferBinds = pBufferBinds;
+  temp.imageOpaqueBindCount = imageOpaqueBindCount;
+  temp.pImageOpaqueBinds = pImageOpaqueBinds;
+  temp.imageBindCount = imageBindCount;
+  temp.pImageBinds = pImageBinds;
+  temp.signalSemaphoreCount = signalSemaphoreCount;
+  temp.pSignalSemaphores = pSignalSemaphores;
 
-  return info;
+  return temp;
 }
 
 inline VkShaderModuleCreateInfo ShaderModuleCreateInfo(
   VkShaderModuleCreateFlags flags,
   size_t codeSize,
-  const uint32_t * pCode
+  const uint32_t* pCode
 )
 {
-  VkShaderModuleCreateInfo info;
-  info.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
-  info.pNext = nullptr;
-  info.flags = flags;
-  info.codeSize = codeSize;
-  info.pCode = pCode;
+  VkShaderModuleCreateInfo temp;
+  temp.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+  temp.pNext = nullptr;
+  temp.flags = flags;
+  temp.codeSize = codeSize;
+  temp.pCode = pCode;
 
-  return info;
+  return temp;
 }
 
 inline VkDescriptorSetLayoutCreateInfo DescriptorSetLayoutCreateInfo(
   VkDescriptorSetLayoutCreateFlags flags,
   uint32_t bindingCount,
-  const VkDescriptorSetLayoutBinding * pBindings
+  const VkDescriptorSetLayoutBinding* pBindings
 )
 {
-  VkDescriptorSetLayoutCreateInfo info;
-  info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
-  info.pNext = nullptr;
-  info.flags = flags;
-  info.bindingCount = bindingCount;
-  info.pBindings = pBindings;
+  VkDescriptorSetLayoutCreateInfo temp;
+  temp.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+  temp.pNext = nullptr;
+  temp.flags = flags;
+  temp.bindingCount = bindingCount;
+  temp.pBindings = pBindings;
 
-  return info;
+  return temp;
 }
 
 inline VkDescriptorPoolCreateInfo DescriptorPoolCreateInfo(
   VkDescriptorPoolCreateFlags flags,
   uint32_t maxSets,
   uint32_t poolSizeCount,
-  const VkDescriptorPoolSize * pPoolSizes
+  const VkDescriptorPoolSize* pPoolSizes
 )
 {
-  VkDescriptorPoolCreateInfo info;
-  info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-  info.pNext = nullptr;
-  info.flags = flags;
-  info.maxSets = maxSets;
-  info.poolSizeCount = poolSizeCount;
-  info.pPoolSizes = pPoolSizes;
+  VkDescriptorPoolCreateInfo temp;
+  temp.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+  temp.pNext = nullptr;
+  temp.flags = flags;
+  temp.maxSets = maxSets;
+  temp.poolSizeCount = poolSizeCount;
+  temp.pPoolSizes = pPoolSizes;
 
-  return info;
+  return temp;
 }
 
 inline VkDescriptorSetAllocateInfo DescriptorSetAllocateInfo(
   VkDescriptorPool descriptorPool,
   uint32_t descriptorSetCount,
-  const VkDescriptorSetLayout * pSetLayouts
+  const VkDescriptorSetLayout* pSetLayouts
 )
 {
-  VkDescriptorSetAllocateInfo info;
-  info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-  info.pNext = nullptr;
-  info.descriptorPool = descriptorPool;
-  info.descriptorSetCount = descriptorSetCount;
-  info.pSetLayouts = pSetLayouts;
+  VkDescriptorSetAllocateInfo temp;
+  temp.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+  temp.pNext = nullptr;
+  temp.descriptorPool = descriptorPool;
+  temp.descriptorSetCount = descriptorSetCount;
+  temp.pSetLayouts = pSetLayouts;
 
-  return info;
+  return temp;
 }
 
 inline VkPipelineShaderStageCreateInfo PipelineShaderStageCreateInfo(
   VkPipelineShaderStageCreateFlags flags,
   VkShaderStageFlagBits stage,
   VkShaderModule module,
-  const char * pName,
-  const VkSpecializationInfo * pSpecializationInfo
+  const char* pName,
+  const VkSpecializationInfo* pSpecializationInfo
 )
 {
-  VkPipelineShaderStageCreateInfo info;
-  info.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-  info.pNext = nullptr;
-  info.flags = flags;
-  info.stage = stage;
-  info.module = module;
-  info.pName = pName;
-  info.pSpecializationInfo = pSpecializationInfo;
+  VkPipelineShaderStageCreateInfo temp;
+  temp.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+  temp.pNext = nullptr;
+  temp.flags = flags;
+  temp.stage = stage;
+  temp.module = module;
+  temp.pName = pName;
+  temp.pSpecializationInfo = pSpecializationInfo;
 
-  return info;
+  return temp;
 }
 
 inline VkComputePipelineCreateInfo ComputePipelineCreateInfo(
@@ -1044,36 +3118,36 @@ inline VkComputePipelineCreateInfo ComputePipelineCreateInfo(
   int32_t basePipelineIndex
 )
 {
-  VkComputePipelineCreateInfo info;
-  info.sType = VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO;
-  info.pNext = nullptr;
-  info.flags = flags;
-  info.stage = stage;
-  info.layout = layout;
-  info.basePipelineHandle = basePipelineHandle;
-  info.basePipelineIndex = basePipelineIndex;
+  VkComputePipelineCreateInfo temp;
+  temp.sType = VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO;
+  temp.pNext = nullptr;
+  temp.flags = flags;
+  temp.stage = stage;
+  temp.layout = layout;
+  temp.basePipelineHandle = basePipelineHandle;
+  temp.basePipelineIndex = basePipelineIndex;
 
-  return info;
+  return temp;
 }
 
 inline VkPipelineVertexInputStateCreateInfo PipelineVertexInputStateCreateInfo(
   VkPipelineVertexInputStateCreateFlags flags,
   uint32_t vertexBindingDescriptionCount,
-  const VkVertexInputBindingDescription * pVertexBindingDescriptions,
+  const VkVertexInputBindingDescription* pVertexBindingDescriptions,
   uint32_t vertexAttributeDescriptionCount,
-  const VkVertexInputAttributeDescription * pVertexAttributeDescriptions
+  const VkVertexInputAttributeDescription* pVertexAttributeDescriptions
 )
 {
-  VkPipelineVertexInputStateCreateInfo info;
-  info.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
-  info.pNext = nullptr;
-  info.flags = flags;
-  info.vertexBindingDescriptionCount = vertexBindingDescriptionCount;
-  info.pVertexBindingDescriptions = pVertexBindingDescriptions;
-  info.vertexAttributeDescriptionCount = vertexAttributeDescriptionCount;
-  info.pVertexAttributeDescriptions = pVertexAttributeDescriptions;
+  VkPipelineVertexInputStateCreateInfo temp;
+  temp.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
+  temp.pNext = nullptr;
+  temp.flags = flags;
+  temp.vertexBindingDescriptionCount = vertexBindingDescriptionCount;
+  temp.pVertexBindingDescriptions = pVertexBindingDescriptions;
+  temp.vertexAttributeDescriptionCount = vertexAttributeDescriptionCount;
+  temp.pVertexAttributeDescriptions = pVertexAttributeDescriptions;
 
-  return info;
+  return temp;
 }
 
 inline VkPipelineInputAssemblyStateCreateInfo PipelineInputAssemblyStateCreateInfo(
@@ -1082,14 +3156,14 @@ inline VkPipelineInputAssemblyStateCreateInfo PipelineInputAssemblyStateCreateIn
   VkBool32 primitiveRestartEnable
 )
 {
-  VkPipelineInputAssemblyStateCreateInfo info;
-  info.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
-  info.pNext = nullptr;
-  info.flags = flags;
-  info.topology = topology;
-  info.primitiveRestartEnable = primitiveRestartEnable;
+  VkPipelineInputAssemblyStateCreateInfo temp;
+  temp.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
+  temp.pNext = nullptr;
+  temp.flags = flags;
+  temp.topology = topology;
+  temp.primitiveRestartEnable = primitiveRestartEnable;
 
-  return info;
+  return temp;
 }
 
 inline VkPipelineTessellationStateCreateInfo PipelineTessellationStateCreateInfo(
@@ -1097,33 +3171,33 @@ inline VkPipelineTessellationStateCreateInfo PipelineTessellationStateCreateInfo
   uint32_t patchControlPoints
 )
 {
-  VkPipelineTessellationStateCreateInfo info;
-  info.sType = VK_STRUCTURE_TYPE_PIPELINE_TESSELLATION_STATE_CREATE_INFO;
-  info.pNext = nullptr;
-  info.flags = flags;
-  info.patchControlPoints = patchControlPoints;
+  VkPipelineTessellationStateCreateInfo temp;
+  temp.sType = VK_STRUCTURE_TYPE_PIPELINE_TESSELLATION_STATE_CREATE_INFO;
+  temp.pNext = nullptr;
+  temp.flags = flags;
+  temp.patchControlPoints = patchControlPoints;
 
-  return info;
+  return temp;
 }
 
 inline VkPipelineViewportStateCreateInfo PipelineViewportStateCreateInfo(
   VkPipelineViewportStateCreateFlags flags,
   uint32_t viewportCount,
-  const VkViewport * pViewports,
+  const VkViewport* pViewports,
   uint32_t scissorCount,
-  const VkRect2D * pScissors
+  const VkRect2D* pScissors
 )
 {
-  VkPipelineViewportStateCreateInfo info;
-  info.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
-  info.pNext = nullptr;
-  info.flags = flags;
-  info.viewportCount = viewportCount;
-  info.pViewports = pViewports;
-  info.scissorCount = scissorCount;
-  info.pScissors = pScissors;
+  VkPipelineViewportStateCreateInfo temp;
+  temp.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
+  temp.pNext = nullptr;
+  temp.flags = flags;
+  temp.viewportCount = viewportCount;
+  temp.pViewports = pViewports;
+  temp.scissorCount = scissorCount;
+  temp.pScissors = pScissors;
 
-  return info;
+  return temp;
 }
 
 inline VkPipelineRasterizationStateCreateInfo PipelineRasterizationStateCreateInfo(
@@ -1140,22 +3214,22 @@ inline VkPipelineRasterizationStateCreateInfo PipelineRasterizationStateCreateIn
   float lineWidth
 )
 {
-  VkPipelineRasterizationStateCreateInfo info;
-  info.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
-  info.pNext = nullptr;
-  info.flags = flags;
-  info.depthClampEnable = depthClampEnable;
-  info.rasterizerDiscardEnable = rasterizerDiscardEnable;
-  info.polygonMode = polygonMode;
-  info.cullMode = cullMode;
-  info.frontFace = frontFace;
-  info.depthBiasEnable = depthBiasEnable;
-  info.depthBiasConstantFactor = depthBiasConstantFactor;
-  info.depthBiasClamp = depthBiasClamp;
-  info.depthBiasSlopeFactor = depthBiasSlopeFactor;
-  info.lineWidth = lineWidth;
+  VkPipelineRasterizationStateCreateInfo temp;
+  temp.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
+  temp.pNext = nullptr;
+  temp.flags = flags;
+  temp.depthClampEnable = depthClampEnable;
+  temp.rasterizerDiscardEnable = rasterizerDiscardEnable;
+  temp.polygonMode = polygonMode;
+  temp.cullMode = cullMode;
+  temp.frontFace = frontFace;
+  temp.depthBiasEnable = depthBiasEnable;
+  temp.depthBiasConstantFactor = depthBiasConstantFactor;
+  temp.depthBiasClamp = depthBiasClamp;
+  temp.depthBiasSlopeFactor = depthBiasSlopeFactor;
+  temp.lineWidth = lineWidth;
 
-  return info;
+  return temp;
 }
 
 inline VkPipelineMultisampleStateCreateInfo PipelineMultisampleStateCreateInfo(
@@ -1163,23 +3237,23 @@ inline VkPipelineMultisampleStateCreateInfo PipelineMultisampleStateCreateInfo(
   VkSampleCountFlagBits rasterizationSamples,
   VkBool32 sampleShadingEnable,
   float minSampleShading,
-  const VkSampleMask * pSampleMask,
+  const VkSampleMask* pSampleMask,
   VkBool32 alphaToCoverageEnable,
   VkBool32 alphaToOneEnable
 )
 {
-  VkPipelineMultisampleStateCreateInfo info;
-  info.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
-  info.pNext = nullptr;
-  info.flags = flags;
-  info.rasterizationSamples = rasterizationSamples;
-  info.sampleShadingEnable = sampleShadingEnable;
-  info.minSampleShading = minSampleShading;
-  info.pSampleMask = pSampleMask;
-  info.alphaToCoverageEnable = alphaToCoverageEnable;
-  info.alphaToOneEnable = alphaToOneEnable;
+  VkPipelineMultisampleStateCreateInfo temp;
+  temp.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
+  temp.pNext = nullptr;
+  temp.flags = flags;
+  temp.rasterizationSamples = rasterizationSamples;
+  temp.sampleShadingEnable = sampleShadingEnable;
+  temp.minSampleShading = minSampleShading;
+  temp.pSampleMask = pSampleMask;
+  temp.alphaToCoverageEnable = alphaToCoverageEnable;
+  temp.alphaToOneEnable = alphaToOneEnable;
 
-  return info;
+  return temp;
 }
 
 inline VkPipelineColorBlendStateCreateInfo PipelineColorBlendStateCreateInfo(
@@ -1187,40 +3261,39 @@ inline VkPipelineColorBlendStateCreateInfo PipelineColorBlendStateCreateInfo(
   VkBool32 logicOpEnable,
   VkLogicOp logicOp,
   uint32_t attachmentCount,
-  const VkPipelineColorBlendAttachmentState * pAttachments,
+  const VkPipelineColorBlendAttachmentState* pAttachments,
   float blendConstants[4]
 )
 {
-  VkPipelineColorBlendStateCreateInfo info;
-  info.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
-  info.pNext = nullptr;
-  info.flags = flags;
-  info.logicOpEnable = logicOpEnable;
-  info.logicOp = logicOp;
-  info.attachmentCount = attachmentCount;
-  info.pAttachments = pAttachments;
-  info.blendConstants[0] = blendConstants[0];
-  info.blendConstants[1] = blendConstants[1];
-  info.blendConstants[2] = blendConstants[2];
-  info.blendConstants[3] = blendConstants[3];
+  VkPipelineColorBlendStateCreateInfo temp;
+  temp.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
+  temp.pNext = nullptr;
+  temp.flags = flags;
+  temp.logicOpEnable = logicOpEnable;
+  temp.logicOp = logicOp;
+  temp.attachmentCount = attachmentCount;
+  temp.pAttachments = pAttachments;
+  for(size_t i = 0; i < 4; ++i){
+    temp.blendConstants[i] = blendConstants[i];
+  }
 
-  return info;
+  return temp;
 }
 
 inline VkPipelineDynamicStateCreateInfo PipelineDynamicStateCreateInfo(
   VkPipelineDynamicStateCreateFlags flags,
   uint32_t dynamicStateCount,
-  const VkDynamicState * pDynamicStates
+  const VkDynamicState* pDynamicStates
 )
 {
-  VkPipelineDynamicStateCreateInfo info;
-  info.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
-  info.pNext = nullptr;
-  info.flags = flags;
-  info.dynamicStateCount = dynamicStateCount;
-  info.pDynamicStates = pDynamicStates;
+  VkPipelineDynamicStateCreateInfo temp;
+  temp.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
+  temp.pNext = nullptr;
+  temp.flags = flags;
+  temp.dynamicStateCount = dynamicStateCount;
+  temp.pDynamicStates = pDynamicStates;
 
-  return info;
+  return temp;
 }
 
 inline VkPipelineDepthStencilStateCreateInfo PipelineDepthStencilStateCreateInfo(
@@ -1236,36 +3309,36 @@ inline VkPipelineDepthStencilStateCreateInfo PipelineDepthStencilStateCreateInfo
   float maxDepthBounds
 )
 {
-  VkPipelineDepthStencilStateCreateInfo info;
-  info.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
-  info.pNext = nullptr;
-  info.flags = flags;
-  info.depthTestEnable = depthTestEnable;
-  info.depthWriteEnable = depthWriteEnable;
-  info.depthCompareOp = depthCompareOp;
-  info.depthBoundsTestEnable = depthBoundsTestEnable;
-  info.stencilTestEnable = stencilTestEnable;
-  info.front = front;
-  info.back = back;
-  info.minDepthBounds = minDepthBounds;
-  info.maxDepthBounds = maxDepthBounds;
+  VkPipelineDepthStencilStateCreateInfo temp;
+  temp.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
+  temp.pNext = nullptr;
+  temp.flags = flags;
+  temp.depthTestEnable = depthTestEnable;
+  temp.depthWriteEnable = depthWriteEnable;
+  temp.depthCompareOp = depthCompareOp;
+  temp.depthBoundsTestEnable = depthBoundsTestEnable;
+  temp.stencilTestEnable = stencilTestEnable;
+  temp.front = front;
+  temp.back = back;
+  temp.minDepthBounds = minDepthBounds;
+  temp.maxDepthBounds = maxDepthBounds;
 
-  return info;
+  return temp;
 }
 
 inline VkGraphicsPipelineCreateInfo GraphicsPipelineCreateInfo(
   VkPipelineCreateFlags flags,
   uint32_t stageCount,
-  const VkPipelineShaderStageCreateInfo * pStages,
-  const VkPipelineVertexInputStateCreateInfo * pVertexInputState,
-  const VkPipelineInputAssemblyStateCreateInfo * pInputAssemblyState,
-  const VkPipelineTessellationStateCreateInfo * pTessellationState,
-  const VkPipelineViewportStateCreateInfo * pViewportState,
-  const VkPipelineRasterizationStateCreateInfo * pRasterizationState,
-  const VkPipelineMultisampleStateCreateInfo * pMultisampleState,
-  const VkPipelineDepthStencilStateCreateInfo * pDepthStencilState,
-  const VkPipelineColorBlendStateCreateInfo * pColorBlendState,
-  const VkPipelineDynamicStateCreateInfo * pDynamicState,
+  const VkPipelineShaderStageCreateInfo* pStages,
+  const VkPipelineVertexInputStateCreateInfo* pVertexInputState,
+  const VkPipelineInputAssemblyStateCreateInfo* pInputAssemblyState,
+  const VkPipelineTessellationStateCreateInfo* pTessellationState,
+  const VkPipelineViewportStateCreateInfo* pViewportState,
+  const VkPipelineRasterizationStateCreateInfo* pRasterizationState,
+  const VkPipelineMultisampleStateCreateInfo* pMultisampleState,
+  const VkPipelineDepthStencilStateCreateInfo* pDepthStencilState,
+  const VkPipelineColorBlendStateCreateInfo* pColorBlendState,
+  const VkPipelineDynamicStateCreateInfo* pDynamicState,
   VkPipelineLayout layout,
   VkRenderPass renderPass,
   uint32_t subpass,
@@ -1273,64 +3346,64 @@ inline VkGraphicsPipelineCreateInfo GraphicsPipelineCreateInfo(
   int32_t basePipelineIndex
 )
 {
-  VkGraphicsPipelineCreateInfo info;
-  info.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
-  info.pNext = nullptr;
-  info.flags = flags;
-  info.stageCount = stageCount;
-  info.pStages = pStages;
-  info.pVertexInputState = pVertexInputState;
-  info.pInputAssemblyState = pInputAssemblyState;
-  info.pTessellationState = pTessellationState;
-  info.pViewportState = pViewportState;
-  info.pRasterizationState = pRasterizationState;
-  info.pMultisampleState = pMultisampleState;
-  info.pDepthStencilState = pDepthStencilState;
-  info.pColorBlendState = pColorBlendState;
-  info.pDynamicState = pDynamicState;
-  info.layout = layout;
-  info.renderPass = renderPass;
-  info.subpass = subpass;
-  info.basePipelineHandle = basePipelineHandle;
-  info.basePipelineIndex = basePipelineIndex;
+  VkGraphicsPipelineCreateInfo temp;
+  temp.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
+  temp.pNext = nullptr;
+  temp.flags = flags;
+  temp.stageCount = stageCount;
+  temp.pStages = pStages;
+  temp.pVertexInputState = pVertexInputState;
+  temp.pInputAssemblyState = pInputAssemblyState;
+  temp.pTessellationState = pTessellationState;
+  temp.pViewportState = pViewportState;
+  temp.pRasterizationState = pRasterizationState;
+  temp.pMultisampleState = pMultisampleState;
+  temp.pDepthStencilState = pDepthStencilState;
+  temp.pColorBlendState = pColorBlendState;
+  temp.pDynamicState = pDynamicState;
+  temp.layout = layout;
+  temp.renderPass = renderPass;
+  temp.subpass = subpass;
+  temp.basePipelineHandle = basePipelineHandle;
+  temp.basePipelineIndex = basePipelineIndex;
 
-  return info;
+  return temp;
 }
 
 inline VkPipelineCacheCreateInfo PipelineCacheCreateInfo(
   VkPipelineCacheCreateFlags flags,
   size_t initialDataSize,
-  const void * pInitialData
+  const void* pInitialData
 )
 {
-  VkPipelineCacheCreateInfo info;
-  info.sType = VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO;
-  info.pNext = nullptr;
-  info.flags = flags;
-  info.initialDataSize = initialDataSize;
-  info.pInitialData = pInitialData;
+  VkPipelineCacheCreateInfo temp;
+  temp.sType = VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO;
+  temp.pNext = nullptr;
+  temp.flags = flags;
+  temp.initialDataSize = initialDataSize;
+  temp.pInitialData = pInitialData;
 
-  return info;
+  return temp;
 }
 
 inline VkPipelineLayoutCreateInfo PipelineLayoutCreateInfo(
   VkPipelineLayoutCreateFlags flags,
   uint32_t setLayoutCount,
-  const VkDescriptorSetLayout * pSetLayouts,
+  const VkDescriptorSetLayout* pSetLayouts,
   uint32_t pushConstantRangeCount,
-  const VkPushConstantRange * pPushConstantRanges
+  const VkPushConstantRange* pPushConstantRanges
 )
 {
-  VkPipelineLayoutCreateInfo info;
-  info.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-  info.pNext = nullptr;
-  info.flags = flags;
-  info.setLayoutCount = setLayoutCount;
-  info.pSetLayouts = pSetLayouts;
-  info.pushConstantRangeCount = pushConstantRangeCount;
-  info.pPushConstantRanges = pPushConstantRanges;
+  VkPipelineLayoutCreateInfo temp;
+  temp.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
+  temp.pNext = nullptr;
+  temp.flags = flags;
+  temp.setLayoutCount = setLayoutCount;
+  temp.pSetLayouts = pSetLayouts;
+  temp.pushConstantRangeCount = pushConstantRangeCount;
+  temp.pPushConstantRanges = pPushConstantRanges;
 
-  return info;
+  return temp;
 }
 
 inline VkSamplerCreateInfo SamplerCreateInfo(
@@ -1352,27 +3425,27 @@ inline VkSamplerCreateInfo SamplerCreateInfo(
   VkBool32 unnormalizedCoordinates
 )
 {
-  VkSamplerCreateInfo info;
-  info.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
-  info.pNext = nullptr;
-  info.flags = flags;
-  info.magFilter = magFilter;
-  info.minFilter = minFilter;
-  info.mipmapMode = mipmapMode;
-  info.addressModeU = addressModeU;
-  info.addressModeV = addressModeV;
-  info.addressModeW = addressModeW;
-  info.mipLodBias = mipLodBias;
-  info.anisotropyEnable = anisotropyEnable;
-  info.maxAnisotropy = maxAnisotropy;
-  info.compareEnable = compareEnable;
-  info.compareOp = compareOp;
-  info.minLod = minLod;
-  info.maxLod = maxLod;
-  info.borderColor = borderColor;
-  info.unnormalizedCoordinates = unnormalizedCoordinates;
+  VkSamplerCreateInfo temp;
+  temp.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
+  temp.pNext = nullptr;
+  temp.flags = flags;
+  temp.magFilter = magFilter;
+  temp.minFilter = minFilter;
+  temp.mipmapMode = mipmapMode;
+  temp.addressModeU = addressModeU;
+  temp.addressModeV = addressModeV;
+  temp.addressModeW = addressModeW;
+  temp.mipLodBias = mipLodBias;
+  temp.anisotropyEnable = anisotropyEnable;
+  temp.maxAnisotropy = maxAnisotropy;
+  temp.compareEnable = compareEnable;
+  temp.compareOp = compareOp;
+  temp.minLod = minLod;
+  temp.maxLod = maxLod;
+  temp.borderColor = borderColor;
+  temp.unnormalizedCoordinates = unnormalizedCoordinates;
 
-  return info;
+  return temp;
 }
 
 inline VkCommandPoolCreateInfo CommandPoolCreateInfo(
@@ -1380,13 +3453,13 @@ inline VkCommandPoolCreateInfo CommandPoolCreateInfo(
   uint32_t queueFamilyIndex
 )
 {
-  VkCommandPoolCreateInfo info;
-  info.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
-  info.pNext = nullptr;
-  info.flags = flags;
-  info.queueFamilyIndex = queueFamilyIndex;
+  VkCommandPoolCreateInfo temp;
+  temp.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+  temp.pNext = nullptr;
+  temp.flags = flags;
+  temp.queueFamilyIndex = queueFamilyIndex;
 
-  return info;
+  return temp;
 }
 
 inline VkCommandBufferAllocateInfo CommandBufferAllocateInfo(
@@ -1395,14 +3468,14 @@ inline VkCommandBufferAllocateInfo CommandBufferAllocateInfo(
   uint32_t commandBufferCount
 )
 {
-  VkCommandBufferAllocateInfo info;
-  info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-  info.pNext = nullptr;
-  info.commandPool = commandPool;
-  info.level = level;
-  info.commandBufferCount = commandBufferCount;
+  VkCommandBufferAllocateInfo temp;
+  temp.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+  temp.pNext = nullptr;
+  temp.commandPool = commandPool;
+  temp.level = level;
+  temp.commandBufferCount = commandBufferCount;
 
-  return info;
+  return temp;
 }
 
 inline VkCommandBufferInheritanceInfo CommandBufferInheritanceInfo(
@@ -1414,31 +3487,31 @@ inline VkCommandBufferInheritanceInfo CommandBufferInheritanceInfo(
   VkQueryPipelineStatisticFlags pipelineStatistics
 )
 {
-  VkCommandBufferInheritanceInfo info;
-  info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO;
-  info.pNext = nullptr;
-  info.renderPass = renderPass;
-  info.subpass = subpass;
-  info.framebuffer = framebuffer;
-  info.occlusionQueryEnable = occlusionQueryEnable;
-  info.queryFlags = queryFlags;
-  info.pipelineStatistics = pipelineStatistics;
+  VkCommandBufferInheritanceInfo temp;
+  temp.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO;
+  temp.pNext = nullptr;
+  temp.renderPass = renderPass;
+  temp.subpass = subpass;
+  temp.framebuffer = framebuffer;
+  temp.occlusionQueryEnable = occlusionQueryEnable;
+  temp.queryFlags = queryFlags;
+  temp.pipelineStatistics = pipelineStatistics;
 
-  return info;
+  return temp;
 }
 
 inline VkCommandBufferBeginInfo CommandBufferBeginInfo(
   VkCommandBufferUsageFlags flags,
-  const VkCommandBufferInheritanceInfo * pInheritanceInfo
+  const VkCommandBufferInheritanceInfo* pInheritanceInfo
 )
 {
-  VkCommandBufferBeginInfo info;
-  info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-  info.pNext = nullptr;
-  info.flags = flags;
-  info.pInheritanceInfo = pInheritanceInfo;
+  VkCommandBufferBeginInfo temp;
+  temp.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+  temp.pNext = nullptr;
+  temp.flags = flags;
+  temp.pInheritanceInfo = pInheritanceInfo;
 
-  return info;
+  return temp;
 }
 
 inline VkRenderPassBeginInfo RenderPassBeginInfo(
@@ -1446,79 +3519,79 @@ inline VkRenderPassBeginInfo RenderPassBeginInfo(
   VkFramebuffer framebuffer,
   VkRect2D renderArea,
   uint32_t clearValueCount,
-  const VkClearValue * pClearValues
+  const VkClearValue* pClearValues
 )
 {
-  VkRenderPassBeginInfo info;
-  info.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-  info.pNext = nullptr;
-  info.renderPass = renderPass;
-  info.framebuffer = framebuffer;
-  info.renderArea = renderArea;
-  info.clearValueCount = clearValueCount;
-  info.pClearValues = pClearValues;
+  VkRenderPassBeginInfo temp;
+  temp.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+  temp.pNext = nullptr;
+  temp.renderPass = renderPass;
+  temp.framebuffer = framebuffer;
+  temp.renderArea = renderArea;
+  temp.clearValueCount = clearValueCount;
+  temp.pClearValues = pClearValues;
 
-  return info;
+  return temp;
 }
 
 inline VkRenderPassCreateInfo RenderPassCreateInfo(
   VkRenderPassCreateFlags flags,
   uint32_t attachmentCount,
-  const VkAttachmentDescription * pAttachments,
+  const VkAttachmentDescription* pAttachments,
   uint32_t subpassCount,
-  const VkSubpassDescription * pSubpasses,
+  const VkSubpassDescription* pSubpasses,
   uint32_t dependencyCount,
-  const VkSubpassDependency * pDependencies
+  const VkSubpassDependency* pDependencies
 )
 {
-  VkRenderPassCreateInfo info;
-  info.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
-  info.pNext = nullptr;
-  info.flags = flags;
-  info.attachmentCount = attachmentCount;
-  info.pAttachments = pAttachments;
-  info.subpassCount = subpassCount;
-  info.pSubpasses = pSubpasses;
-  info.dependencyCount = dependencyCount;
-  info.pDependencies = pDependencies;
+  VkRenderPassCreateInfo temp;
+  temp.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
+  temp.pNext = nullptr;
+  temp.flags = flags;
+  temp.attachmentCount = attachmentCount;
+  temp.pAttachments = pAttachments;
+  temp.subpassCount = subpassCount;
+  temp.pSubpasses = pSubpasses;
+  temp.dependencyCount = dependencyCount;
+  temp.pDependencies = pDependencies;
 
-  return info;
+  return temp;
 }
 
 inline VkEventCreateInfo EventCreateInfo(
   VkEventCreateFlags flags
 )
 {
-  VkEventCreateInfo info;
-  info.sType = VK_STRUCTURE_TYPE_EVENT_CREATE_INFO;
-  info.pNext = nullptr;
-  info.flags = flags;
+  VkEventCreateInfo temp;
+  temp.sType = VK_STRUCTURE_TYPE_EVENT_CREATE_INFO;
+  temp.pNext = nullptr;
+  temp.flags = flags;
 
-  return info;
+  return temp;
 }
 
 inline VkFenceCreateInfo FenceCreateInfo(
   VkFenceCreateFlags flags
 )
 {
-  VkFenceCreateInfo info;
-  info.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
-  info.pNext = nullptr;
-  info.flags = flags;
+  VkFenceCreateInfo temp;
+  temp.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+  temp.pNext = nullptr;
+  temp.flags = flags;
 
-  return info;
+  return temp;
 }
 
 inline VkSemaphoreCreateInfo SemaphoreCreateInfo(
   VkSemaphoreCreateFlags flags
 )
 {
-  VkSemaphoreCreateInfo info;
-  info.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
-  info.pNext = nullptr;
-  info.flags = flags;
+  VkSemaphoreCreateInfo temp;
+  temp.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
+  temp.pNext = nullptr;
+  temp.flags = flags;
 
-  return info;
+  return temp;
 }
 
 inline VkQueryPoolCreateInfo QueryPoolCreateInfo(
@@ -1528,63 +3601,63 @@ inline VkQueryPoolCreateInfo QueryPoolCreateInfo(
   VkQueryPipelineStatisticFlags pipelineStatistics
 )
 {
-  VkQueryPoolCreateInfo info;
-  info.sType = VK_STRUCTURE_TYPE_QUERY_POOL_CREATE_INFO;
-  info.pNext = nullptr;
-  info.flags = flags;
-  info.queryType = queryType;
-  info.queryCount = queryCount;
-  info.pipelineStatistics = pipelineStatistics;
+  VkQueryPoolCreateInfo temp;
+  temp.sType = VK_STRUCTURE_TYPE_QUERY_POOL_CREATE_INFO;
+  temp.pNext = nullptr;
+  temp.flags = flags;
+  temp.queryType = queryType;
+  temp.queryCount = queryCount;
+  temp.pipelineStatistics = pipelineStatistics;
 
-  return info;
+  return temp;
 }
 
 inline VkFramebufferCreateInfo FramebufferCreateInfo(
   VkFramebufferCreateFlags flags,
   VkRenderPass renderPass,
   uint32_t attachmentCount,
-  const VkImageView * pAttachments,
+  const VkImageView* pAttachments,
   uint32_t width,
   uint32_t height,
   uint32_t layers
 )
 {
-  VkFramebufferCreateInfo info;
-  info.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
-  info.pNext = nullptr;
-  info.flags = flags;
-  info.renderPass = renderPass;
-  info.attachmentCount = attachmentCount;
-  info.pAttachments = pAttachments;
-  info.width = width;
-  info.height = height;
-  info.layers = layers;
+  VkFramebufferCreateInfo temp;
+  temp.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+  temp.pNext = nullptr;
+  temp.flags = flags;
+  temp.renderPass = renderPass;
+  temp.attachmentCount = attachmentCount;
+  temp.pAttachments = pAttachments;
+  temp.width = width;
+  temp.height = height;
+  temp.layers = layers;
 
-  return info;
+  return temp;
 }
 
 inline VkSubmitInfo SubmitInfo(
   uint32_t waitSemaphoreCount,
-  const VkSemaphore * pWaitSemaphores,
-  const VkPipelineStageFlags * pWaitDstStageMask,
+  const VkSemaphore* pWaitSemaphores,
+  const VkPipelineStageFlags* pWaitDstStageMask,
   uint32_t commandBufferCount,
-  const VkCommandBuffer * pCommandBuffers,
+  const VkCommandBuffer* pCommandBuffers,
   uint32_t signalSemaphoreCount,
-  const VkSemaphore * pSignalSemaphores
+  const VkSemaphore* pSignalSemaphores
 )
 {
-  VkSubmitInfo info;
-  info.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-  info.pNext = nullptr;
-  info.waitSemaphoreCount = waitSemaphoreCount;
-  info.pWaitSemaphores = pWaitSemaphores;
-  info.pWaitDstStageMask = pWaitDstStageMask;
-  info.commandBufferCount = commandBufferCount;
-  info.pCommandBuffers = pCommandBuffers;
-  info.signalSemaphoreCount = signalSemaphoreCount;
-  info.pSignalSemaphores = pSignalSemaphores;
+  VkSubmitInfo temp;
+  temp.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+  temp.pNext = nullptr;
+  temp.waitSemaphoreCount = waitSemaphoreCount;
+  temp.pWaitSemaphores = pWaitSemaphores;
+  temp.pWaitDstStageMask = pWaitDstStageMask;
+  temp.commandBufferCount = commandBufferCount;
+  temp.pCommandBuffers = pCommandBuffers;
+  temp.signalSemaphoreCount = signalSemaphoreCount;
+  temp.pSignalSemaphores = pSignalSemaphores;
 
-  return info;
+  return temp;
 }
 
 inline VkDisplayModeCreateInfoKHR DisplayModeCreateInfoKHR(
@@ -1592,13 +3665,13 @@ inline VkDisplayModeCreateInfoKHR DisplayModeCreateInfoKHR(
   VkDisplayModeParametersKHR parameters
 )
 {
-  VkDisplayModeCreateInfoKHR info;
-  info.sType = VK_STRUCTURE_TYPE_DISPLAY_MODE_CREATE_INFO_KHR;
-  info.pNext = nullptr;
-  info.flags = flags;
-  info.parameters = parameters;
+  VkDisplayModeCreateInfoKHR temp;
+  temp.sType = VK_STRUCTURE_TYPE_DISPLAY_MODE_CREATE_INFO_KHR;
+  temp.pNext = nullptr;
+  temp.flags = flags;
+  temp.parameters = parameters;
 
-  return info;
+  return temp;
 }
 
 inline VkDisplaySurfaceCreateInfoKHR DisplaySurfaceCreateInfoKHR(
@@ -1612,19 +3685,19 @@ inline VkDisplaySurfaceCreateInfoKHR DisplaySurfaceCreateInfoKHR(
   VkExtent2D imageExtent
 )
 {
-  VkDisplaySurfaceCreateInfoKHR info;
-  info.sType = VK_STRUCTURE_TYPE_DISPLAY_SURFACE_CREATE_INFO_KHR;
-  info.pNext = nullptr;
-  info.flags = flags;
-  info.displayMode = displayMode;
-  info.planeIndex = planeIndex;
-  info.planeStackIndex = planeStackIndex;
-  info.transform = transform;
-  info.globalAlpha = globalAlpha;
-  info.alphaMode = alphaMode;
-  info.imageExtent = imageExtent;
+  VkDisplaySurfaceCreateInfoKHR temp;
+  temp.sType = VK_STRUCTURE_TYPE_DISPLAY_SURFACE_CREATE_INFO_KHR;
+  temp.pNext = nullptr;
+  temp.flags = flags;
+  temp.displayMode = displayMode;
+  temp.planeIndex = planeIndex;
+  temp.planeStackIndex = planeStackIndex;
+  temp.transform = transform;
+  temp.globalAlpha = globalAlpha;
+  temp.alphaMode = alphaMode;
+  temp.imageExtent = imageExtent;
 
-  return info;
+  return temp;
 }
 
 inline VkDisplayPresentInfoKHR DisplayPresentInfoKHR(
@@ -1633,119 +3706,149 @@ inline VkDisplayPresentInfoKHR DisplayPresentInfoKHR(
   VkBool32 persistent
 )
 {
-  VkDisplayPresentInfoKHR info;
-  info.sType = VK_STRUCTURE_TYPE_DISPLAY_PRESENT_INFO_KHR;
-  info.pNext = nullptr;
-  info.srcRect = srcRect;
-  info.dstRect = dstRect;
-  info.persistent = persistent;
+  VkDisplayPresentInfoKHR temp;
+  temp.sType = VK_STRUCTURE_TYPE_DISPLAY_PRESENT_INFO_KHR;
+  temp.pNext = nullptr;
+  temp.srcRect = srcRect;
+  temp.dstRect = dstRect;
+  temp.persistent = persistent;
 
-  return info;
+  return temp;
 }
 
-#ifdef VK_USE_PLATFORM_ANDROID_KHR
+#ifdef  VK_USE_PLATFORM_ANDROID_KHR
 inline VkAndroidSurfaceCreateInfoKHR AndroidSurfaceCreateInfoKHR(
   VkAndroidSurfaceCreateFlagsKHR flags,
-  ANativeWindow window
+  ANativeWindow* window
 )
 {
-  VkAndroidSurfaceCreateInfoKHR info;
-  info.sType = VK_STRUCTURE_TYPE_ANDROID_SURFACE_CREATE_INFO_KHR;
-  info.pNext = nullptr;
-  info.flags = flags;
-  info.window = window;
+  VkAndroidSurfaceCreateInfoKHR temp;
+  temp.sType = VK_STRUCTURE_TYPE_ANDROID_SURFACE_CREATE_INFO_KHR;
+  temp.pNext = nullptr;
+  temp.flags = flags;
+  temp.window = window;
 
-  return info;
+  return temp;
 }
 #endif
 
-#ifdef VK_USE_PLATFORM_MIR_KHR
-inline VkMirSurfaceCreateInfoKHR MirSurfaceCreateInfoKHR(
-  VkMirSurfaceCreateFlagsKHR flags,
-  MirConnection connection,
-  MirSurface mirSurface
+#ifdef  VK_USE_PLATFORM_VI_NN
+inline VkViSurfaceCreateInfoNN ViSurfaceCreateInfoNN(
+  VkViSurfaceCreateFlagsNN flags,
+  void* window
 )
 {
-  VkMirSurfaceCreateInfoKHR info;
-  info.sType = VK_STRUCTURE_TYPE_MIR_SURFACE_CREATE_INFO_KHR;
-  info.pNext = nullptr;
-  info.flags = flags;
-  info.connection = connection;
-  info.mirSurface = mirSurface;
+  VkViSurfaceCreateInfoNN temp;
+  temp.sType = VK_STRUCTURE_TYPE_VI_SURFACE_CREATE_INFO_NN;
+  temp.pNext = nullptr;
+  temp.flags = flags;
+  temp.window = window;
 
-  return info;
+  return temp;
 }
 #endif
 
-#ifdef VK_USE_PLATFORM_WAYLAND_KHR
+#ifdef  VK_USE_PLATFORM_WAYLAND_KHR
 inline VkWaylandSurfaceCreateInfoKHR WaylandSurfaceCreateInfoKHR(
   VkWaylandSurfaceCreateFlagsKHR flags,
-  wl_display display,
-  wl_surface surface
+  wl_display* display,
+  wl_surface* surface
 )
 {
-  VkWaylandSurfaceCreateInfoKHR info;
-  info.sType = VK_STRUCTURE_TYPE_WAYLAND_SURFACE_CREATE_INFO_KHR;
-  info.pNext = nullptr;
-  info.flags = flags;
-  info.display = display;
-  info.surface = surface;
+  VkWaylandSurfaceCreateInfoKHR temp;
+  temp.sType = VK_STRUCTURE_TYPE_WAYLAND_SURFACE_CREATE_INFO_KHR;
+  temp.pNext = nullptr;
+  temp.flags = flags;
+  temp.display = display;
+  temp.surface = surface;
 
-  return info;
+  return temp;
 }
 #endif
 
-#ifdef VK_USE_PLATFORM_WIN32_KHR
+#ifdef  VK_USE_PLATFORM_WIN32_KHR
 inline VkWin32SurfaceCreateInfoKHR Win32SurfaceCreateInfoKHR(
   VkWin32SurfaceCreateFlagsKHR flags,
   HINSTANCE hinstance,
   HWND hwnd
 )
 {
-  VkWin32SurfaceCreateInfoKHR info;
-  info.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
-  info.pNext = nullptr;
-  info.flags = flags;
-  info.hinstance = hinstance;
-  info.hwnd = hwnd;
+  VkWin32SurfaceCreateInfoKHR temp;
+  temp.sType = VK_STRUCTURE_TYPE_WIN_32_SURFACE_CREATE_INFO_KHR;
+  temp.pNext = nullptr;
+  temp.flags = flags;
+  temp.hinstance = hinstance;
+  temp.hwnd = hwnd;
 
-  return info;
+  return temp;
 }
 #endif
 
-#ifdef VK_USE_PLATFORM_XLIB_KHR
+#ifdef  VK_USE_PLATFORM_XLIB_KHR
 inline VkXlibSurfaceCreateInfoKHR XlibSurfaceCreateInfoKHR(
   VkXlibSurfaceCreateFlagsKHR flags,
-  Display dpy,
+  Display* dpy,
   Window window
 )
 {
-  VkXlibSurfaceCreateInfoKHR info;
-  info.sType = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR;
-  info.pNext = nullptr;
-  info.flags = flags;
-  info.dpy = dpy;
-  info.window = window;
+  VkXlibSurfaceCreateInfoKHR temp;
+  temp.sType = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR;
+  temp.pNext = nullptr;
+  temp.flags = flags;
+  temp.dpy = dpy;
+  temp.window = window;
 
-  return info;
+  return temp;
 }
 #endif
 
-#ifdef VK_USE_PLATFORM_XCB_KHR
+#ifdef  VK_USE_PLATFORM_XCB_KHR
 inline VkXcbSurfaceCreateInfoKHR XcbSurfaceCreateInfoKHR(
   VkXcbSurfaceCreateFlagsKHR flags,
-  xcb_connection_t connection,
+  xcb_connection_t* connection,
   xcb_window_t window
 )
 {
-  VkXcbSurfaceCreateInfoKHR info;
-  info.sType = VK_STRUCTURE_TYPE_XCB_SURFACE_CREATE_INFO_KHR;
-  info.pNext = nullptr;
-  info.flags = flags;
-  info.connection = connection;
-  info.window = window;
+  VkXcbSurfaceCreateInfoKHR temp;
+  temp.sType = VK_STRUCTURE_TYPE_XCB_SURFACE_CREATE_INFO_KHR;
+  temp.pNext = nullptr;
+  temp.flags = flags;
+  temp.connection = connection;
+  temp.window = window;
 
-  return info;
+  return temp;
+}
+#endif
+
+#ifdef  VK_USE_PLATFORM_FUCHSIA
+inline VkImagePipeSurfaceCreateInfoFUCHSIA ImagePipeSurfaceCreateInfoFUCHSIA(
+  VkImagePipeSurfaceCreateFlagsFUCHSIA flags,
+  zx_handle_t imagePipeHandle
+)
+{
+  VkImagePipeSurfaceCreateInfoFUCHSIA temp;
+  temp.sType = VK_STRUCTURE_TYPE_IMAGE_PIPE_SURFACE_CREATE_INFO_FUCHSIA;
+  temp.pNext = nullptr;
+  temp.flags = flags;
+  temp.imagePipeHandle = imagePipeHandle;
+
+  return temp;
+}
+#endif
+
+#ifdef  VK_USE_PLATFORM_GGP
+inline VkStreamDescriptorSurfaceCreateInfoGGP StreamDescriptorSurfaceCreateInfoGGP(
+  VkStreamDescriptorSurfaceCreateFlagsGGP flags,
+  GgpStreamDescriptor streamDescriptor
+)
+{
+  VkStreamDescriptorSurfaceCreateInfoGGP temp;
+  temp.sType = VK_STRUCTURE_TYPE_STREAM_DESCRIPTOR_SURFACE_CREATE_INFO_GGP;
+  temp.pNext = nullptr;
+  temp.flags = flags;
+  temp.streamDescriptor = streamDescriptor;
+
+  return temp;
 }
 #endif
 
@@ -1760,7 +3863,7 @@ inline VkSwapchainCreateInfoKHR SwapchainCreateInfoKHR(
   VkImageUsageFlags imageUsage,
   VkSharingMode imageSharingMode,
   uint32_t queueFamilyIndexCount,
-  const uint32_t * pQueueFamilyIndices,
+  const uint32_t* pQueueFamilyIndices,
   VkSurfaceTransformFlagBitsKHR preTransform,
   VkCompositeAlphaFlagBitsKHR compositeAlpha,
   VkPresentModeKHR presentMode,
@@ -1768,65 +3871,3845 @@ inline VkSwapchainCreateInfoKHR SwapchainCreateInfoKHR(
   VkSwapchainKHR oldSwapchain
 )
 {
-  VkSwapchainCreateInfoKHR info;
-  info.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
-  info.pNext = nullptr;
-  info.flags = flags;
-  info.surface = surface;
-  info.minImageCount = minImageCount;
-  info.imageFormat = imageFormat;
-  info.imageColorSpace = imageColorSpace;
-  info.imageExtent = imageExtent;
-  info.imageArrayLayers = imageArrayLayers;
-  info.imageUsage = imageUsage;
-  info.imageSharingMode = imageSharingMode;
-  info.queueFamilyIndexCount = queueFamilyIndexCount;
-  info.pQueueFamilyIndices = pQueueFamilyIndices;
-  info.preTransform = preTransform;
-  info.compositeAlpha = compositeAlpha;
-  info.presentMode = presentMode;
-  info.clipped = clipped;
-  info.oldSwapchain = oldSwapchain;
+  VkSwapchainCreateInfoKHR temp;
+  temp.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
+  temp.pNext = nullptr;
+  temp.flags = flags;
+  temp.surface = surface;
+  temp.minImageCount = minImageCount;
+  temp.imageFormat = imageFormat;
+  temp.imageColorSpace = imageColorSpace;
+  temp.imageExtent = imageExtent;
+  temp.imageArrayLayers = imageArrayLayers;
+  temp.imageUsage = imageUsage;
+  temp.imageSharingMode = imageSharingMode;
+  temp.queueFamilyIndexCount = queueFamilyIndexCount;
+  temp.pQueueFamilyIndices = pQueueFamilyIndices;
+  temp.preTransform = preTransform;
+  temp.compositeAlpha = compositeAlpha;
+  temp.presentMode = presentMode;
+  temp.clipped = clipped;
+  temp.oldSwapchain = oldSwapchain;
 
-  return info;
+  return temp;
 }
 
 inline VkPresentInfoKHR PresentInfoKHR(
   uint32_t waitSemaphoreCount,
-  const VkSemaphore * pWaitSemaphores,
+  const VkSemaphore* pWaitSemaphores,
   uint32_t swapchainCount,
-  const VkSwapchainKHR * pSwapchains,
-  const uint32_t * pImageIndices,
-  VkResult * pResults
+  const VkSwapchainKHR* pSwapchains,
+  const uint32_t* pImageIndices,
+  VkResult* pResults
 )
 {
-  VkPresentInfoKHR info;
-  info.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
-  info.pNext = nullptr;
-  info.waitSemaphoreCount = waitSemaphoreCount;
-  info.pWaitSemaphores = pWaitSemaphores;
-  info.swapchainCount = swapchainCount;
-  info.pSwapchains = pSwapchains;
-  info.pImageIndices = pImageIndices;
-  info.pResults = pResults;
+  VkPresentInfoKHR temp;
+  temp.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+  temp.pNext = nullptr;
+  temp.waitSemaphoreCount = waitSemaphoreCount;
+  temp.pWaitSemaphores = pWaitSemaphores;
+  temp.swapchainCount = swapchainCount;
+  temp.pSwapchains = pSwapchains;
+  temp.pImageIndices = pImageIndices;
+  temp.pResults = pResults;
 
-  return info;
+  return temp;
 }
 
 inline VkDebugReportCallbackCreateInfoEXT DebugReportCallbackCreateInfoEXT(
   VkDebugReportFlagsEXT flags,
   PFN_vkDebugReportCallbackEXT pfnCallback,
-  void * pUserData
+  void* pUserData
 )
 {
-  VkDebugReportCallbackCreateInfoEXT info;
-  info.sType = VK_STRUCTURE_TYPE_DEBUG_REPORT_CREATE_INFO_EXT;
-  info.pNext = nullptr;
-  info.flags = flags;
-  info.pfnCallback = pfnCallback;
-  info.pUserData = pUserData;
+  VkDebugReportCallbackCreateInfoEXT temp;
+  temp.sType = VK_STRUCTURE_TYPE_DEBUG_REPORT_CREATE_INFO_EXT;
+  temp.pNext = nullptr;
+  temp.flags = flags;
+  temp.pfnCallback = pfnCallback;
+  temp.pUserData = pUserData;
 
-  return info;
+  return temp;
+}
+
+inline VkValidationFlagsEXT ValidationFlagsEXT(
+  uint32_t disabledValidationCheckCount,
+  const VkValidationCheckEXT* pDisabledValidationChecks
+)
+{
+  VkValidationFlagsEXT temp;
+  temp.sType = VK_STRUCTURE_TYPE_VALIDATION_FLAGS_EXT;
+  temp.pNext = nullptr;
+  temp.disabledValidationCheckCount = disabledValidationCheckCount;
+  temp.pDisabledValidationChecks = pDisabledValidationChecks;
+
+  return temp;
+}
+
+inline VkValidationFeaturesEXT ValidationFeaturesEXT(
+  uint32_t enabledValidationFeatureCount,
+  const VkValidationFeatureEnableEXT* pEnabledValidationFeatures,
+  uint32_t disabledValidationFeatureCount,
+  const VkValidationFeatureDisableEXT* pDisabledValidationFeatures
+)
+{
+  VkValidationFeaturesEXT temp;
+  temp.sType = VK_STRUCTURE_TYPE_VALIDATION_FEATURES_EXT;
+  temp.pNext = nullptr;
+  temp.enabledValidationFeatureCount = enabledValidationFeatureCount;
+  temp.pEnabledValidationFeatures = pEnabledValidationFeatures;
+  temp.disabledValidationFeatureCount = disabledValidationFeatureCount;
+  temp.pDisabledValidationFeatures = pDisabledValidationFeatures;
+
+  return temp;
+}
+
+inline VkPipelineRasterizationStateRasterizationOrderAMD PipelineRasterizationStateRasterizationOrderAMD(
+  VkRasterizationOrderAMD rasterizationOrder
+)
+{
+  VkPipelineRasterizationStateRasterizationOrderAMD temp;
+  temp.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_RASTERIZATION_ORDER_AMD;
+  temp.pNext = nullptr;
+  temp.rasterizationOrder = rasterizationOrder;
+
+  return temp;
+}
+
+inline VkDebugMarkerObjectNameInfoEXT DebugMarkerObjectNameInfoEXT(
+  VkDebugReportObjectTypeEXT objectType,
+  uint64_t object,
+  const char* pObjectName
+)
+{
+  VkDebugMarkerObjectNameInfoEXT temp;
+  temp.sType = VK_STRUCTURE_TYPE_DEBUG_MARKER_OBJECT_NAME_INFO_EXT;
+  temp.pNext = nullptr;
+  temp.objectType = objectType;
+  temp.object = object;
+  temp.pObjectName = pObjectName;
+
+  return temp;
+}
+
+inline VkDebugMarkerObjectTagInfoEXT DebugMarkerObjectTagInfoEXT(
+  VkDebugReportObjectTypeEXT objectType,
+  uint64_t object,
+  uint64_t tagName,
+  size_t tagSize,
+  const void* pTag
+)
+{
+  VkDebugMarkerObjectTagInfoEXT temp;
+  temp.sType = VK_STRUCTURE_TYPE_DEBUG_MARKER_OBJECT_TAG_INFO_EXT;
+  temp.pNext = nullptr;
+  temp.objectType = objectType;
+  temp.object = object;
+  temp.tagName = tagName;
+  temp.tagSize = tagSize;
+  temp.pTag = pTag;
+
+  return temp;
+}
+
+inline VkDebugMarkerMarkerInfoEXT DebugMarkerMarkerInfoEXT(
+  const char* pMarkerName,
+  float color[4]
+)
+{
+  VkDebugMarkerMarkerInfoEXT temp;
+  temp.sType = VK_STRUCTURE_TYPE_DEBUG_MARKER_MARKER_INFO_EXT;
+  temp.pNext = nullptr;
+  temp.pMarkerName = pMarkerName;
+  for(size_t i = 0; i < 4; ++i){
+    temp.color[i] = color[i];
+  }
+
+  return temp;
+}
+
+inline VkDedicatedAllocationImageCreateInfoNV DedicatedAllocationImageCreateInfoNV(
+  VkBool32 dedicatedAllocation
+)
+{
+  VkDedicatedAllocationImageCreateInfoNV temp;
+  temp.sType = VK_STRUCTURE_TYPE_DEDICATED_ALLOCATION_IMAGE_CREATE_INFO_NV;
+  temp.pNext = nullptr;
+  temp.dedicatedAllocation = dedicatedAllocation;
+
+  return temp;
+}
+
+inline VkDedicatedAllocationBufferCreateInfoNV DedicatedAllocationBufferCreateInfoNV(
+  VkBool32 dedicatedAllocation
+)
+{
+  VkDedicatedAllocationBufferCreateInfoNV temp;
+  temp.sType = VK_STRUCTURE_TYPE_DEDICATED_ALLOCATION_BUFFER_CREATE_INFO_NV;
+  temp.pNext = nullptr;
+  temp.dedicatedAllocation = dedicatedAllocation;
+
+  return temp;
+}
+
+inline VkDedicatedAllocationMemoryAllocateInfoNV DedicatedAllocationMemoryAllocateInfoNV(
+  VkImage image,
+  VkBuffer buffer
+)
+{
+  VkDedicatedAllocationMemoryAllocateInfoNV temp;
+  temp.sType = VK_STRUCTURE_TYPE_DEDICATED_ALLOCATION_MEMORY_ALLOCATE_INFO_NV;
+  temp.pNext = nullptr;
+  temp.image = image;
+  temp.buffer = buffer;
+
+  return temp;
+}
+
+inline VkExternalMemoryImageCreateInfoNV ExternalMemoryImageCreateInfoNV(
+  VkExternalMemoryHandleTypeFlagsNV handleTypes
+)
+{
+  VkExternalMemoryImageCreateInfoNV temp;
+  temp.sType = VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_IMAGE_CREATE_INFO_NV;
+  temp.pNext = nullptr;
+  temp.handleTypes = handleTypes;
+
+  return temp;
+}
+
+inline VkExportMemoryAllocateInfoNV ExportMemoryAllocateInfoNV(
+  VkExternalMemoryHandleTypeFlagsNV handleTypes
+)
+{
+  VkExportMemoryAllocateInfoNV temp;
+  temp.sType = VK_STRUCTURE_TYPE_EXPORT_MEMORY_ALLOCATE_INFO_NV;
+  temp.pNext = nullptr;
+  temp.handleTypes = handleTypes;
+
+  return temp;
+}
+
+#ifdef  VK_USE_PLATFORM_WIN32_KHR
+inline VkImportMemoryWin32HandleInfoNV ImportMemoryWin32HandleInfoNV(
+  VkExternalMemoryHandleTypeFlagsNV handleType,
+  HANDLE handle
+)
+{
+  VkImportMemoryWin32HandleInfoNV temp;
+  temp.sType = VK_STRUCTURE_TYPE_IMPORT_MEMORY_WIN_32_HANDLE_INFO_NV;
+  temp.pNext = nullptr;
+  temp.handleType = handleType;
+  temp.handle = handle;
+
+  return temp;
+}
+#endif
+
+#ifdef  VK_USE_PLATFORM_WIN32_KHR
+inline VkExportMemoryWin32HandleInfoNV ExportMemoryWin32HandleInfoNV(
+  const SECURITY_ATTRIBUTES* pAttributes,
+  DWORD dwAccess
+)
+{
+  VkExportMemoryWin32HandleInfoNV temp;
+  temp.sType = VK_STRUCTURE_TYPE_EXPORT_MEMORY_WIN_32_HANDLE_INFO_NV;
+  temp.pNext = nullptr;
+  temp.pAttributes = pAttributes;
+  temp.dwAccess = dwAccess;
+
+  return temp;
+}
+#endif
+
+#ifdef  VK_USE_PLATFORM_WIN32_KHR
+inline VkWin32KeyedMutexAcquireReleaseInfoNV Win32KeyedMutexAcquireReleaseInfoNV(
+  uint32_t acquireCount,
+  const VkDeviceMemory* pAcquireSyncs,
+  const uint64_t* pAcquireKeys,
+  const uint32_t* pAcquireTimeoutMilliseconds,
+  uint32_t releaseCount,
+  const VkDeviceMemory* pReleaseSyncs,
+  const uint64_t* pReleaseKeys
+)
+{
+  VkWin32KeyedMutexAcquireReleaseInfoNV temp;
+  temp.sType = VK_STRUCTURE_TYPE_WIN_32_KEYED_MUTEX_ACQUIRE_RELEASE_INFO_NV;
+  temp.pNext = nullptr;
+  temp.acquireCount = acquireCount;
+  temp.pAcquireSyncs = pAcquireSyncs;
+  temp.pAcquireKeys = pAcquireKeys;
+  temp.pAcquireTimeoutMilliseconds = pAcquireTimeoutMilliseconds;
+  temp.releaseCount = releaseCount;
+  temp.pReleaseSyncs = pReleaseSyncs;
+  temp.pReleaseKeys = pReleaseKeys;
+
+  return temp;
+}
+#endif
+
+inline VkDeviceGeneratedCommandsFeaturesNVX DeviceGeneratedCommandsFeaturesNVX(
+  VkBool32 computeBindingPointSupport
+)
+{
+  VkDeviceGeneratedCommandsFeaturesNVX temp;
+  temp.sType = VK_STRUCTURE_TYPE_DEVICE_GENERATED_COMMANDS_FEATURES_NVX;
+  temp.pNext = nullptr;
+  temp.computeBindingPointSupport = computeBindingPointSupport;
+
+  return temp;
+}
+
+inline VkDeviceGeneratedCommandsLimitsNVX DeviceGeneratedCommandsLimitsNVX(
+  uint32_t maxIndirectCommandsLayoutTokenCount,
+  uint32_t maxObjectEntryCounts,
+  uint32_t minSequenceCountBufferOffsetAlignment,
+  uint32_t minSequenceIndexBufferOffsetAlignment,
+  uint32_t minCommandsTokenBufferOffsetAlignment
+)
+{
+  VkDeviceGeneratedCommandsLimitsNVX temp;
+  temp.sType = VK_STRUCTURE_TYPE_DEVICE_GENERATED_COMMANDS_LIMITS_NVX;
+  temp.pNext = nullptr;
+  temp.maxIndirectCommandsLayoutTokenCount = maxIndirectCommandsLayoutTokenCount;
+  temp.maxObjectEntryCounts = maxObjectEntryCounts;
+  temp.minSequenceCountBufferOffsetAlignment = minSequenceCountBufferOffsetAlignment;
+  temp.minSequenceIndexBufferOffsetAlignment = minSequenceIndexBufferOffsetAlignment;
+  temp.minCommandsTokenBufferOffsetAlignment = minCommandsTokenBufferOffsetAlignment;
+
+  return temp;
+}
+
+inline VkIndirectCommandsLayoutCreateInfoNVX IndirectCommandsLayoutCreateInfoNVX(
+  VkPipelineBindPoint pipelineBindPoint,
+  VkIndirectCommandsLayoutUsageFlagsNVX flags,
+  uint32_t tokenCount,
+  const VkIndirectCommandsLayoutTokenNVX* pTokens
+)
+{
+  VkIndirectCommandsLayoutCreateInfoNVX temp;
+  temp.sType = VK_STRUCTURE_TYPE_INDIRECT_COMMANDS_LAYOUT_CREATE_INFO_NVX;
+  temp.pNext = nullptr;
+  temp.pipelineBindPoint = pipelineBindPoint;
+  temp.flags = flags;
+  temp.tokenCount = tokenCount;
+  temp.pTokens = pTokens;
+
+  return temp;
+}
+
+inline VkCmdProcessCommandsInfoNVX CmdProcessCommandsInfoNVX(
+  VkObjectTableNVX objectTable,
+  VkIndirectCommandsLayoutNVX indirectCommandsLayout,
+  uint32_t indirectCommandsTokenCount,
+  const VkIndirectCommandsTokenNVX* pIndirectCommandsTokens,
+  uint32_t maxSequencesCount,
+  VkCommandBuffer targetCommandBuffer,
+  VkBuffer sequencesCountBuffer,
+  VkDeviceSize sequencesCountOffset,
+  VkBuffer sequencesIndexBuffer,
+  VkDeviceSize sequencesIndexOffset
+)
+{
+  VkCmdProcessCommandsInfoNVX temp;
+  temp.sType = VK_STRUCTURE_TYPE_CMD_PROCESS_COMMANDS_INFO_NVX;
+  temp.pNext = nullptr;
+  temp.objectTable = objectTable;
+  temp.indirectCommandsLayout = indirectCommandsLayout;
+  temp.indirectCommandsTokenCount = indirectCommandsTokenCount;
+  temp.pIndirectCommandsTokens = pIndirectCommandsTokens;
+  temp.maxSequencesCount = maxSequencesCount;
+  temp.targetCommandBuffer = targetCommandBuffer;
+  temp.sequencesCountBuffer = sequencesCountBuffer;
+  temp.sequencesCountOffset = sequencesCountOffset;
+  temp.sequencesIndexBuffer = sequencesIndexBuffer;
+  temp.sequencesIndexOffset = sequencesIndexOffset;
+
+  return temp;
+}
+
+inline VkCmdReserveSpaceForCommandsInfoNVX CmdReserveSpaceForCommandsInfoNVX(
+  VkObjectTableNVX objectTable,
+  VkIndirectCommandsLayoutNVX indirectCommandsLayout,
+  uint32_t maxSequencesCount
+)
+{
+  VkCmdReserveSpaceForCommandsInfoNVX temp;
+  temp.sType = VK_STRUCTURE_TYPE_CMD_RESERVE_SPACE_FOR_COMMANDS_INFO_NVX;
+  temp.pNext = nullptr;
+  temp.objectTable = objectTable;
+  temp.indirectCommandsLayout = indirectCommandsLayout;
+  temp.maxSequencesCount = maxSequencesCount;
+
+  return temp;
+}
+
+inline VkObjectTableCreateInfoNVX ObjectTableCreateInfoNVX(
+  uint32_t objectCount,
+  const VkObjectEntryTypeNVX* pObjectEntryTypes,
+  const uint32_t* pObjectEntryCounts,
+  const VkObjectEntryUsageFlagsNVX* pObjectEntryUsageFlags,
+  uint32_t maxUniformBuffersPerDescriptor,
+  uint32_t maxStorageBuffersPerDescriptor,
+  uint32_t maxStorageImagesPerDescriptor,
+  uint32_t maxSampledImagesPerDescriptor,
+  uint32_t maxPipelineLayouts
+)
+{
+  VkObjectTableCreateInfoNVX temp;
+  temp.sType = VK_STRUCTURE_TYPE_OBJECT_TABLE_CREATE_INFO_NVX;
+  temp.pNext = nullptr;
+  temp.objectCount = objectCount;
+  temp.pObjectEntryTypes = pObjectEntryTypes;
+  temp.pObjectEntryCounts = pObjectEntryCounts;
+  temp.pObjectEntryUsageFlags = pObjectEntryUsageFlags;
+  temp.maxUniformBuffersPerDescriptor = maxUniformBuffersPerDescriptor;
+  temp.maxStorageBuffersPerDescriptor = maxStorageBuffersPerDescriptor;
+  temp.maxStorageImagesPerDescriptor = maxStorageImagesPerDescriptor;
+  temp.maxSampledImagesPerDescriptor = maxSampledImagesPerDescriptor;
+  temp.maxPipelineLayouts = maxPipelineLayouts;
+
+  return temp;
+}
+
+inline VkPhysicalDeviceFeatures2 PhysicalDeviceFeatures2(
+  VkPhysicalDeviceFeatures features
+)
+{
+  VkPhysicalDeviceFeatures2 temp;
+  temp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2;
+  temp.pNext = nullptr;
+  temp.features = features;
+
+  return temp;
+}
+
+inline VkPhysicalDeviceImageFormatInfo2 PhysicalDeviceImageFormatInfo2(
+  VkFormat format,
+  VkImageType type,
+  VkImageTiling tiling,
+  VkImageUsageFlags usage,
+  VkImageCreateFlags flags
+)
+{
+  VkPhysicalDeviceImageFormatInfo2 temp;
+  temp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_FORMAT_INFO_2;
+  temp.pNext = nullptr;
+  temp.format = format;
+  temp.type = type;
+  temp.tiling = tiling;
+  temp.usage = usage;
+  temp.flags = flags;
+
+  return temp;
+}
+
+inline VkPhysicalDeviceSparseImageFormatInfo2 PhysicalDeviceSparseImageFormatInfo2(
+  VkFormat format,
+  VkImageType type,
+  VkSampleCountFlagBits samples,
+  VkImageUsageFlags usage,
+  VkImageTiling tiling
+)
+{
+  VkPhysicalDeviceSparseImageFormatInfo2 temp;
+  temp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SPARSE_IMAGE_FORMAT_INFO_2;
+  temp.pNext = nullptr;
+  temp.format = format;
+  temp.type = type;
+  temp.samples = samples;
+  temp.usage = usage;
+  temp.tiling = tiling;
+
+  return temp;
+}
+
+inline VkPresentRegionsKHR PresentRegionsKHR(
+  uint32_t swapchainCount,
+  const VkPresentRegionKHR* pRegions
+)
+{
+  VkPresentRegionsKHR temp;
+  temp.sType = VK_STRUCTURE_TYPE_PRESENT_REGIONS_KHR;
+  temp.pNext = nullptr;
+  temp.swapchainCount = swapchainCount;
+  temp.pRegions = pRegions;
+
+  return temp;
+}
+
+inline VkPhysicalDeviceVariablePointersFeatures PhysicalDeviceVariablePointersFeatures(
+  VkBool32 variablePointersStorageBuffer,
+  VkBool32 variablePointers
+)
+{
+  VkPhysicalDeviceVariablePointersFeatures temp;
+  temp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VARIABLE_POINTERS_FEATURES;
+  temp.pNext = nullptr;
+  temp.variablePointersStorageBuffer = variablePointersStorageBuffer;
+  temp.variablePointers = variablePointers;
+
+  return temp;
+}
+
+inline VkPhysicalDeviceExternalImageFormatInfo PhysicalDeviceExternalImageFormatInfo(
+  VkExternalMemoryHandleTypeFlagBits handleType
+)
+{
+  VkPhysicalDeviceExternalImageFormatInfo temp;
+  temp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_IMAGE_FORMAT_INFO;
+  temp.pNext = nullptr;
+  temp.handleType = handleType;
+
+  return temp;
+}
+
+inline VkPhysicalDeviceExternalBufferInfo PhysicalDeviceExternalBufferInfo(
+  VkBufferCreateFlags flags,
+  VkBufferUsageFlags usage,
+  VkExternalMemoryHandleTypeFlagBits handleType
+)
+{
+  VkPhysicalDeviceExternalBufferInfo temp;
+  temp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_BUFFER_INFO;
+  temp.pNext = nullptr;
+  temp.flags = flags;
+  temp.usage = usage;
+  temp.handleType = handleType;
+
+  return temp;
+}
+
+inline VkExternalMemoryImageCreateInfo ExternalMemoryImageCreateInfo(
+  VkExternalMemoryHandleTypeFlags handleTypes
+)
+{
+  VkExternalMemoryImageCreateInfo temp;
+  temp.sType = VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_IMAGE_CREATE_INFO;
+  temp.pNext = nullptr;
+  temp.handleTypes = handleTypes;
+
+  return temp;
+}
+
+inline VkExternalMemoryBufferCreateInfo ExternalMemoryBufferCreateInfo(
+  VkExternalMemoryHandleTypeFlags handleTypes
+)
+{
+  VkExternalMemoryBufferCreateInfo temp;
+  temp.sType = VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_BUFFER_CREATE_INFO;
+  temp.pNext = nullptr;
+  temp.handleTypes = handleTypes;
+
+  return temp;
+}
+
+inline VkExportMemoryAllocateInfo ExportMemoryAllocateInfo(
+  VkExternalMemoryHandleTypeFlags handleTypes
+)
+{
+  VkExportMemoryAllocateInfo temp;
+  temp.sType = VK_STRUCTURE_TYPE_EXPORT_MEMORY_ALLOCATE_INFO;
+  temp.pNext = nullptr;
+  temp.handleTypes = handleTypes;
+
+  return temp;
+}
+
+#ifdef  VK_USE_PLATFORM_WIN32_KHR
+inline VkImportMemoryWin32HandleInfoKHR ImportMemoryWin32HandleInfoKHR(
+  VkExternalMemoryHandleTypeFlagBits handleType,
+  HANDLE handle,
+  LPCWSTR name
+)
+{
+  VkImportMemoryWin32HandleInfoKHR temp;
+  temp.sType = VK_STRUCTURE_TYPE_IMPORT_MEMORY_WIN_32_HANDLE_INFO_KHR;
+  temp.pNext = nullptr;
+  temp.handleType = handleType;
+  temp.handle = handle;
+  temp.name = name;
+
+  return temp;
+}
+#endif
+
+#ifdef  VK_USE_PLATFORM_WIN32_KHR
+inline VkExportMemoryWin32HandleInfoKHR ExportMemoryWin32HandleInfoKHR(
+  const SECURITY_ATTRIBUTES* pAttributes,
+  DWORD dwAccess,
+  LPCWSTR name
+)
+{
+  VkExportMemoryWin32HandleInfoKHR temp;
+  temp.sType = VK_STRUCTURE_TYPE_EXPORT_MEMORY_WIN_32_HANDLE_INFO_KHR;
+  temp.pNext = nullptr;
+  temp.pAttributes = pAttributes;
+  temp.dwAccess = dwAccess;
+  temp.name = name;
+
+  return temp;
+}
+#endif
+
+#ifdef  VK_USE_PLATFORM_WIN32_KHR
+inline VkMemoryGetWin32HandleInfoKHR MemoryGetWin32HandleInfoKHR(
+  VkDeviceMemory memory,
+  VkExternalMemoryHandleTypeFlagBits handleType
+)
+{
+  VkMemoryGetWin32HandleInfoKHR temp;
+  temp.sType = VK_STRUCTURE_TYPE_MEMORY_GET_WIN_32_HANDLE_INFO_KHR;
+  temp.pNext = nullptr;
+  temp.memory = memory;
+  temp.handleType = handleType;
+
+  return temp;
+}
+#endif
+
+inline VkImportMemoryFdInfoKHR ImportMemoryFdInfoKHR(
+  VkExternalMemoryHandleTypeFlagBits handleType,
+  int fd
+)
+{
+  VkImportMemoryFdInfoKHR temp;
+  temp.sType = VK_STRUCTURE_TYPE_IMPORT_MEMORY_FD_INFO_KHR;
+  temp.pNext = nullptr;
+  temp.handleType = handleType;
+  temp.fd = fd;
+
+  return temp;
+}
+
+inline VkMemoryGetFdInfoKHR MemoryGetFdInfoKHR(
+  VkDeviceMemory memory,
+  VkExternalMemoryHandleTypeFlagBits handleType
+)
+{
+  VkMemoryGetFdInfoKHR temp;
+  temp.sType = VK_STRUCTURE_TYPE_MEMORY_GET_FD_INFO_KHR;
+  temp.pNext = nullptr;
+  temp.memory = memory;
+  temp.handleType = handleType;
+
+  return temp;
+}
+
+#ifdef  VK_USE_PLATFORM_WIN32_KHR
+inline VkWin32KeyedMutexAcquireReleaseInfoKHR Win32KeyedMutexAcquireReleaseInfoKHR(
+  uint32_t acquireCount,
+  const VkDeviceMemory* pAcquireSyncs,
+  const uint64_t* pAcquireKeys,
+  const uint32_t* pAcquireTimeouts,
+  uint32_t releaseCount,
+  const VkDeviceMemory* pReleaseSyncs,
+  const uint64_t* pReleaseKeys
+)
+{
+  VkWin32KeyedMutexAcquireReleaseInfoKHR temp;
+  temp.sType = VK_STRUCTURE_TYPE_WIN_32_KEYED_MUTEX_ACQUIRE_RELEASE_INFO_KHR;
+  temp.pNext = nullptr;
+  temp.acquireCount = acquireCount;
+  temp.pAcquireSyncs = pAcquireSyncs;
+  temp.pAcquireKeys = pAcquireKeys;
+  temp.pAcquireTimeouts = pAcquireTimeouts;
+  temp.releaseCount = releaseCount;
+  temp.pReleaseSyncs = pReleaseSyncs;
+  temp.pReleaseKeys = pReleaseKeys;
+
+  return temp;
+}
+#endif
+
+inline VkPhysicalDeviceExternalSemaphoreInfo PhysicalDeviceExternalSemaphoreInfo(
+  VkExternalSemaphoreHandleTypeFlagBits handleType
+)
+{
+  VkPhysicalDeviceExternalSemaphoreInfo temp;
+  temp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_SEMAPHORE_INFO;
+  temp.pNext = nullptr;
+  temp.handleType = handleType;
+
+  return temp;
+}
+
+inline VkExportSemaphoreCreateInfo ExportSemaphoreCreateInfo(
+  VkExternalSemaphoreHandleTypeFlags handleTypes
+)
+{
+  VkExportSemaphoreCreateInfo temp;
+  temp.sType = VK_STRUCTURE_TYPE_EXPORT_SEMAPHORE_CREATE_INFO;
+  temp.pNext = nullptr;
+  temp.handleTypes = handleTypes;
+
+  return temp;
+}
+
+#ifdef  VK_USE_PLATFORM_WIN32_KHR
+inline VkImportSemaphoreWin32HandleInfoKHR ImportSemaphoreWin32HandleInfoKHR(
+  VkSemaphore semaphore,
+  VkSemaphoreImportFlags flags,
+  VkExternalSemaphoreHandleTypeFlagBits handleType,
+  HANDLE handle,
+  LPCWSTR name
+)
+{
+  VkImportSemaphoreWin32HandleInfoKHR temp;
+  temp.sType = VK_STRUCTURE_TYPE_IMPORT_SEMAPHORE_WIN_32_HANDLE_INFO_KHR;
+  temp.pNext = nullptr;
+  temp.semaphore = semaphore;
+  temp.flags = flags;
+  temp.handleType = handleType;
+  temp.handle = handle;
+  temp.name = name;
+
+  return temp;
+}
+#endif
+
+#ifdef  VK_USE_PLATFORM_WIN32_KHR
+inline VkExportSemaphoreWin32HandleInfoKHR ExportSemaphoreWin32HandleInfoKHR(
+  const SECURITY_ATTRIBUTES* pAttributes,
+  DWORD dwAccess,
+  LPCWSTR name
+)
+{
+  VkExportSemaphoreWin32HandleInfoKHR temp;
+  temp.sType = VK_STRUCTURE_TYPE_EXPORT_SEMAPHORE_WIN_32_HANDLE_INFO_KHR;
+  temp.pNext = nullptr;
+  temp.pAttributes = pAttributes;
+  temp.dwAccess = dwAccess;
+  temp.name = name;
+
+  return temp;
+}
+#endif
+
+#ifdef  VK_USE_PLATFORM_WIN32_KHR
+inline VkD3D12FenceSubmitInfoKHR D3D12FenceSubmitInfoKHR(
+  uint32_t waitSemaphoreValuesCount,
+  const uint64_t* pWaitSemaphoreValues,
+  uint32_t signalSemaphoreValuesCount,
+  const uint64_t* pSignalSemaphoreValues
+)
+{
+  VkD3D12FenceSubmitInfoKHR temp;
+  temp.sType = VK_STRUCTURE_TYPE_3_12_FENCE_SUBMIT_INFO_KHR;
+  temp.pNext = nullptr;
+  temp.waitSemaphoreValuesCount = waitSemaphoreValuesCount;
+  temp.pWaitSemaphoreValues = pWaitSemaphoreValues;
+  temp.signalSemaphoreValuesCount = signalSemaphoreValuesCount;
+  temp.pSignalSemaphoreValues = pSignalSemaphoreValues;
+
+  return temp;
+}
+#endif
+
+#ifdef  VK_USE_PLATFORM_WIN32_KHR
+inline VkSemaphoreGetWin32HandleInfoKHR SemaphoreGetWin32HandleInfoKHR(
+  VkSemaphore semaphore,
+  VkExternalSemaphoreHandleTypeFlagBits handleType
+)
+{
+  VkSemaphoreGetWin32HandleInfoKHR temp;
+  temp.sType = VK_STRUCTURE_TYPE_SEMAPHORE_GET_WIN_32_HANDLE_INFO_KHR;
+  temp.pNext = nullptr;
+  temp.semaphore = semaphore;
+  temp.handleType = handleType;
+
+  return temp;
+}
+#endif
+
+inline VkImportSemaphoreFdInfoKHR ImportSemaphoreFdInfoKHR(
+  VkSemaphore semaphore,
+  VkSemaphoreImportFlags flags,
+  VkExternalSemaphoreHandleTypeFlagBits handleType,
+  int fd
+)
+{
+  VkImportSemaphoreFdInfoKHR temp;
+  temp.sType = VK_STRUCTURE_TYPE_IMPORT_SEMAPHORE_FD_INFO_KHR;
+  temp.pNext = nullptr;
+  temp.semaphore = semaphore;
+  temp.flags = flags;
+  temp.handleType = handleType;
+  temp.fd = fd;
+
+  return temp;
+}
+
+inline VkSemaphoreGetFdInfoKHR SemaphoreGetFdInfoKHR(
+  VkSemaphore semaphore,
+  VkExternalSemaphoreHandleTypeFlagBits handleType
+)
+{
+  VkSemaphoreGetFdInfoKHR temp;
+  temp.sType = VK_STRUCTURE_TYPE_SEMAPHORE_GET_FD_INFO_KHR;
+  temp.pNext = nullptr;
+  temp.semaphore = semaphore;
+  temp.handleType = handleType;
+
+  return temp;
+}
+
+inline VkPhysicalDeviceExternalFenceInfo PhysicalDeviceExternalFenceInfo(
+  VkExternalFenceHandleTypeFlagBits handleType
+)
+{
+  VkPhysicalDeviceExternalFenceInfo temp;
+  temp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_FENCE_INFO;
+  temp.pNext = nullptr;
+  temp.handleType = handleType;
+
+  return temp;
+}
+
+inline VkExportFenceCreateInfo ExportFenceCreateInfo(
+  VkExternalFenceHandleTypeFlags handleTypes
+)
+{
+  VkExportFenceCreateInfo temp;
+  temp.sType = VK_STRUCTURE_TYPE_EXPORT_FENCE_CREATE_INFO;
+  temp.pNext = nullptr;
+  temp.handleTypes = handleTypes;
+
+  return temp;
+}
+
+#ifdef  VK_USE_PLATFORM_WIN32_KHR
+inline VkImportFenceWin32HandleInfoKHR ImportFenceWin32HandleInfoKHR(
+  VkFence fence,
+  VkFenceImportFlags flags,
+  VkExternalFenceHandleTypeFlagBits handleType,
+  HANDLE handle,
+  LPCWSTR name
+)
+{
+  VkImportFenceWin32HandleInfoKHR temp;
+  temp.sType = VK_STRUCTURE_TYPE_IMPORT_FENCE_WIN_32_HANDLE_INFO_KHR;
+  temp.pNext = nullptr;
+  temp.fence = fence;
+  temp.flags = flags;
+  temp.handleType = handleType;
+  temp.handle = handle;
+  temp.name = name;
+
+  return temp;
+}
+#endif
+
+#ifdef  VK_USE_PLATFORM_WIN32_KHR
+inline VkExportFenceWin32HandleInfoKHR ExportFenceWin32HandleInfoKHR(
+  const SECURITY_ATTRIBUTES* pAttributes,
+  DWORD dwAccess,
+  LPCWSTR name
+)
+{
+  VkExportFenceWin32HandleInfoKHR temp;
+  temp.sType = VK_STRUCTURE_TYPE_EXPORT_FENCE_WIN_32_HANDLE_INFO_KHR;
+  temp.pNext = nullptr;
+  temp.pAttributes = pAttributes;
+  temp.dwAccess = dwAccess;
+  temp.name = name;
+
+  return temp;
+}
+#endif
+
+#ifdef  VK_USE_PLATFORM_WIN32_KHR
+inline VkFenceGetWin32HandleInfoKHR FenceGetWin32HandleInfoKHR(
+  VkFence fence,
+  VkExternalFenceHandleTypeFlagBits handleType
+)
+{
+  VkFenceGetWin32HandleInfoKHR temp;
+  temp.sType = VK_STRUCTURE_TYPE_FENCE_GET_WIN_32_HANDLE_INFO_KHR;
+  temp.pNext = nullptr;
+  temp.fence = fence;
+  temp.handleType = handleType;
+
+  return temp;
+}
+#endif
+
+inline VkImportFenceFdInfoKHR ImportFenceFdInfoKHR(
+  VkFence fence,
+  VkFenceImportFlags flags,
+  VkExternalFenceHandleTypeFlagBits handleType,
+  int fd
+)
+{
+  VkImportFenceFdInfoKHR temp;
+  temp.sType = VK_STRUCTURE_TYPE_IMPORT_FENCE_FD_INFO_KHR;
+  temp.pNext = nullptr;
+  temp.fence = fence;
+  temp.flags = flags;
+  temp.handleType = handleType;
+  temp.fd = fd;
+
+  return temp;
+}
+
+inline VkFenceGetFdInfoKHR FenceGetFdInfoKHR(
+  VkFence fence,
+  VkExternalFenceHandleTypeFlagBits handleType
+)
+{
+  VkFenceGetFdInfoKHR temp;
+  temp.sType = VK_STRUCTURE_TYPE_FENCE_GET_FD_INFO_KHR;
+  temp.pNext = nullptr;
+  temp.fence = fence;
+  temp.handleType = handleType;
+
+  return temp;
+}
+
+inline VkPhysicalDeviceMultiviewFeatures PhysicalDeviceMultiviewFeatures(
+  VkBool32 multiview,
+  VkBool32 multiviewGeometryShader,
+  VkBool32 multiviewTessellationShader
+)
+{
+  VkPhysicalDeviceMultiviewFeatures temp;
+  temp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_FEATURES;
+  temp.pNext = nullptr;
+  temp.multiview = multiview;
+  temp.multiviewGeometryShader = multiviewGeometryShader;
+  temp.multiviewTessellationShader = multiviewTessellationShader;
+
+  return temp;
+}
+
+inline VkRenderPassMultiviewCreateInfo RenderPassMultiviewCreateInfo(
+  uint32_t subpassCount,
+  const uint32_t* pViewMasks,
+  uint32_t dependencyCount,
+  const int32_t* pViewOffsets,
+  uint32_t correlationMaskCount,
+  const uint32_t* pCorrelationMasks
+)
+{
+  VkRenderPassMultiviewCreateInfo temp;
+  temp.sType = VK_STRUCTURE_TYPE_RENDER_PASS_MULTIVIEW_CREATE_INFO;
+  temp.pNext = nullptr;
+  temp.subpassCount = subpassCount;
+  temp.pViewMasks = pViewMasks;
+  temp.dependencyCount = dependencyCount;
+  temp.pViewOffsets = pViewOffsets;
+  temp.correlationMaskCount = correlationMaskCount;
+  temp.pCorrelationMasks = pCorrelationMasks;
+
+  return temp;
+}
+
+inline VkDisplayPowerInfoEXT DisplayPowerInfoEXT(
+  VkDisplayPowerStateEXT powerState
+)
+{
+  VkDisplayPowerInfoEXT temp;
+  temp.sType = VK_STRUCTURE_TYPE_DISPLAY_POWER_INFO_EXT;
+  temp.pNext = nullptr;
+  temp.powerState = powerState;
+
+  return temp;
+}
+
+inline VkDeviceEventInfoEXT DeviceEventInfoEXT(
+  VkDeviceEventTypeEXT deviceEvent
+)
+{
+  VkDeviceEventInfoEXT temp;
+  temp.sType = VK_STRUCTURE_TYPE_DEVICE_EVENT_INFO_EXT;
+  temp.pNext = nullptr;
+  temp.deviceEvent = deviceEvent;
+
+  return temp;
+}
+
+inline VkDisplayEventInfoEXT DisplayEventInfoEXT(
+  VkDisplayEventTypeEXT displayEvent
+)
+{
+  VkDisplayEventInfoEXT temp;
+  temp.sType = VK_STRUCTURE_TYPE_DISPLAY_EVENT_INFO_EXT;
+  temp.pNext = nullptr;
+  temp.displayEvent = displayEvent;
+
+  return temp;
+}
+
+inline VkSwapchainCounterCreateInfoEXT SwapchainCounterCreateInfoEXT(
+  VkSurfaceCounterFlagsEXT surfaceCounters
+)
+{
+  VkSwapchainCounterCreateInfoEXT temp;
+  temp.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_COUNTER_CREATE_INFO_EXT;
+  temp.pNext = nullptr;
+  temp.surfaceCounters = surfaceCounters;
+
+  return temp;
+}
+
+inline VkMemoryAllocateFlagsInfo MemoryAllocateFlagsInfo(
+  VkMemoryAllocateFlags flags,
+  uint32_t deviceMask
+)
+{
+  VkMemoryAllocateFlagsInfo temp;
+  temp.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_FLAGS_INFO;
+  temp.pNext = nullptr;
+  temp.flags = flags;
+  temp.deviceMask = deviceMask;
+
+  return temp;
+}
+
+inline VkBindBufferMemoryInfo BindBufferMemoryInfo(
+  VkBuffer buffer,
+  VkDeviceMemory memory,
+  VkDeviceSize memoryOffset
+)
+{
+  VkBindBufferMemoryInfo temp;
+  temp.sType = VK_STRUCTURE_TYPE_BIND_BUFFER_MEMORY_INFO;
+  temp.pNext = nullptr;
+  temp.buffer = buffer;
+  temp.memory = memory;
+  temp.memoryOffset = memoryOffset;
+
+  return temp;
+}
+
+inline VkBindBufferMemoryDeviceGroupInfo BindBufferMemoryDeviceGroupInfo(
+  uint32_t deviceIndexCount,
+  const uint32_t* pDeviceIndices
+)
+{
+  VkBindBufferMemoryDeviceGroupInfo temp;
+  temp.sType = VK_STRUCTURE_TYPE_BIND_BUFFER_MEMORY_DEVICE_GROUP_INFO;
+  temp.pNext = nullptr;
+  temp.deviceIndexCount = deviceIndexCount;
+  temp.pDeviceIndices = pDeviceIndices;
+
+  return temp;
+}
+
+inline VkBindImageMemoryInfo BindImageMemoryInfo(
+  VkImage image,
+  VkDeviceMemory memory,
+  VkDeviceSize memoryOffset
+)
+{
+  VkBindImageMemoryInfo temp;
+  temp.sType = VK_STRUCTURE_TYPE_BIND_IMAGE_MEMORY_INFO;
+  temp.pNext = nullptr;
+  temp.image = image;
+  temp.memory = memory;
+  temp.memoryOffset = memoryOffset;
+
+  return temp;
+}
+
+inline VkBindImageMemoryDeviceGroupInfo BindImageMemoryDeviceGroupInfo(
+  uint32_t deviceIndexCount,
+  const uint32_t* pDeviceIndices,
+  uint32_t splitInstanceBindRegionCount,
+  const VkRect2D* pSplitInstanceBindRegions
+)
+{
+  VkBindImageMemoryDeviceGroupInfo temp;
+  temp.sType = VK_STRUCTURE_TYPE_BIND_IMAGE_MEMORY_DEVICE_GROUP_INFO;
+  temp.pNext = nullptr;
+  temp.deviceIndexCount = deviceIndexCount;
+  temp.pDeviceIndices = pDeviceIndices;
+  temp.splitInstanceBindRegionCount = splitInstanceBindRegionCount;
+  temp.pSplitInstanceBindRegions = pSplitInstanceBindRegions;
+
+  return temp;
+}
+
+inline VkDeviceGroupRenderPassBeginInfo DeviceGroupRenderPassBeginInfo(
+  uint32_t deviceMask,
+  uint32_t deviceRenderAreaCount,
+  const VkRect2D* pDeviceRenderAreas
+)
+{
+  VkDeviceGroupRenderPassBeginInfo temp;
+  temp.sType = VK_STRUCTURE_TYPE_DEVICE_GROUP_RENDER_PASS_BEGIN_INFO;
+  temp.pNext = nullptr;
+  temp.deviceMask = deviceMask;
+  temp.deviceRenderAreaCount = deviceRenderAreaCount;
+  temp.pDeviceRenderAreas = pDeviceRenderAreas;
+
+  return temp;
+}
+
+inline VkDeviceGroupCommandBufferBeginInfo DeviceGroupCommandBufferBeginInfo(
+  uint32_t deviceMask
+)
+{
+  VkDeviceGroupCommandBufferBeginInfo temp;
+  temp.sType = VK_STRUCTURE_TYPE_DEVICE_GROUP_COMMAND_BUFFER_BEGIN_INFO;
+  temp.pNext = nullptr;
+  temp.deviceMask = deviceMask;
+
+  return temp;
+}
+
+inline VkDeviceGroupSubmitInfo DeviceGroupSubmitInfo(
+  uint32_t waitSemaphoreCount,
+  const uint32_t* pWaitSemaphoreDeviceIndices,
+  uint32_t commandBufferCount,
+  const uint32_t* pCommandBufferDeviceMasks,
+  uint32_t signalSemaphoreCount,
+  const uint32_t* pSignalSemaphoreDeviceIndices
+)
+{
+  VkDeviceGroupSubmitInfo temp;
+  temp.sType = VK_STRUCTURE_TYPE_DEVICE_GROUP_SUBMIT_INFO;
+  temp.pNext = nullptr;
+  temp.waitSemaphoreCount = waitSemaphoreCount;
+  temp.pWaitSemaphoreDeviceIndices = pWaitSemaphoreDeviceIndices;
+  temp.commandBufferCount = commandBufferCount;
+  temp.pCommandBufferDeviceMasks = pCommandBufferDeviceMasks;
+  temp.signalSemaphoreCount = signalSemaphoreCount;
+  temp.pSignalSemaphoreDeviceIndices = pSignalSemaphoreDeviceIndices;
+
+  return temp;
+}
+
+inline VkDeviceGroupBindSparseInfo DeviceGroupBindSparseInfo(
+  uint32_t resourceDeviceIndex,
+  uint32_t memoryDeviceIndex
+)
+{
+  VkDeviceGroupBindSparseInfo temp;
+  temp.sType = VK_STRUCTURE_TYPE_DEVICE_GROUP_BIND_SPARSE_INFO;
+  temp.pNext = nullptr;
+  temp.resourceDeviceIndex = resourceDeviceIndex;
+  temp.memoryDeviceIndex = memoryDeviceIndex;
+
+  return temp;
+}
+
+inline VkImageSwapchainCreateInfoKHR ImageSwapchainCreateInfoKHR(
+  VkSwapchainKHR swapchain
+)
+{
+  VkImageSwapchainCreateInfoKHR temp;
+  temp.sType = VK_STRUCTURE_TYPE_IMAGE_SWAPCHAIN_CREATE_INFO_KHR;
+  temp.pNext = nullptr;
+  temp.swapchain = swapchain;
+
+  return temp;
+}
+
+inline VkBindImageMemorySwapchainInfoKHR BindImageMemorySwapchainInfoKHR(
+  VkSwapchainKHR swapchain,
+  uint32_t imageIndex
+)
+{
+  VkBindImageMemorySwapchainInfoKHR temp;
+  temp.sType = VK_STRUCTURE_TYPE_BIND_IMAGE_MEMORY_SWAPCHAIN_INFO_KHR;
+  temp.pNext = nullptr;
+  temp.swapchain = swapchain;
+  temp.imageIndex = imageIndex;
+
+  return temp;
+}
+
+inline VkAcquireNextImageInfoKHR AcquireNextImageInfoKHR(
+  VkSwapchainKHR swapchain,
+  uint64_t timeout,
+  VkSemaphore semaphore,
+  VkFence fence,
+  uint32_t deviceMask
+)
+{
+  VkAcquireNextImageInfoKHR temp;
+  temp.sType = VK_STRUCTURE_TYPE_ACQUIRE_NEXT_IMAGE_INFO_KHR;
+  temp.pNext = nullptr;
+  temp.swapchain = swapchain;
+  temp.timeout = timeout;
+  temp.semaphore = semaphore;
+  temp.fence = fence;
+  temp.deviceMask = deviceMask;
+
+  return temp;
+}
+
+inline VkDeviceGroupPresentInfoKHR DeviceGroupPresentInfoKHR(
+  uint32_t swapchainCount,
+  const uint32_t* pDeviceMasks,
+  VkDeviceGroupPresentModeFlagBitsKHR mode
+)
+{
+  VkDeviceGroupPresentInfoKHR temp;
+  temp.sType = VK_STRUCTURE_TYPE_DEVICE_GROUP_PRESENT_INFO_KHR;
+  temp.pNext = nullptr;
+  temp.swapchainCount = swapchainCount;
+  temp.pDeviceMasks = pDeviceMasks;
+  temp.mode = mode;
+
+  return temp;
+}
+
+inline VkDeviceGroupDeviceCreateInfo DeviceGroupDeviceCreateInfo(
+  uint32_t physicalDeviceCount,
+  const VkPhysicalDevice* pPhysicalDevices
+)
+{
+  VkDeviceGroupDeviceCreateInfo temp;
+  temp.sType = VK_STRUCTURE_TYPE_DEVICE_GROUP_DEVICE_CREATE_INFO;
+  temp.pNext = nullptr;
+  temp.physicalDeviceCount = physicalDeviceCount;
+  temp.pPhysicalDevices = pPhysicalDevices;
+
+  return temp;
+}
+
+inline VkDeviceGroupSwapchainCreateInfoKHR DeviceGroupSwapchainCreateInfoKHR(
+  VkDeviceGroupPresentModeFlagsKHR modes
+)
+{
+  VkDeviceGroupSwapchainCreateInfoKHR temp;
+  temp.sType = VK_STRUCTURE_TYPE_DEVICE_GROUP_SWAPCHAIN_CREATE_INFO_KHR;
+  temp.pNext = nullptr;
+  temp.modes = modes;
+
+  return temp;
+}
+
+inline VkDescriptorUpdateTemplateCreateInfo DescriptorUpdateTemplateCreateInfo(
+  VkDescriptorUpdateTemplateCreateFlags flags,
+  uint32_t descriptorUpdateEntryCount,
+  const VkDescriptorUpdateTemplateEntry* pDescriptorUpdateEntries,
+  VkDescriptorUpdateTemplateType templateType,
+  VkDescriptorSetLayout descriptorSetLayout,
+  VkPipelineBindPoint pipelineBindPoint,
+  VkPipelineLayout pipelineLayout,
+  uint32_t set
+)
+{
+  VkDescriptorUpdateTemplateCreateInfo temp;
+  temp.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_UPDATE_TEMPLATE_CREATE_INFO;
+  temp.pNext = nullptr;
+  temp.flags = flags;
+  temp.descriptorUpdateEntryCount = descriptorUpdateEntryCount;
+  temp.pDescriptorUpdateEntries = pDescriptorUpdateEntries;
+  temp.templateType = templateType;
+  temp.descriptorSetLayout = descriptorSetLayout;
+  temp.pipelineBindPoint = pipelineBindPoint;
+  temp.pipelineLayout = pipelineLayout;
+  temp.set = set;
+
+  return temp;
+}
+
+inline VkHdrMetadataEXT HdrMetadataEXT(
+  VkXYColorEXT displayPrimaryRed,
+  VkXYColorEXT displayPrimaryGreen,
+  VkXYColorEXT displayPrimaryBlue,
+  VkXYColorEXT whitePoint,
+  float maxLuminance,
+  float minLuminance,
+  float maxContentLightLevel,
+  float maxFrameAverageLightLevel
+)
+{
+  VkHdrMetadataEXT temp;
+  temp.sType = VK_STRUCTURE_TYPE_HDR_METADATA_EXT;
+  temp.pNext = nullptr;
+  temp.displayPrimaryRed = displayPrimaryRed;
+  temp.displayPrimaryGreen = displayPrimaryGreen;
+  temp.displayPrimaryBlue = displayPrimaryBlue;
+  temp.whitePoint = whitePoint;
+  temp.maxLuminance = maxLuminance;
+  temp.minLuminance = minLuminance;
+  temp.maxContentLightLevel = maxContentLightLevel;
+  temp.maxFrameAverageLightLevel = maxFrameAverageLightLevel;
+
+  return temp;
+}
+
+inline VkSwapchainDisplayNativeHdrCreateInfoAMD SwapchainDisplayNativeHdrCreateInfoAMD(
+  VkBool32 localDimmingEnable
+)
+{
+  VkSwapchainDisplayNativeHdrCreateInfoAMD temp;
+  temp.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_DISPLAY_NATIVE_HDR_CREATE_INFO_AMD;
+  temp.pNext = nullptr;
+  temp.localDimmingEnable = localDimmingEnable;
+
+  return temp;
+}
+
+inline VkPresentTimesInfoGOOGLE PresentTimesInfoGOOGLE(
+  uint32_t swapchainCount,
+  const VkPresentTimeGOOGLE* pTimes
+)
+{
+  VkPresentTimesInfoGOOGLE temp;
+  temp.sType = VK_STRUCTURE_TYPE_PRESENT_TIMES_INFO_GOOGLE;
+  temp.pNext = nullptr;
+  temp.swapchainCount = swapchainCount;
+  temp.pTimes = pTimes;
+
+  return temp;
+}
+
+#ifdef  VK_USE_PLATFORM_IOS_MVK
+inline VkIOSSurfaceCreateInfoMVK IOSSurfaceCreateInfoMVK(
+  VkIOSSurfaceCreateFlagsMVK flags,
+  const void* pView
+)
+{
+  VkIOSSurfaceCreateInfoMVK temp;
+  temp.sType = VK_STRUCTURE_TYPE_IOSS_CREATE_INFO_MVK;
+  temp.pNext = nullptr;
+  temp.flags = flags;
+  temp.pView = pView;
+
+  return temp;
+}
+#endif
+
+#ifdef  VK_USE_PLATFORM_MACOS_MVK
+inline VkMacOSSurfaceCreateInfoMVK MacOSSurfaceCreateInfoMVK(
+  VkMacOSSurfaceCreateFlagsMVK flags,
+  const void* pView
+)
+{
+  VkMacOSSurfaceCreateInfoMVK temp;
+  temp.sType = VK_STRUCTURE_TYPE_MAC_OSS_CREATE_INFO_MVK;
+  temp.pNext = nullptr;
+  temp.flags = flags;
+  temp.pView = pView;
+
+  return temp;
+}
+#endif
+
+#ifdef  VK_USE_PLATFORM_METAL_EXT
+inline VkMetalSurfaceCreateInfoEXT MetalSurfaceCreateInfoEXT(
+  VkMetalSurfaceCreateFlagsEXT flags,
+  const CAMetalLayer* pLayer
+)
+{
+  VkMetalSurfaceCreateInfoEXT temp;
+  temp.sType = VK_STRUCTURE_TYPE_METAL_SURFACE_CREATE_INFO_EXT;
+  temp.pNext = nullptr;
+  temp.flags = flags;
+  temp.pLayer = pLayer;
+
+  return temp;
+}
+#endif
+
+inline VkPipelineViewportWScalingStateCreateInfoNV PipelineViewportWScalingStateCreateInfoNV(
+  VkBool32 viewportWScalingEnable,
+  uint32_t viewportCount,
+  const VkViewportWScalingNV* pViewportWScalings
+)
+{
+  VkPipelineViewportWScalingStateCreateInfoNV temp;
+  temp.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_W_SCALING_STATE_CREATE_INFO_NV;
+  temp.pNext = nullptr;
+  temp.viewportWScalingEnable = viewportWScalingEnable;
+  temp.viewportCount = viewportCount;
+  temp.pViewportWScalings = pViewportWScalings;
+
+  return temp;
+}
+
+inline VkPipelineViewportSwizzleStateCreateInfoNV PipelineViewportSwizzleStateCreateInfoNV(
+  VkPipelineViewportSwizzleStateCreateFlagsNV flags,
+  uint32_t viewportCount,
+  const VkViewportSwizzleNV* pViewportSwizzles
+)
+{
+  VkPipelineViewportSwizzleStateCreateInfoNV temp;
+  temp.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_SWIZZLE_STATE_CREATE_INFO_NV;
+  temp.pNext = nullptr;
+  temp.flags = flags;
+  temp.viewportCount = viewportCount;
+  temp.pViewportSwizzles = pViewportSwizzles;
+
+  return temp;
+}
+
+inline VkPipelineDiscardRectangleStateCreateInfoEXT PipelineDiscardRectangleStateCreateInfoEXT(
+  VkPipelineDiscardRectangleStateCreateFlagsEXT flags,
+  VkDiscardRectangleModeEXT discardRectangleMode,
+  uint32_t discardRectangleCount,
+  const VkRect2D* pDiscardRectangles
+)
+{
+  VkPipelineDiscardRectangleStateCreateInfoEXT temp;
+  temp.sType = VK_STRUCTURE_TYPE_PIPELINE_DISCARD_RECTANGLE_STATE_CREATE_INFO_EXT;
+  temp.pNext = nullptr;
+  temp.flags = flags;
+  temp.discardRectangleMode = discardRectangleMode;
+  temp.discardRectangleCount = discardRectangleCount;
+  temp.pDiscardRectangles = pDiscardRectangles;
+
+  return temp;
+}
+
+inline VkRenderPassInputAttachmentAspectCreateInfo RenderPassInputAttachmentAspectCreateInfo(
+  uint32_t aspectReferenceCount,
+  const VkInputAttachmentAspectReference* pAspectReferences
+)
+{
+  VkRenderPassInputAttachmentAspectCreateInfo temp;
+  temp.sType = VK_STRUCTURE_TYPE_RENDER_PASS_INPUT_ATTACHMENT_ASPECT_CREATE_INFO;
+  temp.pNext = nullptr;
+  temp.aspectReferenceCount = aspectReferenceCount;
+  temp.pAspectReferences = pAspectReferences;
+
+  return temp;
+}
+
+inline VkPhysicalDeviceSurfaceInfo2KHR PhysicalDeviceSurfaceInfo2KHR(
+  VkSurfaceKHR surface
+)
+{
+  VkPhysicalDeviceSurfaceInfo2KHR temp;
+  temp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SURFACE_INFO_2_KHR;
+  temp.pNext = nullptr;
+  temp.surface = surface;
+
+  return temp;
+}
+
+inline VkDisplayPlaneInfo2KHR DisplayPlaneInfo2KHR(
+  VkDisplayModeKHR mode,
+  uint32_t planeIndex
+)
+{
+  VkDisplayPlaneInfo2KHR temp;
+  temp.sType = VK_STRUCTURE_TYPE_DISPLAY_PLANE_INFO_2_KHR;
+  temp.pNext = nullptr;
+  temp.mode = mode;
+  temp.planeIndex = planeIndex;
+
+  return temp;
+}
+
+inline VkPhysicalDevice16BitStorageFeatures PhysicalDevice16BitStorageFeatures(
+  VkBool32 storageBuffer16BitAccess,
+  VkBool32 uniformAndStorageBuffer16BitAccess,
+  VkBool32 storagePushConstant16,
+  VkBool32 storageInputOutput16
+)
+{
+  VkPhysicalDevice16BitStorageFeatures temp;
+  temp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_16BIT_STORAGE_FEATURES;
+  temp.pNext = nullptr;
+  temp.storageBuffer16BitAccess = storageBuffer16BitAccess;
+  temp.uniformAndStorageBuffer16BitAccess = uniformAndStorageBuffer16BitAccess;
+  temp.storagePushConstant16 = storagePushConstant16;
+  temp.storageInputOutput16 = storageInputOutput16;
+
+  return temp;
+}
+
+inline VkPhysicalDeviceShaderSubgroupExtendedTypesFeaturesKHR PhysicalDeviceShaderSubgroupExtendedTypesFeaturesKHR(
+  VkBool32 shaderSubgroupExtendedTypes
+)
+{
+  VkPhysicalDeviceShaderSubgroupExtendedTypesFeaturesKHR temp;
+  temp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_SUBGROUP_EXTENDED_TYPES_FEATURES_KHR;
+  temp.pNext = nullptr;
+  temp.shaderSubgroupExtendedTypes = shaderSubgroupExtendedTypes;
+
+  return temp;
+}
+
+inline VkBufferMemoryRequirementsInfo2 BufferMemoryRequirementsInfo2(
+  VkBuffer buffer
+)
+{
+  VkBufferMemoryRequirementsInfo2 temp;
+  temp.sType = VK_STRUCTURE_TYPE_BUFFER_MEMORY_REQUIREMENTS_INFO_2;
+  temp.pNext = nullptr;
+  temp.buffer = buffer;
+
+  return temp;
+}
+
+inline VkImageMemoryRequirementsInfo2 ImageMemoryRequirementsInfo2(
+  VkImage image
+)
+{
+  VkImageMemoryRequirementsInfo2 temp;
+  temp.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_REQUIREMENTS_INFO_2;
+  temp.pNext = nullptr;
+  temp.image = image;
+
+  return temp;
+}
+
+inline VkImageSparseMemoryRequirementsInfo2 ImageSparseMemoryRequirementsInfo2(
+  VkImage image
+)
+{
+  VkImageSparseMemoryRequirementsInfo2 temp;
+  temp.sType = VK_STRUCTURE_TYPE_IMAGE_SPARSE_MEMORY_REQUIREMENTS_INFO_2;
+  temp.pNext = nullptr;
+  temp.image = image;
+
+  return temp;
+}
+
+inline VkMemoryDedicatedAllocateInfo MemoryDedicatedAllocateInfo(
+  VkImage image,
+  VkBuffer buffer
+)
+{
+  VkMemoryDedicatedAllocateInfo temp;
+  temp.sType = VK_STRUCTURE_TYPE_MEMORY_DEDICATED_ALLOCATE_INFO;
+  temp.pNext = nullptr;
+  temp.image = image;
+  temp.buffer = buffer;
+
+  return temp;
+}
+
+inline VkImageViewUsageCreateInfo ImageViewUsageCreateInfo(
+  VkImageUsageFlags usage
+)
+{
+  VkImageViewUsageCreateInfo temp;
+  temp.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_USAGE_CREATE_INFO;
+  temp.pNext = nullptr;
+  temp.usage = usage;
+
+  return temp;
+}
+
+inline VkPipelineTessellationDomainOriginStateCreateInfo PipelineTessellationDomainOriginStateCreateInfo(
+  VkTessellationDomainOrigin domainOrigin
+)
+{
+  VkPipelineTessellationDomainOriginStateCreateInfo temp;
+  temp.sType = VK_STRUCTURE_TYPE_PIPELINE_TESSELLATION_DOMAIN_ORIGIN_STATE_CREATE_INFO;
+  temp.pNext = nullptr;
+  temp.domainOrigin = domainOrigin;
+
+  return temp;
+}
+
+inline VkSamplerYcbcrConversionInfo SamplerYcbcrConversionInfo(
+  VkSamplerYcbcrConversion conversion
+)
+{
+  VkSamplerYcbcrConversionInfo temp;
+  temp.sType = VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_INFO;
+  temp.pNext = nullptr;
+  temp.conversion = conversion;
+
+  return temp;
+}
+
+inline VkSamplerYcbcrConversionCreateInfo SamplerYcbcrConversionCreateInfo(
+  VkFormat format,
+  VkSamplerYcbcrModelConversion ycbcrModel,
+  VkSamplerYcbcrRange ycbcrRange,
+  VkComponentMapping components,
+  VkChromaLocation xChromaOffset,
+  VkChromaLocation yChromaOffset,
+  VkFilter chromaFilter,
+  VkBool32 forceExplicitReconstruction
+)
+{
+  VkSamplerYcbcrConversionCreateInfo temp;
+  temp.sType = VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_CREATE_INFO;
+  temp.pNext = nullptr;
+  temp.format = format;
+  temp.ycbcrModel = ycbcrModel;
+  temp.ycbcrRange = ycbcrRange;
+  temp.components = components;
+  temp.xChromaOffset = xChromaOffset;
+  temp.yChromaOffset = yChromaOffset;
+  temp.chromaFilter = chromaFilter;
+  temp.forceExplicitReconstruction = forceExplicitReconstruction;
+
+  return temp;
+}
+
+inline VkBindImagePlaneMemoryInfo BindImagePlaneMemoryInfo(
+  VkImageAspectFlagBits planeAspect
+)
+{
+  VkBindImagePlaneMemoryInfo temp;
+  temp.sType = VK_STRUCTURE_TYPE_BIND_IMAGE_PLANE_MEMORY_INFO;
+  temp.pNext = nullptr;
+  temp.planeAspect = planeAspect;
+
+  return temp;
+}
+
+inline VkImagePlaneMemoryRequirementsInfo ImagePlaneMemoryRequirementsInfo(
+  VkImageAspectFlagBits planeAspect
+)
+{
+  VkImagePlaneMemoryRequirementsInfo temp;
+  temp.sType = VK_STRUCTURE_TYPE_IMAGE_PLANE_MEMORY_REQUIREMENTS_INFO;
+  temp.pNext = nullptr;
+  temp.planeAspect = planeAspect;
+
+  return temp;
+}
+
+inline VkPhysicalDeviceSamplerYcbcrConversionFeatures PhysicalDeviceSamplerYcbcrConversionFeatures(
+  VkBool32 samplerYcbcrConversion
+)
+{
+  VkPhysicalDeviceSamplerYcbcrConversionFeatures temp;
+  temp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLER_YCBCR_CONVERSION_FEATURES;
+  temp.pNext = nullptr;
+  temp.samplerYcbcrConversion = samplerYcbcrConversion;
+
+  return temp;
+}
+
+inline VkConditionalRenderingBeginInfoEXT ConditionalRenderingBeginInfoEXT(
+  VkBuffer buffer,
+  VkDeviceSize offset,
+  VkConditionalRenderingFlagsEXT flags
+)
+{
+  VkConditionalRenderingBeginInfoEXT temp;
+  temp.sType = VK_STRUCTURE_TYPE_CONDITIONAL_RENDERING_BEGIN_INFO_EXT;
+  temp.pNext = nullptr;
+  temp.buffer = buffer;
+  temp.offset = offset;
+  temp.flags = flags;
+
+  return temp;
+}
+
+inline VkProtectedSubmitInfo ProtectedSubmitInfo(
+  VkBool32 protectedSubmit
+)
+{
+  VkProtectedSubmitInfo temp;
+  temp.sType = VK_STRUCTURE_TYPE_PROTECTED_SUBMIT_INFO;
+  temp.pNext = nullptr;
+  temp.protectedSubmit = protectedSubmit;
+
+  return temp;
+}
+
+inline VkPhysicalDeviceProtectedMemoryFeatures PhysicalDeviceProtectedMemoryFeatures(
+  VkBool32 protectedMemory
+)
+{
+  VkPhysicalDeviceProtectedMemoryFeatures temp;
+  temp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROTECTED_MEMORY_FEATURES;
+  temp.pNext = nullptr;
+  temp.protectedMemory = protectedMemory;
+
+  return temp;
+}
+
+inline VkDeviceQueueInfo2 DeviceQueueInfo2(
+  VkDeviceQueueCreateFlags flags,
+  uint32_t queueFamilyIndex,
+  uint32_t queueIndex
+)
+{
+  VkDeviceQueueInfo2 temp;
+  temp.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_INFO_2;
+  temp.pNext = nullptr;
+  temp.flags = flags;
+  temp.queueFamilyIndex = queueFamilyIndex;
+  temp.queueIndex = queueIndex;
+
+  return temp;
+}
+
+inline VkPipelineCoverageToColorStateCreateInfoNV PipelineCoverageToColorStateCreateInfoNV(
+  VkPipelineCoverageToColorStateCreateFlagsNV flags,
+  VkBool32 coverageToColorEnable,
+  uint32_t coverageToColorLocation
+)
+{
+  VkPipelineCoverageToColorStateCreateInfoNV temp;
+  temp.sType = VK_STRUCTURE_TYPE_PIPELINE_COVERAGE_TO_COLOR_STATE_CREATE_INFO_NV;
+  temp.pNext = nullptr;
+  temp.flags = flags;
+  temp.coverageToColorEnable = coverageToColorEnable;
+  temp.coverageToColorLocation = coverageToColorLocation;
+
+  return temp;
+}
+
+inline VkSampleLocationsInfoEXT SampleLocationsInfoEXT(
+  VkSampleCountFlagBits sampleLocationsPerPixel,
+  VkExtent2D sampleLocationGridSize,
+  uint32_t sampleLocationsCount,
+  const VkSampleLocationEXT* pSampleLocations
+)
+{
+  VkSampleLocationsInfoEXT temp;
+  temp.sType = VK_STRUCTURE_TYPE_SAMPLE_LOCATIONS_INFO_EXT;
+  temp.pNext = nullptr;
+  temp.sampleLocationsPerPixel = sampleLocationsPerPixel;
+  temp.sampleLocationGridSize = sampleLocationGridSize;
+  temp.sampleLocationsCount = sampleLocationsCount;
+  temp.pSampleLocations = pSampleLocations;
+
+  return temp;
+}
+
+inline VkRenderPassSampleLocationsBeginInfoEXT RenderPassSampleLocationsBeginInfoEXT(
+  uint32_t attachmentInitialSampleLocationsCount,
+  const VkAttachmentSampleLocationsEXT* pAttachmentInitialSampleLocations,
+  uint32_t postSubpassSampleLocationsCount,
+  const VkSubpassSampleLocationsEXT* pPostSubpassSampleLocations
+)
+{
+  VkRenderPassSampleLocationsBeginInfoEXT temp;
+  temp.sType = VK_STRUCTURE_TYPE_RENDER_PASS_SAMPLE_LOCATIONS_BEGIN_INFO_EXT;
+  temp.pNext = nullptr;
+  temp.attachmentInitialSampleLocationsCount = attachmentInitialSampleLocationsCount;
+  temp.pAttachmentInitialSampleLocations = pAttachmentInitialSampleLocations;
+  temp.postSubpassSampleLocationsCount = postSubpassSampleLocationsCount;
+  temp.pPostSubpassSampleLocations = pPostSubpassSampleLocations;
+
+  return temp;
+}
+
+inline VkPipelineSampleLocationsStateCreateInfoEXT PipelineSampleLocationsStateCreateInfoEXT(
+  VkBool32 sampleLocationsEnable,
+  VkSampleLocationsInfoEXT sampleLocationsInfo
+)
+{
+  VkPipelineSampleLocationsStateCreateInfoEXT temp;
+  temp.sType = VK_STRUCTURE_TYPE_PIPELINE_SAMPLE_LOCATIONS_STATE_CREATE_INFO_EXT;
+  temp.pNext = nullptr;
+  temp.sampleLocationsEnable = sampleLocationsEnable;
+  temp.sampleLocationsInfo = sampleLocationsInfo;
+
+  return temp;
+}
+
+inline VkSamplerReductionModeCreateInfoEXT SamplerReductionModeCreateInfoEXT(
+  VkSamplerReductionModeEXT reductionMode
+)
+{
+  VkSamplerReductionModeCreateInfoEXT temp;
+  temp.sType = VK_STRUCTURE_TYPE_SAMPLER_REDUCTION_MODE_CREATE_INFO_EXT;
+  temp.pNext = nullptr;
+  temp.reductionMode = reductionMode;
+
+  return temp;
+}
+
+inline VkPhysicalDeviceBlendOperationAdvancedFeaturesEXT PhysicalDeviceBlendOperationAdvancedFeaturesEXT(
+  VkBool32 advancedBlendCoherentOperations
+)
+{
+  VkPhysicalDeviceBlendOperationAdvancedFeaturesEXT temp;
+  temp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BLEND_OPERATION_ADVANCED_FEATURES_EXT;
+  temp.pNext = nullptr;
+  temp.advancedBlendCoherentOperations = advancedBlendCoherentOperations;
+
+  return temp;
+}
+
+inline VkPipelineColorBlendAdvancedStateCreateInfoEXT PipelineColorBlendAdvancedStateCreateInfoEXT(
+  VkBool32 srcPremultiplied,
+  VkBool32 dstPremultiplied,
+  VkBlendOverlapEXT blendOverlap
+)
+{
+  VkPipelineColorBlendAdvancedStateCreateInfoEXT temp;
+  temp.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_ADVANCED_STATE_CREATE_INFO_EXT;
+  temp.pNext = nullptr;
+  temp.srcPremultiplied = srcPremultiplied;
+  temp.dstPremultiplied = dstPremultiplied;
+  temp.blendOverlap = blendOverlap;
+
+  return temp;
+}
+
+inline VkPhysicalDeviceInlineUniformBlockFeaturesEXT PhysicalDeviceInlineUniformBlockFeaturesEXT(
+  VkBool32 inlineUniformBlock,
+  VkBool32 descriptorBindingInlineUniformBlockUpdateAfterBind
+)
+{
+  VkPhysicalDeviceInlineUniformBlockFeaturesEXT temp;
+  temp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_INLINE_UNIFORM_BLOCK_FEATURES_EXT;
+  temp.pNext = nullptr;
+  temp.inlineUniformBlock = inlineUniformBlock;
+  temp.descriptorBindingInlineUniformBlockUpdateAfterBind = descriptorBindingInlineUniformBlockUpdateAfterBind;
+
+  return temp;
+}
+
+inline VkWriteDescriptorSetInlineUniformBlockEXT WriteDescriptorSetInlineUniformBlockEXT(
+  uint32_t dataSize,
+  const void* pData
+)
+{
+  VkWriteDescriptorSetInlineUniformBlockEXT temp;
+  temp.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET_INLINE_UNIFORM_BLOCK_EXT;
+  temp.pNext = nullptr;
+  temp.dataSize = dataSize;
+  temp.pData = pData;
+
+  return temp;
+}
+
+inline VkDescriptorPoolInlineUniformBlockCreateInfoEXT DescriptorPoolInlineUniformBlockCreateInfoEXT(
+  uint32_t maxInlineUniformBlockBindings
+)
+{
+  VkDescriptorPoolInlineUniformBlockCreateInfoEXT temp;
+  temp.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_INLINE_UNIFORM_BLOCK_CREATE_INFO_EXT;
+  temp.pNext = nullptr;
+  temp.maxInlineUniformBlockBindings = maxInlineUniformBlockBindings;
+
+  return temp;
+}
+
+inline VkPipelineCoverageModulationStateCreateInfoNV PipelineCoverageModulationStateCreateInfoNV(
+  VkPipelineCoverageModulationStateCreateFlagsNV flags,
+  VkCoverageModulationModeNV coverageModulationMode,
+  VkBool32 coverageModulationTableEnable,
+  uint32_t coverageModulationTableCount,
+  const float* pCoverageModulationTable
+)
+{
+  VkPipelineCoverageModulationStateCreateInfoNV temp;
+  temp.sType = VK_STRUCTURE_TYPE_PIPELINE_COVERAGE_MODULATION_STATE_CREATE_INFO_NV;
+  temp.pNext = nullptr;
+  temp.flags = flags;
+  temp.coverageModulationMode = coverageModulationMode;
+  temp.coverageModulationTableEnable = coverageModulationTableEnable;
+  temp.coverageModulationTableCount = coverageModulationTableCount;
+  temp.pCoverageModulationTable = pCoverageModulationTable;
+
+  return temp;
+}
+
+inline VkImageFormatListCreateInfoKHR ImageFormatListCreateInfoKHR(
+  uint32_t viewFormatCount,
+  const VkFormat* pViewFormats
+)
+{
+  VkImageFormatListCreateInfoKHR temp;
+  temp.sType = VK_STRUCTURE_TYPE_IMAGE_FORMAT_LIST_CREATE_INFO_KHR;
+  temp.pNext = nullptr;
+  temp.viewFormatCount = viewFormatCount;
+  temp.pViewFormats = pViewFormats;
+
+  return temp;
+}
+
+inline VkValidationCacheCreateInfoEXT ValidationCacheCreateInfoEXT(
+  VkValidationCacheCreateFlagsEXT flags,
+  size_t initialDataSize,
+  const void* pInitialData
+)
+{
+  VkValidationCacheCreateInfoEXT temp;
+  temp.sType = VK_STRUCTURE_TYPE_VALIDATION_CACHE_CREATE_INFO_EXT;
+  temp.pNext = nullptr;
+  temp.flags = flags;
+  temp.initialDataSize = initialDataSize;
+  temp.pInitialData = pInitialData;
+
+  return temp;
+}
+
+inline VkShaderModuleValidationCacheCreateInfoEXT ShaderModuleValidationCacheCreateInfoEXT(
+  VkValidationCacheEXT validationCache
+)
+{
+  VkShaderModuleValidationCacheCreateInfoEXT temp;
+  temp.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_VALIDATION_CACHE_CREATE_INFO_EXT;
+  temp.pNext = nullptr;
+  temp.validationCache = validationCache;
+
+  return temp;
+}
+
+inline VkPhysicalDeviceShaderDrawParametersFeatures PhysicalDeviceShaderDrawParametersFeatures(
+  VkBool32 shaderDrawParameters
+)
+{
+  VkPhysicalDeviceShaderDrawParametersFeatures temp;
+  temp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_DRAW_PARAMETERS_FEATURES;
+  temp.pNext = nullptr;
+  temp.shaderDrawParameters = shaderDrawParameters;
+
+  return temp;
+}
+
+inline VkPhysicalDeviceShaderFloat16Int8FeaturesKHR PhysicalDeviceShaderFloat16Int8FeaturesKHR(
+  VkBool32 shaderFloat16,
+  VkBool32 shaderInt8
+)
+{
+  VkPhysicalDeviceShaderFloat16Int8FeaturesKHR temp;
+  temp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_FLOAT16_INT8_FEATURES_KHR;
+  temp.pNext = nullptr;
+  temp.shaderFloat16 = shaderFloat16;
+  temp.shaderInt8 = shaderInt8;
+
+  return temp;
+}
+
+inline VkPhysicalDeviceHostQueryResetFeaturesEXT PhysicalDeviceHostQueryResetFeaturesEXT(
+  VkBool32 hostQueryReset
+)
+{
+  VkPhysicalDeviceHostQueryResetFeaturesEXT temp;
+  temp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_HOST_QUERY_RESET_FEATURES_EXT;
+  temp.pNext = nullptr;
+  temp.hostQueryReset = hostQueryReset;
+
+  return temp;
+}
+
+#ifdef  VK_USE_PLATFORM_ANDROID_KHR
+inline VkNativeBufferANDROID NativeBufferANDROID(
+  const void* handle,
+  int stride,
+  int format,
+  int usage,
+  VkNativeBufferUsage2ANDROID usage2
+)
+{
+  VkNativeBufferANDROID temp;
+  temp.sType = VK_STRUCTURE_TYPE_NATIVE_BUFFER_ANDROID;
+  temp.pNext = nullptr;
+  temp.handle = handle;
+  temp.stride = stride;
+  temp.format = format;
+  temp.usage = usage;
+  temp.usage2 = usage2;
+
+  return temp;
+}
+#endif
+
+#ifdef  VK_USE_PLATFORM_ANDROID_KHR
+inline VkSwapchainImageCreateInfoANDROID SwapchainImageCreateInfoANDROID(
+  VkSwapchainImageUsageFlagsANDROID usage
+)
+{
+  VkSwapchainImageCreateInfoANDROID temp;
+  temp.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_IMAGE_CREATE_INFO_ANDROID;
+  temp.pNext = nullptr;
+  temp.usage = usage;
+
+  return temp;
+}
+#endif
+
+#ifdef  VK_USE_PLATFORM_ANDROID_KHR
+inline VkPhysicalDevicePresentationPropertiesANDROID PhysicalDevicePresentationPropertiesANDROID(
+  VkBool32 sharedImage
+)
+{
+  VkPhysicalDevicePresentationPropertiesANDROID temp;
+  temp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRESENTATION_PROPERTIES_ANDROID;
+  temp.pNext = nullptr;
+  temp.sharedImage = sharedImage;
+
+  return temp;
+}
+#endif
+
+inline VkDeviceQueueGlobalPriorityCreateInfoEXT DeviceQueueGlobalPriorityCreateInfoEXT(
+  VkQueueGlobalPriorityEXT globalPriority
+)
+{
+  VkDeviceQueueGlobalPriorityCreateInfoEXT temp;
+  temp.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_GLOBAL_PRIORITY_CREATE_INFO_EXT;
+  temp.pNext = nullptr;
+  temp.globalPriority = globalPriority;
+
+  return temp;
+}
+
+inline VkDebugUtilsObjectNameInfoEXT DebugUtilsObjectNameInfoEXT(
+  VkObjectType objectType,
+  uint64_t objectHandle,
+  const char* pObjectName
+)
+{
+  VkDebugUtilsObjectNameInfoEXT temp;
+  temp.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT;
+  temp.pNext = nullptr;
+  temp.objectType = objectType;
+  temp.objectHandle = objectHandle;
+  temp.pObjectName = pObjectName;
+
+  return temp;
+}
+
+inline VkDebugUtilsObjectTagInfoEXT DebugUtilsObjectTagInfoEXT(
+  VkObjectType objectType,
+  uint64_t objectHandle,
+  uint64_t tagName,
+  size_t tagSize,
+  const void* pTag
+)
+{
+  VkDebugUtilsObjectTagInfoEXT temp;
+  temp.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_TAG_INFO_EXT;
+  temp.pNext = nullptr;
+  temp.objectType = objectType;
+  temp.objectHandle = objectHandle;
+  temp.tagName = tagName;
+  temp.tagSize = tagSize;
+  temp.pTag = pTag;
+
+  return temp;
+}
+
+inline VkDebugUtilsLabelEXT DebugUtilsLabelEXT(
+  const char* pLabelName,
+  float color[4]
+)
+{
+  VkDebugUtilsLabelEXT temp;
+  temp.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT;
+  temp.pNext = nullptr;
+  temp.pLabelName = pLabelName;
+  for(size_t i = 0; i < 4; ++i){
+    temp.color[i] = color[i];
+  }
+
+  return temp;
+}
+
+inline VkDebugUtilsMessengerCreateInfoEXT DebugUtilsMessengerCreateInfoEXT(
+  VkDebugUtilsMessengerCreateFlagsEXT flags,
+  VkDebugUtilsMessageSeverityFlagsEXT messageSeverity,
+  VkDebugUtilsMessageTypeFlagsEXT messageType,
+  PFN_vkDebugUtilsMessengerCallbackEXT pfnUserCallback,
+  void* pUserData
+)
+{
+  VkDebugUtilsMessengerCreateInfoEXT temp;
+  temp.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
+  temp.pNext = nullptr;
+  temp.flags = flags;
+  temp.messageSeverity = messageSeverity;
+  temp.messageType = messageType;
+  temp.pfnUserCallback = pfnUserCallback;
+  temp.pUserData = pUserData;
+
+  return temp;
+}
+
+inline VkDebugUtilsMessengerCallbackDataEXT DebugUtilsMessengerCallbackDataEXT(
+  VkDebugUtilsMessengerCallbackDataFlagsEXT flags,
+  const char* pMessageIdName,
+  int32_t messageIdNumber,
+  const char* pMessage,
+  uint32_t queueLabelCount,
+  const VkDebugUtilsLabelEXT* pQueueLabels,
+  uint32_t cmdBufLabelCount,
+  const VkDebugUtilsLabelEXT* pCmdBufLabels,
+  uint32_t objectCount,
+  const VkDebugUtilsObjectNameInfoEXT* pObjects
+)
+{
+  VkDebugUtilsMessengerCallbackDataEXT temp;
+  temp.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CALLBACK_DATA_EXT;
+  temp.pNext = nullptr;
+  temp.flags = flags;
+  temp.pMessageIdName = pMessageIdName;
+  temp.messageIdNumber = messageIdNumber;
+  temp.pMessage = pMessage;
+  temp.queueLabelCount = queueLabelCount;
+  temp.pQueueLabels = pQueueLabels;
+  temp.cmdBufLabelCount = cmdBufLabelCount;
+  temp.pCmdBufLabels = pCmdBufLabels;
+  temp.objectCount = objectCount;
+  temp.pObjects = pObjects;
+
+  return temp;
+}
+
+inline VkImportMemoryHostPointerInfoEXT ImportMemoryHostPointerInfoEXT(
+  VkExternalMemoryHandleTypeFlagBits handleType,
+  void* pHostPointer
+)
+{
+  VkImportMemoryHostPointerInfoEXT temp;
+  temp.sType = VK_STRUCTURE_TYPE_IMPORT_MEMORY_HOST_POINTER_INFO_EXT;
+  temp.pNext = nullptr;
+  temp.handleType = handleType;
+  temp.pHostPointer = pHostPointer;
+
+  return temp;
+}
+
+inline VkCalibratedTimestampInfoEXT CalibratedTimestampInfoEXT(
+  VkTimeDomainEXT timeDomain
+)
+{
+  VkCalibratedTimestampInfoEXT temp;
+  temp.sType = VK_STRUCTURE_TYPE_CALIBRATED_TIMESTAMP_INFO_EXT;
+  temp.pNext = nullptr;
+  temp.timeDomain = timeDomain;
+
+  return temp;
+}
+
+inline VkPipelineRasterizationConservativeStateCreateInfoEXT PipelineRasterizationConservativeStateCreateInfoEXT(
+  VkPipelineRasterizationConservativeStateCreateFlagsEXT flags,
+  VkConservativeRasterizationModeEXT conservativeRasterizationMode,
+  float extraPrimitiveOverestimationSize
+)
+{
+  VkPipelineRasterizationConservativeStateCreateInfoEXT temp;
+  temp.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_CONSERVATIVE_STATE_CREATE_INFO_EXT;
+  temp.pNext = nullptr;
+  temp.flags = flags;
+  temp.conservativeRasterizationMode = conservativeRasterizationMode;
+  temp.extraPrimitiveOverestimationSize = extraPrimitiveOverestimationSize;
+
+  return temp;
+}
+
+inline VkDescriptorSetLayoutBindingFlagsCreateInfoEXT DescriptorSetLayoutBindingFlagsCreateInfoEXT(
+  uint32_t bindingCount,
+  const VkDescriptorBindingFlagsEXT* pBindingFlags
+)
+{
+  VkDescriptorSetLayoutBindingFlagsCreateInfoEXT temp;
+  temp.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_BINDING_FLAGS_CREATE_INFO_EXT;
+  temp.pNext = nullptr;
+  temp.bindingCount = bindingCount;
+  temp.pBindingFlags = pBindingFlags;
+
+  return temp;
+}
+
+inline VkDescriptorSetVariableDescriptorCountAllocateInfoEXT DescriptorSetVariableDescriptorCountAllocateInfoEXT(
+  uint32_t descriptorSetCount,
+  const uint32_t* pDescriptorCounts
+)
+{
+  VkDescriptorSetVariableDescriptorCountAllocateInfoEXT temp;
+  temp.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_VARIABLE_DESCRIPTOR_COUNT_ALLOCATE_INFO_EXT;
+  temp.pNext = nullptr;
+  temp.descriptorSetCount = descriptorSetCount;
+  temp.pDescriptorCounts = pDescriptorCounts;
+
+  return temp;
+}
+
+inline VkAttachmentDescription2KHR AttachmentDescription2KHR(
+  VkAttachmentDescriptionFlags flags,
+  VkFormat format,
+  VkSampleCountFlagBits samples,
+  VkAttachmentLoadOp loadOp,
+  VkAttachmentStoreOp storeOp,
+  VkAttachmentLoadOp stencilLoadOp,
+  VkAttachmentStoreOp stencilStoreOp,
+  VkImageLayout initialLayout,
+  VkImageLayout finalLayout
+)
+{
+  VkAttachmentDescription2KHR temp;
+  temp.sType = VK_STRUCTURE_TYPE_ATTACHMENT_DESCRIPTION_2_KHR;
+  temp.pNext = nullptr;
+  temp.flags = flags;
+  temp.format = format;
+  temp.samples = samples;
+  temp.loadOp = loadOp;
+  temp.storeOp = storeOp;
+  temp.stencilLoadOp = stencilLoadOp;
+  temp.stencilStoreOp = stencilStoreOp;
+  temp.initialLayout = initialLayout;
+  temp.finalLayout = finalLayout;
+
+  return temp;
+}
+
+inline VkAttachmentReference2KHR AttachmentReference2KHR(
+  uint32_t attachment,
+  VkImageLayout layout,
+  VkImageAspectFlags aspectMask
+)
+{
+  VkAttachmentReference2KHR temp;
+  temp.sType = VK_STRUCTURE_TYPE_ATTACHMENT_REFERENCE_2_KHR;
+  temp.pNext = nullptr;
+  temp.attachment = attachment;
+  temp.layout = layout;
+  temp.aspectMask = aspectMask;
+
+  return temp;
+}
+
+inline VkSubpassDescription2KHR SubpassDescription2KHR(
+  VkSubpassDescriptionFlags flags,
+  VkPipelineBindPoint pipelineBindPoint,
+  uint32_t viewMask,
+  uint32_t inputAttachmentCount,
+  const VkAttachmentReference2KHR* pInputAttachments,
+  uint32_t colorAttachmentCount,
+  const VkAttachmentReference2KHR* pColorAttachments,
+  const VkAttachmentReference2KHR* pResolveAttachments,
+  const VkAttachmentReference2KHR* pDepthStencilAttachment,
+  uint32_t preserveAttachmentCount,
+  const uint32_t* pPreserveAttachments
+)
+{
+  VkSubpassDescription2KHR temp;
+  temp.sType = VK_STRUCTURE_TYPE_SUBPASS_DESCRIPTION_2_KHR;
+  temp.pNext = nullptr;
+  temp.flags = flags;
+  temp.pipelineBindPoint = pipelineBindPoint;
+  temp.viewMask = viewMask;
+  temp.inputAttachmentCount = inputAttachmentCount;
+  temp.pInputAttachments = pInputAttachments;
+  temp.colorAttachmentCount = colorAttachmentCount;
+  temp.pColorAttachments = pColorAttachments;
+  temp.pResolveAttachments = pResolveAttachments;
+  temp.pDepthStencilAttachment = pDepthStencilAttachment;
+  temp.preserveAttachmentCount = preserveAttachmentCount;
+  temp.pPreserveAttachments = pPreserveAttachments;
+
+  return temp;
+}
+
+inline VkSubpassDependency2KHR SubpassDependency2KHR(
+  uint32_t srcSubpass,
+  uint32_t dstSubpass,
+  VkPipelineStageFlags srcStageMask,
+  VkPipelineStageFlags dstStageMask,
+  VkAccessFlags srcAccessMask,
+  VkAccessFlags dstAccessMask,
+  VkDependencyFlags dependencyFlags,
+  int32_t viewOffset
+)
+{
+  VkSubpassDependency2KHR temp;
+  temp.sType = VK_STRUCTURE_TYPE_SUBPASS_DEPENDENCY_2_KHR;
+  temp.pNext = nullptr;
+  temp.srcSubpass = srcSubpass;
+  temp.dstSubpass = dstSubpass;
+  temp.srcStageMask = srcStageMask;
+  temp.dstStageMask = dstStageMask;
+  temp.srcAccessMask = srcAccessMask;
+  temp.dstAccessMask = dstAccessMask;
+  temp.dependencyFlags = dependencyFlags;
+  temp.viewOffset = viewOffset;
+
+  return temp;
+}
+
+inline VkRenderPassCreateInfo2KHR RenderPassCreateInfo2KHR(
+  VkRenderPassCreateFlags flags,
+  uint32_t attachmentCount,
+  const VkAttachmentDescription2KHR* pAttachments,
+  uint32_t subpassCount,
+  const VkSubpassDescription2KHR* pSubpasses,
+  uint32_t dependencyCount,
+  const VkSubpassDependency2KHR* pDependencies,
+  uint32_t correlatedViewMaskCount,
+  const uint32_t* pCorrelatedViewMasks
+)
+{
+  VkRenderPassCreateInfo2KHR temp;
+  temp.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO_2_KHR;
+  temp.pNext = nullptr;
+  temp.flags = flags;
+  temp.attachmentCount = attachmentCount;
+  temp.pAttachments = pAttachments;
+  temp.subpassCount = subpassCount;
+  temp.pSubpasses = pSubpasses;
+  temp.dependencyCount = dependencyCount;
+  temp.pDependencies = pDependencies;
+  temp.correlatedViewMaskCount = correlatedViewMaskCount;
+  temp.pCorrelatedViewMasks = pCorrelatedViewMasks;
+
+  return temp;
+}
+
+inline VkSubpassBeginInfoKHR SubpassBeginInfoKHR(
+  VkSubpassContents contents
+)
+{
+  VkSubpassBeginInfoKHR temp;
+  temp.sType = VK_STRUCTURE_TYPE_SUBPASS_BEGIN_INFO_KHR;
+  temp.pNext = nullptr;
+  temp.contents = contents;
+
+  return temp;
+}
+
+inline VkPhysicalDeviceTimelineSemaphoreFeaturesKHR PhysicalDeviceTimelineSemaphoreFeaturesKHR(
+  VkBool32 timelineSemaphore
+)
+{
+  VkPhysicalDeviceTimelineSemaphoreFeaturesKHR temp;
+  temp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_FEATURES_KHR;
+  temp.pNext = nullptr;
+  temp.timelineSemaphore = timelineSemaphore;
+
+  return temp;
+}
+
+inline VkSemaphoreTypeCreateInfoKHR SemaphoreTypeCreateInfoKHR(
+  VkSemaphoreTypeKHR semaphoreType,
+  uint64_t initialValue
+)
+{
+  VkSemaphoreTypeCreateInfoKHR temp;
+  temp.sType = VK_STRUCTURE_TYPE_SEMAPHORE_TYPE_CREATE_INFO_KHR;
+  temp.pNext = nullptr;
+  temp.semaphoreType = semaphoreType;
+  temp.initialValue = initialValue;
+
+  return temp;
+}
+
+inline VkTimelineSemaphoreSubmitInfoKHR TimelineSemaphoreSubmitInfoKHR(
+  uint32_t waitSemaphoreValueCount,
+  const uint64_t* pWaitSemaphoreValues,
+  uint32_t signalSemaphoreValueCount,
+  const uint64_t* pSignalSemaphoreValues
+)
+{
+  VkTimelineSemaphoreSubmitInfoKHR temp;
+  temp.sType = VK_STRUCTURE_TYPE_TIMELINE_SEMAPHORE_SUBMIT_INFO_KHR;
+  temp.pNext = nullptr;
+  temp.waitSemaphoreValueCount = waitSemaphoreValueCount;
+  temp.pWaitSemaphoreValues = pWaitSemaphoreValues;
+  temp.signalSemaphoreValueCount = signalSemaphoreValueCount;
+  temp.pSignalSemaphoreValues = pSignalSemaphoreValues;
+
+  return temp;
+}
+
+inline VkSemaphoreWaitInfoKHR SemaphoreWaitInfoKHR(
+  VkSemaphoreWaitFlagsKHR flags,
+  uint32_t semaphoreCount,
+  const VkSemaphore* pSemaphores,
+  const uint64_t* pValues
+)
+{
+  VkSemaphoreWaitInfoKHR temp;
+  temp.sType = VK_STRUCTURE_TYPE_SEMAPHORE_WAIT_INFO_KHR;
+  temp.pNext = nullptr;
+  temp.flags = flags;
+  temp.semaphoreCount = semaphoreCount;
+  temp.pSemaphores = pSemaphores;
+  temp.pValues = pValues;
+
+  return temp;
+}
+
+inline VkSemaphoreSignalInfoKHR SemaphoreSignalInfoKHR(
+  VkSemaphore semaphore,
+  uint64_t value
+)
+{
+  VkSemaphoreSignalInfoKHR temp;
+  temp.sType = VK_STRUCTURE_TYPE_SEMAPHORE_SIGNAL_INFO_KHR;
+  temp.pNext = nullptr;
+  temp.semaphore = semaphore;
+  temp.value = value;
+
+  return temp;
+}
+
+inline VkPipelineVertexInputDivisorStateCreateInfoEXT PipelineVertexInputDivisorStateCreateInfoEXT(
+  uint32_t vertexBindingDivisorCount,
+  const VkVertexInputBindingDivisorDescriptionEXT* pVertexBindingDivisors
+)
+{
+  VkPipelineVertexInputDivisorStateCreateInfoEXT temp;
+  temp.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_DIVISOR_STATE_CREATE_INFO_EXT;
+  temp.pNext = nullptr;
+  temp.vertexBindingDivisorCount = vertexBindingDivisorCount;
+  temp.pVertexBindingDivisors = pVertexBindingDivisors;
+
+  return temp;
+}
+
+#ifdef  VK_USE_PLATFORM_ANDROID_KHR
+inline VkImportAndroidHardwareBufferInfoANDROID ImportAndroidHardwareBufferInfoANDROID(
+  AHardwareBuffer* buffer
+)
+{
+  VkImportAndroidHardwareBufferInfoANDROID temp;
+  temp.sType = VK_STRUCTURE_TYPE_IMPORT_ANDROID_HARDWARE_BUFFER_INFO_ANDROID;
+  temp.pNext = nullptr;
+  temp.buffer = buffer;
+
+  return temp;
+}
+#endif
+
+#ifdef  VK_USE_PLATFORM_ANDROID_KHR
+inline VkMemoryGetAndroidHardwareBufferInfoANDROID MemoryGetAndroidHardwareBufferInfoANDROID(
+  VkDeviceMemory memory
+)
+{
+  VkMemoryGetAndroidHardwareBufferInfoANDROID temp;
+  temp.sType = VK_STRUCTURE_TYPE_MEMORY_GET_ANDROID_HARDWARE_BUFFER_INFO_ANDROID;
+  temp.pNext = nullptr;
+  temp.memory = memory;
+
+  return temp;
+}
+#endif
+
+inline VkCommandBufferInheritanceConditionalRenderingInfoEXT CommandBufferInheritanceConditionalRenderingInfoEXT(
+  VkBool32 conditionalRenderingEnable
+)
+{
+  VkCommandBufferInheritanceConditionalRenderingInfoEXT temp;
+  temp.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_CONDITIONAL_RENDERING_INFO_EXT;
+  temp.pNext = nullptr;
+  temp.conditionalRenderingEnable = conditionalRenderingEnable;
+
+  return temp;
+}
+
+#ifdef  VK_USE_PLATFORM_ANDROID_KHR
+inline VkExternalFormatANDROID ExternalFormatANDROID(
+  uint64_t externalFormat
+)
+{
+  VkExternalFormatANDROID temp;
+  temp.sType = VK_STRUCTURE_TYPE_EXTERNAL_FORMAT_ANDROID;
+  temp.pNext = nullptr;
+  temp.externalFormat = externalFormat;
+
+  return temp;
+}
+#endif
+
+inline VkPhysicalDevice8BitStorageFeaturesKHR PhysicalDevice8BitStorageFeaturesKHR(
+  VkBool32 storageBuffer8BitAccess,
+  VkBool32 uniformAndStorageBuffer8BitAccess,
+  VkBool32 storagePushConstant8
+)
+{
+  VkPhysicalDevice8BitStorageFeaturesKHR temp;
+  temp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_8BIT_STORAGE_FEATURES_KHR;
+  temp.pNext = nullptr;
+  temp.storageBuffer8BitAccess = storageBuffer8BitAccess;
+  temp.uniformAndStorageBuffer8BitAccess = uniformAndStorageBuffer8BitAccess;
+  temp.storagePushConstant8 = storagePushConstant8;
+
+  return temp;
+}
+
+inline VkPhysicalDeviceConditionalRenderingFeaturesEXT PhysicalDeviceConditionalRenderingFeaturesEXT(
+  VkBool32 conditionalRendering,
+  VkBool32 inheritedConditionalRendering
+)
+{
+  VkPhysicalDeviceConditionalRenderingFeaturesEXT temp;
+  temp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CONDITIONAL_RENDERING_FEATURES_EXT;
+  temp.pNext = nullptr;
+  temp.conditionalRendering = conditionalRendering;
+  temp.inheritedConditionalRendering = inheritedConditionalRendering;
+
+  return temp;
+}
+
+inline VkPhysicalDeviceVulkanMemoryModelFeaturesKHR PhysicalDeviceVulkanMemoryModelFeaturesKHR(
+  VkBool32 vulkanMemoryModel,
+  VkBool32 vulkanMemoryModelDeviceScope,
+  VkBool32 vulkanMemoryModelAvailabilityVisibilityChains
+)
+{
+  VkPhysicalDeviceVulkanMemoryModelFeaturesKHR temp;
+  temp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_MEMORY_MODEL_FEATURES_KHR;
+  temp.pNext = nullptr;
+  temp.vulkanMemoryModel = vulkanMemoryModel;
+  temp.vulkanMemoryModelDeviceScope = vulkanMemoryModelDeviceScope;
+  temp.vulkanMemoryModelAvailabilityVisibilityChains = vulkanMemoryModelAvailabilityVisibilityChains;
+
+  return temp;
+}
+
+inline VkPhysicalDeviceShaderAtomicInt64FeaturesKHR PhysicalDeviceShaderAtomicInt64FeaturesKHR(
+  VkBool32 shaderBufferInt64Atomics,
+  VkBool32 shaderSharedInt64Atomics
+)
+{
+  VkPhysicalDeviceShaderAtomicInt64FeaturesKHR temp;
+  temp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_ATOMIC_INT64_FEATURES_KHR;
+  temp.pNext = nullptr;
+  temp.shaderBufferInt64Atomics = shaderBufferInt64Atomics;
+  temp.shaderSharedInt64Atomics = shaderSharedInt64Atomics;
+
+  return temp;
+}
+
+inline VkPhysicalDeviceVertexAttributeDivisorFeaturesEXT PhysicalDeviceVertexAttributeDivisorFeaturesEXT(
+  VkBool32 vertexAttributeInstanceRateDivisor,
+  VkBool32 vertexAttributeInstanceRateZeroDivisor
+)
+{
+  VkPhysicalDeviceVertexAttributeDivisorFeaturesEXT temp;
+  temp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_ATTRIBUTE_DIVISOR_FEATURES_EXT;
+  temp.pNext = nullptr;
+  temp.vertexAttributeInstanceRateDivisor = vertexAttributeInstanceRateDivisor;
+  temp.vertexAttributeInstanceRateZeroDivisor = vertexAttributeInstanceRateZeroDivisor;
+
+  return temp;
+}
+
+inline VkSubpassDescriptionDepthStencilResolveKHR SubpassDescriptionDepthStencilResolveKHR(
+  VkResolveModeFlagBitsKHR depthResolveMode,
+  VkResolveModeFlagBitsKHR stencilResolveMode,
+  const VkAttachmentReference2KHR* pDepthStencilResolveAttachment
+)
+{
+  VkSubpassDescriptionDepthStencilResolveKHR temp;
+  temp.sType = VK_STRUCTURE_TYPE_SUBPASS_DESCRIPTION_DEPTH_STENCIL_RESOLVE_KHR;
+  temp.pNext = nullptr;
+  temp.depthResolveMode = depthResolveMode;
+  temp.stencilResolveMode = stencilResolveMode;
+  temp.pDepthStencilResolveAttachment = pDepthStencilResolveAttachment;
+
+  return temp;
+}
+
+inline VkImageViewASTCDecodeModeEXT ImageViewASTCDecodeModeEXT(
+  VkFormat decodeMode
+)
+{
+  VkImageViewASTCDecodeModeEXT temp;
+  temp.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_ASTC_DECODE_MODE_EXT;
+  temp.pNext = nullptr;
+  temp.decodeMode = decodeMode;
+
+  return temp;
+}
+
+inline VkPhysicalDeviceASTCDecodeFeaturesEXT PhysicalDeviceASTCDecodeFeaturesEXT(
+  VkBool32 decodeModeSharedExponent
+)
+{
+  VkPhysicalDeviceASTCDecodeFeaturesEXT temp;
+  temp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ASTC_DECODE_FEATURES_EXT;
+  temp.pNext = nullptr;
+  temp.decodeModeSharedExponent = decodeModeSharedExponent;
+
+  return temp;
+}
+
+inline VkPhysicalDeviceTransformFeedbackFeaturesEXT PhysicalDeviceTransformFeedbackFeaturesEXT(
+  VkBool32 transformFeedback,
+  VkBool32 geometryStreams
+)
+{
+  VkPhysicalDeviceTransformFeedbackFeaturesEXT temp;
+  temp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TRANSFORM_FEEDBACK_FEATURES_EXT;
+  temp.pNext = nullptr;
+  temp.transformFeedback = transformFeedback;
+  temp.geometryStreams = geometryStreams;
+
+  return temp;
+}
+
+inline VkPipelineRasterizationStateStreamCreateInfoEXT PipelineRasterizationStateStreamCreateInfoEXT(
+  VkPipelineRasterizationStateStreamCreateFlagsEXT flags,
+  uint32_t rasterizationStream
+)
+{
+  VkPipelineRasterizationStateStreamCreateInfoEXT temp;
+  temp.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_STREAM_CREATE_INFO_EXT;
+  temp.pNext = nullptr;
+  temp.flags = flags;
+  temp.rasterizationStream = rasterizationStream;
+
+  return temp;
+}
+
+inline VkPhysicalDeviceRepresentativeFragmentTestFeaturesNV PhysicalDeviceRepresentativeFragmentTestFeaturesNV(
+  VkBool32 representativeFragmentTest
+)
+{
+  VkPhysicalDeviceRepresentativeFragmentTestFeaturesNV temp;
+  temp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_REPRESENTATIVE_FRAGMENT_TEST_FEATURES_NV;
+  temp.pNext = nullptr;
+  temp.representativeFragmentTest = representativeFragmentTest;
+
+  return temp;
+}
+
+inline VkPipelineRepresentativeFragmentTestStateCreateInfoNV PipelineRepresentativeFragmentTestStateCreateInfoNV(
+  VkBool32 representativeFragmentTestEnable
+)
+{
+  VkPipelineRepresentativeFragmentTestStateCreateInfoNV temp;
+  temp.sType = VK_STRUCTURE_TYPE_PIPELINE_REPRESENTATIVE_FRAGMENT_TEST_STATE_CREATE_INFO_NV;
+  temp.pNext = nullptr;
+  temp.representativeFragmentTestEnable = representativeFragmentTestEnable;
+
+  return temp;
+}
+
+inline VkPhysicalDeviceExclusiveScissorFeaturesNV PhysicalDeviceExclusiveScissorFeaturesNV(
+  VkBool32 exclusiveScissor
+)
+{
+  VkPhysicalDeviceExclusiveScissorFeaturesNV temp;
+  temp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXCLUSIVE_SCISSOR_FEATURES_NV;
+  temp.pNext = nullptr;
+  temp.exclusiveScissor = exclusiveScissor;
+
+  return temp;
+}
+
+inline VkPipelineViewportExclusiveScissorStateCreateInfoNV PipelineViewportExclusiveScissorStateCreateInfoNV(
+  uint32_t exclusiveScissorCount,
+  const VkRect2D* pExclusiveScissors
+)
+{
+  VkPipelineViewportExclusiveScissorStateCreateInfoNV temp;
+  temp.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_EXCLUSIVE_SCISSOR_STATE_CREATE_INFO_NV;
+  temp.pNext = nullptr;
+  temp.exclusiveScissorCount = exclusiveScissorCount;
+  temp.pExclusiveScissors = pExclusiveScissors;
+
+  return temp;
+}
+
+inline VkPhysicalDeviceCornerSampledImageFeaturesNV PhysicalDeviceCornerSampledImageFeaturesNV(
+  VkBool32 cornerSampledImage
+)
+{
+  VkPhysicalDeviceCornerSampledImageFeaturesNV temp;
+  temp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CORNER_SAMPLED_IMAGE_FEATURES_NV;
+  temp.pNext = nullptr;
+  temp.cornerSampledImage = cornerSampledImage;
+
+  return temp;
+}
+
+inline VkPhysicalDeviceComputeShaderDerivativesFeaturesNV PhysicalDeviceComputeShaderDerivativesFeaturesNV(
+  VkBool32 computeDerivativeGroupQuads,
+  VkBool32 computeDerivativeGroupLinear
+)
+{
+  VkPhysicalDeviceComputeShaderDerivativesFeaturesNV temp;
+  temp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COMPUTE_SHADER_DERIVATIVES_FEATURES_NV;
+  temp.pNext = nullptr;
+  temp.computeDerivativeGroupQuads = computeDerivativeGroupQuads;
+  temp.computeDerivativeGroupLinear = computeDerivativeGroupLinear;
+
+  return temp;
+}
+
+inline VkPhysicalDeviceFragmentShaderBarycentricFeaturesNV PhysicalDeviceFragmentShaderBarycentricFeaturesNV(
+  VkBool32 fragmentShaderBarycentric
+)
+{
+  VkPhysicalDeviceFragmentShaderBarycentricFeaturesNV temp;
+  temp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_SHADER_BARYCENTRIC_FEATURES_NV;
+  temp.pNext = nullptr;
+  temp.fragmentShaderBarycentric = fragmentShaderBarycentric;
+
+  return temp;
+}
+
+inline VkPhysicalDeviceShaderImageFootprintFeaturesNV PhysicalDeviceShaderImageFootprintFeaturesNV(
+  VkBool32 imageFootprint
+)
+{
+  VkPhysicalDeviceShaderImageFootprintFeaturesNV temp;
+  temp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_IMAGE_FOOTPRINT_FEATURES_NV;
+  temp.pNext = nullptr;
+  temp.imageFootprint = imageFootprint;
+
+  return temp;
+}
+
+inline VkPhysicalDeviceDedicatedAllocationImageAliasingFeaturesNV PhysicalDeviceDedicatedAllocationImageAliasingFeaturesNV(
+  VkBool32 dedicatedAllocationImageAliasing
+)
+{
+  VkPhysicalDeviceDedicatedAllocationImageAliasingFeaturesNV temp;
+  temp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEDICATED_ALLOCATION_IMAGE_ALIASING_FEATURES_NV;
+  temp.pNext = nullptr;
+  temp.dedicatedAllocationImageAliasing = dedicatedAllocationImageAliasing;
+
+  return temp;
+}
+
+inline VkPipelineViewportShadingRateImageStateCreateInfoNV PipelineViewportShadingRateImageStateCreateInfoNV(
+  VkBool32 shadingRateImageEnable,
+  uint32_t viewportCount,
+  const VkShadingRatePaletteNV* pShadingRatePalettes
+)
+{
+  VkPipelineViewportShadingRateImageStateCreateInfoNV temp;
+  temp.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_SHADING_RATE_IMAGE_STATE_CREATE_INFO_NV;
+  temp.pNext = nullptr;
+  temp.shadingRateImageEnable = shadingRateImageEnable;
+  temp.viewportCount = viewportCount;
+  temp.pShadingRatePalettes = pShadingRatePalettes;
+
+  return temp;
+}
+
+inline VkPhysicalDeviceShadingRateImageFeaturesNV PhysicalDeviceShadingRateImageFeaturesNV(
+  VkBool32 shadingRateImage,
+  VkBool32 shadingRateCoarseSampleOrder
+)
+{
+  VkPhysicalDeviceShadingRateImageFeaturesNV temp;
+  temp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADING_RATE_IMAGE_FEATURES_NV;
+  temp.pNext = nullptr;
+  temp.shadingRateImage = shadingRateImage;
+  temp.shadingRateCoarseSampleOrder = shadingRateCoarseSampleOrder;
+
+  return temp;
+}
+
+inline VkPipelineViewportCoarseSampleOrderStateCreateInfoNV PipelineViewportCoarseSampleOrderStateCreateInfoNV(
+  VkCoarseSampleOrderTypeNV sampleOrderType,
+  uint32_t customSampleOrderCount,
+  const VkCoarseSampleOrderCustomNV* pCustomSampleOrders
+)
+{
+  VkPipelineViewportCoarseSampleOrderStateCreateInfoNV temp;
+  temp.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_COARSE_SAMPLE_ORDER_STATE_CREATE_INFO_NV;
+  temp.pNext = nullptr;
+  temp.sampleOrderType = sampleOrderType;
+  temp.customSampleOrderCount = customSampleOrderCount;
+  temp.pCustomSampleOrders = pCustomSampleOrders;
+
+  return temp;
+}
+
+inline VkPhysicalDeviceMeshShaderFeaturesNV PhysicalDeviceMeshShaderFeaturesNV(
+  VkBool32 taskShader,
+  VkBool32 meshShader
+)
+{
+  VkPhysicalDeviceMeshShaderFeaturesNV temp;
+  temp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MESH_SHADER_FEATURES_NV;
+  temp.pNext = nullptr;
+  temp.taskShader = taskShader;
+  temp.meshShader = meshShader;
+
+  return temp;
+}
+
+inline VkRayTracingShaderGroupCreateInfoNV RayTracingShaderGroupCreateInfoNV(
+  VkRayTracingShaderGroupTypeNV type,
+  uint32_t generalShader,
+  uint32_t closestHitShader,
+  uint32_t anyHitShader,
+  uint32_t intersectionShader
+)
+{
+  VkRayTracingShaderGroupCreateInfoNV temp;
+  temp.sType = VK_STRUCTURE_TYPE_RAY_TRACING_SHADER_GROUP_CREATE_INFO_NV;
+  temp.pNext = nullptr;
+  temp.type = type;
+  temp.generalShader = generalShader;
+  temp.closestHitShader = closestHitShader;
+  temp.anyHitShader = anyHitShader;
+  temp.intersectionShader = intersectionShader;
+
+  return temp;
+}
+
+inline VkRayTracingPipelineCreateInfoNV RayTracingPipelineCreateInfoNV(
+  VkPipelineCreateFlags flags,
+  uint32_t stageCount,
+  const VkPipelineShaderStageCreateInfo* pStages,
+  uint32_t groupCount,
+  const VkRayTracingShaderGroupCreateInfoNV* pGroups,
+  uint32_t maxRecursionDepth,
+  VkPipelineLayout layout,
+  VkPipeline basePipelineHandle,
+  int32_t basePipelineIndex
+)
+{
+  VkRayTracingPipelineCreateInfoNV temp;
+  temp.sType = VK_STRUCTURE_TYPE_RAY_TRACING_PIPELINE_CREATE_INFO_NV;
+  temp.pNext = nullptr;
+  temp.flags = flags;
+  temp.stageCount = stageCount;
+  temp.pStages = pStages;
+  temp.groupCount = groupCount;
+  temp.pGroups = pGroups;
+  temp.maxRecursionDepth = maxRecursionDepth;
+  temp.layout = layout;
+  temp.basePipelineHandle = basePipelineHandle;
+  temp.basePipelineIndex = basePipelineIndex;
+
+  return temp;
+}
+
+inline VkGeometryTrianglesNV GeometryTrianglesNV(
+  VkBuffer vertexData,
+  VkDeviceSize vertexOffset,
+  uint32_t vertexCount,
+  VkDeviceSize vertexStride,
+  VkFormat vertexFormat,
+  VkBuffer indexData,
+  VkDeviceSize indexOffset,
+  uint32_t indexCount,
+  VkIndexType indexType,
+  VkBuffer transformData,
+  VkDeviceSize transformOffset
+)
+{
+  VkGeometryTrianglesNV temp;
+  temp.sType = VK_STRUCTURE_TYPE_GEOMETRY_TRIANGLES_NV;
+  temp.pNext = nullptr;
+  temp.vertexData = vertexData;
+  temp.vertexOffset = vertexOffset;
+  temp.vertexCount = vertexCount;
+  temp.vertexStride = vertexStride;
+  temp.vertexFormat = vertexFormat;
+  temp.indexData = indexData;
+  temp.indexOffset = indexOffset;
+  temp.indexCount = indexCount;
+  temp.indexType = indexType;
+  temp.transformData = transformData;
+  temp.transformOffset = transformOffset;
+
+  return temp;
+}
+
+inline VkGeometryAABBNV GeometryAABBNV(
+  VkBuffer aabbData,
+  uint32_t numAABBs,
+  uint32_t stride,
+  VkDeviceSize offset
+)
+{
+  VkGeometryAABBNV temp;
+  temp.sType = VK_STRUCTURE_TYPE_GEOMETRY_AABB_NV;
+  temp.pNext = nullptr;
+  temp.aabbData = aabbData;
+  temp.numAABBs = numAABBs;
+  temp.stride = stride;
+  temp.offset = offset;
+
+  return temp;
+}
+
+inline VkGeometryNV GeometryNV(
+  VkGeometryTypeNV geometryType,
+  VkGeometryDataNV geometry,
+  VkGeometryFlagsNV flags
+)
+{
+  VkGeometryNV temp;
+  temp.sType = VK_STRUCTURE_TYPE_GEOMETRY_NV;
+  temp.pNext = nullptr;
+  temp.geometryType = geometryType;
+  temp.geometry = geometry;
+  temp.flags = flags;
+
+  return temp;
+}
+
+inline VkAccelerationStructureInfoNV AccelerationStructureInfoNV(
+  VkAccelerationStructureTypeNV type,
+  VkBuildAccelerationStructureFlagsNV flags,
+  uint32_t instanceCount,
+  uint32_t geometryCount,
+  const VkGeometryNV* pGeometries
+)
+{
+  VkAccelerationStructureInfoNV temp;
+  temp.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_INFO_NV;
+  temp.pNext = nullptr;
+  temp.type = type;
+  temp.flags = flags;
+  temp.instanceCount = instanceCount;
+  temp.geometryCount = geometryCount;
+  temp.pGeometries = pGeometries;
+
+  return temp;
+}
+
+inline VkAccelerationStructureCreateInfoNV AccelerationStructureCreateInfoNV(
+  VkDeviceSize compactedSize,
+  VkAccelerationStructureInfoNV info
+)
+{
+  VkAccelerationStructureCreateInfoNV temp;
+  temp.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_CREATE_INFO_NV;
+  temp.pNext = nullptr;
+  temp.compactedSize = compactedSize;
+  temp.info = info;
+
+  return temp;
+}
+
+inline VkBindAccelerationStructureMemoryInfoNV BindAccelerationStructureMemoryInfoNV(
+  VkAccelerationStructureNV accelerationStructure,
+  VkDeviceMemory memory,
+  VkDeviceSize memoryOffset,
+  uint32_t deviceIndexCount,
+  const uint32_t* pDeviceIndices
+)
+{
+  VkBindAccelerationStructureMemoryInfoNV temp;
+  temp.sType = VK_STRUCTURE_TYPE_BIND_ACCELERATION_STRUCTURE_MEMORY_INFO_NV;
+  temp.pNext = nullptr;
+  temp.accelerationStructure = accelerationStructure;
+  temp.memory = memory;
+  temp.memoryOffset = memoryOffset;
+  temp.deviceIndexCount = deviceIndexCount;
+  temp.pDeviceIndices = pDeviceIndices;
+
+  return temp;
+}
+
+inline VkWriteDescriptorSetAccelerationStructureNV WriteDescriptorSetAccelerationStructureNV(
+  uint32_t accelerationStructureCount,
+  const VkAccelerationStructureNV* pAccelerationStructures
+)
+{
+  VkWriteDescriptorSetAccelerationStructureNV temp;
+  temp.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET_ACCELERATION_STRUCTURE_NV;
+  temp.pNext = nullptr;
+  temp.accelerationStructureCount = accelerationStructureCount;
+  temp.pAccelerationStructures = pAccelerationStructures;
+
+  return temp;
+}
+
+inline VkAccelerationStructureMemoryRequirementsInfoNV AccelerationStructureMemoryRequirementsInfoNV(
+  VkAccelerationStructureMemoryRequirementsTypeNV type,
+  VkAccelerationStructureNV accelerationStructure
+)
+{
+  VkAccelerationStructureMemoryRequirementsInfoNV temp;
+  temp.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_MEMORY_REQUIREMENTS_INFO_NV;
+  temp.pNext = nullptr;
+  temp.type = type;
+  temp.accelerationStructure = accelerationStructure;
+
+  return temp;
+}
+
+inline VkPhysicalDeviceImageDrmFormatModifierInfoEXT PhysicalDeviceImageDrmFormatModifierInfoEXT(
+  uint64_t drmFormatModifier,
+  VkSharingMode sharingMode,
+  uint32_t queueFamilyIndexCount,
+  const uint32_t* pQueueFamilyIndices
+)
+{
+  VkPhysicalDeviceImageDrmFormatModifierInfoEXT temp;
+  temp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_DRM_FORMAT_MODIFIER_INFO_EXT;
+  temp.pNext = nullptr;
+  temp.drmFormatModifier = drmFormatModifier;
+  temp.sharingMode = sharingMode;
+  temp.queueFamilyIndexCount = queueFamilyIndexCount;
+  temp.pQueueFamilyIndices = pQueueFamilyIndices;
+
+  return temp;
+}
+
+inline VkImageDrmFormatModifierListCreateInfoEXT ImageDrmFormatModifierListCreateInfoEXT(
+  uint32_t drmFormatModifierCount,
+  const uint64_t* pDrmFormatModifiers
+)
+{
+  VkImageDrmFormatModifierListCreateInfoEXT temp;
+  temp.sType = VK_STRUCTURE_TYPE_IMAGE_DRM_FORMAT_MODIFIER_LIST_CREATE_INFO_EXT;
+  temp.pNext = nullptr;
+  temp.drmFormatModifierCount = drmFormatModifierCount;
+  temp.pDrmFormatModifiers = pDrmFormatModifiers;
+
+  return temp;
+}
+
+inline VkImageDrmFormatModifierExplicitCreateInfoEXT ImageDrmFormatModifierExplicitCreateInfoEXT(
+  uint64_t drmFormatModifier,
+  uint32_t drmFormatModifierPlaneCount,
+  const VkSubresourceLayout* pPlaneLayouts
+)
+{
+  VkImageDrmFormatModifierExplicitCreateInfoEXT temp;
+  temp.sType = VK_STRUCTURE_TYPE_IMAGE_DRM_FORMAT_MODIFIER_EXPLICIT_CREATE_INFO_EXT;
+  temp.pNext = nullptr;
+  temp.drmFormatModifier = drmFormatModifier;
+  temp.drmFormatModifierPlaneCount = drmFormatModifierPlaneCount;
+  temp.pPlaneLayouts = pPlaneLayouts;
+
+  return temp;
+}
+
+inline VkImageStencilUsageCreateInfoEXT ImageStencilUsageCreateInfoEXT(
+  VkImageUsageFlags stencilUsage
+)
+{
+  VkImageStencilUsageCreateInfoEXT temp;
+  temp.sType = VK_STRUCTURE_TYPE_IMAGE_STENCIL_USAGE_CREATE_INFO_EXT;
+  temp.pNext = nullptr;
+  temp.stencilUsage = stencilUsage;
+
+  return temp;
+}
+
+inline VkDeviceMemoryOverallocationCreateInfoAMD DeviceMemoryOverallocationCreateInfoAMD(
+  VkMemoryOverallocationBehaviorAMD overallocationBehavior
+)
+{
+  VkDeviceMemoryOverallocationCreateInfoAMD temp;
+  temp.sType = VK_STRUCTURE_TYPE_DEVICE_MEMORY_OVERALLOCATION_CREATE_INFO_AMD;
+  temp.pNext = nullptr;
+  temp.overallocationBehavior = overallocationBehavior;
+
+  return temp;
+}
+
+inline VkRenderPassFragmentDensityMapCreateInfoEXT RenderPassFragmentDensityMapCreateInfoEXT(
+  VkAttachmentReference fragmentDensityMapAttachment
+)
+{
+  VkRenderPassFragmentDensityMapCreateInfoEXT temp;
+  temp.sType = VK_STRUCTURE_TYPE_RENDER_PASS_FRAGMENT_DENSITY_MAP_CREATE_INFO_EXT;
+  temp.pNext = nullptr;
+  temp.fragmentDensityMapAttachment = fragmentDensityMapAttachment;
+
+  return temp;
+}
+
+inline VkPhysicalDeviceScalarBlockLayoutFeaturesEXT PhysicalDeviceScalarBlockLayoutFeaturesEXT(
+  VkBool32 scalarBlockLayout
+)
+{
+  VkPhysicalDeviceScalarBlockLayoutFeaturesEXT temp;
+  temp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SCALAR_BLOCK_LAYOUT_FEATURES_EXT;
+  temp.pNext = nullptr;
+  temp.scalarBlockLayout = scalarBlockLayout;
+
+  return temp;
+}
+
+inline VkSurfaceProtectedCapabilitiesKHR SurfaceProtectedCapabilitiesKHR(
+  VkBool32 supportsProtected
+)
+{
+  VkSurfaceProtectedCapabilitiesKHR temp;
+  temp.sType = VK_STRUCTURE_TYPE_SURFACE_PROTECTED_CAPABILITIES_KHR;
+  temp.pNext = nullptr;
+  temp.supportsProtected = supportsProtected;
+
+  return temp;
+}
+
+inline VkPhysicalDeviceUniformBufferStandardLayoutFeaturesKHR PhysicalDeviceUniformBufferStandardLayoutFeaturesKHR(
+  VkBool32 uniformBufferStandardLayout
+)
+{
+  VkPhysicalDeviceUniformBufferStandardLayoutFeaturesKHR temp;
+  temp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_UNIFORM_BUFFER_STANDARD_LAYOUT_FEATURES_KHR;
+  temp.pNext = nullptr;
+  temp.uniformBufferStandardLayout = uniformBufferStandardLayout;
+
+  return temp;
+}
+
+inline VkPhysicalDeviceDepthClipEnableFeaturesEXT PhysicalDeviceDepthClipEnableFeaturesEXT(
+  VkBool32 depthClipEnable
+)
+{
+  VkPhysicalDeviceDepthClipEnableFeaturesEXT temp;
+  temp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEPTH_CLIP_ENABLE_FEATURES_EXT;
+  temp.pNext = nullptr;
+  temp.depthClipEnable = depthClipEnable;
+
+  return temp;
+}
+
+inline VkPipelineRasterizationDepthClipStateCreateInfoEXT PipelineRasterizationDepthClipStateCreateInfoEXT(
+  VkPipelineRasterizationDepthClipStateCreateFlagsEXT flags,
+  VkBool32 depthClipEnable
+)
+{
+  VkPipelineRasterizationDepthClipStateCreateInfoEXT temp;
+  temp.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_DEPTH_CLIP_STATE_CREATE_INFO_EXT;
+  temp.pNext = nullptr;
+  temp.flags = flags;
+  temp.depthClipEnable = depthClipEnable;
+
+  return temp;
+}
+
+inline VkPhysicalDeviceMemoryPriorityFeaturesEXT PhysicalDeviceMemoryPriorityFeaturesEXT(
+  VkBool32 memoryPriority
+)
+{
+  VkPhysicalDeviceMemoryPriorityFeaturesEXT temp;
+  temp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_PRIORITY_FEATURES_EXT;
+  temp.pNext = nullptr;
+  temp.memoryPriority = memoryPriority;
+
+  return temp;
+}
+
+inline VkMemoryPriorityAllocateInfoEXT MemoryPriorityAllocateInfoEXT(
+  float priority
+)
+{
+  VkMemoryPriorityAllocateInfoEXT temp;
+  temp.sType = VK_STRUCTURE_TYPE_MEMORY_PRIORITY_ALLOCATE_INFO_EXT;
+  temp.pNext = nullptr;
+  temp.priority = priority;
+
+  return temp;
+}
+
+inline VkPhysicalDeviceBufferDeviceAddressFeaturesKHR PhysicalDeviceBufferDeviceAddressFeaturesKHR(
+  VkBool32 bufferDeviceAddress,
+  VkBool32 bufferDeviceAddressCaptureReplay,
+  VkBool32 bufferDeviceAddressMultiDevice
+)
+{
+  VkPhysicalDeviceBufferDeviceAddressFeaturesKHR temp;
+  temp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BUFFER_DEVICE_ADDRESS_FEATURES_KHR;
+  temp.pNext = nullptr;
+  temp.bufferDeviceAddress = bufferDeviceAddress;
+  temp.bufferDeviceAddressCaptureReplay = bufferDeviceAddressCaptureReplay;
+  temp.bufferDeviceAddressMultiDevice = bufferDeviceAddressMultiDevice;
+
+  return temp;
+}
+
+inline VkPhysicalDeviceBufferDeviceAddressFeaturesEXT PhysicalDeviceBufferDeviceAddressFeaturesEXT(
+  VkBool32 bufferDeviceAddress,
+  VkBool32 bufferDeviceAddressCaptureReplay,
+  VkBool32 bufferDeviceAddressMultiDevice
+)
+{
+  VkPhysicalDeviceBufferDeviceAddressFeaturesEXT temp;
+  temp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BUFFER_DEVICE_ADDRESS_FEATURES_EXT;
+  temp.pNext = nullptr;
+  temp.bufferDeviceAddress = bufferDeviceAddress;
+  temp.bufferDeviceAddressCaptureReplay = bufferDeviceAddressCaptureReplay;
+  temp.bufferDeviceAddressMultiDevice = bufferDeviceAddressMultiDevice;
+
+  return temp;
+}
+
+inline VkBufferDeviceAddressInfoKHR BufferDeviceAddressInfoKHR(
+  VkBuffer buffer
+)
+{
+  VkBufferDeviceAddressInfoKHR temp;
+  temp.sType = VK_STRUCTURE_TYPE_BUFFER_DEVICE_ADDRESS_INFO_KHR;
+  temp.pNext = nullptr;
+  temp.buffer = buffer;
+
+  return temp;
+}
+
+inline VkBufferOpaqueCaptureAddressCreateInfoKHR BufferOpaqueCaptureAddressCreateInfoKHR(
+  uint64_t opaqueCaptureAddress
+)
+{
+  VkBufferOpaqueCaptureAddressCreateInfoKHR temp;
+  temp.sType = VK_STRUCTURE_TYPE_BUFFER_OPAQUE_CAPTURE_ADDRESS_CREATE_INFO_KHR;
+  temp.pNext = nullptr;
+  temp.opaqueCaptureAddress = opaqueCaptureAddress;
+
+  return temp;
+}
+
+inline VkBufferDeviceAddressCreateInfoEXT BufferDeviceAddressCreateInfoEXT(
+  VkDeviceAddress deviceAddress
+)
+{
+  VkBufferDeviceAddressCreateInfoEXT temp;
+  temp.sType = VK_STRUCTURE_TYPE_BUFFER_DEVICE_ADDRESS_CREATE_INFO_EXT;
+  temp.pNext = nullptr;
+  temp.deviceAddress = deviceAddress;
+
+  return temp;
+}
+
+inline VkPhysicalDeviceImageViewImageFormatInfoEXT PhysicalDeviceImageViewImageFormatInfoEXT(
+  VkImageViewType imageViewType
+)
+{
+  VkPhysicalDeviceImageViewImageFormatInfoEXT temp;
+  temp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_VIEW_IMAGE_FORMAT_INFO_EXT;
+  temp.pNext = nullptr;
+  temp.imageViewType = imageViewType;
+
+  return temp;
+}
+
+inline VkPhysicalDeviceImagelessFramebufferFeaturesKHR PhysicalDeviceImagelessFramebufferFeaturesKHR(
+  VkBool32 imagelessFramebuffer
+)
+{
+  VkPhysicalDeviceImagelessFramebufferFeaturesKHR temp;
+  temp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGELESS_FRAMEBUFFER_FEATURES_KHR;
+  temp.pNext = nullptr;
+  temp.imagelessFramebuffer = imagelessFramebuffer;
+
+  return temp;
+}
+
+inline VkFramebufferAttachmentsCreateInfoKHR FramebufferAttachmentsCreateInfoKHR(
+  uint32_t attachmentImageInfoCount,
+  const VkFramebufferAttachmentImageInfoKHR* pAttachmentImageInfos
+)
+{
+  VkFramebufferAttachmentsCreateInfoKHR temp;
+  temp.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_ATTACHMENTS_CREATE_INFO_KHR;
+  temp.pNext = nullptr;
+  temp.attachmentImageInfoCount = attachmentImageInfoCount;
+  temp.pAttachmentImageInfos = pAttachmentImageInfos;
+
+  return temp;
+}
+
+inline VkFramebufferAttachmentImageInfoKHR FramebufferAttachmentImageInfoKHR(
+  VkImageCreateFlags flags,
+  VkImageUsageFlags usage,
+  uint32_t width,
+  uint32_t height,
+  uint32_t layerCount,
+  uint32_t viewFormatCount,
+  const VkFormat* pViewFormats
+)
+{
+  VkFramebufferAttachmentImageInfoKHR temp;
+  temp.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_ATTACHMENT_IMAGE_INFO_KHR;
+  temp.pNext = nullptr;
+  temp.flags = flags;
+  temp.usage = usage;
+  temp.width = width;
+  temp.height = height;
+  temp.layerCount = layerCount;
+  temp.viewFormatCount = viewFormatCount;
+  temp.pViewFormats = pViewFormats;
+
+  return temp;
+}
+
+inline VkRenderPassAttachmentBeginInfoKHR RenderPassAttachmentBeginInfoKHR(
+  uint32_t attachmentCount,
+  const VkImageView* pAttachments
+)
+{
+  VkRenderPassAttachmentBeginInfoKHR temp;
+  temp.sType = VK_STRUCTURE_TYPE_RENDER_PASS_ATTACHMENT_BEGIN_INFO_KHR;
+  temp.pNext = nullptr;
+  temp.attachmentCount = attachmentCount;
+  temp.pAttachments = pAttachments;
+
+  return temp;
+}
+
+inline VkPhysicalDeviceTextureCompressionASTCHDRFeaturesEXT PhysicalDeviceTextureCompressionASTCHDRFeaturesEXT(
+  VkBool32 textureCompressionASTC_HDR
+)
+{
+  VkPhysicalDeviceTextureCompressionASTCHDRFeaturesEXT temp;
+  temp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TEXTURE_COMPRESSION_ASTC_HDR_FEATURES_EXT;
+  temp.pNext = nullptr;
+  temp.textureCompressionASTC_HDR = textureCompressionASTC_HDR;
+
+  return temp;
+}
+
+inline VkPhysicalDeviceCooperativeMatrixFeaturesNV PhysicalDeviceCooperativeMatrixFeaturesNV(
+  VkBool32 cooperativeMatrix,
+  VkBool32 cooperativeMatrixRobustBufferAccess
+)
+{
+  VkPhysicalDeviceCooperativeMatrixFeaturesNV temp;
+  temp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COOPERATIVE_MATRIX_FEATURES_NV;
+  temp.pNext = nullptr;
+  temp.cooperativeMatrix = cooperativeMatrix;
+  temp.cooperativeMatrixRobustBufferAccess = cooperativeMatrixRobustBufferAccess;
+
+  return temp;
+}
+
+inline VkCooperativeMatrixPropertiesNV CooperativeMatrixPropertiesNV(
+  uint32_t MSize,
+  uint32_t NSize,
+  uint32_t KSize,
+  VkComponentTypeNV AType,
+  VkComponentTypeNV BType,
+  VkComponentTypeNV CType,
+  VkComponentTypeNV DType,
+  VkScopeNV scope
+)
+{
+  VkCooperativeMatrixPropertiesNV temp;
+  temp.sType = VK_STRUCTURE_TYPE_COOPERATIVE_MATRIX_PROPERTIES_NV;
+  temp.pNext = nullptr;
+  temp.MSize = MSize;
+  temp.NSize = NSize;
+  temp.KSize = KSize;
+  temp.AType = AType;
+  temp.BType = BType;
+  temp.CType = CType;
+  temp.DType = DType;
+  temp.scope = scope;
+
+  return temp;
+}
+
+inline VkPhysicalDeviceYcbcrImageArraysFeaturesEXT PhysicalDeviceYcbcrImageArraysFeaturesEXT(
+  VkBool32 ycbcrImageArrays
+)
+{
+  VkPhysicalDeviceYcbcrImageArraysFeaturesEXT temp;
+  temp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_YCBCR_IMAGE_ARRAYS_FEATURES_EXT;
+  temp.pNext = nullptr;
+  temp.ycbcrImageArrays = ycbcrImageArrays;
+
+  return temp;
+}
+
+inline VkImageViewHandleInfoNVX ImageViewHandleInfoNVX(
+  VkImageView imageView,
+  VkDescriptorType descriptorType,
+  VkSampler sampler
+)
+{
+  VkImageViewHandleInfoNVX temp;
+  temp.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_HANDLE_INFO_NVX;
+  temp.pNext = nullptr;
+  temp.imageView = imageView;
+  temp.descriptorType = descriptorType;
+  temp.sampler = sampler;
+
+  return temp;
+}
+
+#ifdef  VK_USE_PLATFORM_GGP
+inline VkPresentFrameTokenGGP PresentFrameTokenGGP(
+  GgpFrameToken frameToken
+)
+{
+  VkPresentFrameTokenGGP temp;
+  temp.sType = VK_STRUCTURE_TYPE_PRESENT_FRAME_TOKEN_GGP;
+  temp.pNext = nullptr;
+  temp.frameToken = frameToken;
+
+  return temp;
+}
+#endif
+
+inline VkPipelineCreationFeedbackCreateInfoEXT PipelineCreationFeedbackCreateInfoEXT(
+  VkPipelineCreationFeedbackEXT* pPipelineCreationFeedback,
+  uint32_t pipelineStageCreationFeedbackCount,
+  VkPipelineCreationFeedbackEXT* pPipelineStageCreationFeedbacks
+)
+{
+  VkPipelineCreationFeedbackCreateInfoEXT temp;
+  temp.sType = VK_STRUCTURE_TYPE_PIPELINE_CREATION_FEEDBACK_CREATE_INFO_EXT;
+  temp.pNext = nullptr;
+  temp.pPipelineCreationFeedback = pPipelineCreationFeedback;
+  temp.pipelineStageCreationFeedbackCount = pipelineStageCreationFeedbackCount;
+  temp.pPipelineStageCreationFeedbacks = pPipelineStageCreationFeedbacks;
+
+  return temp;
+}
+
+#ifdef  VK_USE_PLATFORM_WIN32_KHR
+inline VkSurfaceFullScreenExclusiveInfoEXT SurfaceFullScreenExclusiveInfoEXT(
+  VkFullScreenExclusiveEXT fullScreenExclusive
+)
+{
+  VkSurfaceFullScreenExclusiveInfoEXT temp;
+  temp.sType = VK_STRUCTURE_TYPE_SURFACE_FULL_SCREEN_EXCLUSIVE_INFO_EXT;
+  temp.pNext = nullptr;
+  temp.fullScreenExclusive = fullScreenExclusive;
+
+  return temp;
+}
+#endif
+
+#ifdef  VK_USE_PLATFORM_WIN32_KHR
+inline VkSurfaceFullScreenExclusiveWin32InfoEXT SurfaceFullScreenExclusiveWin32InfoEXT(
+  HMONITOR hmonitor
+)
+{
+  VkSurfaceFullScreenExclusiveWin32InfoEXT temp;
+  temp.sType = VK_STRUCTURE_TYPE_SURFACE_FULL_SCREEN_EXCLUSIVE_WIN_32_INFO_EXT;
+  temp.pNext = nullptr;
+  temp.hmonitor = hmonitor;
+
+  return temp;
+}
+#endif
+
+#ifdef  VK_USE_PLATFORM_WIN32_KHR
+inline VkSurfaceCapabilitiesFullScreenExclusiveEXT SurfaceCapabilitiesFullScreenExclusiveEXT(
+  VkBool32 fullScreenExclusiveSupported
+)
+{
+  VkSurfaceCapabilitiesFullScreenExclusiveEXT temp;
+  temp.sType = VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_FULL_SCREEN_EXCLUSIVE_EXT;
+  temp.pNext = nullptr;
+  temp.fullScreenExclusiveSupported = fullScreenExclusiveSupported;
+
+  return temp;
+}
+#endif
+
+inline VkPhysicalDevicePerformanceQueryFeaturesKHR PhysicalDevicePerformanceQueryFeaturesKHR(
+  VkBool32 performanceCounterQueryPools,
+  VkBool32 performanceCounterMultipleQueryPools
+)
+{
+  VkPhysicalDevicePerformanceQueryFeaturesKHR temp;
+  temp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PERFORMANCE_QUERY_FEATURES_KHR;
+  temp.pNext = nullptr;
+  temp.performanceCounterQueryPools = performanceCounterQueryPools;
+  temp.performanceCounterMultipleQueryPools = performanceCounterMultipleQueryPools;
+
+  return temp;
+}
+
+inline VkQueryPoolPerformanceCreateInfoKHR QueryPoolPerformanceCreateInfoKHR(
+  uint32_t queueFamilyIndex,
+  uint32_t counterIndexCount,
+  const uint32_t* pCounterIndices
+)
+{
+  VkQueryPoolPerformanceCreateInfoKHR temp;
+  temp.sType = VK_STRUCTURE_TYPE_QUERY_POOL_PERFORMANCE_CREATE_INFO_KHR;
+  temp.pNext = nullptr;
+  temp.queueFamilyIndex = queueFamilyIndex;
+  temp.counterIndexCount = counterIndexCount;
+  temp.pCounterIndices = pCounterIndices;
+
+  return temp;
+}
+
+inline VkAcquireProfilingLockInfoKHR AcquireProfilingLockInfoKHR(
+  VkAcquireProfilingLockFlagsKHR flags,
+  uint64_t timeout
+)
+{
+  VkAcquireProfilingLockInfoKHR temp;
+  temp.sType = VK_STRUCTURE_TYPE_ACQUIRE_PROFILING_LOCK_INFO_KHR;
+  temp.pNext = nullptr;
+  temp.flags = flags;
+  temp.timeout = timeout;
+
+  return temp;
+}
+
+inline VkPerformanceQuerySubmitInfoKHR PerformanceQuerySubmitInfoKHR(
+  uint32_t counterPassIndex
+)
+{
+  VkPerformanceQuerySubmitInfoKHR temp;
+  temp.sType = VK_STRUCTURE_TYPE_PERFORMANCE_QUERY_SUBMIT_INFO_KHR;
+  temp.pNext = nullptr;
+  temp.counterPassIndex = counterPassIndex;
+
+  return temp;
+}
+
+inline VkHeadlessSurfaceCreateInfoEXT HeadlessSurfaceCreateInfoEXT(
+  VkHeadlessSurfaceCreateFlagsEXT flags
+)
+{
+  VkHeadlessSurfaceCreateInfoEXT temp;
+  temp.sType = VK_STRUCTURE_TYPE_HEADLESS_SURFACE_CREATE_INFO_EXT;
+  temp.pNext = nullptr;
+  temp.flags = flags;
+
+  return temp;
+}
+
+inline VkPhysicalDeviceCoverageReductionModeFeaturesNV PhysicalDeviceCoverageReductionModeFeaturesNV(
+  VkBool32 coverageReductionMode
+)
+{
+  VkPhysicalDeviceCoverageReductionModeFeaturesNV temp;
+  temp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COVERAGE_REDUCTION_MODE_FEATURES_NV;
+  temp.pNext = nullptr;
+  temp.coverageReductionMode = coverageReductionMode;
+
+  return temp;
+}
+
+inline VkPipelineCoverageReductionStateCreateInfoNV PipelineCoverageReductionStateCreateInfoNV(
+  VkPipelineCoverageReductionStateCreateFlagsNV flags,
+  VkCoverageReductionModeNV coverageReductionMode
+)
+{
+  VkPipelineCoverageReductionStateCreateInfoNV temp;
+  temp.sType = VK_STRUCTURE_TYPE_PIPELINE_COVERAGE_REDUCTION_STATE_CREATE_INFO_NV;
+  temp.pNext = nullptr;
+  temp.flags = flags;
+  temp.coverageReductionMode = coverageReductionMode;
+
+  return temp;
+}
+
+inline VkPhysicalDeviceShaderIntegerFunctions2FeaturesINTEL PhysicalDeviceShaderIntegerFunctions2FeaturesINTEL(
+  VkBool32 shaderIntegerFunctions2
+)
+{
+  VkPhysicalDeviceShaderIntegerFunctions2FeaturesINTEL temp;
+  temp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_INTEGER_FUNCTIONS_2_FEATURES_INTEL;
+  temp.pNext = nullptr;
+  temp.shaderIntegerFunctions2 = shaderIntegerFunctions2;
+
+  return temp;
+}
+
+inline VkInitializePerformanceApiInfoINTEL InitializePerformanceApiInfoINTEL(
+  void* pUserData
+)
+{
+  VkInitializePerformanceApiInfoINTEL temp;
+  temp.sType = VK_STRUCTURE_TYPE_INITIALIZE_PERFORMANCE_API_INFO_INTEL;
+  temp.pNext = nullptr;
+  temp.pUserData = pUserData;
+
+  return temp;
+}
+
+inline VkQueryPoolCreateInfoINTEL QueryPoolCreateInfoINTEL(
+  VkQueryPoolSamplingModeINTEL performanceCountersSampling
+)
+{
+  VkQueryPoolCreateInfoINTEL temp;
+  temp.sType = VK_STRUCTURE_TYPE_QUERY_POOL_CREATE_INFO_INTEL;
+  temp.pNext = nullptr;
+  temp.performanceCountersSampling = performanceCountersSampling;
+
+  return temp;
+}
+
+inline VkPerformanceMarkerInfoINTEL PerformanceMarkerInfoINTEL(
+  uint64_t marker
+)
+{
+  VkPerformanceMarkerInfoINTEL temp;
+  temp.sType = VK_STRUCTURE_TYPE_PERFORMANCE_MARKER_INFO_INTEL;
+  temp.pNext = nullptr;
+  temp.marker = marker;
+
+  return temp;
+}
+
+inline VkPerformanceStreamMarkerInfoINTEL PerformanceStreamMarkerInfoINTEL(
+  uint32_t marker
+)
+{
+  VkPerformanceStreamMarkerInfoINTEL temp;
+  temp.sType = VK_STRUCTURE_TYPE_PERFORMANCE_STREAM_MARKER_INFO_INTEL;
+  temp.pNext = nullptr;
+  temp.marker = marker;
+
+  return temp;
+}
+
+inline VkPerformanceOverrideInfoINTEL PerformanceOverrideInfoINTEL(
+  VkPerformanceOverrideTypeINTEL type,
+  VkBool32 enable,
+  uint64_t parameter
+)
+{
+  VkPerformanceOverrideInfoINTEL temp;
+  temp.sType = VK_STRUCTURE_TYPE_PERFORMANCE_OVERRIDE_INFO_INTEL;
+  temp.pNext = nullptr;
+  temp.type = type;
+  temp.enable = enable;
+  temp.parameter = parameter;
+
+  return temp;
+}
+
+inline VkPerformanceConfigurationAcquireInfoINTEL PerformanceConfigurationAcquireInfoINTEL(
+  VkPerformanceConfigurationTypeINTEL type
+)
+{
+  VkPerformanceConfigurationAcquireInfoINTEL temp;
+  temp.sType = VK_STRUCTURE_TYPE_PERFORMANCE_CONFIGURATION_ACQUIRE_INFO_INTEL;
+  temp.pNext = nullptr;
+  temp.type = type;
+
+  return temp;
+}
+
+inline VkPhysicalDeviceShaderClockFeaturesKHR PhysicalDeviceShaderClockFeaturesKHR(
+  VkBool32 shaderSubgroupClock,
+  VkBool32 shaderDeviceClock
+)
+{
+  VkPhysicalDeviceShaderClockFeaturesKHR temp;
+  temp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_CLOCK_FEATURES_KHR;
+  temp.pNext = nullptr;
+  temp.shaderSubgroupClock = shaderSubgroupClock;
+  temp.shaderDeviceClock = shaderDeviceClock;
+
+  return temp;
+}
+
+inline VkPhysicalDeviceIndexTypeUint8FeaturesEXT PhysicalDeviceIndexTypeUint8FeaturesEXT(
+  VkBool32 indexTypeUint8
+)
+{
+  VkPhysicalDeviceIndexTypeUint8FeaturesEXT temp;
+  temp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_INDEX_TYPE_UINT8_FEATURES_EXT;
+  temp.pNext = nullptr;
+  temp.indexTypeUint8 = indexTypeUint8;
+
+  return temp;
+}
+
+inline VkPhysicalDeviceShaderSMBuiltinsFeaturesNV PhysicalDeviceShaderSMBuiltinsFeaturesNV(
+  VkBool32 shaderSMBuiltins
+)
+{
+  VkPhysicalDeviceShaderSMBuiltinsFeaturesNV temp;
+  temp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_SM_BUILTINS_FEATURES_NV;
+  temp.pNext = nullptr;
+  temp.shaderSMBuiltins = shaderSMBuiltins;
+
+  return temp;
+}
+
+inline VkPhysicalDeviceFragmentShaderInterlockFeaturesEXT PhysicalDeviceFragmentShaderInterlockFeaturesEXT(
+  VkBool32 fragmentShaderSampleInterlock,
+  VkBool32 fragmentShaderPixelInterlock,
+  VkBool32 fragmentShaderShadingRateInterlock
+)
+{
+  VkPhysicalDeviceFragmentShaderInterlockFeaturesEXT temp;
+  temp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_SHADER_INTERLOCK_FEATURES_EXT;
+  temp.pNext = nullptr;
+  temp.fragmentShaderSampleInterlock = fragmentShaderSampleInterlock;
+  temp.fragmentShaderPixelInterlock = fragmentShaderPixelInterlock;
+  temp.fragmentShaderShadingRateInterlock = fragmentShaderShadingRateInterlock;
+
+  return temp;
+}
+
+inline VkPhysicalDeviceSeparateDepthStencilLayoutsFeaturesKHR PhysicalDeviceSeparateDepthStencilLayoutsFeaturesKHR(
+  VkBool32 separateDepthStencilLayouts
+)
+{
+  VkPhysicalDeviceSeparateDepthStencilLayoutsFeaturesKHR temp;
+  temp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SEPARATE_DEPTH_STENCIL_LAYOUTS_FEATURES_KHR;
+  temp.pNext = nullptr;
+  temp.separateDepthStencilLayouts = separateDepthStencilLayouts;
+
+  return temp;
+}
+
+inline VkAttachmentReferenceStencilLayoutKHR AttachmentReferenceStencilLayoutKHR(
+  VkImageLayout stencilLayout
+)
+{
+  VkAttachmentReferenceStencilLayoutKHR temp;
+  temp.sType = VK_STRUCTURE_TYPE_ATTACHMENT_REFERENCE_STENCIL_LAYOUT_KHR;
+  temp.pNext = nullptr;
+  temp.stencilLayout = stencilLayout;
+
+  return temp;
+}
+
+inline VkAttachmentDescriptionStencilLayoutKHR AttachmentDescriptionStencilLayoutKHR(
+  VkImageLayout stencilInitialLayout,
+  VkImageLayout stencilFinalLayout
+)
+{
+  VkAttachmentDescriptionStencilLayoutKHR temp;
+  temp.sType = VK_STRUCTURE_TYPE_ATTACHMENT_DESCRIPTION_STENCIL_LAYOUT_KHR;
+  temp.pNext = nullptr;
+  temp.stencilInitialLayout = stencilInitialLayout;
+  temp.stencilFinalLayout = stencilFinalLayout;
+
+  return temp;
+}
+
+inline VkPhysicalDevicePipelineExecutablePropertiesFeaturesKHR PhysicalDevicePipelineExecutablePropertiesFeaturesKHR(
+  VkBool32 pipelineExecutableInfo
+)
+{
+  VkPhysicalDevicePipelineExecutablePropertiesFeaturesKHR temp;
+  temp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_EXECUTABLE_PROPERTIES_FEATURES_KHR;
+  temp.pNext = nullptr;
+  temp.pipelineExecutableInfo = pipelineExecutableInfo;
+
+  return temp;
+}
+
+inline VkPipelineInfoKHR PipelineInfoKHR(
+  VkPipeline pipeline
+)
+{
+  VkPipelineInfoKHR temp;
+  temp.sType = VK_STRUCTURE_TYPE_PIPELINE_INFO_KHR;
+  temp.pNext = nullptr;
+  temp.pipeline = pipeline;
+
+  return temp;
+}
+
+inline VkPipelineExecutableInfoKHR PipelineExecutableInfoKHR(
+  VkPipeline pipeline,
+  uint32_t executableIndex
+)
+{
+  VkPipelineExecutableInfoKHR temp;
+  temp.sType = VK_STRUCTURE_TYPE_PIPELINE_EXECUTABLE_INFO_KHR;
+  temp.pNext = nullptr;
+  temp.pipeline = pipeline;
+  temp.executableIndex = executableIndex;
+
+  return temp;
+}
+
+inline VkPhysicalDeviceShaderDemoteToHelperInvocationFeaturesEXT PhysicalDeviceShaderDemoteToHelperInvocationFeaturesEXT(
+  VkBool32 shaderDemoteToHelperInvocation
+)
+{
+  VkPhysicalDeviceShaderDemoteToHelperInvocationFeaturesEXT temp;
+  temp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_DEMOTE_TO_HELPER_INVOCATION_FEATURES_EXT;
+  temp.pNext = nullptr;
+  temp.shaderDemoteToHelperInvocation = shaderDemoteToHelperInvocation;
+
+  return temp;
+}
+
+inline VkPhysicalDeviceTexelBufferAlignmentFeaturesEXT PhysicalDeviceTexelBufferAlignmentFeaturesEXT(
+  VkBool32 texelBufferAlignment
+)
+{
+  VkPhysicalDeviceTexelBufferAlignmentFeaturesEXT temp;
+  temp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TEXEL_BUFFER_ALIGNMENT_FEATURES_EXT;
+  temp.pNext = nullptr;
+  temp.texelBufferAlignment = texelBufferAlignment;
+
+  return temp;
+}
+
+inline VkPhysicalDeviceSubgroupSizeControlFeaturesEXT PhysicalDeviceSubgroupSizeControlFeaturesEXT(
+  VkBool32 subgroupSizeControl,
+  VkBool32 computeFullSubgroups
+)
+{
+  VkPhysicalDeviceSubgroupSizeControlFeaturesEXT temp;
+  temp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SUBGROUP_SIZE_CONTROL_FEATURES_EXT;
+  temp.pNext = nullptr;
+  temp.subgroupSizeControl = subgroupSizeControl;
+  temp.computeFullSubgroups = computeFullSubgroups;
+
+  return temp;
+}
+
+inline VkMemoryOpaqueCaptureAddressAllocateInfoKHR MemoryOpaqueCaptureAddressAllocateInfoKHR(
+  uint64_t opaqueCaptureAddress
+)
+{
+  VkMemoryOpaqueCaptureAddressAllocateInfoKHR temp;
+  temp.sType = VK_STRUCTURE_TYPE_MEMORY_OPAQUE_CAPTURE_ADDRESS_ALLOCATE_INFO_KHR;
+  temp.pNext = nullptr;
+  temp.opaqueCaptureAddress = opaqueCaptureAddress;
+
+  return temp;
+}
+
+inline VkDeviceMemoryOpaqueCaptureAddressInfoKHR DeviceMemoryOpaqueCaptureAddressInfoKHR(
+  VkDeviceMemory memory
+)
+{
+  VkDeviceMemoryOpaqueCaptureAddressInfoKHR temp;
+  temp.sType = VK_STRUCTURE_TYPE_DEVICE_MEMORY_OPAQUE_CAPTURE_ADDRESS_INFO_KHR;
+  temp.pNext = nullptr;
+  temp.memory = memory;
+
+  return temp;
+}
+
+inline VkPhysicalDeviceLineRasterizationFeaturesEXT PhysicalDeviceLineRasterizationFeaturesEXT(
+  VkBool32 rectangularLines,
+  VkBool32 bresenhamLines,
+  VkBool32 smoothLines,
+  VkBool32 stippledRectangularLines,
+  VkBool32 stippledBresenhamLines,
+  VkBool32 stippledSmoothLines
+)
+{
+  VkPhysicalDeviceLineRasterizationFeaturesEXT temp;
+  temp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LINE_RASTERIZATION_FEATURES_EXT;
+  temp.pNext = nullptr;
+  temp.rectangularLines = rectangularLines;
+  temp.bresenhamLines = bresenhamLines;
+  temp.smoothLines = smoothLines;
+  temp.stippledRectangularLines = stippledRectangularLines;
+  temp.stippledBresenhamLines = stippledBresenhamLines;
+  temp.stippledSmoothLines = stippledSmoothLines;
+
+  return temp;
+}
+
+inline VkPipelineRasterizationLineStateCreateInfoEXT PipelineRasterizationLineStateCreateInfoEXT(
+  VkLineRasterizationModeEXT lineRasterizationMode,
+  VkBool32 stippledLineEnable,
+  uint32_t lineStippleFactor,
+  uint16_t lineStipplePattern
+)
+{
+  VkPipelineRasterizationLineStateCreateInfoEXT temp;
+  temp.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_LINE_STATE_CREATE_INFO_EXT;
+  temp.pNext = nullptr;
+  temp.lineRasterizationMode = lineRasterizationMode;
+  temp.stippledLineEnable = stippledLineEnable;
+  temp.lineStippleFactor = lineStippleFactor;
+  temp.lineStipplePattern = lineStipplePattern;
+
+  return temp;
+}
+
+inline VkPipelineCompilerControlCreateInfoAMD PipelineCompilerControlCreateInfoAMD(
+  VkPipelineCompilerControlFlagsAMD compilerControlFlags
+)
+{
+  VkPipelineCompilerControlCreateInfoAMD temp;
+  temp.sType = VK_STRUCTURE_TYPE_PIPELINE_COMPILER_CONTROL_CREATE_INFO_AMD;
+  temp.pNext = nullptr;
+  temp.compilerControlFlags = compilerControlFlags;
+
+  return temp;
+}
+
+inline VkPhysicalDeviceCoherentMemoryFeaturesAMD PhysicalDeviceCoherentMemoryFeaturesAMD(
+  VkBool32 deviceCoherentMemory
+)
+{
+  VkPhysicalDeviceCoherentMemoryFeaturesAMD temp;
+  temp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COHERENT_MEMORY_FEATURES_AMD;
+  temp.pNext = nullptr;
+  temp.deviceCoherentMemory = deviceCoherentMemory;
+
+  return temp;
 }
 
 ///@}
@@ -1965,7 +7848,7 @@ inline VkComponentMapping ComponentMapping(
 }
 
 inline VkAllocationCallbacks AllocationCallbacks(
-  void * pUserData,
+  void* pUserData,
   PFN_vkAllocationFunction pfnAllocation,
   PFN_vkReallocationFunction pfnReallocation,
   PFN_vkFreeFunction pfnFree,
@@ -1980,124 +7863,6 @@ inline VkAllocationCallbacks AllocationCallbacks(
   temp.pfnFree = pfnFree;
   temp.pfnInternalAllocation = pfnInternalAllocation;
   temp.pfnInternalFree = pfnInternalFree;
-
-  return temp;
-}
-
-inline VkQueueFamilyProperties QueueFamilyProperties(
-  VkQueueFlags queueFlags,
-  uint32_t queueCount,
-  uint32_t timestampValidBits,
-  VkExtent3D minImageTransferGranularity
-)
-{
-  VkQueueFamilyProperties temp;
-  temp.queueFlags = queueFlags;
-  temp.queueCount = queueCount;
-  temp.timestampValidBits = timestampValidBits;
-  temp.minImageTransferGranularity = minImageTransferGranularity;
-
-  return temp;
-}
-
-inline VkMemoryRequirements MemoryRequirements(
-  VkDeviceSize size,
-  VkDeviceSize alignment,
-  uint32_t memoryTypeBits
-)
-{
-  VkMemoryRequirements temp;
-  temp.size = size;
-  temp.alignment = alignment;
-  temp.memoryTypeBits = memoryTypeBits;
-
-  return temp;
-}
-
-inline VkSparseImageFormatProperties SparseImageFormatProperties(
-  VkImageAspectFlags aspectMask,
-  VkExtent3D imageGranularity,
-  VkSparseImageFormatFlags flags
-)
-{
-  VkSparseImageFormatProperties temp;
-  temp.aspectMask = aspectMask;
-  temp.imageGranularity = imageGranularity;
-  temp.flags = flags;
-
-  return temp;
-}
-
-inline VkSparseImageMemoryRequirements SparseImageMemoryRequirements(
-  VkSparseImageFormatProperties formatProperties,
-  uint32_t imageMipTailFirstLod,
-  VkDeviceSize imageMipTailSize,
-  VkDeviceSize imageMipTailOffset,
-  VkDeviceSize imageMipTailStride
-)
-{
-  VkSparseImageMemoryRequirements temp;
-  temp.formatProperties = formatProperties;
-  temp.imageMipTailFirstLod = imageMipTailFirstLod;
-  temp.imageMipTailSize = imageMipTailSize;
-  temp.imageMipTailOffset = imageMipTailOffset;
-  temp.imageMipTailStride = imageMipTailStride;
-
-  return temp;
-}
-
-inline VkMemoryType MemoryType(
-  VkMemoryPropertyFlags propertyFlags,
-  uint32_t heapIndex
-)
-{
-  VkMemoryType temp;
-  temp.propertyFlags = propertyFlags;
-  temp.heapIndex = heapIndex;
-
-  return temp;
-}
-
-inline VkMemoryHeap MemoryHeap(
-  VkDeviceSize size,
-  VkMemoryHeapFlags flags
-)
-{
-  VkMemoryHeap temp;
-  temp.size = size;
-  temp.flags = flags;
-
-  return temp;
-}
-
-inline VkFormatProperties FormatProperties(
-  VkFormatFeatureFlags linearTilingFeatures,
-  VkFormatFeatureFlags optimalTilingFeatures,
-  VkFormatFeatureFlags bufferFeatures
-)
-{
-  VkFormatProperties temp;
-  temp.linearTilingFeatures = linearTilingFeatures;
-  temp.optimalTilingFeatures = optimalTilingFeatures;
-  temp.bufferFeatures = bufferFeatures;
-
-  return temp;
-}
-
-inline VkImageFormatProperties ImageFormatProperties(
-  VkExtent3D maxExtent,
-  uint32_t maxMipLevels,
-  uint32_t maxArrayLayers,
-  VkSampleCountFlags sampleCounts,
-  VkDeviceSize maxResourceSize
-)
-{
-  VkImageFormatProperties temp;
-  temp.maxExtent = maxExtent;
-  temp.maxMipLevels = maxMipLevels;
-  temp.maxArrayLayers = maxArrayLayers;
-  temp.sampleCounts = sampleCounts;
-  temp.maxResourceSize = maxResourceSize;
 
   return temp;
 }
@@ -2178,24 +7943,6 @@ inline VkImageSubresourceRange ImageSubresourceRange(
   return temp;
 }
 
-inline VkSubresourceLayout SubresourceLayout(
-  VkDeviceSize offset,
-  VkDeviceSize size,
-  VkDeviceSize rowPitch,
-  VkDeviceSize arrayPitch,
-  VkDeviceSize depthPitch
-)
-{
-  VkSubresourceLayout temp;
-  temp.offset = offset;
-  temp.size = size;
-  temp.rowPitch = rowPitch;
-  temp.arrayPitch = arrayPitch;
-  temp.depthPitch = depthPitch;
-
-  return temp;
-}
-
 inline VkBufferCopy BufferCopy(
   VkDeviceSize srcOffset,
   VkDeviceSize dstOffset,
@@ -2251,7 +7998,7 @@ inline VkSparseImageMemoryBind SparseImageMemoryBind(
 inline VkSparseBufferMemoryBindInfo SparseBufferMemoryBindInfo(
   VkBuffer buffer,
   uint32_t bindCount,
-  const VkSparseMemoryBind * pBinds
+  const VkSparseMemoryBind* pBinds
 )
 {
   VkSparseBufferMemoryBindInfo temp;
@@ -2265,7 +8012,7 @@ inline VkSparseBufferMemoryBindInfo SparseBufferMemoryBindInfo(
 inline VkSparseImageOpaqueMemoryBindInfo SparseImageOpaqueMemoryBindInfo(
   VkImage image,
   uint32_t bindCount,
-  const VkSparseMemoryBind * pBinds
+  const VkSparseMemoryBind* pBinds
 )
 {
   VkSparseImageOpaqueMemoryBindInfo temp;
@@ -2279,7 +8026,7 @@ inline VkSparseImageOpaqueMemoryBindInfo SparseImageOpaqueMemoryBindInfo(
 inline VkSparseImageMemoryBindInfo SparseImageMemoryBindInfo(
   VkImage image,
   uint32_t bindCount,
-  const VkSparseImageMemoryBind * pBinds
+  const VkSparseImageMemoryBind* pBinds
 )
 {
   VkSparseImageMemoryBindInfo temp;
@@ -2317,9 +8064,13 @@ inline VkImageBlit ImageBlit(
 {
   VkImageBlit temp;
   temp.srcSubresource = srcSubresource;
-  temp.srcOffsets[2] = srcOffsets[2];
+  for(size_t i = 0; i < 2; ++i){
+    temp.srcOffsets[i] = srcOffsets[i];
+  }
   temp.dstSubresource = dstSubresource;
-  temp.dstOffsets[2] = dstOffsets[2];
+  for(size_t i = 0; i < 2; ++i){
+    temp.dstOffsets[i] = dstOffsets[i];
+  }
 
   return temp;
 }
@@ -2367,7 +8118,7 @@ inline VkDescriptorSetLayoutBinding DescriptorSetLayoutBinding(
   VkDescriptorType descriptorType,
   uint32_t descriptorCount,
   VkShaderStageFlags stageFlags,
-  const VkSampler * pImmutableSamplers
+  const VkSampler* pImmutableSamplers
 )
 {
   VkDescriptorSetLayoutBinding temp;
@@ -2408,9 +8159,9 @@ inline VkSpecializationMapEntry SpecializationMapEntry(
 
 inline VkSpecializationInfo SpecializationInfo(
   uint32_t mapEntryCount,
-  const VkSpecializationMapEntry * pMapEntries,
+  const VkSpecializationMapEntry* pMapEntries,
   size_t dataSize,
-  const void * pData
+  const void* pData
 )
 {
   VkSpecializationInfo temp;
@@ -2580,13 +8331,13 @@ inline VkSubpassDescription SubpassDescription(
   VkSubpassDescriptionFlags flags,
   VkPipelineBindPoint pipelineBindPoint,
   uint32_t inputAttachmentCount,
-  const VkAttachmentReference * pInputAttachments,
+  const VkAttachmentReference* pInputAttachments,
   uint32_t colorAttachmentCount,
-  const VkAttachmentReference * pColorAttachments,
-  const VkAttachmentReference * pResolveAttachments,
-  const VkAttachmentReference * pDepthStencilAttachment,
+  const VkAttachmentReference* pColorAttachments,
+  const VkAttachmentReference* pResolveAttachments,
+  const VkAttachmentReference* pDepthStencilAttachment,
   uint32_t preserveAttachmentCount,
-  const uint32_t * pPreserveAttachments
+  const uint32_t* pPreserveAttachments
 )
 {
   VkSubpassDescription temp;
@@ -2682,6 +8433,392 @@ inline VkDisplayModeParametersKHR DisplayModeParametersKHR(
   VkDisplayModeParametersKHR temp;
   temp.visibleRegion = visibleRegion;
   temp.refreshRate = refreshRate;
+
+  return temp;
+}
+
+inline VkIndirectCommandsTokenNVX IndirectCommandsTokenNVX(
+  VkIndirectCommandsTokenTypeNVX tokenType,
+  VkBuffer buffer,
+  VkDeviceSize offset
+)
+{
+  VkIndirectCommandsTokenNVX temp;
+  temp.tokenType = tokenType;
+  temp.buffer = buffer;
+  temp.offset = offset;
+
+  return temp;
+}
+
+inline VkIndirectCommandsLayoutTokenNVX IndirectCommandsLayoutTokenNVX(
+  VkIndirectCommandsTokenTypeNVX tokenType,
+  uint32_t bindingUnit,
+  uint32_t dynamicCount,
+  uint32_t divisor
+)
+{
+  VkIndirectCommandsLayoutTokenNVX temp;
+  temp.tokenType = tokenType;
+  temp.bindingUnit = bindingUnit;
+  temp.dynamicCount = dynamicCount;
+  temp.divisor = divisor;
+
+  return temp;
+}
+
+inline VkObjectTableEntryNVX ObjectTableEntryNVX(
+  VkObjectEntryTypeNVX type,
+  VkObjectEntryUsageFlagsNVX flags
+)
+{
+  VkObjectTableEntryNVX temp;
+  temp.type = type;
+  temp.flags = flags;
+
+  return temp;
+}
+
+inline VkObjectTablePipelineEntryNVX ObjectTablePipelineEntryNVX(
+  VkObjectEntryTypeNVX type,
+  VkObjectEntryUsageFlagsNVX flags,
+  VkPipeline pipeline
+)
+{
+  VkObjectTablePipelineEntryNVX temp;
+  temp.type = type;
+  temp.flags = flags;
+  temp.pipeline = pipeline;
+
+  return temp;
+}
+
+inline VkObjectTableDescriptorSetEntryNVX ObjectTableDescriptorSetEntryNVX(
+  VkObjectEntryTypeNVX type,
+  VkObjectEntryUsageFlagsNVX flags,
+  VkPipelineLayout pipelineLayout,
+  VkDescriptorSet descriptorSet
+)
+{
+  VkObjectTableDescriptorSetEntryNVX temp;
+  temp.type = type;
+  temp.flags = flags;
+  temp.pipelineLayout = pipelineLayout;
+  temp.descriptorSet = descriptorSet;
+
+  return temp;
+}
+
+inline VkObjectTableVertexBufferEntryNVX ObjectTableVertexBufferEntryNVX(
+  VkObjectEntryTypeNVX type,
+  VkObjectEntryUsageFlagsNVX flags,
+  VkBuffer buffer
+)
+{
+  VkObjectTableVertexBufferEntryNVX temp;
+  temp.type = type;
+  temp.flags = flags;
+  temp.buffer = buffer;
+
+  return temp;
+}
+
+inline VkObjectTableIndexBufferEntryNVX ObjectTableIndexBufferEntryNVX(
+  VkObjectEntryTypeNVX type,
+  VkObjectEntryUsageFlagsNVX flags,
+  VkBuffer buffer,
+  VkIndexType indexType
+)
+{
+  VkObjectTableIndexBufferEntryNVX temp;
+  temp.type = type;
+  temp.flags = flags;
+  temp.buffer = buffer;
+  temp.indexType = indexType;
+
+  return temp;
+}
+
+inline VkObjectTablePushConstantEntryNVX ObjectTablePushConstantEntryNVX(
+  VkObjectEntryTypeNVX type,
+  VkObjectEntryUsageFlagsNVX flags,
+  VkPipelineLayout pipelineLayout,
+  VkShaderStageFlags stageFlags
+)
+{
+  VkObjectTablePushConstantEntryNVX temp;
+  temp.type = type;
+  temp.flags = flags;
+  temp.pipelineLayout = pipelineLayout;
+  temp.stageFlags = stageFlags;
+
+  return temp;
+}
+
+inline VkConformanceVersionKHR ConformanceVersionKHR(
+  uint8_t major,
+  uint8_t minor,
+  uint8_t subminor,
+  uint8_t patch
+)
+{
+  VkConformanceVersionKHR temp;
+  temp.major = major;
+  temp.minor = minor;
+  temp.subminor = subminor;
+  temp.patch = patch;
+
+  return temp;
+}
+
+inline VkPresentRegionKHR PresentRegionKHR(
+  uint32_t rectangleCount,
+  const VkRectLayerKHR* pRectangles
+)
+{
+  VkPresentRegionKHR temp;
+  temp.rectangleCount = rectangleCount;
+  temp.pRectangles = pRectangles;
+
+  return temp;
+}
+
+inline VkRectLayerKHR RectLayerKHR(
+  VkOffset2D offset,
+  VkExtent2D extent,
+  uint32_t layer
+)
+{
+  VkRectLayerKHR temp;
+  temp.offset = offset;
+  temp.extent = extent;
+  temp.layer = layer;
+
+  return temp;
+}
+
+inline VkDescriptorUpdateTemplateEntry DescriptorUpdateTemplateEntry(
+  uint32_t dstBinding,
+  uint32_t dstArrayElement,
+  uint32_t descriptorCount,
+  VkDescriptorType descriptorType,
+  size_t offset,
+  size_t stride
+)
+{
+  VkDescriptorUpdateTemplateEntry temp;
+  temp.dstBinding = dstBinding;
+  temp.dstArrayElement = dstArrayElement;
+  temp.descriptorCount = descriptorCount;
+  temp.descriptorType = descriptorType;
+  temp.offset = offset;
+  temp.stride = stride;
+
+  return temp;
+}
+
+inline VkXYColorEXT XYColorEXT(
+  float x,
+  float y
+)
+{
+  VkXYColorEXT temp;
+  temp.x = x;
+  temp.y = y;
+
+  return temp;
+}
+
+inline VkPresentTimeGOOGLE PresentTimeGOOGLE(
+  uint32_t presentID,
+  uint64_t desiredPresentTime
+)
+{
+  VkPresentTimeGOOGLE temp;
+  temp.presentID = presentID;
+  temp.desiredPresentTime = desiredPresentTime;
+
+  return temp;
+}
+
+inline VkViewportWScalingNV ViewportWScalingNV(
+  float xcoeff,
+  float ycoeff
+)
+{
+  VkViewportWScalingNV temp;
+  temp.xcoeff = xcoeff;
+  temp.ycoeff = ycoeff;
+
+  return temp;
+}
+
+inline VkViewportSwizzleNV ViewportSwizzleNV(
+  VkViewportCoordinateSwizzleNV x,
+  VkViewportCoordinateSwizzleNV y,
+  VkViewportCoordinateSwizzleNV z,
+  VkViewportCoordinateSwizzleNV w
+)
+{
+  VkViewportSwizzleNV temp;
+  temp.x = x;
+  temp.y = y;
+  temp.z = z;
+  temp.w = w;
+
+  return temp;
+}
+
+inline VkInputAttachmentAspectReference InputAttachmentAspectReference(
+  uint32_t subpass,
+  uint32_t inputAttachmentIndex,
+  VkImageAspectFlags aspectMask
+)
+{
+  VkInputAttachmentAspectReference temp;
+  temp.subpass = subpass;
+  temp.inputAttachmentIndex = inputAttachmentIndex;
+  temp.aspectMask = aspectMask;
+
+  return temp;
+}
+
+inline VkSampleLocationEXT SampleLocationEXT(
+  float x,
+  float y
+)
+{
+  VkSampleLocationEXT temp;
+  temp.x = x;
+  temp.y = y;
+
+  return temp;
+}
+
+inline VkAttachmentSampleLocationsEXT AttachmentSampleLocationsEXT(
+  uint32_t attachmentIndex,
+  VkSampleLocationsInfoEXT sampleLocationsInfo
+)
+{
+  VkAttachmentSampleLocationsEXT temp;
+  temp.attachmentIndex = attachmentIndex;
+  temp.sampleLocationsInfo = sampleLocationsInfo;
+
+  return temp;
+}
+
+inline VkSubpassSampleLocationsEXT SubpassSampleLocationsEXT(
+  uint32_t subpassIndex,
+  VkSampleLocationsInfoEXT sampleLocationsInfo
+)
+{
+  VkSubpassSampleLocationsEXT temp;
+  temp.subpassIndex = subpassIndex;
+  temp.sampleLocationsInfo = sampleLocationsInfo;
+
+  return temp;
+}
+
+#ifdef  VK_USE_PLATFORM_ANDROID_KHR
+inline VkNativeBufferUsage2ANDROID NativeBufferUsage2ANDROID(
+  uint64_t consumer,
+  uint64_t producer
+)
+{
+  VkNativeBufferUsage2ANDROID temp;
+  temp.consumer = consumer;
+  temp.producer = producer;
+
+  return temp;
+}
+#endif
+
+inline VkVertexInputBindingDivisorDescriptionEXT VertexInputBindingDivisorDescriptionEXT(
+  uint32_t binding,
+  uint32_t divisor
+)
+{
+  VkVertexInputBindingDivisorDescriptionEXT temp;
+  temp.binding = binding;
+  temp.divisor = divisor;
+
+  return temp;
+}
+
+inline VkShadingRatePaletteNV ShadingRatePaletteNV(
+  uint32_t shadingRatePaletteEntryCount,
+  const VkShadingRatePaletteEntryNV* pShadingRatePaletteEntries
+)
+{
+  VkShadingRatePaletteNV temp;
+  temp.shadingRatePaletteEntryCount = shadingRatePaletteEntryCount;
+  temp.pShadingRatePaletteEntries = pShadingRatePaletteEntries;
+
+  return temp;
+}
+
+inline VkCoarseSampleLocationNV CoarseSampleLocationNV(
+  uint32_t pixelX,
+  uint32_t pixelY,
+  uint32_t sample
+)
+{
+  VkCoarseSampleLocationNV temp;
+  temp.pixelX = pixelX;
+  temp.pixelY = pixelY;
+  temp.sample = sample;
+
+  return temp;
+}
+
+inline VkCoarseSampleOrderCustomNV CoarseSampleOrderCustomNV(
+  VkShadingRatePaletteEntryNV shadingRate,
+  uint32_t sampleCount,
+  uint32_t sampleLocationCount,
+  const VkCoarseSampleLocationNV* pSampleLocations
+)
+{
+  VkCoarseSampleOrderCustomNV temp;
+  temp.shadingRate = shadingRate;
+  temp.sampleCount = sampleCount;
+  temp.sampleLocationCount = sampleLocationCount;
+  temp.pSampleLocations = pSampleLocations;
+
+  return temp;
+}
+
+inline VkDrawMeshTasksIndirectCommandNV DrawMeshTasksIndirectCommandNV(
+  uint32_t taskCount,
+  uint32_t firstTask
+)
+{
+  VkDrawMeshTasksIndirectCommandNV temp;
+  temp.taskCount = taskCount;
+  temp.firstTask = firstTask;
+
+  return temp;
+}
+
+inline VkGeometryDataNV GeometryDataNV(
+  VkGeometryTrianglesNV triangles,
+  VkGeometryAABBNV aabbs
+)
+{
+  VkGeometryDataNV temp;
+  temp.triangles = triangles;
+  temp.aabbs = aabbs;
+
+  return temp;
+}
+
+inline VkPerformanceValueINTEL PerformanceValueINTEL(
+  VkPerformanceValueTypeINTEL type,
+  VkPerformanceValueDataINTEL data
+)
+{
+  VkPerformanceValueINTEL temp;
+  temp.type = type;
+  temp.data = data;
 
   return temp;
 }
