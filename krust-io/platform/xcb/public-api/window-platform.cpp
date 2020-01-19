@@ -88,8 +88,14 @@ WindowPlatform::WindowPlatform(
       ;
 
       // Calculate a reasonable width and height:
-      const unsigned windowClientWidth = Screen()->width_in_pixels / 4 * 3;
-      const unsigned windowClientHeight = Screen()->height_in_pixels / 4 * 3;
+      // Note in multimonitor setups this screen is likely the whole virtual
+      // screen encompassing both monitors. We should really figure out the
+      // primary monitor and size ourself to fit onto that:
+      // https://stackoverflow.com/questions/36966900/xcb-get-all-monitors-ands-their-x-y-coordinates
+      const unsigned windowClientWidth  = std::min(1800u, Screen()->width_in_pixels  / 4u * 3u);
+      const unsigned windowClientHeight = std::min(960u,  Screen()->height_in_pixels / 4u * 3u);
+      KRUST_LOG_INFO << "windowClientWidth: "  << windowClientWidth  << '.' << endlog;
+      KRUST_LOG_INFO << "windowClientHeight: " << windowClientHeight << '.' << endlog;
       mWidth = windowClientWidth;
       mHeight = windowClientHeight;
 

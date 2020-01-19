@@ -54,6 +54,9 @@ bool Krust::IO::ApplicationPlatform::Init()
   KRUST_LOG_INFO << "xcb_connect -> " << mXcbConnection << "." << endlog;
 
   // Get the first screen:
+  // If we have a multi-monitor setup, this is likely a virtual screen encompassing
+  // both of them. See xcb_randr_[...] for querying individual displays:
+  // https://stackoverflow.com/questions/36966900/xcb-get-all-monitors-ands-their-x-y-coordinates
   const xcb_setup_t* setup  = xcb_get_setup(mXcbConnection);
   xcb_screen_iterator_t iter = xcb_setup_roots_iterator(setup);
   mXcbScreen = iter.data;
