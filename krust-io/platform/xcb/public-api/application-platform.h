@@ -61,6 +61,9 @@ public:
   /** Non-blocking event get.
    * @return true if an event was dispatched, else false.*/
   bool PeekAndDispatchEvent();
+private:
+  void ProcessEvent(const xcb_generic_event_t *event);
+public:
 
   const char* GetPlatformSurfaceExtensionName() { return VK_KHR_XCB_SURFACE_EXTENSION_NAME; }
 

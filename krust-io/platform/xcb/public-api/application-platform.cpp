@@ -114,10 +114,13 @@ void Krust::IO::ApplicationPlatform::WindowClosing(Window& window) {
 
 bool Krust::IO::ApplicationPlatform::PeekAndDispatchEvent()
 {
-  // Temporarily just pass through to the waiting version:
-  WaitForAndDispatchEvent();
-  //@ToDo: Implement a non-blocking PeekAndDispatchEvent() on XCB.
-  // Always return false so caller at least renders once per event processed [TEMP]
+  xcb_generic_event_t *event;
+  event = xcb_poll_for_event(mXcbConnection);
+  if(event){
+    ScopedFree event_deleter(event);
+    ProcessEvent(event);
+    return true;
+  }
   return false;
 }
 
@@ -126,6 +129,11 @@ void Krust::IO::ApplicationPlatform::WaitForAndDispatchEvent()
   xcb_generic_event_t *event;
   event = xcb_wait_for_event(mXcbConnection);
   ScopedFree event_deleter(event);
+  ProcessEvent(event);
+}
+
+void Krust::IO::ApplicationPlatform::ProcessEvent(const xcb_generic_event_t *event)
+{
   if (event) {
     unsigned eventCode = event->response_type & 0x7f;
     switch (eventCode)
@@ -147,7 +155,7 @@ void Krust::IO::ApplicationPlatform::WaitForAndDispatchEvent()
         break;
       }
       case XCB_KEY_PRESS: {
-        const auto keyPress = reinterpret_cast<xcb_key_press_event_t *>(event);
+        const auto keyPress = reinterpret_cast<const xcb_key_press_event_t *>(event);
         KRUST_LOG_INFO << "Key pressed in window. Code: " << int(keyPress->detail) << "." << endlog;
         break;
       }
@@ -156,12 +164,12 @@ void Krust::IO::ApplicationPlatform::WaitForAndDispatchEvent()
         break;
       }
       case XCB_BUTTON_PRESS: {
-        const auto *buttonPresss = reinterpret_cast<xcb_button_press_event_t *>(event);
+        const auto *buttonPresss = reinterpret_cast<const xcb_button_press_event_t *>(event);
         KRUST_LOG_INFO << "XCB_BUTTON_PRESS, detail: " << int(buttonPresss->detail) << endlog;
         break;
       }
       case XCB_BUTTON_RELEASE: {
-        const auto buttonRelease = reinterpret_cast<xcb_button_release_event_t *>(event);
+        const auto buttonRelease = reinterpret_cast<const xcb_button_release_event_t *>(event);
         KRUST_LOG_INFO << "Button release: " << int(buttonRelease->detail) << endlog;
         break;
       }
@@ -181,13 +189,13 @@ void Krust::IO::ApplicationPlatform::WaitForAndDispatchEvent()
         break;
       }
       case XCB_CONFIGURE_NOTIFY: {
-        xcb_configure_notify_event_t* notifyEvent = reinterpret_cast<xcb_configure_notify_event_t*>(event);
+        const auto* notifyEvent = reinterpret_cast<const xcb_configure_notify_event_t*>(event);
         KRUST_LOG_INFO << "Window configuration changed (x = " << notifyEvent->x << ", y = " << notifyEvent->y << ", width = " << notifyEvent->width << ", height = " << notifyEvent->height <<")." << endlog;
         break;
       }
 
       case XCB_CLIENT_MESSAGE: {
-        xcb_client_message_event_t * clientEvent = reinterpret_cast<xcb_client_message_event_t*>(event);
+        const auto * clientEvent = reinterpret_cast<const xcb_client_message_event_t*>(event);
         if(mDefaultWindow)
         {
           if(mDefaultWindow->GetPlatformWindow().mDeleteWindowEventAtom == clientEvent->data.data32[0])
