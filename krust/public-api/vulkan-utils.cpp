@@ -157,6 +157,7 @@ const char* ResultToString(const VkResult result)
     case VK_ERROR_TOO_MANY_OBJECTS: { string = "VK_ERROR_TOO_MANY_OBJECTS"; break; }
     case VK_ERROR_FORMAT_NOT_SUPPORTED: { string = "VK_ERROR_FORMAT_NOT_SUPPORTED"; break; }
     case VK_ERROR_FRAGMENTED_POOL: { string = "VK_ERROR_FRAGMENTED_POOL"; break; }
+    case VK_ERROR_UNKNOWN: { string = "VK_ERROR_UNKNOWN"; break; }
     case VK_ERROR_OUT_OF_POOL_MEMORY: { string = "VK_ERROR_OUT_OF_POOL_MEMORY"; break; }
     case VK_ERROR_INVALID_EXTERNAL_HANDLE: { string = "VK_ERROR_INVALID_EXTERNAL_HANDLE"; break; }
     case VK_ERROR_SURFACE_LOST_KHR: { string = "VK_ERROR_SURFACE_LOST_KHR"; break; }

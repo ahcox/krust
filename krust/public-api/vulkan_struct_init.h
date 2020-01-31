@@ -1300,10 +1300,10 @@ inline VkPhysicalDevice16BitStorageFeatures PhysicalDevice16BitStorageFeatures()
   return info;
 }
 
-inline VkPhysicalDeviceShaderSubgroupExtendedTypesFeaturesKHR PhysicalDeviceShaderSubgroupExtendedTypesFeaturesKHR()
+inline VkPhysicalDeviceShaderSubgroupExtendedTypesFeatures PhysicalDeviceShaderSubgroupExtendedTypesFeatures()
 {
-  VkPhysicalDeviceShaderSubgroupExtendedTypesFeaturesKHR info;
-  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_SUBGROUP_EXTENDED_TYPES_FEATURES_KHR;
+  VkPhysicalDeviceShaderSubgroupExtendedTypesFeatures info;
+  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_SUBGROUP_EXTENDED_TYPES_FEATURES;
   info.pNext = nullptr;
   return info;
 }
@@ -1460,10 +1460,10 @@ inline VkPipelineSampleLocationsStateCreateInfoEXT PipelineSampleLocationsStateC
   return info;
 }
 
-inline VkSamplerReductionModeCreateInfoEXT SamplerReductionModeCreateInfoEXT()
+inline VkSamplerReductionModeCreateInfo SamplerReductionModeCreateInfo()
 {
-  VkSamplerReductionModeCreateInfoEXT info;
-  info.sType = VK_STRUCTURE_TYPE_SAMPLER_REDUCTION_MODE_CREATE_INFO_EXT;
+  VkSamplerReductionModeCreateInfo info;
+  info.sType = VK_STRUCTURE_TYPE_SAMPLER_REDUCTION_MODE_CREATE_INFO;
   info.pNext = nullptr;
   return info;
 }
@@ -1516,10 +1516,10 @@ inline VkPipelineCoverageModulationStateCreateInfoNV PipelineCoverageModulationS
   return info;
 }
 
-inline VkImageFormatListCreateInfoKHR ImageFormatListCreateInfoKHR()
+inline VkImageFormatListCreateInfo ImageFormatListCreateInfo()
 {
-  VkImageFormatListCreateInfoKHR info;
-  info.sType = VK_STRUCTURE_TYPE_IMAGE_FORMAT_LIST_CREATE_INFO_KHR;
+  VkImageFormatListCreateInfo info;
+  info.sType = VK_STRUCTURE_TYPE_IMAGE_FORMAT_LIST_CREATE_INFO;
   info.pNext = nullptr;
   return info;
 }
@@ -1548,18 +1548,18 @@ inline VkPhysicalDeviceShaderDrawParametersFeatures PhysicalDeviceShaderDrawPara
   return info;
 }
 
-inline VkPhysicalDeviceShaderFloat16Int8FeaturesKHR PhysicalDeviceShaderFloat16Int8FeaturesKHR()
+inline VkPhysicalDeviceShaderFloat16Int8Features PhysicalDeviceShaderFloat16Int8Features()
 {
-  VkPhysicalDeviceShaderFloat16Int8FeaturesKHR info;
-  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_FLOAT16_INT8_FEATURES_KHR;
+  VkPhysicalDeviceShaderFloat16Int8Features info;
+  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_FLOAT16_INT8_FEATURES;
   info.pNext = nullptr;
   return info;
 }
 
-inline VkPhysicalDeviceHostQueryResetFeaturesEXT PhysicalDeviceHostQueryResetFeaturesEXT()
+inline VkPhysicalDeviceHostQueryResetFeatures PhysicalDeviceHostQueryResetFeatures()
 {
-  VkPhysicalDeviceHostQueryResetFeaturesEXT info;
-  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_HOST_QUERY_RESET_FEATURES_EXT;
+  VkPhysicalDeviceHostQueryResetFeatures info;
+  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_HOST_QUERY_RESET_FEATURES;
   info.pNext = nullptr;
   return info;
 }
@@ -1666,122 +1666,122 @@ inline VkPipelineRasterizationConservativeStateCreateInfoEXT PipelineRasterizati
   return info;
 }
 
-inline VkPhysicalDeviceDescriptorIndexingFeaturesEXT PhysicalDeviceDescriptorIndexingFeaturesEXT()
+inline VkPhysicalDeviceDescriptorIndexingFeatures PhysicalDeviceDescriptorIndexingFeatures()
 {
-  VkPhysicalDeviceDescriptorIndexingFeaturesEXT info;
-  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES_EXT;
+  VkPhysicalDeviceDescriptorIndexingFeatures info;
+  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES;
   info.pNext = nullptr;
   return info;
 }
 
-inline VkDescriptorSetLayoutBindingFlagsCreateInfoEXT DescriptorSetLayoutBindingFlagsCreateInfoEXT()
+inline VkDescriptorSetLayoutBindingFlagsCreateInfo DescriptorSetLayoutBindingFlagsCreateInfo()
 {
-  VkDescriptorSetLayoutBindingFlagsCreateInfoEXT info;
-  info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_BINDING_FLAGS_CREATE_INFO_EXT;
+  VkDescriptorSetLayoutBindingFlagsCreateInfo info;
+  info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_BINDING_FLAGS_CREATE_INFO;
   info.pNext = nullptr;
   return info;
 }
 
-inline VkDescriptorSetVariableDescriptorCountAllocateInfoEXT DescriptorSetVariableDescriptorCountAllocateInfoEXT()
+inline VkDescriptorSetVariableDescriptorCountAllocateInfo DescriptorSetVariableDescriptorCountAllocateInfo()
 {
-  VkDescriptorSetVariableDescriptorCountAllocateInfoEXT info;
-  info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_VARIABLE_DESCRIPTOR_COUNT_ALLOCATE_INFO_EXT;
+  VkDescriptorSetVariableDescriptorCountAllocateInfo info;
+  info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_VARIABLE_DESCRIPTOR_COUNT_ALLOCATE_INFO;
   info.pNext = nullptr;
   return info;
 }
 
-inline VkAttachmentDescription2KHR AttachmentDescription2KHR()
+inline VkAttachmentDescription2 AttachmentDescription2()
 {
-  VkAttachmentDescription2KHR info;
-  info.sType = VK_STRUCTURE_TYPE_ATTACHMENT_DESCRIPTION_2_KHR;
+  VkAttachmentDescription2 info;
+  info.sType = VK_STRUCTURE_TYPE_ATTACHMENT_DESCRIPTION_2;
   info.pNext = nullptr;
   return info;
 }
 
-inline VkAttachmentReference2KHR AttachmentReference2KHR()
+inline VkAttachmentReference2 AttachmentReference2()
 {
-  VkAttachmentReference2KHR info;
-  info.sType = VK_STRUCTURE_TYPE_ATTACHMENT_REFERENCE_2_KHR;
+  VkAttachmentReference2 info;
+  info.sType = VK_STRUCTURE_TYPE_ATTACHMENT_REFERENCE_2;
   info.pNext = nullptr;
   return info;
 }
 
-inline VkSubpassDescription2KHR SubpassDescription2KHR()
+inline VkSubpassDescription2 SubpassDescription2()
 {
-  VkSubpassDescription2KHR info;
-  info.sType = VK_STRUCTURE_TYPE_SUBPASS_DESCRIPTION_2_KHR;
+  VkSubpassDescription2 info;
+  info.sType = VK_STRUCTURE_TYPE_SUBPASS_DESCRIPTION_2;
   info.pNext = nullptr;
   return info;
 }
 
-inline VkSubpassDependency2KHR SubpassDependency2KHR()
+inline VkSubpassDependency2 SubpassDependency2()
 {
-  VkSubpassDependency2KHR info;
-  info.sType = VK_STRUCTURE_TYPE_SUBPASS_DEPENDENCY_2_KHR;
+  VkSubpassDependency2 info;
+  info.sType = VK_STRUCTURE_TYPE_SUBPASS_DEPENDENCY_2;
   info.pNext = nullptr;
   return info;
 }
 
-inline VkRenderPassCreateInfo2KHR RenderPassCreateInfo2KHR()
+inline VkRenderPassCreateInfo2 RenderPassCreateInfo2()
 {
-  VkRenderPassCreateInfo2KHR info;
-  info.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO_2_KHR;
+  VkRenderPassCreateInfo2 info;
+  info.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO_2;
   info.pNext = nullptr;
   return info;
 }
 
-inline VkSubpassBeginInfoKHR SubpassBeginInfoKHR()
+inline VkSubpassBeginInfo SubpassBeginInfo()
 {
-  VkSubpassBeginInfoKHR info;
-  info.sType = VK_STRUCTURE_TYPE_SUBPASS_BEGIN_INFO_KHR;
+  VkSubpassBeginInfo info;
+  info.sType = VK_STRUCTURE_TYPE_SUBPASS_BEGIN_INFO;
   info.pNext = nullptr;
   return info;
 }
 
-inline VkSubpassEndInfoKHR SubpassEndInfoKHR()
+inline VkSubpassEndInfo SubpassEndInfo()
 {
-  VkSubpassEndInfoKHR info;
-  info.sType = VK_STRUCTURE_TYPE_SUBPASS_END_INFO_KHR;
+  VkSubpassEndInfo info;
+  info.sType = VK_STRUCTURE_TYPE_SUBPASS_END_INFO;
   info.pNext = nullptr;
   return info;
 }
 
-inline VkPhysicalDeviceTimelineSemaphoreFeaturesKHR PhysicalDeviceTimelineSemaphoreFeaturesKHR()
+inline VkPhysicalDeviceTimelineSemaphoreFeatures PhysicalDeviceTimelineSemaphoreFeatures()
 {
-  VkPhysicalDeviceTimelineSemaphoreFeaturesKHR info;
-  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_FEATURES_KHR;
+  VkPhysicalDeviceTimelineSemaphoreFeatures info;
+  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_FEATURES;
   info.pNext = nullptr;
   return info;
 }
 
-inline VkSemaphoreTypeCreateInfoKHR SemaphoreTypeCreateInfoKHR()
+inline VkSemaphoreTypeCreateInfo SemaphoreTypeCreateInfo()
 {
-  VkSemaphoreTypeCreateInfoKHR info;
-  info.sType = VK_STRUCTURE_TYPE_SEMAPHORE_TYPE_CREATE_INFO_KHR;
+  VkSemaphoreTypeCreateInfo info;
+  info.sType = VK_STRUCTURE_TYPE_SEMAPHORE_TYPE_CREATE_INFO;
   info.pNext = nullptr;
   return info;
 }
 
-inline VkTimelineSemaphoreSubmitInfoKHR TimelineSemaphoreSubmitInfoKHR()
+inline VkTimelineSemaphoreSubmitInfo TimelineSemaphoreSubmitInfo()
 {
-  VkTimelineSemaphoreSubmitInfoKHR info;
-  info.sType = VK_STRUCTURE_TYPE_TIMELINE_SEMAPHORE_SUBMIT_INFO_KHR;
+  VkTimelineSemaphoreSubmitInfo info;
+  info.sType = VK_STRUCTURE_TYPE_TIMELINE_SEMAPHORE_SUBMIT_INFO;
   info.pNext = nullptr;
   return info;
 }
 
-inline VkSemaphoreWaitInfoKHR SemaphoreWaitInfoKHR()
+inline VkSemaphoreWaitInfo SemaphoreWaitInfo()
 {
-  VkSemaphoreWaitInfoKHR info;
-  info.sType = VK_STRUCTURE_TYPE_SEMAPHORE_WAIT_INFO_KHR;
+  VkSemaphoreWaitInfo info;
+  info.sType = VK_STRUCTURE_TYPE_SEMAPHORE_WAIT_INFO;
   info.pNext = nullptr;
   return info;
 }
 
-inline VkSemaphoreSignalInfoKHR SemaphoreSignalInfoKHR()
+inline VkSemaphoreSignalInfo SemaphoreSignalInfo()
 {
-  VkSemaphoreSignalInfoKHR info;
-  info.sType = VK_STRUCTURE_TYPE_SEMAPHORE_SIGNAL_INFO_KHR;
+  VkSemaphoreSignalInfo info;
+  info.sType = VK_STRUCTURE_TYPE_SEMAPHORE_SIGNAL_INFO;
   info.pNext = nullptr;
   return info;
 }
@@ -1832,10 +1832,10 @@ inline VkExternalFormatANDROID ExternalFormatANDROID()
 }
 #endif
 
-inline VkPhysicalDevice8BitStorageFeaturesKHR PhysicalDevice8BitStorageFeaturesKHR()
+inline VkPhysicalDevice8BitStorageFeatures PhysicalDevice8BitStorageFeatures()
 {
-  VkPhysicalDevice8BitStorageFeaturesKHR info;
-  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_8BIT_STORAGE_FEATURES_KHR;
+  VkPhysicalDevice8BitStorageFeatures info;
+  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_8BIT_STORAGE_FEATURES;
   info.pNext = nullptr;
   return info;
 }
@@ -1848,18 +1848,18 @@ inline VkPhysicalDeviceConditionalRenderingFeaturesEXT PhysicalDeviceConditional
   return info;
 }
 
-inline VkPhysicalDeviceVulkanMemoryModelFeaturesKHR PhysicalDeviceVulkanMemoryModelFeaturesKHR()
+inline VkPhysicalDeviceVulkanMemoryModelFeatures PhysicalDeviceVulkanMemoryModelFeatures()
 {
-  VkPhysicalDeviceVulkanMemoryModelFeaturesKHR info;
-  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_MEMORY_MODEL_FEATURES_KHR;
+  VkPhysicalDeviceVulkanMemoryModelFeatures info;
+  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_MEMORY_MODEL_FEATURES;
   info.pNext = nullptr;
   return info;
 }
 
-inline VkPhysicalDeviceShaderAtomicInt64FeaturesKHR PhysicalDeviceShaderAtomicInt64FeaturesKHR()
+inline VkPhysicalDeviceShaderAtomicInt64Features PhysicalDeviceShaderAtomicInt64Features()
 {
-  VkPhysicalDeviceShaderAtomicInt64FeaturesKHR info;
-  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_ATOMIC_INT64_FEATURES_KHR;
+  VkPhysicalDeviceShaderAtomicInt64Features info;
+  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_ATOMIC_INT64_FEATURES;
   info.pNext = nullptr;
   return info;
 }
@@ -1872,10 +1872,10 @@ inline VkPhysicalDeviceVertexAttributeDivisorFeaturesEXT PhysicalDeviceVertexAtt
   return info;
 }
 
-inline VkSubpassDescriptionDepthStencilResolveKHR SubpassDescriptionDepthStencilResolveKHR()
+inline VkSubpassDescriptionDepthStencilResolve SubpassDescriptionDepthStencilResolve()
 {
-  VkSubpassDescriptionDepthStencilResolveKHR info;
-  info.sType = VK_STRUCTURE_TYPE_SUBPASS_DESCRIPTION_DEPTH_STENCIL_RESOLVE_KHR;
+  VkSubpassDescriptionDepthStencilResolve info;
+  info.sType = VK_STRUCTURE_TYPE_SUBPASS_DESCRIPTION_DEPTH_STENCIL_RESOLVE;
   info.pNext = nullptr;
   return info;
 }
@@ -2120,10 +2120,10 @@ inline VkImageDrmFormatModifierExplicitCreateInfoEXT ImageDrmFormatModifierExpli
   return info;
 }
 
-inline VkImageStencilUsageCreateInfoEXT ImageStencilUsageCreateInfoEXT()
+inline VkImageStencilUsageCreateInfo ImageStencilUsageCreateInfo()
 {
-  VkImageStencilUsageCreateInfoEXT info;
-  info.sType = VK_STRUCTURE_TYPE_IMAGE_STENCIL_USAGE_CREATE_INFO_EXT;
+  VkImageStencilUsageCreateInfo info;
+  info.sType = VK_STRUCTURE_TYPE_IMAGE_STENCIL_USAGE_CREATE_INFO;
   info.pNext = nullptr;
   return info;
 }
@@ -2144,10 +2144,10 @@ inline VkRenderPassFragmentDensityMapCreateInfoEXT RenderPassFragmentDensityMapC
   return info;
 }
 
-inline VkPhysicalDeviceScalarBlockLayoutFeaturesEXT PhysicalDeviceScalarBlockLayoutFeaturesEXT()
+inline VkPhysicalDeviceScalarBlockLayoutFeatures PhysicalDeviceScalarBlockLayoutFeatures()
 {
-  VkPhysicalDeviceScalarBlockLayoutFeaturesEXT info;
-  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SCALAR_BLOCK_LAYOUT_FEATURES_EXT;
+  VkPhysicalDeviceScalarBlockLayoutFeatures info;
+  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SCALAR_BLOCK_LAYOUT_FEATURES;
   info.pNext = nullptr;
   return info;
 }
@@ -2160,10 +2160,10 @@ inline VkSurfaceProtectedCapabilitiesKHR SurfaceProtectedCapabilitiesKHR()
   return info;
 }
 
-inline VkPhysicalDeviceUniformBufferStandardLayoutFeaturesKHR PhysicalDeviceUniformBufferStandardLayoutFeaturesKHR()
+inline VkPhysicalDeviceUniformBufferStandardLayoutFeatures PhysicalDeviceUniformBufferStandardLayoutFeatures()
 {
-  VkPhysicalDeviceUniformBufferStandardLayoutFeaturesKHR info;
-  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_UNIFORM_BUFFER_STANDARD_LAYOUT_FEATURES_KHR;
+  VkPhysicalDeviceUniformBufferStandardLayoutFeatures info;
+  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_UNIFORM_BUFFER_STANDARD_LAYOUT_FEATURES;
   info.pNext = nullptr;
   return info;
 }
@@ -2200,10 +2200,10 @@ inline VkMemoryPriorityAllocateInfoEXT MemoryPriorityAllocateInfoEXT()
   return info;
 }
 
-inline VkPhysicalDeviceBufferDeviceAddressFeaturesKHR PhysicalDeviceBufferDeviceAddressFeaturesKHR()
+inline VkPhysicalDeviceBufferDeviceAddressFeatures PhysicalDeviceBufferDeviceAddressFeatures()
 {
-  VkPhysicalDeviceBufferDeviceAddressFeaturesKHR info;
-  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BUFFER_DEVICE_ADDRESS_FEATURES_KHR;
+  VkPhysicalDeviceBufferDeviceAddressFeatures info;
+  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BUFFER_DEVICE_ADDRESS_FEATURES;
   info.pNext = nullptr;
   return info;
 }
@@ -2216,18 +2216,18 @@ inline VkPhysicalDeviceBufferDeviceAddressFeaturesEXT PhysicalDeviceBufferDevice
   return info;
 }
 
-inline VkBufferDeviceAddressInfoKHR BufferDeviceAddressInfoKHR()
+inline VkBufferDeviceAddressInfo BufferDeviceAddressInfo()
 {
-  VkBufferDeviceAddressInfoKHR info;
-  info.sType = VK_STRUCTURE_TYPE_BUFFER_DEVICE_ADDRESS_INFO_KHR;
+  VkBufferDeviceAddressInfo info;
+  info.sType = VK_STRUCTURE_TYPE_BUFFER_DEVICE_ADDRESS_INFO;
   info.pNext = nullptr;
   return info;
 }
 
-inline VkBufferOpaqueCaptureAddressCreateInfoKHR BufferOpaqueCaptureAddressCreateInfoKHR()
+inline VkBufferOpaqueCaptureAddressCreateInfo BufferOpaqueCaptureAddressCreateInfo()
 {
-  VkBufferOpaqueCaptureAddressCreateInfoKHR info;
-  info.sType = VK_STRUCTURE_TYPE_BUFFER_OPAQUE_CAPTURE_ADDRESS_CREATE_INFO_KHR;
+  VkBufferOpaqueCaptureAddressCreateInfo info;
+  info.sType = VK_STRUCTURE_TYPE_BUFFER_OPAQUE_CAPTURE_ADDRESS_CREATE_INFO;
   info.pNext = nullptr;
   return info;
 }
@@ -2248,34 +2248,34 @@ inline VkPhysicalDeviceImageViewImageFormatInfoEXT PhysicalDeviceImageViewImageF
   return info;
 }
 
-inline VkPhysicalDeviceImagelessFramebufferFeaturesKHR PhysicalDeviceImagelessFramebufferFeaturesKHR()
+inline VkPhysicalDeviceImagelessFramebufferFeatures PhysicalDeviceImagelessFramebufferFeatures()
 {
-  VkPhysicalDeviceImagelessFramebufferFeaturesKHR info;
-  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGELESS_FRAMEBUFFER_FEATURES_KHR;
+  VkPhysicalDeviceImagelessFramebufferFeatures info;
+  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGELESS_FRAMEBUFFER_FEATURES;
   info.pNext = nullptr;
   return info;
 }
 
-inline VkFramebufferAttachmentsCreateInfoKHR FramebufferAttachmentsCreateInfoKHR()
+inline VkFramebufferAttachmentsCreateInfo FramebufferAttachmentsCreateInfo()
 {
-  VkFramebufferAttachmentsCreateInfoKHR info;
-  info.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_ATTACHMENTS_CREATE_INFO_KHR;
+  VkFramebufferAttachmentsCreateInfo info;
+  info.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_ATTACHMENTS_CREATE_INFO;
   info.pNext = nullptr;
   return info;
 }
 
-inline VkFramebufferAttachmentImageInfoKHR FramebufferAttachmentImageInfoKHR()
+inline VkFramebufferAttachmentImageInfo FramebufferAttachmentImageInfo()
 {
-  VkFramebufferAttachmentImageInfoKHR info;
-  info.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_ATTACHMENT_IMAGE_INFO_KHR;
+  VkFramebufferAttachmentImageInfo info;
+  info.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_ATTACHMENT_IMAGE_INFO;
   info.pNext = nullptr;
   return info;
 }
 
-inline VkRenderPassAttachmentBeginInfoKHR RenderPassAttachmentBeginInfoKHR()
+inline VkRenderPassAttachmentBeginInfo RenderPassAttachmentBeginInfo()
 {
-  VkRenderPassAttachmentBeginInfoKHR info;
-  info.sType = VK_STRUCTURE_TYPE_RENDER_PASS_ATTACHMENT_BEGIN_INFO_KHR;
+  VkRenderPassAttachmentBeginInfo info;
+  info.sType = VK_STRUCTURE_TYPE_RENDER_PASS_ATTACHMENT_BEGIN_INFO;
   info.pNext = nullptr;
   return info;
 }
@@ -2512,26 +2512,26 @@ inline VkPhysicalDeviceFragmentShaderInterlockFeaturesEXT PhysicalDeviceFragment
   return info;
 }
 
-inline VkPhysicalDeviceSeparateDepthStencilLayoutsFeaturesKHR PhysicalDeviceSeparateDepthStencilLayoutsFeaturesKHR()
+inline VkPhysicalDeviceSeparateDepthStencilLayoutsFeatures PhysicalDeviceSeparateDepthStencilLayoutsFeatures()
 {
-  VkPhysicalDeviceSeparateDepthStencilLayoutsFeaturesKHR info;
-  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SEPARATE_DEPTH_STENCIL_LAYOUTS_FEATURES_KHR;
+  VkPhysicalDeviceSeparateDepthStencilLayoutsFeatures info;
+  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SEPARATE_DEPTH_STENCIL_LAYOUTS_FEATURES;
   info.pNext = nullptr;
   return info;
 }
 
-inline VkAttachmentReferenceStencilLayoutKHR AttachmentReferenceStencilLayoutKHR()
+inline VkAttachmentReferenceStencilLayout AttachmentReferenceStencilLayout()
 {
-  VkAttachmentReferenceStencilLayoutKHR info;
-  info.sType = VK_STRUCTURE_TYPE_ATTACHMENT_REFERENCE_STENCIL_LAYOUT_KHR;
+  VkAttachmentReferenceStencilLayout info;
+  info.sType = VK_STRUCTURE_TYPE_ATTACHMENT_REFERENCE_STENCIL_LAYOUT;
   info.pNext = nullptr;
   return info;
 }
 
-inline VkAttachmentDescriptionStencilLayoutKHR AttachmentDescriptionStencilLayoutKHR()
+inline VkAttachmentDescriptionStencilLayout AttachmentDescriptionStencilLayout()
 {
-  VkAttachmentDescriptionStencilLayoutKHR info;
-  info.sType = VK_STRUCTURE_TYPE_ATTACHMENT_DESCRIPTION_STENCIL_LAYOUT_KHR;
+  VkAttachmentDescriptionStencilLayout info;
+  info.sType = VK_STRUCTURE_TYPE_ATTACHMENT_DESCRIPTION_STENCIL_LAYOUT;
   info.pNext = nullptr;
   return info;
 }
@@ -2584,18 +2584,18 @@ inline VkPhysicalDeviceSubgroupSizeControlFeaturesEXT PhysicalDeviceSubgroupSize
   return info;
 }
 
-inline VkMemoryOpaqueCaptureAddressAllocateInfoKHR MemoryOpaqueCaptureAddressAllocateInfoKHR()
+inline VkMemoryOpaqueCaptureAddressAllocateInfo MemoryOpaqueCaptureAddressAllocateInfo()
 {
-  VkMemoryOpaqueCaptureAddressAllocateInfoKHR info;
-  info.sType = VK_STRUCTURE_TYPE_MEMORY_OPAQUE_CAPTURE_ADDRESS_ALLOCATE_INFO_KHR;
+  VkMemoryOpaqueCaptureAddressAllocateInfo info;
+  info.sType = VK_STRUCTURE_TYPE_MEMORY_OPAQUE_CAPTURE_ADDRESS_ALLOCATE_INFO;
   info.pNext = nullptr;
   return info;
 }
 
-inline VkDeviceMemoryOpaqueCaptureAddressInfoKHR DeviceMemoryOpaqueCaptureAddressInfoKHR()
+inline VkDeviceMemoryOpaqueCaptureAddressInfo DeviceMemoryOpaqueCaptureAddressInfo()
 {
-  VkDeviceMemoryOpaqueCaptureAddressInfoKHR info;
-  info.sType = VK_STRUCTURE_TYPE_DEVICE_MEMORY_OPAQUE_CAPTURE_ADDRESS_INFO_KHR;
+  VkDeviceMemoryOpaqueCaptureAddressInfo info;
+  info.sType = VK_STRUCTURE_TYPE_DEVICE_MEMORY_OPAQUE_CAPTURE_ADDRESS_INFO;
   info.pNext = nullptr;
   return info;
 }
@@ -2612,6 +2612,38 @@ inline VkPipelineRasterizationLineStateCreateInfoEXT PipelineRasterizationLineSt
 {
   VkPipelineRasterizationLineStateCreateInfoEXT info;
   info.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_LINE_STATE_CREATE_INFO_EXT;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkPhysicalDeviceVulkan11Features PhysicalDeviceVulkan11Features()
+{
+  VkPhysicalDeviceVulkan11Features info;
+  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_FEATURES;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkPhysicalDeviceVulkan11Properties PhysicalDeviceVulkan11Properties()
+{
+  VkPhysicalDeviceVulkan11Properties info;
+  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_PROPERTIES;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkPhysicalDeviceVulkan12Features PhysicalDeviceVulkan12Features()
+{
+  VkPhysicalDeviceVulkan12Features info;
+  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_FEATURES;
+  info.pNext = nullptr;
+  return info;
+}
+
+inline VkPhysicalDeviceVulkan12Properties PhysicalDeviceVulkan12Properties()
+{
+  VkPhysicalDeviceVulkan12Properties info;
+  info.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_PROPERTIES;
   info.pNext = nullptr;
   return info;
 }
@@ -5316,12 +5348,12 @@ inline VkPhysicalDevice16BitStorageFeatures PhysicalDevice16BitStorageFeatures(
   return temp;
 }
 
-inline VkPhysicalDeviceShaderSubgroupExtendedTypesFeaturesKHR PhysicalDeviceShaderSubgroupExtendedTypesFeaturesKHR(
+inline VkPhysicalDeviceShaderSubgroupExtendedTypesFeatures PhysicalDeviceShaderSubgroupExtendedTypesFeatures(
   VkBool32 shaderSubgroupExtendedTypes
 )
 {
-  VkPhysicalDeviceShaderSubgroupExtendedTypesFeaturesKHR temp;
-  temp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_SUBGROUP_EXTENDED_TYPES_FEATURES_KHR;
+  VkPhysicalDeviceShaderSubgroupExtendedTypesFeatures temp;
+  temp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_SUBGROUP_EXTENDED_TYPES_FEATURES;
   temp.pNext = nullptr;
   temp.shaderSubgroupExtendedTypes = shaderSubgroupExtendedTypes;
 
@@ -5598,12 +5630,12 @@ inline VkPipelineSampleLocationsStateCreateInfoEXT PipelineSampleLocationsStateC
   return temp;
 }
 
-inline VkSamplerReductionModeCreateInfoEXT SamplerReductionModeCreateInfoEXT(
-  VkSamplerReductionModeEXT reductionMode
+inline VkSamplerReductionModeCreateInfo SamplerReductionModeCreateInfo(
+  VkSamplerReductionMode reductionMode
 )
 {
-  VkSamplerReductionModeCreateInfoEXT temp;
-  temp.sType = VK_STRUCTURE_TYPE_SAMPLER_REDUCTION_MODE_CREATE_INFO_EXT;
+  VkSamplerReductionModeCreateInfo temp;
+  temp.sType = VK_STRUCTURE_TYPE_SAMPLER_REDUCTION_MODE_CREATE_INFO;
   temp.pNext = nullptr;
   temp.reductionMode = reductionMode;
 
@@ -5698,13 +5730,13 @@ inline VkPipelineCoverageModulationStateCreateInfoNV PipelineCoverageModulationS
   return temp;
 }
 
-inline VkImageFormatListCreateInfoKHR ImageFormatListCreateInfoKHR(
+inline VkImageFormatListCreateInfo ImageFormatListCreateInfo(
   uint32_t viewFormatCount,
   const VkFormat* pViewFormats
 )
 {
-  VkImageFormatListCreateInfoKHR temp;
-  temp.sType = VK_STRUCTURE_TYPE_IMAGE_FORMAT_LIST_CREATE_INFO_KHR;
+  VkImageFormatListCreateInfo temp;
+  temp.sType = VK_STRUCTURE_TYPE_IMAGE_FORMAT_LIST_CREATE_INFO;
   temp.pNext = nullptr;
   temp.viewFormatCount = viewFormatCount;
   temp.pViewFormats = pViewFormats;
@@ -5752,13 +5784,13 @@ inline VkPhysicalDeviceShaderDrawParametersFeatures PhysicalDeviceShaderDrawPara
   return temp;
 }
 
-inline VkPhysicalDeviceShaderFloat16Int8FeaturesKHR PhysicalDeviceShaderFloat16Int8FeaturesKHR(
+inline VkPhysicalDeviceShaderFloat16Int8Features PhysicalDeviceShaderFloat16Int8Features(
   VkBool32 shaderFloat16,
   VkBool32 shaderInt8
 )
 {
-  VkPhysicalDeviceShaderFloat16Int8FeaturesKHR temp;
-  temp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_FLOAT16_INT8_FEATURES_KHR;
+  VkPhysicalDeviceShaderFloat16Int8Features temp;
+  temp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_FLOAT16_INT8_FEATURES;
   temp.pNext = nullptr;
   temp.shaderFloat16 = shaderFloat16;
   temp.shaderInt8 = shaderInt8;
@@ -5766,12 +5798,12 @@ inline VkPhysicalDeviceShaderFloat16Int8FeaturesKHR PhysicalDeviceShaderFloat16I
   return temp;
 }
 
-inline VkPhysicalDeviceHostQueryResetFeaturesEXT PhysicalDeviceHostQueryResetFeaturesEXT(
+inline VkPhysicalDeviceHostQueryResetFeatures PhysicalDeviceHostQueryResetFeatures(
   VkBool32 hostQueryReset
 )
 {
-  VkPhysicalDeviceHostQueryResetFeaturesEXT temp;
-  temp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_HOST_QUERY_RESET_FEATURES_EXT;
+  VkPhysicalDeviceHostQueryResetFeatures temp;
+  temp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_HOST_QUERY_RESET_FEATURES;
   temp.pNext = nullptr;
   temp.hostQueryReset = hostQueryReset;
 
@@ -5984,13 +6016,63 @@ inline VkPipelineRasterizationConservativeStateCreateInfoEXT PipelineRasterizati
   return temp;
 }
 
-inline VkDescriptorSetLayoutBindingFlagsCreateInfoEXT DescriptorSetLayoutBindingFlagsCreateInfoEXT(
-  uint32_t bindingCount,
-  const VkDescriptorBindingFlagsEXT* pBindingFlags
+inline VkPhysicalDeviceDescriptorIndexingFeatures PhysicalDeviceDescriptorIndexingFeatures(
+  VkBool32 shaderInputAttachmentArrayDynamicIndexing,
+  VkBool32 shaderUniformTexelBufferArrayDynamicIndexing,
+  VkBool32 shaderStorageTexelBufferArrayDynamicIndexing,
+  VkBool32 shaderUniformBufferArrayNonUniformIndexing,
+  VkBool32 shaderSampledImageArrayNonUniformIndexing,
+  VkBool32 shaderStorageBufferArrayNonUniformIndexing,
+  VkBool32 shaderStorageImageArrayNonUniformIndexing,
+  VkBool32 shaderInputAttachmentArrayNonUniformIndexing,
+  VkBool32 shaderUniformTexelBufferArrayNonUniformIndexing,
+  VkBool32 shaderStorageTexelBufferArrayNonUniformIndexing,
+  VkBool32 descriptorBindingUniformBufferUpdateAfterBind,
+  VkBool32 descriptorBindingSampledImageUpdateAfterBind,
+  VkBool32 descriptorBindingStorageImageUpdateAfterBind,
+  VkBool32 descriptorBindingStorageBufferUpdateAfterBind,
+  VkBool32 descriptorBindingUniformTexelBufferUpdateAfterBind,
+  VkBool32 descriptorBindingStorageTexelBufferUpdateAfterBind,
+  VkBool32 descriptorBindingUpdateUnusedWhilePending,
+  VkBool32 descriptorBindingPartiallyBound,
+  VkBool32 descriptorBindingVariableDescriptorCount,
+  VkBool32 runtimeDescriptorArray
 )
 {
-  VkDescriptorSetLayoutBindingFlagsCreateInfoEXT temp;
-  temp.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_BINDING_FLAGS_CREATE_INFO_EXT;
+  VkPhysicalDeviceDescriptorIndexingFeatures temp;
+  temp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES;
+  temp.pNext = nullptr;
+  temp.shaderInputAttachmentArrayDynamicIndexing = shaderInputAttachmentArrayDynamicIndexing;
+  temp.shaderUniformTexelBufferArrayDynamicIndexing = shaderUniformTexelBufferArrayDynamicIndexing;
+  temp.shaderStorageTexelBufferArrayDynamicIndexing = shaderStorageTexelBufferArrayDynamicIndexing;
+  temp.shaderUniformBufferArrayNonUniformIndexing = shaderUniformBufferArrayNonUniformIndexing;
+  temp.shaderSampledImageArrayNonUniformIndexing = shaderSampledImageArrayNonUniformIndexing;
+  temp.shaderStorageBufferArrayNonUniformIndexing = shaderStorageBufferArrayNonUniformIndexing;
+  temp.shaderStorageImageArrayNonUniformIndexing = shaderStorageImageArrayNonUniformIndexing;
+  temp.shaderInputAttachmentArrayNonUniformIndexing = shaderInputAttachmentArrayNonUniformIndexing;
+  temp.shaderUniformTexelBufferArrayNonUniformIndexing = shaderUniformTexelBufferArrayNonUniformIndexing;
+  temp.shaderStorageTexelBufferArrayNonUniformIndexing = shaderStorageTexelBufferArrayNonUniformIndexing;
+  temp.descriptorBindingUniformBufferUpdateAfterBind = descriptorBindingUniformBufferUpdateAfterBind;
+  temp.descriptorBindingSampledImageUpdateAfterBind = descriptorBindingSampledImageUpdateAfterBind;
+  temp.descriptorBindingStorageImageUpdateAfterBind = descriptorBindingStorageImageUpdateAfterBind;
+  temp.descriptorBindingStorageBufferUpdateAfterBind = descriptorBindingStorageBufferUpdateAfterBind;
+  temp.descriptorBindingUniformTexelBufferUpdateAfterBind = descriptorBindingUniformTexelBufferUpdateAfterBind;
+  temp.descriptorBindingStorageTexelBufferUpdateAfterBind = descriptorBindingStorageTexelBufferUpdateAfterBind;
+  temp.descriptorBindingUpdateUnusedWhilePending = descriptorBindingUpdateUnusedWhilePending;
+  temp.descriptorBindingPartiallyBound = descriptorBindingPartiallyBound;
+  temp.descriptorBindingVariableDescriptorCount = descriptorBindingVariableDescriptorCount;
+  temp.runtimeDescriptorArray = runtimeDescriptorArray;
+
+  return temp;
+}
+
+inline VkDescriptorSetLayoutBindingFlagsCreateInfo DescriptorSetLayoutBindingFlagsCreateInfo(
+  uint32_t bindingCount,
+  const VkDescriptorBindingFlags* pBindingFlags
+)
+{
+  VkDescriptorSetLayoutBindingFlagsCreateInfo temp;
+  temp.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_BINDING_FLAGS_CREATE_INFO;
   temp.pNext = nullptr;
   temp.bindingCount = bindingCount;
   temp.pBindingFlags = pBindingFlags;
@@ -5998,13 +6080,13 @@ inline VkDescriptorSetLayoutBindingFlagsCreateInfoEXT DescriptorSetLayoutBinding
   return temp;
 }
 
-inline VkDescriptorSetVariableDescriptorCountAllocateInfoEXT DescriptorSetVariableDescriptorCountAllocateInfoEXT(
+inline VkDescriptorSetVariableDescriptorCountAllocateInfo DescriptorSetVariableDescriptorCountAllocateInfo(
   uint32_t descriptorSetCount,
   const uint32_t* pDescriptorCounts
 )
 {
-  VkDescriptorSetVariableDescriptorCountAllocateInfoEXT temp;
-  temp.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_VARIABLE_DESCRIPTOR_COUNT_ALLOCATE_INFO_EXT;
+  VkDescriptorSetVariableDescriptorCountAllocateInfo temp;
+  temp.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_VARIABLE_DESCRIPTOR_COUNT_ALLOCATE_INFO;
   temp.pNext = nullptr;
   temp.descriptorSetCount = descriptorSetCount;
   temp.pDescriptorCounts = pDescriptorCounts;
@@ -6012,7 +6094,7 @@ inline VkDescriptorSetVariableDescriptorCountAllocateInfoEXT DescriptorSetVariab
   return temp;
 }
 
-inline VkAttachmentDescription2KHR AttachmentDescription2KHR(
+inline VkAttachmentDescription2 AttachmentDescription2(
   VkAttachmentDescriptionFlags flags,
   VkFormat format,
   VkSampleCountFlagBits samples,
@@ -6024,8 +6106,8 @@ inline VkAttachmentDescription2KHR AttachmentDescription2KHR(
   VkImageLayout finalLayout
 )
 {
-  VkAttachmentDescription2KHR temp;
-  temp.sType = VK_STRUCTURE_TYPE_ATTACHMENT_DESCRIPTION_2_KHR;
+  VkAttachmentDescription2 temp;
+  temp.sType = VK_STRUCTURE_TYPE_ATTACHMENT_DESCRIPTION_2;
   temp.pNext = nullptr;
   temp.flags = flags;
   temp.format = format;
@@ -6040,14 +6122,14 @@ inline VkAttachmentDescription2KHR AttachmentDescription2KHR(
   return temp;
 }
 
-inline VkAttachmentReference2KHR AttachmentReference2KHR(
+inline VkAttachmentReference2 AttachmentReference2(
   uint32_t attachment,
   VkImageLayout layout,
   VkImageAspectFlags aspectMask
 )
 {
-  VkAttachmentReference2KHR temp;
-  temp.sType = VK_STRUCTURE_TYPE_ATTACHMENT_REFERENCE_2_KHR;
+  VkAttachmentReference2 temp;
+  temp.sType = VK_STRUCTURE_TYPE_ATTACHMENT_REFERENCE_2;
   temp.pNext = nullptr;
   temp.attachment = attachment;
   temp.layout = layout;
@@ -6056,22 +6138,22 @@ inline VkAttachmentReference2KHR AttachmentReference2KHR(
   return temp;
 }
 
-inline VkSubpassDescription2KHR SubpassDescription2KHR(
+inline VkSubpassDescription2 SubpassDescription2(
   VkSubpassDescriptionFlags flags,
   VkPipelineBindPoint pipelineBindPoint,
   uint32_t viewMask,
   uint32_t inputAttachmentCount,
-  const VkAttachmentReference2KHR* pInputAttachments,
+  const VkAttachmentReference2* pInputAttachments,
   uint32_t colorAttachmentCount,
-  const VkAttachmentReference2KHR* pColorAttachments,
-  const VkAttachmentReference2KHR* pResolveAttachments,
-  const VkAttachmentReference2KHR* pDepthStencilAttachment,
+  const VkAttachmentReference2* pColorAttachments,
+  const VkAttachmentReference2* pResolveAttachments,
+  const VkAttachmentReference2* pDepthStencilAttachment,
   uint32_t preserveAttachmentCount,
   const uint32_t* pPreserveAttachments
 )
 {
-  VkSubpassDescription2KHR temp;
-  temp.sType = VK_STRUCTURE_TYPE_SUBPASS_DESCRIPTION_2_KHR;
+  VkSubpassDescription2 temp;
+  temp.sType = VK_STRUCTURE_TYPE_SUBPASS_DESCRIPTION_2;
   temp.pNext = nullptr;
   temp.flags = flags;
   temp.pipelineBindPoint = pipelineBindPoint;
@@ -6088,7 +6170,7 @@ inline VkSubpassDescription2KHR SubpassDescription2KHR(
   return temp;
 }
 
-inline VkSubpassDependency2KHR SubpassDependency2KHR(
+inline VkSubpassDependency2 SubpassDependency2(
   uint32_t srcSubpass,
   uint32_t dstSubpass,
   VkPipelineStageFlags srcStageMask,
@@ -6099,8 +6181,8 @@ inline VkSubpassDependency2KHR SubpassDependency2KHR(
   int32_t viewOffset
 )
 {
-  VkSubpassDependency2KHR temp;
-  temp.sType = VK_STRUCTURE_TYPE_SUBPASS_DEPENDENCY_2_KHR;
+  VkSubpassDependency2 temp;
+  temp.sType = VK_STRUCTURE_TYPE_SUBPASS_DEPENDENCY_2;
   temp.pNext = nullptr;
   temp.srcSubpass = srcSubpass;
   temp.dstSubpass = dstSubpass;
@@ -6114,20 +6196,20 @@ inline VkSubpassDependency2KHR SubpassDependency2KHR(
   return temp;
 }
 
-inline VkRenderPassCreateInfo2KHR RenderPassCreateInfo2KHR(
+inline VkRenderPassCreateInfo2 RenderPassCreateInfo2(
   VkRenderPassCreateFlags flags,
   uint32_t attachmentCount,
-  const VkAttachmentDescription2KHR* pAttachments,
+  const VkAttachmentDescription2* pAttachments,
   uint32_t subpassCount,
-  const VkSubpassDescription2KHR* pSubpasses,
+  const VkSubpassDescription2* pSubpasses,
   uint32_t dependencyCount,
-  const VkSubpassDependency2KHR* pDependencies,
+  const VkSubpassDependency2* pDependencies,
   uint32_t correlatedViewMaskCount,
   const uint32_t* pCorrelatedViewMasks
 )
 {
-  VkRenderPassCreateInfo2KHR temp;
-  temp.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO_2_KHR;
+  VkRenderPassCreateInfo2 temp;
+  temp.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO_2;
   temp.pNext = nullptr;
   temp.flags = flags;
   temp.attachmentCount = attachmentCount;
@@ -6142,37 +6224,37 @@ inline VkRenderPassCreateInfo2KHR RenderPassCreateInfo2KHR(
   return temp;
 }
 
-inline VkSubpassBeginInfoKHR SubpassBeginInfoKHR(
+inline VkSubpassBeginInfo SubpassBeginInfo(
   VkSubpassContents contents
 )
 {
-  VkSubpassBeginInfoKHR temp;
-  temp.sType = VK_STRUCTURE_TYPE_SUBPASS_BEGIN_INFO_KHR;
+  VkSubpassBeginInfo temp;
+  temp.sType = VK_STRUCTURE_TYPE_SUBPASS_BEGIN_INFO;
   temp.pNext = nullptr;
   temp.contents = contents;
 
   return temp;
 }
 
-inline VkPhysicalDeviceTimelineSemaphoreFeaturesKHR PhysicalDeviceTimelineSemaphoreFeaturesKHR(
+inline VkPhysicalDeviceTimelineSemaphoreFeatures PhysicalDeviceTimelineSemaphoreFeatures(
   VkBool32 timelineSemaphore
 )
 {
-  VkPhysicalDeviceTimelineSemaphoreFeaturesKHR temp;
-  temp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_FEATURES_KHR;
+  VkPhysicalDeviceTimelineSemaphoreFeatures temp;
+  temp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_FEATURES;
   temp.pNext = nullptr;
   temp.timelineSemaphore = timelineSemaphore;
 
   return temp;
 }
 
-inline VkSemaphoreTypeCreateInfoKHR SemaphoreTypeCreateInfoKHR(
-  VkSemaphoreTypeKHR semaphoreType,
+inline VkSemaphoreTypeCreateInfo SemaphoreTypeCreateInfo(
+  VkSemaphoreType semaphoreType,
   uint64_t initialValue
 )
 {
-  VkSemaphoreTypeCreateInfoKHR temp;
-  temp.sType = VK_STRUCTURE_TYPE_SEMAPHORE_TYPE_CREATE_INFO_KHR;
+  VkSemaphoreTypeCreateInfo temp;
+  temp.sType = VK_STRUCTURE_TYPE_SEMAPHORE_TYPE_CREATE_INFO;
   temp.pNext = nullptr;
   temp.semaphoreType = semaphoreType;
   temp.initialValue = initialValue;
@@ -6180,15 +6262,15 @@ inline VkSemaphoreTypeCreateInfoKHR SemaphoreTypeCreateInfoKHR(
   return temp;
 }
 
-inline VkTimelineSemaphoreSubmitInfoKHR TimelineSemaphoreSubmitInfoKHR(
+inline VkTimelineSemaphoreSubmitInfo TimelineSemaphoreSubmitInfo(
   uint32_t waitSemaphoreValueCount,
   const uint64_t* pWaitSemaphoreValues,
   uint32_t signalSemaphoreValueCount,
   const uint64_t* pSignalSemaphoreValues
 )
 {
-  VkTimelineSemaphoreSubmitInfoKHR temp;
-  temp.sType = VK_STRUCTURE_TYPE_TIMELINE_SEMAPHORE_SUBMIT_INFO_KHR;
+  VkTimelineSemaphoreSubmitInfo temp;
+  temp.sType = VK_STRUCTURE_TYPE_TIMELINE_SEMAPHORE_SUBMIT_INFO;
   temp.pNext = nullptr;
   temp.waitSemaphoreValueCount = waitSemaphoreValueCount;
   temp.pWaitSemaphoreValues = pWaitSemaphoreValues;
@@ -6198,15 +6280,15 @@ inline VkTimelineSemaphoreSubmitInfoKHR TimelineSemaphoreSubmitInfoKHR(
   return temp;
 }
 
-inline VkSemaphoreWaitInfoKHR SemaphoreWaitInfoKHR(
-  VkSemaphoreWaitFlagsKHR flags,
+inline VkSemaphoreWaitInfo SemaphoreWaitInfo(
+  VkSemaphoreWaitFlags flags,
   uint32_t semaphoreCount,
   const VkSemaphore* pSemaphores,
   const uint64_t* pValues
 )
 {
-  VkSemaphoreWaitInfoKHR temp;
-  temp.sType = VK_STRUCTURE_TYPE_SEMAPHORE_WAIT_INFO_KHR;
+  VkSemaphoreWaitInfo temp;
+  temp.sType = VK_STRUCTURE_TYPE_SEMAPHORE_WAIT_INFO;
   temp.pNext = nullptr;
   temp.flags = flags;
   temp.semaphoreCount = semaphoreCount;
@@ -6216,13 +6298,13 @@ inline VkSemaphoreWaitInfoKHR SemaphoreWaitInfoKHR(
   return temp;
 }
 
-inline VkSemaphoreSignalInfoKHR SemaphoreSignalInfoKHR(
+inline VkSemaphoreSignalInfo SemaphoreSignalInfo(
   VkSemaphore semaphore,
   uint64_t value
 )
 {
-  VkSemaphoreSignalInfoKHR temp;
-  temp.sType = VK_STRUCTURE_TYPE_SEMAPHORE_SIGNAL_INFO_KHR;
+  VkSemaphoreSignalInfo temp;
+  temp.sType = VK_STRUCTURE_TYPE_SEMAPHORE_SIGNAL_INFO;
   temp.pNext = nullptr;
   temp.semaphore = semaphore;
   temp.value = value;
@@ -6298,14 +6380,14 @@ inline VkExternalFormatANDROID ExternalFormatANDROID(
 }
 #endif
 
-inline VkPhysicalDevice8BitStorageFeaturesKHR PhysicalDevice8BitStorageFeaturesKHR(
+inline VkPhysicalDevice8BitStorageFeatures PhysicalDevice8BitStorageFeatures(
   VkBool32 storageBuffer8BitAccess,
   VkBool32 uniformAndStorageBuffer8BitAccess,
   VkBool32 storagePushConstant8
 )
 {
-  VkPhysicalDevice8BitStorageFeaturesKHR temp;
-  temp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_8BIT_STORAGE_FEATURES_KHR;
+  VkPhysicalDevice8BitStorageFeatures temp;
+  temp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_8BIT_STORAGE_FEATURES;
   temp.pNext = nullptr;
   temp.storageBuffer8BitAccess = storageBuffer8BitAccess;
   temp.uniformAndStorageBuffer8BitAccess = uniformAndStorageBuffer8BitAccess;
@@ -6328,14 +6410,14 @@ inline VkPhysicalDeviceConditionalRenderingFeaturesEXT PhysicalDeviceConditional
   return temp;
 }
 
-inline VkPhysicalDeviceVulkanMemoryModelFeaturesKHR PhysicalDeviceVulkanMemoryModelFeaturesKHR(
+inline VkPhysicalDeviceVulkanMemoryModelFeatures PhysicalDeviceVulkanMemoryModelFeatures(
   VkBool32 vulkanMemoryModel,
   VkBool32 vulkanMemoryModelDeviceScope,
   VkBool32 vulkanMemoryModelAvailabilityVisibilityChains
 )
 {
-  VkPhysicalDeviceVulkanMemoryModelFeaturesKHR temp;
-  temp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_MEMORY_MODEL_FEATURES_KHR;
+  VkPhysicalDeviceVulkanMemoryModelFeatures temp;
+  temp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_MEMORY_MODEL_FEATURES;
   temp.pNext = nullptr;
   temp.vulkanMemoryModel = vulkanMemoryModel;
   temp.vulkanMemoryModelDeviceScope = vulkanMemoryModelDeviceScope;
@@ -6344,13 +6426,13 @@ inline VkPhysicalDeviceVulkanMemoryModelFeaturesKHR PhysicalDeviceVulkanMemoryMo
   return temp;
 }
 
-inline VkPhysicalDeviceShaderAtomicInt64FeaturesKHR PhysicalDeviceShaderAtomicInt64FeaturesKHR(
+inline VkPhysicalDeviceShaderAtomicInt64Features PhysicalDeviceShaderAtomicInt64Features(
   VkBool32 shaderBufferInt64Atomics,
   VkBool32 shaderSharedInt64Atomics
 )
 {
-  VkPhysicalDeviceShaderAtomicInt64FeaturesKHR temp;
-  temp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_ATOMIC_INT64_FEATURES_KHR;
+  VkPhysicalDeviceShaderAtomicInt64Features temp;
+  temp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_ATOMIC_INT64_FEATURES;
   temp.pNext = nullptr;
   temp.shaderBufferInt64Atomics = shaderBufferInt64Atomics;
   temp.shaderSharedInt64Atomics = shaderSharedInt64Atomics;
@@ -6372,14 +6454,14 @@ inline VkPhysicalDeviceVertexAttributeDivisorFeaturesEXT PhysicalDeviceVertexAtt
   return temp;
 }
 
-inline VkSubpassDescriptionDepthStencilResolveKHR SubpassDescriptionDepthStencilResolveKHR(
-  VkResolveModeFlagBitsKHR depthResolveMode,
-  VkResolveModeFlagBitsKHR stencilResolveMode,
-  const VkAttachmentReference2KHR* pDepthStencilResolveAttachment
+inline VkSubpassDescriptionDepthStencilResolve SubpassDescriptionDepthStencilResolve(
+  VkResolveModeFlagBits depthResolveMode,
+  VkResolveModeFlagBits stencilResolveMode,
+  const VkAttachmentReference2* pDepthStencilResolveAttachment
 )
 {
-  VkSubpassDescriptionDepthStencilResolveKHR temp;
-  temp.sType = VK_STRUCTURE_TYPE_SUBPASS_DESCRIPTION_DEPTH_STENCIL_RESOLVE_KHR;
+  VkSubpassDescriptionDepthStencilResolve temp;
+  temp.sType = VK_STRUCTURE_TYPE_SUBPASS_DESCRIPTION_DEPTH_STENCIL_RESOLVE;
   temp.pNext = nullptr;
   temp.depthResolveMode = depthResolveMode;
   temp.stencilResolveMode = stencilResolveMode;
@@ -6856,12 +6938,12 @@ inline VkImageDrmFormatModifierExplicitCreateInfoEXT ImageDrmFormatModifierExpli
   return temp;
 }
 
-inline VkImageStencilUsageCreateInfoEXT ImageStencilUsageCreateInfoEXT(
+inline VkImageStencilUsageCreateInfo ImageStencilUsageCreateInfo(
   VkImageUsageFlags stencilUsage
 )
 {
-  VkImageStencilUsageCreateInfoEXT temp;
-  temp.sType = VK_STRUCTURE_TYPE_IMAGE_STENCIL_USAGE_CREATE_INFO_EXT;
+  VkImageStencilUsageCreateInfo temp;
+  temp.sType = VK_STRUCTURE_TYPE_IMAGE_STENCIL_USAGE_CREATE_INFO;
   temp.pNext = nullptr;
   temp.stencilUsage = stencilUsage;
 
@@ -6892,12 +6974,12 @@ inline VkRenderPassFragmentDensityMapCreateInfoEXT RenderPassFragmentDensityMapC
   return temp;
 }
 
-inline VkPhysicalDeviceScalarBlockLayoutFeaturesEXT PhysicalDeviceScalarBlockLayoutFeaturesEXT(
+inline VkPhysicalDeviceScalarBlockLayoutFeatures PhysicalDeviceScalarBlockLayoutFeatures(
   VkBool32 scalarBlockLayout
 )
 {
-  VkPhysicalDeviceScalarBlockLayoutFeaturesEXT temp;
-  temp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SCALAR_BLOCK_LAYOUT_FEATURES_EXT;
+  VkPhysicalDeviceScalarBlockLayoutFeatures temp;
+  temp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SCALAR_BLOCK_LAYOUT_FEATURES;
   temp.pNext = nullptr;
   temp.scalarBlockLayout = scalarBlockLayout;
 
@@ -6916,12 +6998,12 @@ inline VkSurfaceProtectedCapabilitiesKHR SurfaceProtectedCapabilitiesKHR(
   return temp;
 }
 
-inline VkPhysicalDeviceUniformBufferStandardLayoutFeaturesKHR PhysicalDeviceUniformBufferStandardLayoutFeaturesKHR(
+inline VkPhysicalDeviceUniformBufferStandardLayoutFeatures PhysicalDeviceUniformBufferStandardLayoutFeatures(
   VkBool32 uniformBufferStandardLayout
 )
 {
-  VkPhysicalDeviceUniformBufferStandardLayoutFeaturesKHR temp;
-  temp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_UNIFORM_BUFFER_STANDARD_LAYOUT_FEATURES_KHR;
+  VkPhysicalDeviceUniformBufferStandardLayoutFeatures temp;
+  temp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_UNIFORM_BUFFER_STANDARD_LAYOUT_FEATURES;
   temp.pNext = nullptr;
   temp.uniformBufferStandardLayout = uniformBufferStandardLayout;
 
@@ -6978,14 +7060,14 @@ inline VkMemoryPriorityAllocateInfoEXT MemoryPriorityAllocateInfoEXT(
   return temp;
 }
 
-inline VkPhysicalDeviceBufferDeviceAddressFeaturesKHR PhysicalDeviceBufferDeviceAddressFeaturesKHR(
+inline VkPhysicalDeviceBufferDeviceAddressFeatures PhysicalDeviceBufferDeviceAddressFeatures(
   VkBool32 bufferDeviceAddress,
   VkBool32 bufferDeviceAddressCaptureReplay,
   VkBool32 bufferDeviceAddressMultiDevice
 )
 {
-  VkPhysicalDeviceBufferDeviceAddressFeaturesKHR temp;
-  temp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BUFFER_DEVICE_ADDRESS_FEATURES_KHR;
+  VkPhysicalDeviceBufferDeviceAddressFeatures temp;
+  temp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BUFFER_DEVICE_ADDRESS_FEATURES;
   temp.pNext = nullptr;
   temp.bufferDeviceAddress = bufferDeviceAddress;
   temp.bufferDeviceAddressCaptureReplay = bufferDeviceAddressCaptureReplay;
@@ -7010,24 +7092,24 @@ inline VkPhysicalDeviceBufferDeviceAddressFeaturesEXT PhysicalDeviceBufferDevice
   return temp;
 }
 
-inline VkBufferDeviceAddressInfoKHR BufferDeviceAddressInfoKHR(
+inline VkBufferDeviceAddressInfo BufferDeviceAddressInfo(
   VkBuffer buffer
 )
 {
-  VkBufferDeviceAddressInfoKHR temp;
-  temp.sType = VK_STRUCTURE_TYPE_BUFFER_DEVICE_ADDRESS_INFO_KHR;
+  VkBufferDeviceAddressInfo temp;
+  temp.sType = VK_STRUCTURE_TYPE_BUFFER_DEVICE_ADDRESS_INFO;
   temp.pNext = nullptr;
   temp.buffer = buffer;
 
   return temp;
 }
 
-inline VkBufferOpaqueCaptureAddressCreateInfoKHR BufferOpaqueCaptureAddressCreateInfoKHR(
+inline VkBufferOpaqueCaptureAddressCreateInfo BufferOpaqueCaptureAddressCreateInfo(
   uint64_t opaqueCaptureAddress
 )
 {
-  VkBufferOpaqueCaptureAddressCreateInfoKHR temp;
-  temp.sType = VK_STRUCTURE_TYPE_BUFFER_OPAQUE_CAPTURE_ADDRESS_CREATE_INFO_KHR;
+  VkBufferOpaqueCaptureAddressCreateInfo temp;
+  temp.sType = VK_STRUCTURE_TYPE_BUFFER_OPAQUE_CAPTURE_ADDRESS_CREATE_INFO;
   temp.pNext = nullptr;
   temp.opaqueCaptureAddress = opaqueCaptureAddress;
 
@@ -7058,25 +7140,25 @@ inline VkPhysicalDeviceImageViewImageFormatInfoEXT PhysicalDeviceImageViewImageF
   return temp;
 }
 
-inline VkPhysicalDeviceImagelessFramebufferFeaturesKHR PhysicalDeviceImagelessFramebufferFeaturesKHR(
+inline VkPhysicalDeviceImagelessFramebufferFeatures PhysicalDeviceImagelessFramebufferFeatures(
   VkBool32 imagelessFramebuffer
 )
 {
-  VkPhysicalDeviceImagelessFramebufferFeaturesKHR temp;
-  temp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGELESS_FRAMEBUFFER_FEATURES_KHR;
+  VkPhysicalDeviceImagelessFramebufferFeatures temp;
+  temp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGELESS_FRAMEBUFFER_FEATURES;
   temp.pNext = nullptr;
   temp.imagelessFramebuffer = imagelessFramebuffer;
 
   return temp;
 }
 
-inline VkFramebufferAttachmentsCreateInfoKHR FramebufferAttachmentsCreateInfoKHR(
+inline VkFramebufferAttachmentsCreateInfo FramebufferAttachmentsCreateInfo(
   uint32_t attachmentImageInfoCount,
-  const VkFramebufferAttachmentImageInfoKHR* pAttachmentImageInfos
+  const VkFramebufferAttachmentImageInfo* pAttachmentImageInfos
 )
 {
-  VkFramebufferAttachmentsCreateInfoKHR temp;
-  temp.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_ATTACHMENTS_CREATE_INFO_KHR;
+  VkFramebufferAttachmentsCreateInfo temp;
+  temp.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_ATTACHMENTS_CREATE_INFO;
   temp.pNext = nullptr;
   temp.attachmentImageInfoCount = attachmentImageInfoCount;
   temp.pAttachmentImageInfos = pAttachmentImageInfos;
@@ -7084,7 +7166,7 @@ inline VkFramebufferAttachmentsCreateInfoKHR FramebufferAttachmentsCreateInfoKHR
   return temp;
 }
 
-inline VkFramebufferAttachmentImageInfoKHR FramebufferAttachmentImageInfoKHR(
+inline VkFramebufferAttachmentImageInfo FramebufferAttachmentImageInfo(
   VkImageCreateFlags flags,
   VkImageUsageFlags usage,
   uint32_t width,
@@ -7094,8 +7176,8 @@ inline VkFramebufferAttachmentImageInfoKHR FramebufferAttachmentImageInfoKHR(
   const VkFormat* pViewFormats
 )
 {
-  VkFramebufferAttachmentImageInfoKHR temp;
-  temp.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_ATTACHMENT_IMAGE_INFO_KHR;
+  VkFramebufferAttachmentImageInfo temp;
+  temp.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_ATTACHMENT_IMAGE_INFO;
   temp.pNext = nullptr;
   temp.flags = flags;
   temp.usage = usage;
@@ -7108,13 +7190,13 @@ inline VkFramebufferAttachmentImageInfoKHR FramebufferAttachmentImageInfoKHR(
   return temp;
 }
 
-inline VkRenderPassAttachmentBeginInfoKHR RenderPassAttachmentBeginInfoKHR(
+inline VkRenderPassAttachmentBeginInfo RenderPassAttachmentBeginInfo(
   uint32_t attachmentCount,
   const VkImageView* pAttachments
 )
 {
-  VkRenderPassAttachmentBeginInfoKHR temp;
-  temp.sType = VK_STRUCTURE_TYPE_RENDER_PASS_ATTACHMENT_BEGIN_INFO_KHR;
+  VkRenderPassAttachmentBeginInfo temp;
+  temp.sType = VK_STRUCTURE_TYPE_RENDER_PASS_ATTACHMENT_BEGIN_INFO;
   temp.pNext = nullptr;
   temp.attachmentCount = attachmentCount;
   temp.pAttachments = pAttachments;
@@ -7510,37 +7592,37 @@ inline VkPhysicalDeviceFragmentShaderInterlockFeaturesEXT PhysicalDeviceFragment
   return temp;
 }
 
-inline VkPhysicalDeviceSeparateDepthStencilLayoutsFeaturesKHR PhysicalDeviceSeparateDepthStencilLayoutsFeaturesKHR(
+inline VkPhysicalDeviceSeparateDepthStencilLayoutsFeatures PhysicalDeviceSeparateDepthStencilLayoutsFeatures(
   VkBool32 separateDepthStencilLayouts
 )
 {
-  VkPhysicalDeviceSeparateDepthStencilLayoutsFeaturesKHR temp;
-  temp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SEPARATE_DEPTH_STENCIL_LAYOUTS_FEATURES_KHR;
+  VkPhysicalDeviceSeparateDepthStencilLayoutsFeatures temp;
+  temp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SEPARATE_DEPTH_STENCIL_LAYOUTS_FEATURES;
   temp.pNext = nullptr;
   temp.separateDepthStencilLayouts = separateDepthStencilLayouts;
 
   return temp;
 }
 
-inline VkAttachmentReferenceStencilLayoutKHR AttachmentReferenceStencilLayoutKHR(
+inline VkAttachmentReferenceStencilLayout AttachmentReferenceStencilLayout(
   VkImageLayout stencilLayout
 )
 {
-  VkAttachmentReferenceStencilLayoutKHR temp;
-  temp.sType = VK_STRUCTURE_TYPE_ATTACHMENT_REFERENCE_STENCIL_LAYOUT_KHR;
+  VkAttachmentReferenceStencilLayout temp;
+  temp.sType = VK_STRUCTURE_TYPE_ATTACHMENT_REFERENCE_STENCIL_LAYOUT;
   temp.pNext = nullptr;
   temp.stencilLayout = stencilLayout;
 
   return temp;
 }
 
-inline VkAttachmentDescriptionStencilLayoutKHR AttachmentDescriptionStencilLayoutKHR(
+inline VkAttachmentDescriptionStencilLayout AttachmentDescriptionStencilLayout(
   VkImageLayout stencilInitialLayout,
   VkImageLayout stencilFinalLayout
 )
 {
-  VkAttachmentDescriptionStencilLayoutKHR temp;
-  temp.sType = VK_STRUCTURE_TYPE_ATTACHMENT_DESCRIPTION_STENCIL_LAYOUT_KHR;
+  VkAttachmentDescriptionStencilLayout temp;
+  temp.sType = VK_STRUCTURE_TYPE_ATTACHMENT_DESCRIPTION_STENCIL_LAYOUT;
   temp.pNext = nullptr;
   temp.stencilInitialLayout = stencilInitialLayout;
   temp.stencilFinalLayout = stencilFinalLayout;
@@ -7624,24 +7706,24 @@ inline VkPhysicalDeviceSubgroupSizeControlFeaturesEXT PhysicalDeviceSubgroupSize
   return temp;
 }
 
-inline VkMemoryOpaqueCaptureAddressAllocateInfoKHR MemoryOpaqueCaptureAddressAllocateInfoKHR(
+inline VkMemoryOpaqueCaptureAddressAllocateInfo MemoryOpaqueCaptureAddressAllocateInfo(
   uint64_t opaqueCaptureAddress
 )
 {
-  VkMemoryOpaqueCaptureAddressAllocateInfoKHR temp;
-  temp.sType = VK_STRUCTURE_TYPE_MEMORY_OPAQUE_CAPTURE_ADDRESS_ALLOCATE_INFO_KHR;
+  VkMemoryOpaqueCaptureAddressAllocateInfo temp;
+  temp.sType = VK_STRUCTURE_TYPE_MEMORY_OPAQUE_CAPTURE_ADDRESS_ALLOCATE_INFO;
   temp.pNext = nullptr;
   temp.opaqueCaptureAddress = opaqueCaptureAddress;
 
   return temp;
 }
 
-inline VkDeviceMemoryOpaqueCaptureAddressInfoKHR DeviceMemoryOpaqueCaptureAddressInfoKHR(
+inline VkDeviceMemoryOpaqueCaptureAddressInfo DeviceMemoryOpaqueCaptureAddressInfo(
   VkDeviceMemory memory
 )
 {
-  VkDeviceMemoryOpaqueCaptureAddressInfoKHR temp;
-  temp.sType = VK_STRUCTURE_TYPE_DEVICE_MEMORY_OPAQUE_CAPTURE_ADDRESS_INFO_KHR;
+  VkDeviceMemoryOpaqueCaptureAddressInfo temp;
+  temp.sType = VK_STRUCTURE_TYPE_DEVICE_MEMORY_OPAQUE_CAPTURE_ADDRESS_INFO;
   temp.pNext = nullptr;
   temp.memory = memory;
 
@@ -7684,6 +7766,308 @@ inline VkPipelineRasterizationLineStateCreateInfoEXT PipelineRasterizationLineSt
   temp.stippledLineEnable = stippledLineEnable;
   temp.lineStippleFactor = lineStippleFactor;
   temp.lineStipplePattern = lineStipplePattern;
+
+  return temp;
+}
+
+inline VkPhysicalDeviceVulkan11Features PhysicalDeviceVulkan11Features(
+  VkBool32 storageBuffer16BitAccess,
+  VkBool32 uniformAndStorageBuffer16BitAccess,
+  VkBool32 storagePushConstant16,
+  VkBool32 storageInputOutput16,
+  VkBool32 multiview,
+  VkBool32 multiviewGeometryShader,
+  VkBool32 multiviewTessellationShader,
+  VkBool32 variablePointersStorageBuffer,
+  VkBool32 variablePointers,
+  VkBool32 protectedMemory,
+  VkBool32 samplerYcbcrConversion,
+  VkBool32 shaderDrawParameters
+)
+{
+  VkPhysicalDeviceVulkan11Features temp;
+  temp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_FEATURES;
+  temp.pNext = nullptr;
+  temp.storageBuffer16BitAccess = storageBuffer16BitAccess;
+  temp.uniformAndStorageBuffer16BitAccess = uniformAndStorageBuffer16BitAccess;
+  temp.storagePushConstant16 = storagePushConstant16;
+  temp.storageInputOutput16 = storageInputOutput16;
+  temp.multiview = multiview;
+  temp.multiviewGeometryShader = multiviewGeometryShader;
+  temp.multiviewTessellationShader = multiviewTessellationShader;
+  temp.variablePointersStorageBuffer = variablePointersStorageBuffer;
+  temp.variablePointers = variablePointers;
+  temp.protectedMemory = protectedMemory;
+  temp.samplerYcbcrConversion = samplerYcbcrConversion;
+  temp.shaderDrawParameters = shaderDrawParameters;
+
+  return temp;
+}
+
+inline VkPhysicalDeviceVulkan11Properties PhysicalDeviceVulkan11Properties(
+  uint8_t deviceUUID[VK_UUID_SIZE],
+  uint8_t driverUUID[VK_UUID_SIZE],
+  uint8_t deviceLUID[VK_LUID_SIZE],
+  uint32_t deviceNodeMask,
+  VkBool32 deviceLUIDValid,
+  uint32_t subgroupSize,
+  VkShaderStageFlags subgroupSupportedStages,
+  VkSubgroupFeatureFlags subgroupSupportedOperations,
+  VkBool32 subgroupQuadOperationsInAllStages,
+  VkPointClippingBehavior pointClippingBehavior,
+  uint32_t maxMultiviewViewCount,
+  uint32_t maxMultiviewInstanceIndex,
+  VkBool32 protectedNoFault,
+  uint32_t maxPerSetDescriptors,
+  VkDeviceSize maxMemoryAllocationSize
+)
+{
+  VkPhysicalDeviceVulkan11Properties temp;
+  temp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_PROPERTIES;
+  temp.pNext = nullptr;
+  for(size_t i = 0; i < VK_UUID_SIZE; ++i){
+    temp.deviceUUID[i] = deviceUUID[i];
+  }
+  for(size_t i = 0; i < VK_UUID_SIZE; ++i){
+    temp.driverUUID[i] = driverUUID[i];
+  }
+  for(size_t i = 0; i < VK_LUID_SIZE; ++i){
+    temp.deviceLUID[i] = deviceLUID[i];
+  }
+  temp.deviceNodeMask = deviceNodeMask;
+  temp.deviceLUIDValid = deviceLUIDValid;
+  temp.subgroupSize = subgroupSize;
+  temp.subgroupSupportedStages = subgroupSupportedStages;
+  temp.subgroupSupportedOperations = subgroupSupportedOperations;
+  temp.subgroupQuadOperationsInAllStages = subgroupQuadOperationsInAllStages;
+  temp.pointClippingBehavior = pointClippingBehavior;
+  temp.maxMultiviewViewCount = maxMultiviewViewCount;
+  temp.maxMultiviewInstanceIndex = maxMultiviewInstanceIndex;
+  temp.protectedNoFault = protectedNoFault;
+  temp.maxPerSetDescriptors = maxPerSetDescriptors;
+  temp.maxMemoryAllocationSize = maxMemoryAllocationSize;
+
+  return temp;
+}
+
+inline VkPhysicalDeviceVulkan12Features PhysicalDeviceVulkan12Features(
+  VkBool32 samplerMirrorClampToEdge,
+  VkBool32 drawIndirectCount,
+  VkBool32 storageBuffer8BitAccess,
+  VkBool32 uniformAndStorageBuffer8BitAccess,
+  VkBool32 storagePushConstant8,
+  VkBool32 shaderBufferInt64Atomics,
+  VkBool32 shaderSharedInt64Atomics,
+  VkBool32 shaderFloat16,
+  VkBool32 shaderInt8,
+  VkBool32 descriptorIndexing,
+  VkBool32 shaderInputAttachmentArrayDynamicIndexing,
+  VkBool32 shaderUniformTexelBufferArrayDynamicIndexing,
+  VkBool32 shaderStorageTexelBufferArrayDynamicIndexing,
+  VkBool32 shaderUniformBufferArrayNonUniformIndexing,
+  VkBool32 shaderSampledImageArrayNonUniformIndexing,
+  VkBool32 shaderStorageBufferArrayNonUniformIndexing,
+  VkBool32 shaderStorageImageArrayNonUniformIndexing,
+  VkBool32 shaderInputAttachmentArrayNonUniformIndexing,
+  VkBool32 shaderUniformTexelBufferArrayNonUniformIndexing,
+  VkBool32 shaderStorageTexelBufferArrayNonUniformIndexing,
+  VkBool32 descriptorBindingUniformBufferUpdateAfterBind,
+  VkBool32 descriptorBindingSampledImageUpdateAfterBind,
+  VkBool32 descriptorBindingStorageImageUpdateAfterBind,
+  VkBool32 descriptorBindingStorageBufferUpdateAfterBind,
+  VkBool32 descriptorBindingUniformTexelBufferUpdateAfterBind,
+  VkBool32 descriptorBindingStorageTexelBufferUpdateAfterBind,
+  VkBool32 descriptorBindingUpdateUnusedWhilePending,
+  VkBool32 descriptorBindingPartiallyBound,
+  VkBool32 descriptorBindingVariableDescriptorCount,
+  VkBool32 runtimeDescriptorArray,
+  VkBool32 samplerFilterMinmax,
+  VkBool32 scalarBlockLayout,
+  VkBool32 imagelessFramebuffer,
+  VkBool32 uniformBufferStandardLayout,
+  VkBool32 shaderSubgroupExtendedTypes,
+  VkBool32 separateDepthStencilLayouts,
+  VkBool32 hostQueryReset,
+  VkBool32 timelineSemaphore,
+  VkBool32 bufferDeviceAddress,
+  VkBool32 bufferDeviceAddressCaptureReplay,
+  VkBool32 bufferDeviceAddressMultiDevice,
+  VkBool32 vulkanMemoryModel,
+  VkBool32 vulkanMemoryModelDeviceScope,
+  VkBool32 vulkanMemoryModelAvailabilityVisibilityChains,
+  VkBool32 shaderOutputViewportIndex,
+  VkBool32 shaderOutputLayer,
+  VkBool32 subgroupBroadcastDynamicId
+)
+{
+  VkPhysicalDeviceVulkan12Features temp;
+  temp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_FEATURES;
+  temp.pNext = nullptr;
+  temp.samplerMirrorClampToEdge = samplerMirrorClampToEdge;
+  temp.drawIndirectCount = drawIndirectCount;
+  temp.storageBuffer8BitAccess = storageBuffer8BitAccess;
+  temp.uniformAndStorageBuffer8BitAccess = uniformAndStorageBuffer8BitAccess;
+  temp.storagePushConstant8 = storagePushConstant8;
+  temp.shaderBufferInt64Atomics = shaderBufferInt64Atomics;
+  temp.shaderSharedInt64Atomics = shaderSharedInt64Atomics;
+  temp.shaderFloat16 = shaderFloat16;
+  temp.shaderInt8 = shaderInt8;
+  temp.descriptorIndexing = descriptorIndexing;
+  temp.shaderInputAttachmentArrayDynamicIndexing = shaderInputAttachmentArrayDynamicIndexing;
+  temp.shaderUniformTexelBufferArrayDynamicIndexing = shaderUniformTexelBufferArrayDynamicIndexing;
+  temp.shaderStorageTexelBufferArrayDynamicIndexing = shaderStorageTexelBufferArrayDynamicIndexing;
+  temp.shaderUniformBufferArrayNonUniformIndexing = shaderUniformBufferArrayNonUniformIndexing;
+  temp.shaderSampledImageArrayNonUniformIndexing = shaderSampledImageArrayNonUniformIndexing;
+  temp.shaderStorageBufferArrayNonUniformIndexing = shaderStorageBufferArrayNonUniformIndexing;
+  temp.shaderStorageImageArrayNonUniformIndexing = shaderStorageImageArrayNonUniformIndexing;
+  temp.shaderInputAttachmentArrayNonUniformIndexing = shaderInputAttachmentArrayNonUniformIndexing;
+  temp.shaderUniformTexelBufferArrayNonUniformIndexing = shaderUniformTexelBufferArrayNonUniformIndexing;
+  temp.shaderStorageTexelBufferArrayNonUniformIndexing = shaderStorageTexelBufferArrayNonUniformIndexing;
+  temp.descriptorBindingUniformBufferUpdateAfterBind = descriptorBindingUniformBufferUpdateAfterBind;
+  temp.descriptorBindingSampledImageUpdateAfterBind = descriptorBindingSampledImageUpdateAfterBind;
+  temp.descriptorBindingStorageImageUpdateAfterBind = descriptorBindingStorageImageUpdateAfterBind;
+  temp.descriptorBindingStorageBufferUpdateAfterBind = descriptorBindingStorageBufferUpdateAfterBind;
+  temp.descriptorBindingUniformTexelBufferUpdateAfterBind = descriptorBindingUniformTexelBufferUpdateAfterBind;
+  temp.descriptorBindingStorageTexelBufferUpdateAfterBind = descriptorBindingStorageTexelBufferUpdateAfterBind;
+  temp.descriptorBindingUpdateUnusedWhilePending = descriptorBindingUpdateUnusedWhilePending;
+  temp.descriptorBindingPartiallyBound = descriptorBindingPartiallyBound;
+  temp.descriptorBindingVariableDescriptorCount = descriptorBindingVariableDescriptorCount;
+  temp.runtimeDescriptorArray = runtimeDescriptorArray;
+  temp.samplerFilterMinmax = samplerFilterMinmax;
+  temp.scalarBlockLayout = scalarBlockLayout;
+  temp.imagelessFramebuffer = imagelessFramebuffer;
+  temp.uniformBufferStandardLayout = uniformBufferStandardLayout;
+  temp.shaderSubgroupExtendedTypes = shaderSubgroupExtendedTypes;
+  temp.separateDepthStencilLayouts = separateDepthStencilLayouts;
+  temp.hostQueryReset = hostQueryReset;
+  temp.timelineSemaphore = timelineSemaphore;
+  temp.bufferDeviceAddress = bufferDeviceAddress;
+  temp.bufferDeviceAddressCaptureReplay = bufferDeviceAddressCaptureReplay;
+  temp.bufferDeviceAddressMultiDevice = bufferDeviceAddressMultiDevice;
+  temp.vulkanMemoryModel = vulkanMemoryModel;
+  temp.vulkanMemoryModelDeviceScope = vulkanMemoryModelDeviceScope;
+  temp.vulkanMemoryModelAvailabilityVisibilityChains = vulkanMemoryModelAvailabilityVisibilityChains;
+  temp.shaderOutputViewportIndex = shaderOutputViewportIndex;
+  temp.shaderOutputLayer = shaderOutputLayer;
+  temp.subgroupBroadcastDynamicId = subgroupBroadcastDynamicId;
+
+  return temp;
+}
+
+inline VkPhysicalDeviceVulkan12Properties PhysicalDeviceVulkan12Properties(
+  VkDriverId driverID,
+  char driverName[VK_MAX_DRIVER_NAME_SIZE],
+  char driverInfo[VK_MAX_DRIVER_INFO_SIZE],
+  VkConformanceVersion conformanceVersion,
+  VkShaderFloatControlsIndependence denormBehaviorIndependence,
+  VkShaderFloatControlsIndependence roundingModeIndependence,
+  VkBool32 shaderSignedZeroInfNanPreserveFloat16,
+  VkBool32 shaderSignedZeroInfNanPreserveFloat32,
+  VkBool32 shaderSignedZeroInfNanPreserveFloat64,
+  VkBool32 shaderDenormPreserveFloat16,
+  VkBool32 shaderDenormPreserveFloat32,
+  VkBool32 shaderDenormPreserveFloat64,
+  VkBool32 shaderDenormFlushToZeroFloat16,
+  VkBool32 shaderDenormFlushToZeroFloat32,
+  VkBool32 shaderDenormFlushToZeroFloat64,
+  VkBool32 shaderRoundingModeRTEFloat16,
+  VkBool32 shaderRoundingModeRTEFloat32,
+  VkBool32 shaderRoundingModeRTEFloat64,
+  VkBool32 shaderRoundingModeRTZFloat16,
+  VkBool32 shaderRoundingModeRTZFloat32,
+  VkBool32 shaderRoundingModeRTZFloat64,
+  uint32_t maxUpdateAfterBindDescriptorsInAllPools,
+  VkBool32 shaderUniformBufferArrayNonUniformIndexingNative,
+  VkBool32 shaderSampledImageArrayNonUniformIndexingNative,
+  VkBool32 shaderStorageBufferArrayNonUniformIndexingNative,
+  VkBool32 shaderStorageImageArrayNonUniformIndexingNative,
+  VkBool32 shaderInputAttachmentArrayNonUniformIndexingNative,
+  VkBool32 robustBufferAccessUpdateAfterBind,
+  VkBool32 quadDivergentImplicitLod,
+  uint32_t maxPerStageDescriptorUpdateAfterBindSamplers,
+  uint32_t maxPerStageDescriptorUpdateAfterBindUniformBuffers,
+  uint32_t maxPerStageDescriptorUpdateAfterBindStorageBuffers,
+  uint32_t maxPerStageDescriptorUpdateAfterBindSampledImages,
+  uint32_t maxPerStageDescriptorUpdateAfterBindStorageImages,
+  uint32_t maxPerStageDescriptorUpdateAfterBindInputAttachments,
+  uint32_t maxPerStageUpdateAfterBindResources,
+  uint32_t maxDescriptorSetUpdateAfterBindSamplers,
+  uint32_t maxDescriptorSetUpdateAfterBindUniformBuffers,
+  uint32_t maxDescriptorSetUpdateAfterBindUniformBuffersDynamic,
+  uint32_t maxDescriptorSetUpdateAfterBindStorageBuffers,
+  uint32_t maxDescriptorSetUpdateAfterBindStorageBuffersDynamic,
+  uint32_t maxDescriptorSetUpdateAfterBindSampledImages,
+  uint32_t maxDescriptorSetUpdateAfterBindStorageImages,
+  uint32_t maxDescriptorSetUpdateAfterBindInputAttachments,
+  VkResolveModeFlags supportedDepthResolveModes,
+  VkResolveModeFlags supportedStencilResolveModes,
+  VkBool32 independentResolveNone,
+  VkBool32 independentResolve,
+  VkBool32 filterMinmaxSingleComponentFormats,
+  VkBool32 filterMinmaxImageComponentMapping,
+  uint64_t maxTimelineSemaphoreValueDifference,
+  VkSampleCountFlags framebufferIntegerColorSampleCounts
+)
+{
+  VkPhysicalDeviceVulkan12Properties temp;
+  temp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_PROPERTIES;
+  temp.pNext = nullptr;
+  temp.driverID = driverID;
+  for(size_t i = 0; i < VK_MAX_DRIVER_NAME_SIZE; ++i){
+    temp.driverName[i] = driverName[i];
+  }
+  for(size_t i = 0; i < VK_MAX_DRIVER_INFO_SIZE; ++i){
+    temp.driverInfo[i] = driverInfo[i];
+  }
+  temp.conformanceVersion = conformanceVersion;
+  temp.denormBehaviorIndependence = denormBehaviorIndependence;
+  temp.roundingModeIndependence = roundingModeIndependence;
+  temp.shaderSignedZeroInfNanPreserveFloat16 = shaderSignedZeroInfNanPreserveFloat16;
+  temp.shaderSignedZeroInfNanPreserveFloat32 = shaderSignedZeroInfNanPreserveFloat32;
+  temp.shaderSignedZeroInfNanPreserveFloat64 = shaderSignedZeroInfNanPreserveFloat64;
+  temp.shaderDenormPreserveFloat16 = shaderDenormPreserveFloat16;
+  temp.shaderDenormPreserveFloat32 = shaderDenormPreserveFloat32;
+  temp.shaderDenormPreserveFloat64 = shaderDenormPreserveFloat64;
+  temp.shaderDenormFlushToZeroFloat16 = shaderDenormFlushToZeroFloat16;
+  temp.shaderDenormFlushToZeroFloat32 = shaderDenormFlushToZeroFloat32;
+  temp.shaderDenormFlushToZeroFloat64 = shaderDenormFlushToZeroFloat64;
+  temp.shaderRoundingModeRTEFloat16 = shaderRoundingModeRTEFloat16;
+  temp.shaderRoundingModeRTEFloat32 = shaderRoundingModeRTEFloat32;
+  temp.shaderRoundingModeRTEFloat64 = shaderRoundingModeRTEFloat64;
+  temp.shaderRoundingModeRTZFloat16 = shaderRoundingModeRTZFloat16;
+  temp.shaderRoundingModeRTZFloat32 = shaderRoundingModeRTZFloat32;
+  temp.shaderRoundingModeRTZFloat64 = shaderRoundingModeRTZFloat64;
+  temp.maxUpdateAfterBindDescriptorsInAllPools = maxUpdateAfterBindDescriptorsInAllPools;
+  temp.shaderUniformBufferArrayNonUniformIndexingNative = shaderUniformBufferArrayNonUniformIndexingNative;
+  temp.shaderSampledImageArrayNonUniformIndexingNative = shaderSampledImageArrayNonUniformIndexingNative;
+  temp.shaderStorageBufferArrayNonUniformIndexingNative = shaderStorageBufferArrayNonUniformIndexingNative;
+  temp.shaderStorageImageArrayNonUniformIndexingNative = shaderStorageImageArrayNonUniformIndexingNative;
+  temp.shaderInputAttachmentArrayNonUniformIndexingNative = shaderInputAttachmentArrayNonUniformIndexingNative;
+  temp.robustBufferAccessUpdateAfterBind = robustBufferAccessUpdateAfterBind;
+  temp.quadDivergentImplicitLod = quadDivergentImplicitLod;
+  temp.maxPerStageDescriptorUpdateAfterBindSamplers = maxPerStageDescriptorUpdateAfterBindSamplers;
+  temp.maxPerStageDescriptorUpdateAfterBindUniformBuffers = maxPerStageDescriptorUpdateAfterBindUniformBuffers;
+  temp.maxPerStageDescriptorUpdateAfterBindStorageBuffers = maxPerStageDescriptorUpdateAfterBindStorageBuffers;
+  temp.maxPerStageDescriptorUpdateAfterBindSampledImages = maxPerStageDescriptorUpdateAfterBindSampledImages;
+  temp.maxPerStageDescriptorUpdateAfterBindStorageImages = maxPerStageDescriptorUpdateAfterBindStorageImages;
+  temp.maxPerStageDescriptorUpdateAfterBindInputAttachments = maxPerStageDescriptorUpdateAfterBindInputAttachments;
+  temp.maxPerStageUpdateAfterBindResources = maxPerStageUpdateAfterBindResources;
+  temp.maxDescriptorSetUpdateAfterBindSamplers = maxDescriptorSetUpdateAfterBindSamplers;
+  temp.maxDescriptorSetUpdateAfterBindUniformBuffers = maxDescriptorSetUpdateAfterBindUniformBuffers;
+  temp.maxDescriptorSetUpdateAfterBindUniformBuffersDynamic = maxDescriptorSetUpdateAfterBindUniformBuffersDynamic;
+  temp.maxDescriptorSetUpdateAfterBindStorageBuffers = maxDescriptorSetUpdateAfterBindStorageBuffers;
+  temp.maxDescriptorSetUpdateAfterBindStorageBuffersDynamic = maxDescriptorSetUpdateAfterBindStorageBuffersDynamic;
+  temp.maxDescriptorSetUpdateAfterBindSampledImages = maxDescriptorSetUpdateAfterBindSampledImages;
+  temp.maxDescriptorSetUpdateAfterBindStorageImages = maxDescriptorSetUpdateAfterBindStorageImages;
+  temp.maxDescriptorSetUpdateAfterBindInputAttachments = maxDescriptorSetUpdateAfterBindInputAttachments;
+  temp.supportedDepthResolveModes = supportedDepthResolveModes;
+  temp.supportedStencilResolveModes = supportedStencilResolveModes;
+  temp.independentResolveNone = independentResolveNone;
+  temp.independentResolve = independentResolve;
+  temp.filterMinmaxSingleComponentFormats = filterMinmaxSingleComponentFormats;
+  temp.filterMinmaxImageComponentMapping = filterMinmaxImageComponentMapping;
+  temp.maxTimelineSemaphoreValueDifference = maxTimelineSemaphoreValueDifference;
+  temp.framebufferIntegerColorSampleCounts = framebufferIntegerColorSampleCounts;
 
   return temp;
 }
@@ -8555,14 +8939,14 @@ inline VkObjectTablePushConstantEntryNVX ObjectTablePushConstantEntryNVX(
   return temp;
 }
 
-inline VkConformanceVersionKHR ConformanceVersionKHR(
+inline VkConformanceVersion ConformanceVersion(
   uint8_t major,
   uint8_t minor,
   uint8_t subminor,
   uint8_t patch
 )
 {
-  VkConformanceVersionKHR temp;
+  VkConformanceVersion temp;
   temp.major = major;
   temp.minor = minor;
   temp.subminor = subminor;

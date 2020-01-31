@@ -6,7 +6,7 @@
 #
 # Usage, from project root:
 # 
-#     wget https://github.com/KhronosGroup/Vulkan-Docs/raw/master/xml/vk.xml
+#     wget https://raw.githubusercontent.com/KhronosGroup/Vulkan-Docs/master/xml/vk.xml
 #     python3 tools/scripts/gen_info_struct_wrappers.py > krust/public-api/vulkan_struct_init.h
 # 
 # The API used:
@@ -27,7 +27,6 @@ IGNORED_STRUCTS = {
 
 # Structures to not generate the longer function with parameters for:
 IGNORED_STRUCTS_ALL_PARAMS = {
-  'VkSubpassEndInfoKHR' : True,         # Holds no data so the params init function version duplicates the simple one.
   'VkPhysicalDeviceProperties2': True,  # < Because it is big and we will typically query the implementation, change a few fields, and send back the diff
   'VkPhysicalDeviceDescriptorIndexingFeaturesEXT': True,
 }
@@ -75,6 +74,14 @@ def StructToCode(name):
       code = 'VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_SM_BUILTINS_PROPERTIES_NV'
     elif code == 'VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_SMB_FEATURES_NV':
       code = 'VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_SM_BUILTINS_FEATURES_NV'
+    elif code == 'VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_11_FEATURES':
+      code = 'VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_FEATURES'
+    elif code == 'VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_12_FEATURES':
+      code = 'VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_FEATURES'
+    elif code == 'VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_11_PROPERTIES':
+      code = 'VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_PROPERTIES'
+    elif code == 'VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_12_PROPERTIES':
+      code = 'VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_PROPERTIES'
 
     return code
 
@@ -356,6 +363,7 @@ def PrintMemberAssignments(local, members):
 # Print file header:
 print(FILE_TOP)
 
+# ------------------------------------------------------------------------------
 # Generate the simple wrappers for tagged sructs that save the user from sType
 # and pNext init:
 print(SIMPLE_TOP)
@@ -380,6 +388,7 @@ if 1 == 1:
       print("")
 print(SIMPLE_BOTTOM)
 
+# ------------------------------------------------------------------------------
 # Generate the fuller-featured init functions which set all members:
 print(PARAMS_TOP)
 for struct in structs:
@@ -389,12 +398,17 @@ for struct in structs:
     name = struct['name']
     if name in IGNORED_STRUCTS_ALL_PARAMS:
       continue
+
+    # Skip if there are no parameters to initialise:
+    members = struct['members']
+    if len(members) < 3:
+      continue
+
     funcName = name[2:len(name)]
     # generate platform-specific ifdefs if required:
     ifdefed = PrintPlatformIfdef(name)
     print("inline " + name, funcName + "(")
     # Spew out the members as a parameter list:
-    members = struct['members']
     PrintParameterList(members)
     print(")")
     print("{")
@@ -410,6 +424,7 @@ for struct in structs:
     print("")
 print(PARAMS_BOTTOM)
 
+# ------------------------------------------------------------------------------
 # Generate the creation wrappers for structs that are not tagged:
 print(UNTAGGED_TOP)
 if 1 == 1:
