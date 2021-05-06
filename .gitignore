@@ -4,6 +4,7 @@
 *.git*~
 .cproject
 .project
+build/*
 build/vs15/*
 *.swo
 *.swp
