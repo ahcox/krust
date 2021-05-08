@@ -1,7 +1,7 @@
 Directory: platform
 ===================
 
-All code outside this directory is portable, with varying levels of dependency
+The code outside this directory is portable, with varying levels of dependency
 on the C++ standard libraries only.
 Inside are rooted a set of source trees specific to:
 
