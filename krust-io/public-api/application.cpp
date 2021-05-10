@@ -452,10 +452,7 @@ bool Application::ChoosePresentableSurfaceFormat()
   bool found = false;
   for(auto surfaceFormat : surfaceFormats)
   {
-    if((surfaceFormat.format != VK_FORMAT_UNDEFINED) &&
-       (surfaceFormat.format <= VK_FORMAT_END_RANGE) &&
-       (surfaceFormat.colorSpace >= VK_COLOR_SPACE_BEGIN_RANGE_KHR &&
-        surfaceFormat.colorSpace <= VK_COLOR_SPACE_END_RANGE_KHR ))
+    if(surfaceFormat.format != VK_FORMAT_UNDEFINED)
     {
       // We currently just choose the first okay surfaceFormat we find:
       // (this should be configurable)

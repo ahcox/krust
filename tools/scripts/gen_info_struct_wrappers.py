@@ -32,6 +32,7 @@ IGNORED_STRUCTS = {
   'VkBaseInStructure': True,                  # < Because we never make one: it is an "abstract base class".
   'VkBaseOutStructure': True,                 # < Because we never make one: it is an "abstract base class".
   'VkPhysicalDeviceFeatures': True,           # < Because it is big and we will typically query the implementation, change a few fields, and send back the diff.
+  'VkTransformMatrixKHR' : True               # < Because it holds a 2D matrix which our generated code mishandles [todo: fix this]
 }
 
 # Structures to not generate the longer function with parameters for:

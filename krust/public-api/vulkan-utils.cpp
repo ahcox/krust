@@ -110,8 +110,9 @@ FindMemoryTypeWithProperties(const VkPhysicalDeviceMemoryProperties& memoryPrope
 bool IsDepthFormat(const VkFormat format)
 {
   // Use this to find out the new number if the assert below fires:
-  //KRUST_SHOW_UINT_AS_WARNING(VK_FORMAT_RANGE_SIZE);
-  KRUST_COMPILE_ASSERT(VK_FORMAT_RANGE_SIZE == 185, "Number of formats changed. Check if any are depth ones.");
+  // KRUST_SHOW_UINT_AS_WARNING(VK_FORMAT_RANGE_SIZE);
+  // Vulkan headers have started shipping withotu these useful extra enumernats:
+  // KRUST_COMPILE_ASSERT(VK_FORMAT_RANGE_SIZE == 185, "Number of formats changed. Check if any are depth ones.");
 
   // Note, a depth format could be added while a non-depth one was removed and not
   // trigger the assert above.
@@ -160,6 +161,8 @@ const char* ResultToString(const VkResult result)
     case VK_ERROR_UNKNOWN: { string = "VK_ERROR_UNKNOWN"; break; }
     case VK_ERROR_OUT_OF_POOL_MEMORY: { string = "VK_ERROR_OUT_OF_POOL_MEMORY"; break; }
     case VK_ERROR_INVALID_EXTERNAL_HANDLE: { string = "VK_ERROR_INVALID_EXTERNAL_HANDLE"; break; }
+    case VK_ERROR_FRAGMENTATION: { string = "VK_ERROR_FRAGMENTATION"; break; }
+    case VK_ERROR_INVALID_OPAQUE_CAPTURE_ADDRESS: { string = "VK_ERROR_INVALID_OPAQUE_CAPTURE_ADDRESS"; break; }
     case VK_ERROR_SURFACE_LOST_KHR: { string = "VK_ERROR_SURFACE_LOST_KHR"; break; }
     case VK_ERROR_NATIVE_WINDOW_IN_USE_KHR: { string = "VK_ERROR_NATIVE_WINDOW_IN_USE_KHR"; break; }
     case VK_SUBOPTIMAL_KHR: { string = "VK_SUBOPTIMAL_KHR"; break; }
@@ -168,12 +171,15 @@ const char* ResultToString(const VkResult result)
     case VK_ERROR_VALIDATION_FAILED_EXT: { string = "VK_ERROR_VALIDATION_FAILED_EXT"; break; }
     case VK_ERROR_INVALID_SHADER_NV: { string = "VK_ERROR_INVALID_SHADER_NV"; break; }
     case VK_ERROR_INVALID_DRM_FORMAT_MODIFIER_PLANE_LAYOUT_EXT: { string = "VK_ERROR_INVALID_DRM_FORMAT_MODIFIER_PLANE_LAYOUT_EXT"; break; }
-    case VK_ERROR_FRAGMENTATION_EXT: { string = "VK_ERROR_FRAGMENTATION_EXT"; break; }
     case VK_ERROR_NOT_PERMITTED_EXT: { string = "VK_ERROR_NOT_PERMITTED_EXT"; break; }
-    case VK_ERROR_INVALID_DEVICE_ADDRESS_EXT: { string = "VK_ERROR_INVALID_DEVICE_ADDRESS_EXT"; break; }
     case VK_ERROR_FULL_SCREEN_EXCLUSIVE_MODE_LOST_EXT: { string = "VK_ERROR_FULL_SCREEN_EXCLUSIVE_MODE_LOST_EXT"; break; }
-
-    case VK_RESULT_RANGE_SIZE: { string = "VK_RESULT_RANGE_SIZE"; break; }
+    case VK_THREAD_IDLE_KHR: { string = "VK_THREAD_IDLE_KHR"; break; }
+    case VK_THREAD_DONE_KHR: { string = "VK_THREAD_DONE_KHR"; break; }
+    case VK_OPERATION_DEFERRED_KHR: { string = "VK_OPERATION_DEFERRED_KHR"; break; }
+    case VK_OPERATION_NOT_DEFERRED_KHR: { string = "VK_OPERATION_NOT_DEFERRED_KHR"; break; }
+    case VK_PIPELINE_COMPILE_REQUIRED_EXT: { string = "VK_PIPELINE_COMPILE_REQUIRED_EXT"; break; }
+    
+    // case VK_RESULT_RANGE_SIZE: { string = "VK_RESULT_RANGE_SIZE"; break; }
     case VK_RESULT_MAX_ENUM: { string = "VK_RESULT_MAX_ENUM"; break; }
   };
 
@@ -182,17 +188,14 @@ const char* ResultToString(const VkResult result)
 
 int SortMetric(const VkPresentModeKHR mode, const bool tearingAllowed)
 {
-  KRUST_COMPILE_ASSERT(VK_PRESENT_MODE_END_RANGE_KHR == 3,
-    "Need to examine VkPresentModeKHR as it has changed since this function was "
-    "written. Check if the natural ordering is still of decreasing goodness and if"
-    "a new mode was added.");
+  /// @todo Revise code that chooses a present mode. Maybe force app to have a list from best to worst it knows about.
   // The modes are enumerated from best to worst, with the caveat that the first
   // will tear. Therefore we use their values as the metric but penalize the tearing
   // mode if tearing is not allowed.
   int sortKey = mode;
   if(!tearingAllowed && (mode == VK_PRESENT_MODE_IMMEDIATE_KHR))
   {
-    sortKey += int(VK_PRESENT_MODE_END_RANGE_KHR) + 1;
+    sortKey += 128;
   }
   return sortKey;
 }
@@ -323,7 +326,7 @@ const char* FormatToString(const VkFormat format)
   const char *string = "<<Unknown Format>>";
   // Recreate contents with: %s/\(VK_FORMAT.*\) = .*,$/case \1: { string = "\1"; break; }/
   switch (format) {
-    case VK_FORMAT_UNDEFINED: { string = "VK_FORMAT_UNDEFINED"; break; }
+        case VK_FORMAT_UNDEFINED: { string = "VK_FORMAT_UNDEFINED"; break; }
     case VK_FORMAT_R4G4_UNORM_PACK8: { string = "VK_FORMAT_R4G4_UNORM_PACK8"; break; }
     case VK_FORMAT_R4G4B4A4_UNORM_PACK16: { string = "VK_FORMAT_R4G4B4A4_UNORM_PACK16"; break; }
     case VK_FORMAT_B4G4R4A4_UNORM_PACK16: { string = "VK_FORMAT_B4G4R4A4_UNORM_PACK16"; break; }
@@ -564,9 +567,15 @@ const char* FormatToString(const VkFormat format)
     case VK_FORMAT_ASTC_10x10_SFLOAT_BLOCK_EXT: { string = "VK_FORMAT_ASTC_10x10_SFLOAT_BLOCK_EXT"; break; }
     case VK_FORMAT_ASTC_12x10_SFLOAT_BLOCK_EXT: { string = "VK_FORMAT_ASTC_12x10_SFLOAT_BLOCK_EXT"; break; }
     case VK_FORMAT_ASTC_12x12_SFLOAT_BLOCK_EXT: { string = "VK_FORMAT_ASTC_12x12_SFLOAT_BLOCK_EXT"; break; }
+    case VK_FORMAT_G8_B8R8_2PLANE_444_UNORM_EXT: { string = "VK_FORMAT_G8_B8R8_2PLANE_444_UNORM_EXT"; break; }
+    case VK_FORMAT_G10X6_B10X6R10X6_2PLANE_444_UNORM_3PACK16_EXT: { string = "VK_FORMAT_G10X6_B10X6R10X6_2PLANE_444_UNORM_3PACK16_EXT"; break; }
+    case VK_FORMAT_G12X4_B12X4R12X4_2PLANE_444_UNORM_3PACK16_EXT: { string = "VK_FORMAT_G12X4_B12X4R12X4_2PLANE_444_UNORM_3PACK16_EXT"; break; }
+    case VK_FORMAT_G16_B16R16_2PLANE_444_UNORM_EXT: { string = "VK_FORMAT_G16_B16R16_2PLANE_444_UNORM_EXT"; break; }
+    case VK_FORMAT_A4R4G4B4_UNORM_PACK16_EXT: { string = "VK_FORMAT_A4R4G4B4_UNORM_PACK16_EXT"; break; }
+    case VK_FORMAT_A4B4G4R4_UNORM_PACK16_EXT: { string = "VK_FORMAT_A4B4G4R4_UNORM_PACK16_EXT"; break; }
 
     // Specials (not actually formats):
-    case VK_FORMAT_RANGE_SIZE: { string = "VK_FORMAT_RANGE_SIZE"; break; }
+    //case VK_FORMAT_RANGE_SIZE: { string = "VK_FORMAT_RANGE_SIZE"; break; }
     case VK_FORMAT_MAX_ENUM: {string = "VK_FORMAT_MAX_ENUM"; break; };
   };
   return string;
@@ -574,7 +583,7 @@ const char* FormatToString(const VkFormat format)
 
 const char* KHRColorspaceToString(const VkColorSpaceKHR space)
 {
-  KRUST_ASSERT2(space <= VK_COLOR_SPACE_END_RANGE_KHR, "Out of range color space.");
+  // KRUST_ASSERT2(space <= VK_COLOR_SPACE_END_RANGE_KHR, "Out of range color space.");
   const char* string = "<<unkown colorspace>>";
   // recreate cases below with: %s/\(VK_.*\) = .*,$/case \1: { string = "\1"; break; }/
   switch (space) {
@@ -595,7 +604,7 @@ const char* KHRColorspaceToString(const VkColorSpaceKHR space)
     case VK_COLOR_SPACE_EXTENDED_SRGB_NONLINEAR_EXT: { string = "VK_COLOR_SPACE_EXTENDED_SRGB_NONLINEAR_EXT"; break; }
     case VK_COLOR_SPACE_DISPLAY_NATIVE_AMD: { string = "VK_COLOR_SPACE_DISPLAY_NATIVE_AMD"; break; }
 
-    case VK_COLOR_SPACE_RANGE_SIZE_KHR: {string = "<<invalid: VK_COLORSPACE_RANGE_SIZE>>"; break; };
+    // case VK_COLOR_SPACE_RANGE_SIZE_KHR: {string = "<<invalid: VK_COLORSPACE_RANGE_SIZE>>"; break; };
     case VK_COLOR_SPACE_MAX_ENUM_KHR: {string = "<<invalid: VK_COLORSPACE_MAX_ENUM>>"; break; };
   }
   return string;
