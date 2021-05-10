@@ -6,8 +6,17 @@
 #
 # Usage, from project root:
 # 
-#     wget https://raw.githubusercontent.com/KhronosGroup/Vulkan-Docs/master/xml/vk.xml
+#     wget https://raw.githubusercontent.com/KhronosGroup/Vulkan-Docs/main/xml/vk.xml
 #     python3 tools/scripts/gen_info_struct_wrappers.py > krust/public-api/vulkan_struct_init.h
+#
+# If the library fails to compile due to unknown vulkan symbols, try downloading
+# the tagged xml file that matches the vulkan headers installed on your system
+# that your are building against. E.g. on ubuntu, check the package version of
+# vulkan-headers and use that for the tag. Tagged versions live on paths like:
+# https://github.com/KhronosGroup/Vulkan-Docs/releases/tag/v1.2.176
+# from where you can navigate to find the raw file blob.
+#
+#     wget https://raw.githubusercontent.com/KhronosGroup/Vulkan-Docs/67f599afee77b0e598e7a325f13b9878edcacdfd/xml/vk.xml
 # 
 # The API used:
 # https://docs.python.org/3/library/xml.etree.elementtree.html
@@ -20,8 +29,8 @@ path_to_spec='./vk.xml'
 
 # Structures to not generate for:
 IGNORED_STRUCTS = {
-  'VkBaseInStructure': True,  # < Because we never make one: it is an "abstract base class".
-  'VkBaseOutStructure': True, # < Because we never make one: it is an "abstract base class".
+  'VkBaseInStructure': True,                  # < Because we never make one: it is an "abstract base class".
+  'VkBaseOutStructure': True,                 # < Because we never make one: it is an "abstract base class".
   'VkPhysicalDeviceFeatures': True,           # < Because it is big and we will typically query the implementation, change a few fields, and send back the diff.
 }
 
