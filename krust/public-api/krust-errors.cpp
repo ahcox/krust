@@ -20,6 +20,7 @@
 
 #include "krust-errors.h"
 #include "krust/public-api/logging.h"
+#include "krust/public-api/vulkan-utils.h"
 
 namespace Krust
 {
@@ -60,7 +61,7 @@ namespace Krust
 
   LogBuilder& KrustVulkanErrorException::Log(LogBuilder& logBuilder) const
   {
-    logBuilder << "KrustVulkanErrorException: [called = " << mApiCalled << "] [result = " << mResult << "] ";
+    logBuilder << "KrustVulkanErrorException: [called = " << mApiCalled << "] [result = " << ResultToString(mResult) << "] ";
     KrustException::Log(logBuilder);
     return logBuilder;
   }
@@ -74,18 +75,18 @@ namespace Krust
 
   void ExceptionsErrorPolicy::VulkanError(const char * apiCalled, VkResult result, const char *  msg, const char * function, const char * file, unsigned line)
   {
-    KRUST_LOG_ERROR << "Vulkan error (" << result << ") (msg: \"" << msg << "\") reported by " << apiCalled << " in function " << function << " at: " << file << ":" << line << endlog;
+    KRUST_LOG_ERROR << "Vulkan error (" << ResultToString(result) << ") (msg: \"" << (msg ? msg : "") << "\") reported by " << apiCalled << " in function " << function << " at: " << file << ":" << line << endlog;
     throw KrustVulkanErrorException(apiCalled, result, msg, function, file, line);
   }
 
   void ExceptionsErrorPolicy::VulkanUnexpected(const char* apiCalled, const char* msg, const char * function, const char * file, unsigned line) {
-    KRUST_LOG_ERROR << "Vulkan error (msg: \"" << msg << "\") reported by " << apiCalled << " in function " << function << " at: " << file << ":" << line << endlog;
+    KRUST_LOG_ERROR << "Vulkan error (msg: \"" << (msg ? msg : "") << "\") reported by " << apiCalled << " in function " << function << " at: " << file << ":" << line << endlog;
     throw KrustVulkanUnexpectedException(apiCalled, msg, function, file, line);
   }
 
   void ExceptionsErrorPolicy::Error(Errors error, const char * msg, const char * function, const char * file, unsigned line)
   {
-    KRUST_LOG_ERROR << error << " in " << function << " (msg: \"" << msg << "\") at: " << file << ":" << line << endlog;
+    KRUST_LOG_ERROR << error << " in " << function << " (msg: \"" << (msg ? msg : "") << "\") at: " << file << ":" << line << endlog;
     throw KrustErrorException(error, msg, function, file, line);
   }
 
