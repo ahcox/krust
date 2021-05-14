@@ -96,7 +96,7 @@ public:
    * @brief Report an error returned by a Vulkan API call.
    *
    * The user should be prepared to receive `VK_ERROR_DEVICE_LOST` at any time.
-   * Once it has received that error it should throuw away all Vulkan object
+   * Once it has received that error it should throw away all Vulkan object
    * wrappers it holds and repeat Vulkan initialization from the creation of a new
    * logical device.
    *
