@@ -28,6 +28,7 @@ namespace Krust
 namespace Internal
 { 
 
+/// @todo Consider making this sAllocator a struct rather than a pointer to one elsewhere to avoid an indirection.
 VkAllocationCallbacks* sAllocator = nullptr;
 
 }
