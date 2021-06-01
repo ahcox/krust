@@ -70,13 +70,14 @@ VkBool32 DebugCallback(
 
   if(flags & VK_DEBUG_REPORT_ERROR_BIT_EXT)
   {
-    ++error_count; //< Just a line to set a breakpoint on to watch errors.
+    ++error_count; //< Just a line to set a breakpoint on to watch errors. When tracking down the call-site for validation error logs, break here.
   }
   if(flags & VK_DEBUG_REPORT_WARNING_BIT_EXT)
   {
     ++warning_count; //< Just a line to set a breakpoint on to watch warnings.
   }
 
+  // Log messages printed here will start with VK_ERROR, VK_DEBUG, etc.
   KRUST_DEBUG_LOG_WARN << "<< VK_" << MessageFlagsToLevel(flags) << " [" << layerPrefix << "] " << message << ". [code = " << code << ", location = " << location << "] >>" << endlog;
   // Return 0 to allow the system to keep going (may fail disasterously anyway):
   return 0;
