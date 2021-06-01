@@ -663,9 +663,7 @@ bool Application::InitDefaultSwapchain()
 
   // Make a semaphore to control the swapchain:
   KRUST_ASSERT1(!mSwapChainSemaphore, "Semaphore already initialised.");
-  // Start signaled since the first time we wait, there will be no framebuffer
-  // in flight for WSI signal on:
-  auto semaphoreCreateInfo = SemaphoreCreateInfo(VK_FENCE_CREATE_SIGNALED_BIT);
+  auto semaphoreCreateInfo = SemaphoreCreateInfo(0);
 
   VkResult semaphoreResult = vkCreateSemaphore(*mGpuInterface, &semaphoreCreateInfo, Krust::GetAllocationCallbacks(), &mSwapChainSemaphore);
   if(semaphoreResult != VK_SUCCESS)
