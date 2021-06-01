@@ -85,8 +85,9 @@ VkImageView CreateDepthImageView(VkDevice device, VkImage image, const VkFormat 
 
 /**
  * @brief Examines the memory types offered by the device, looking for one which
- * is both one of the input candidate types and has the desired property
+ * is both one of the input candidate types and has the desired properties
  * associated with it.
+ * The type may also have other properties.
  * @param[in] memoryProperties The device memory properties that should be
  *            examined.
  * @param[in] candidateTypeBitset A set of bits: if bit x of this is set then
@@ -98,7 +99,26 @@ VkImageView CreateDepthImageView(VkDevice device, VkImage image, const VkFormat 
  *
  */
 ConditionalValue<uint32_t>
-  FindMemoryTypeWithProperties(const VkPhysicalDeviceMemoryProperties& memoryProperties, uint32_t candidateTypeBitset, VkMemoryPropertyFlags properties);
+FindFirstMemoryTypeWithProperties(const VkPhysicalDeviceMemoryProperties& memoryProperties, uint32_t candidateTypeBitset, VkMemoryPropertyFlags properties);
+
+/**
+ * @brief Examines the memory types offered by the device, looking for one which
+ * is both one of the input candidate types and has exactly the desired properties
+ * associated with it.
+ * The type will not have any other properties.
+ * @param[in] memoryProperties The device memory properties that should be
+ *            examined.
+ * @param[in] candidateTypeBitset A set of bits: if bit x of this is set then
+ *            type x in the device's list of memory types can be considered.
+ * @param[in] properties A set of VkMemoryPropertyFlagBits memory properties to
+ *            be searched for. E.g. `VK_MEMORY_PROPERTY_DEVICE_ONLY`.
+ * @returns A pair of the index of a compatible memory type and true if one
+ *          could be found, or a pair of an undefined value and false otherwise.
+ *
+ */
+ConditionalValue<uint32_t>
+FindMemoryTypeMatchingProperties(const VkPhysicalDeviceMemoryProperties& memoryProperties, uint32_t candidateTypeBitset, VkMemoryPropertyFlags properties);
+
 
 /**
  * @brief Determines whether format argument is usable for a depth buffer.
@@ -153,6 +173,11 @@ bool BuildFramebuffersForSwapChain(
 * passed in.
 */
 bool FindExtension(const std::vector<VkExtensionProperties>& extensions, const char* const extension);
+
+/**
+ * @brief Search for a layer name among the layer property structs passed in.
+ */
+bool FindLayer(const std::vector<VkLayerProperties> &layers, const char *const layer);
 
 /**
 * @brief Converts VkDebugReportFlagsEXT with single bit set to all-caps string

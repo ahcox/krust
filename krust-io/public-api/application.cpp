@@ -217,9 +217,29 @@ bool Application::InitVulkanInstance()
     extensionNames.push_back(VK_EXT_DEBUG_REPORT_EXTENSION_NAME);
   }
 
+  std::vector<const char*> layerNames;
+  {
+    auto availableLayers { EnumerateInstanceLayerProperties() };
+    KRUST_LOG_INFO << "Number of instance layers: " << availableLayers.size() << endlog;
+    for(const auto& layer : availableLayers )
+    {
+      KRUST_LOG_INFO << "\tLayer: " << layer.layerName <<
+        "\n\t  spec version: " << layer.specVersion << 
+        "\n\t  impl version: " << layer.implementationVersion <<
+        "\n\t  description: \"" << layer.description << "\"" << endlog;
+
+    }
+
+    if(FindLayer(availableLayers, "VK_LAYER_KHRONOS_validation")){
+      layerNames.push_back("VK_LAYER_KHRONOS_validation");
+    }
+  }
+
+
+
   // Setup the struct telling Vulkan about layers, extensions, and memory allocation
   // callbacks:
-  auto instanceInfo = InstanceCreateInfo(0, &appInfo, 0, 0,
+  auto instanceInfo = InstanceCreateInfo(0, &appInfo, layerNames.size(), &layerNames[0],
     static_cast<uint32_t>(extensionNames.size()), &extensionNames[0]);
 
   KRUST_COMPILE_ASSERT(!KRUST_GCC_64BIT_X86_BUILD || sizeof(VkInstanceCreateInfo) == 64U, "VkInstanceCreateInfo size changed: recheck init code.");
@@ -493,7 +513,7 @@ bool Application::InitDepthBuffer(const VkFormat depthFormat)
   KRUST_LOG_INFO << "Depth buffer memory requirements: (Size = " << depthMemoryRequirements.size << ", Alignment = " << depthMemoryRequirements.alignment << ", Flags = " << depthMemoryRequirements.memoryTypeBits << ")." << endlog;
 
   // Work out which memory type we can use:
-  ConditionalValue<uint32_t> memoryType = FindMemoryTypeWithProperties(mGpuMemoryProperties, depthMemoryRequirements.memoryTypeBits, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+  ConditionalValue<uint32_t> memoryType = FindFirstMemoryTypeWithProperties(mGpuMemoryProperties, depthMemoryRequirements.memoryTypeBits, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
   if(!memoryType)
   {
     KRUST_LOG_ERROR << "No memory suitable for depth buffer." << endlog;

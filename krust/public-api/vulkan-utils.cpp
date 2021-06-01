@@ -88,7 +88,7 @@ VkImageView CreateDepthImageView(VkDevice device, VkImage image, const VkFormat 
 }
 
 ConditionalValue<uint32_t>
-FindMemoryTypeWithProperties(const VkPhysicalDeviceMemoryProperties& memoryProperties, uint32_t candidateTypeBitset, VkMemoryPropertyFlags properties)
+FindFirstMemoryTypeWithProperties(const VkPhysicalDeviceMemoryProperties& memoryProperties, const uint32_t candidateTypeBitset, const VkMemoryPropertyFlags properties)
 {
   const uint32_t count = std::min(uint32_t(VK_MAX_MEMORY_TYPES), memoryProperties.memoryTypeCount);
   for(uint32_t memoryType = 0; memoryType < count; ++memoryType)
@@ -98,6 +98,26 @@ FindMemoryTypeWithProperties(const VkPhysicalDeviceMemoryProperties& memoryPrope
     {
       // Check whether all the requested properties are set for the memory type:
       if((memoryProperties.memoryTypes[memoryType].propertyFlags & properties) == properties)
+      {
+        return ConditionalValue<uint32_t>(memoryType, true);
+      }
+    }
+  }
+  KRUST_LOG_WARN << "No suitable memory type found with the requested properties (" << properties << ") among the allowed types in the flag set (" << candidateTypeBitset << ")." << endlog;
+  return ConditionalValue<uint32_t>(0, false);
+}
+
+ConditionalValue<uint32_t>
+FindMemoryTypeMatchingProperties(const VkPhysicalDeviceMemoryProperties& memoryProperties, const uint32_t candidateTypeBitset, const VkMemoryPropertyFlags properties)
+{
+  const uint32_t count = std::min(uint32_t(VK_MAX_MEMORY_TYPES), memoryProperties.memoryTypeCount);
+  for(uint32_t memoryType = 0; memoryType < count; ++memoryType)
+  {
+    // Check whether the memory type is in the bitset of allowable options:
+    if(candidateTypeBitset & (1u << memoryType))
+    {
+      // Check whether all the requested properties are set for the memory type:
+      if(memoryProperties.memoryTypes[memoryType].propertyFlags  == properties)
       {
         return ConditionalValue<uint32_t>(memoryType, true);
       }
@@ -618,6 +638,17 @@ bool FindExtension(const std::vector<VkExtensionProperties> &extensions, const c
     }
   }
   KRUST_LOG_WARN << "Failed to find extension \"" << extension << "\"." << endlog;
+  return false;
+}
+
+bool FindLayer(const std::vector<VkLayerProperties> &layers, const char *const layer) {
+  KRUST_ASSERT1(layer, "Name of extension to look up is missing.");
+  for (auto potential : layers) {
+    if (strcmp(layer, potential.layerName) == 0) {
+      return true;
+    }
+  }
+  KRUST_LOG_WARN << "Failed to find layer \"" << layer << "\"." << endlog;
   return false;
 }
 
