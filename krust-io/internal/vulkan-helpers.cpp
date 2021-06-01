@@ -30,6 +30,11 @@
 
 // External includes:
 #include <cstring>
+/// @todo Move and improve this test.
+#if !defined(NDEBUG) && !defined(_WIN64) && !defined(_WIN32)
+#define KRUST_DEBUGGING_ON_LINUX
+#include <csignal>
+#endif
 
 namespace Krust
 {
@@ -71,6 +76,9 @@ VkBool32 DebugCallback(
   if(flags & VK_DEBUG_REPORT_ERROR_BIT_EXT)
   {
     ++error_count; //< Just a line to set a breakpoint on to watch errors. When tracking down the call-site for validation error logs, break here.
+#if defined(KRUST_DEBUGGING_ON_LINUX)
+    raise(SIGTRAP);
+#endif
   }
   if(flags & VK_DEBUG_REPORT_WARNING_BIT_EXT)
   {
