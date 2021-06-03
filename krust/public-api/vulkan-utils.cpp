@@ -71,7 +71,7 @@ VkImageView CreateDepthImageView(VkDevice device, VkImage image, const VkFormat 
     viewInfo.components.g = VK_COMPONENT_SWIZZLE_IDENTITY,
     viewInfo.components.b = VK_COMPONENT_SWIZZLE_IDENTITY,
     viewInfo.components.a = VK_COMPONENT_SWIZZLE_IDENTITY,
-    viewInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT,
+    viewInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_STENCIL_BIT | VK_IMAGE_ASPECT_DEPTH_BIT,
     viewInfo.subresourceRange.baseMipLevel = 0,
     viewInfo.subresourceRange.levelCount = 1,
     viewInfo.subresourceRange.baseArrayLayer = 0,
