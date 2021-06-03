@@ -79,6 +79,8 @@ private:
   VulkanObject& operator=(const VulkanObject&) = delete;
 };
 
+
+
 class Instance;
 /**
 * Shared pointer to automatically manage the lifetime of an Instance object and
@@ -106,6 +108,8 @@ private:
   VkInstance mInstance = VK_NULL_HANDLE;
 };
 
+
+
 class Device;
 using DevicePtr = IntrusivePointer<Device>;
 
@@ -129,6 +133,8 @@ private:
   VkDevice mDevice = VK_NULL_HANDLE;
 };
 
+
+
 class CommandPool;
 using CommandPoolPtr = IntrusivePointer<CommandPool>;
 
@@ -149,6 +155,8 @@ private:
   /// The raw Vulkan CommandPool handle.
   VkCommandPool mCommandPool = VK_NULL_HANDLE;
 };
+
+
 
 class CommandBuffer;
 using CommandBufferPtr = IntrusivePointer<CommandBuffer>;
@@ -184,6 +192,8 @@ private:
   VkCommandBuffer mCommandBuffer = VK_NULL_HANDLE;
 };
 
+
+
 class DeviceMemory;
 using DeviceMemoryPtr = IntrusivePointer<DeviceMemory>;
 
@@ -205,6 +215,33 @@ private:
   DevicePtr mDevice;
   VkDeviceMemory mDeviceMemory = VK_NULL_HANDLE;
 };
+
+
+
+class Fence;
+using FencePtr = IntrusivePointer<Fence>;
+
+/**
+ * @brief A handle to a fence.
+ *
+ * Owns a VkFence object and allows its lifetime to be managed in RAII
+ * fashion with shared pointers.
+ */
+class Fence : public VulkanObject
+{
+  Fence(Device& device, const VkFenceCreateFlags flags);
+public:
+  static FencePtr New(Device& device, const VkFenceCreateFlags flags);
+  ~Fence();
+  operator VkFence() const { return mFence; }
+  const VkFence* GetVkFenceAddress() const { return &mFence; }
+  VkFence* GetVkFenceAddress() { return &mFence; }
+private:
+  DevicePtr mDevice;
+  VkFence mFence = VK_NULL_HANDLE;
+};
+
+
 
 class Image;
 using ImagePtr = IntrusivePointer<Image>;

@@ -107,7 +107,8 @@ CommandPool::~CommandPool()
   vkDestroyCommandPool(*mDevice, mCommandPool, Internal::sAllocator);
 }
 
-CommandBuffer::CommandBuffer(CommandPool& pool, const VkCommandBufferLevel level)
+CommandBuffer::CommandBuffer(CommandPool& pool, const VkCommandBufferLevel level) :
+  mPool(&pool)
 {
   auto info = CommandBufferAllocateInfo(pool, level, 1u);
   const VkResult result = vkAllocateCommandBuffers(pool.GetDevice(), &info, &mCommandBuffer);
@@ -168,6 +169,8 @@ void CommandBuffer::KeepAlive(VulkanObject & needed)
   reinterpret_cast<KeepAliveSet*>(mKeepAlives)->Add(needed);
 }
 
+
+
 DeviceMemory::DeviceMemory(Device & device, const VkMemoryAllocateInfo & info) :
   mDevice(&device)
 {
@@ -189,6 +192,32 @@ DeviceMemory::~DeviceMemory()
 {
   vkFreeMemory(*mDevice, mDeviceMemory, Internal::sAllocator);
 }
+
+
+
+Fence::Fence(Device& device, const VkFenceCreateFlags flags) :
+  mDevice(&device)
+{
+  const auto createInfo = FenceCreateInfo(flags);
+  const VkResult result = vkCreateFence(device, &createInfo, Internal::sAllocator, &mFence);
+  if (result != VK_SUCCESS)
+  {
+    mFence = VK_NULL_HANDLE;
+    auto & threadBase = ThreadBase::Get();
+    threadBase.GetErrorPolicy().VulkanError("vkCreateFence", result, nullptr, __FUNCTION__, __FILE__, __LINE__);
+  }
+}
+
+FencePtr Fence::New(Device& device, const VkFenceCreateFlags flags)
+{
+  return new Fence {device, flags};
+}
+
+Fence::~Fence()
+{
+  vkDestroyFence(*mDevice, mFence, Internal::sAllocator);
+}
+
 
 Image::Image(Device & device, const VkImageCreateInfo & createInfo) :
   mDevice(device)
