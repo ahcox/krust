@@ -58,7 +58,7 @@ namespace Krust
  * @oaram[in] allocator If you need to control CPU/host memory allocation of
  * Vulkan data structures, you can pass in an allocator here. This must be
  * thread-safe if you use Krust from multiple threads. For instance if you
- * generate one-shot command buffers on worker threads, sugmit them on a submit
+ * generate one-shot command buffers on worker threads, submit them on a submit
  * thread and let Krust's automatic lifetime management clean them up when they
  * complete on the GPU, the cleanup will happen on the 
  * @returns True if Krust was initialised, else false.
