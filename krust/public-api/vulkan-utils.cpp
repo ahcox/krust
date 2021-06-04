@@ -28,6 +28,7 @@
 #include "krust/public-api/logging.h"
 #include "krust/public-api/krust-assertions.h"
 #include "krust/public-api/vulkan_struct_init.h"
+#include "krust/public-api/vulkan-objects.h"
 #include "krust/internal/krust-internal.h"
 
 // External includes:
@@ -86,6 +87,70 @@ VkImageView CreateDepthImageView(VkDevice device, VkImage image, const VkFormat 
   }
   return imageView;
 }
+
+
+VkResult ApplyImageBarrierBlocking(
+  Krust::Device& device, VkImage image, VkQueue queue, Krust::CommandPool& pool,
+  const VkImageMemoryBarrier& barrier)
+{
+  auto commandBuffer = CommandBuffer::New(pool, VK_COMMAND_BUFFER_LEVEL_PRIMARY);
+
+  auto commandBufferInheritanceInfo = CommandBufferInheritanceInfo();
+    commandBufferInheritanceInfo.renderPass = nullptr,
+    commandBufferInheritanceInfo.subpass = 0,
+    commandBufferInheritanceInfo.framebuffer = nullptr,
+    commandBufferInheritanceInfo.occlusionQueryEnable = VK_FALSE,
+    commandBufferInheritanceInfo.queryFlags = 0,
+    commandBufferInheritanceInfo.pipelineStatistics = 0;
+
+  auto bufferBeginInfo = CommandBufferBeginInfo(
+    VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT,
+    &commandBufferInheritanceInfo);
+
+    const VkResult beginBufferResult = vkBeginCommandBuffer(
+      *commandBuffer,
+      &bufferBeginInfo);
+
+    if(VK_SUCCESS != beginBufferResult)
+    {
+      KRUST_LOG_ERROR << "Failed to begin command buffer. Error: " << beginBufferResult << Krust::endlog;
+      return beginBufferResult;
+    }
+
+    vkCmdPipelineBarrier(
+      *commandBuffer,
+      VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
+      VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
+      0, // VkDependencyFlags
+      0, nullptr,
+      0, nullptr,
+      1, &barrier);
+
+    VK_CALL_RET_RES(vkEndCommandBuffer, *commandBuffer);
+
+    // Submit the buffer and then wait for it to complete:
+
+    constexpr VkPipelineStageFlags pipelineFlags = VK_PIPELINE_STAGE_ALL_COMMANDS_BIT;
+    auto submitInfo = SubmitInfo(
+      0, nullptr,
+      &pipelineFlags,
+      1, commandBuffer->GetVkCommandBufferAddress(),
+      0, nullptr);
+
+    // Execute command buffer on main queue:
+    FencePtr fence {Fence::New(device, 0)};
+    VK_CALL(vkQueueSubmit, queue, 1, &submitInfo, *fence);
+    const VkResult fenceWaitResult = vkWaitForFences(device, 1, fence->GetVkFenceAddress(), true, 1000000000); // Wait one second.
+    if(VK_SUCCESS != fenceWaitResult)
+    {
+      KRUST_LOG_ERROR << "Wait for queue submit of image memory barrier did not succeed: " << fenceWaitResult << Krust::endlog;
+      return fenceWaitResult;
+    }
+
+  return VK_SUCCESS;
+}
+
+
 
 ConditionalValue<uint32_t>
 FindFirstMemoryTypeWithProperties(const VkPhysicalDeviceMemoryProperties& memoryProperties, const uint32_t candidateTypeBitset, const VkMemoryPropertyFlags properties)

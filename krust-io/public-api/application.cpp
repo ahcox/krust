@@ -537,72 +537,22 @@ bool Application::InitDepthBuffer(const VkFormat depthFormat)
   mDepthBufferMemory = depthMemory;
 
   // Transition the depth buffer to the ideal layout:
+  auto postPresentImageMemoryBarrier = ImageMemoryBarrier();
+  postPresentImageMemoryBarrier.srcAccessMask = VK_ACCESS_MEMORY_READ_BIT | VK_ACCESS_MEMORY_WRITE_BIT,
+  postPresentImageMemoryBarrier.dstAccessMask = VK_ACCESS_MEMORY_READ_BIT | VK_ACCESS_MEMORY_WRITE_BIT,
+  postPresentImageMemoryBarrier.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED,
+  postPresentImageMemoryBarrier.newLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
+  postPresentImageMemoryBarrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
+  postPresentImageMemoryBarrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
+  postPresentImageMemoryBarrier.image = *mDepthBufferImage,
+  postPresentImageMemoryBarrier.subresourceRange = {VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT, 0, 1, 0, 1};
 
-  auto commandBuffer = CommandBuffer::New(*mCommandPool, VK_COMMAND_BUFFER_LEVEL_PRIMARY);
-
-  auto commandBufferInheritanceInfo = CommandBufferInheritanceInfo();
-    commandBufferInheritanceInfo.renderPass = nullptr,
-    commandBufferInheritanceInfo.subpass = 0,
-    commandBufferInheritanceInfo.framebuffer = nullptr,
-    commandBufferInheritanceInfo.occlusionQueryEnable = VK_FALSE,
-    commandBufferInheritanceInfo.queryFlags = 0,
-    commandBufferInheritanceInfo.pipelineStatistics = 0;
-
-  auto bufferBeginInfo = CommandBufferBeginInfo(
-    VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT,
-    &commandBufferInheritanceInfo);
-
-    const VkResult beginBufferResult = vkBeginCommandBuffer(
-      *commandBuffer,
-      &bufferBeginInfo);
-
-    if(VK_SUCCESS != beginBufferResult)
-    {
-      KRUST_LOG_ERROR << "Failed to begin command buffer. Error: " << beginBufferResult << Krust::endlog;
-      return false;
-    }
-
-    // Fix the depth buffer up using an image memory barrier:
-    auto postPresentImageMemoryBarrier = ImageMemoryBarrier();
-      postPresentImageMemoryBarrier.srcAccessMask = 0,
-      postPresentImageMemoryBarrier.dstAccessMask = VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT,
-      postPresentImageMemoryBarrier.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED,
-      postPresentImageMemoryBarrier.newLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
-      postPresentImageMemoryBarrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
-      postPresentImageMemoryBarrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
-      postPresentImageMemoryBarrier.image = *mDepthBufferImage,
-      postPresentImageMemoryBarrier.subresourceRange = { VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT, 0, 1, 0, 1 };
-
-    vkCmdPipelineBarrier(
-      *commandBuffer,
-      VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,
-      VK_PIPELINE_STAGE_ALL_GRAPHICS_BIT,
-      0, // VkDependencyFlags
-      0, nullptr,
-      0, nullptr,
-      1, &postPresentImageMemoryBarrier);
-
-    VK_CALL_RET(vkEndCommandBuffer, *commandBuffer);
-
-    // Submit the buffer and then wait for it to complete:
-
-    constexpr VkPipelineStageFlags pipelineFlags = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
-    auto submitInfo = SubmitInfo(
-      0, nullptr,
-      &pipelineFlags,
-      1, commandBuffer->GetVkCommandBufferAddress(),
-      0, nullptr);
-
-    // Execute command buffer on main queue:
-    FencePtr fence {Fence::New(*mGpuInterface, 0)}; // ----------------------------------------------------------------------------------- BOOKMARK
-    VK_CALL(vkQueueSubmit, *mDefaultGraphicsQueue, 1, &submitInfo, *fence);
-    const VkResult fenceWaitResult = vkWaitForFences(*mGpuInterface, 1, fence->GetVkFenceAddress(), true, 10000000000); // Wait ten seconds.
-    if(VK_SUCCESS != fenceWaitResult)
-    {
-      KRUST_LOG_ERROR << "Wait for queue submit of depth buffer memory barrier did not succeed: " << fenceWaitResult << Krust::endlog;
-      return false;
-    }
-
+  const auto depthLayoutResult = ApplyImageBarrierBlocking(*mGpuInterface, *mDepthBufferImage, mDefaultQueue, *mCommandPool, postPresentImageMemoryBarrier);
+  if (VK_SUCCESS != depthLayoutResult)
+  {
+    KRUST_LOG_ERROR << "Failed to change depth image layout: " << ResultToString(depthLayoutResult) << Krust::endlog;
+    return false;
+  }
   return true;
 }
 

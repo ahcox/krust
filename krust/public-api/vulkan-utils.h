@@ -1,7 +1,7 @@
 #ifndef KRUST_COMMON_PUBLIC_API_VULKAN_UTILS_H
 #define KRUST_COMMON_PUBLIC_API_VULKAN_UTILS_H
 
-// Copyright (c) 2016 Andrew Helge Cox
+// Copyright (c) 2016-2021 Andrew Helge Cox
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -25,11 +25,15 @@
  * @file Helpers and utilities for the Vulkan API.
  */
 
+// Internal includes:
+#include "krust/public-api/vulkan-objects.h"
+
 // External includes:
 #include "conditional-value.h"
 #include <vulkan/vulkan.h>
 #include <stdint.h>
 #include <vector>
+
 
 /**
  * @brief A little wrapper to make sure errors from Vulkan calls are logged.
@@ -60,6 +64,20 @@ if(FUNC##result != VK_SUCCESS) { \
 }
 
 /**
+ * @copydoc VK_CALL
+ *
+ * Returns from embedding function with VkResult from called API function.
+ */
+#define VK_CALL_RET_RES(FUNC, ...) \
+{ \
+const VkResult FUNC##result = FUNC( __VA_ARGS__ ); \
+if(FUNC##result != VK_SUCCESS) { \
+  KRUST_LOG_ERROR << "Call to " #FUNC " failed with error: " << FUNC##result << Krust::endlog; \
+  return FUNC##result; \
+} \
+}
+
+/**
  * @brief CPU memory allocator to be used by Vulkan implementations
  * if no better one is passed to Krust::InitKrust().
  * @todo Move KRUST_DEFAULT_ALLOCATION_CALLBACKS to non-public.
@@ -82,6 +100,14 @@ VkImageCreateInfo CreateDepthImageInfo(uint32_t presentQueueFamily, VkFormat dep
  * The caller must destroy the view eventually.
  */
 VkImageView CreateDepthImageView(VkDevice device, VkImage image, const VkFormat format);
+
+/** @brief Runs a memory barrier on the image passed in and waits for it to
+ *  complete.
+ * 
+ * This is a slow function for use a few times during startup, not something to
+ * call inside a render loop per-frame.
+ */
+VkResult ApplyImageBarrierBlocking(Device& device, VkImage image, VkQueue queue, CommandPool& pool, const VkImageMemoryBarrier& barrier);
 
 /**
  * @brief Examines the memory types offered by the device, looking for one which
