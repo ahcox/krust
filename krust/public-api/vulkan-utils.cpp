@@ -304,7 +304,7 @@ const char* SurfaceTransformToString(const VkSurfaceTransformFlagsKHR transform)
 }
 
 bool BuildFramebuffersForSwapChain(
-  const VkDevice device,
+  Krust::Device& device,
   const std::vector<VkImageView>& swapChainImageViews,
   const VkImageView depthBufferView,
   const uint32_t surfaceWidth, const uint32_t surfaceHeight,
@@ -312,7 +312,8 @@ bool BuildFramebuffersForSwapChain(
   const VkFormat depthFormat,
   const VkSampleCountFlagBits colorSamples,
   std::vector<VkRenderPass>& outRenderPasses,
-  std::vector<VkFramebuffer>& outSwapChainFramebuffers)
+  std::vector<VkFramebuffer>& outSwapChainFramebuffers,
+  std::vector<FencePtr>& outSwapChainFences)
 {
   // Create RenderPass per swap chain image:
   VkAttachmentDescription attachments[2];
@@ -396,11 +397,17 @@ bool BuildFramebuffersForSwapChain(
     framebufferInfo.height = surfaceHeight,
     framebufferInfo.layers = 1;
 
-  for(unsigned i = 0; i < swapChainImageViews.size(); ++i)
+  for(unsigned i = 0; i < outSwapChainFramebuffers.size(); ++i)
   {
     framebufferInfo.renderPass = outRenderPasses[i];
     colorDepthViews[0] = swapChainImageViews[i]; // Reset color buffer, but share depth.
     VK_CALL_RET(vkCreateFramebuffer, device, &framebufferInfo, Krust::Internal::sAllocator, &outSwapChainFramebuffers[i]);
+  }
+
+  outSwapChainFences.resize(swapChainImageViews.size());
+  for(unsigned i = 0; i < outSwapChainFences.size(); ++i)
+  {
+    outSwapChainFences[i] = Fence::New(device, VK_FENCE_CREATE_SIGNALED_BIT);
   }
 
   return true;

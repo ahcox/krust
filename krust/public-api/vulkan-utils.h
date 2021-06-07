@@ -184,7 +184,7 @@ const char* SurfaceTransformToString(const VkSurfaceTransformFlagsKHR transform)
  * configuration using a single shared depth buffer.
  */
 bool BuildFramebuffersForSwapChain(
-  const VkDevice device,
+  Krust::Device& device,
   const std::vector<VkImageView>& swapChainImageViews,
   const VkImageView depthBufferView,
   const uint32_t surfaceWidth, const uint32_t surfaceHeight,
@@ -192,7 +192,8 @@ bool BuildFramebuffersForSwapChain(
   const VkFormat depthFormat,
   const VkSampleCountFlagBits colorSamples,
   std::vector<VkRenderPass>& outRenderPasses,
-  std::vector<VkFramebuffer>& outSwapChainFramebuffers);
+  std::vector<VkFramebuffer>& outSwapChainFramebuffers,
+  std::vector<FencePtr>& outSwapChainFences);
 
 /**
 * @brief Find the named extension in the list of extension property structs

@@ -322,6 +322,9 @@ protected:
   std::vector<VkImageView> mSwapChainImageViews;
   /// FrameBuffers for each image in swapchain:
   std::vector<VkFramebuffer> mSwapChainFramebuffers;
+  /// Fence for each image in swapchain, this is signalled by last queue submit of a frame by apps,
+  /// and waited for at start of frame by them:
+  std::vector<FencePtr> mSwapChainFences;
   /// Command pool for all command buffers:
   CommandPoolPtr mCommandPool = nullptr;
   /// CommandBuffers for each image in swapchain:

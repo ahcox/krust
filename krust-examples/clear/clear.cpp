@@ -61,7 +61,8 @@ public:
       mDepthFormat,
       NUM_SAMPLES,
       mRenderPasses,
-      mSwapChainFramebuffers))
+      mSwapChainFramebuffers,
+      mSwapChainFences))
     {
       return false;
     }
@@ -102,14 +103,21 @@ public:
       auto postPresentImageMemoryBarrier = kr::ImageMemoryBarrier();
         postPresentImageMemoryBarrier.srcAccessMask = 0,
         postPresentImageMemoryBarrier.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
-        postPresentImageMemoryBarrier.oldLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
+        postPresentImageMemoryBarrier.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED, //VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
         postPresentImageMemoryBarrier.newLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
         postPresentImageMemoryBarrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
         postPresentImageMemoryBarrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
         postPresentImageMemoryBarrier.image = framebufferImage,
         postPresentImageMemoryBarrier.subresourceRange = { VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1 };
 
-      vkCmdPipelineBarrier(*commandBuffer, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, 0, 0, nullptr, 0, nullptr, 1, &postPresentImageMemoryBarrier);
+      vkCmdPipelineBarrier(
+        *commandBuffer,
+        VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
+        VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+        0, // VkDependencyFlags
+        0, nullptr,
+        0, nullptr,
+        1, &postPresentImageMemoryBarrier);
 
       VkClearValue clearValues[2];
       clearValues[0].color.float32[0] = 0.9f;
@@ -180,9 +188,19 @@ public:
    */
   virtual void DoDrawFrame()
   {
-    KRUST_LOG_INFO << "   -------------------------- Clear Example draw frame! currImage: " << mCurrentTargetImage << " (handle: " << mSwapChainImages[mCurrentTargetImage] << ")  --------------------------\n";
+    static unsigned frame_no = 0;
+    KRUST_LOG_INFO << "   -------------------------- Clear Example draw frame! currImage: " << mCurrentTargetImage << " (handle: " << mSwapChainImages[mCurrentTargetImage] << "), frame " << frame_no++ << "  --------------------------\n";
 
-    constexpr VkPipelineStageFlags pipelineFlags = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
+    auto submitFence = mSwapChainFences[mCurrentTargetImage];
+    const VkResult fenceWaitResult = vkWaitForFences(*mGpuInterface, 1, submitFence->GetVkFenceAddress(), true, 1000000000); // Wait one second.
+    if(VK_SUCCESS != fenceWaitResult)
+    {
+      KRUST_LOG_ERROR << "Wait for queue submit of main commandbuffer did not succeed: " << fenceWaitResult << Krust::endlog;
+    }
+    vkResetFences(*mGpuInterface, 1, submitFence->GetVkFenceAddress());
+
+    //auto submitFence = kr::Fence::New(*mGpuInterface, 0);
+    constexpr VkPipelineStageFlags pipelineFlags = VK_PIPELINE_STAGE_ALL_COMMANDS_BIT; // VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
     auto submitInfo = kr::SubmitInfo();
       submitInfo.waitSemaphoreCount = 1,
       submitInfo.pWaitSemaphores = &mSwapChainSemaphore,
@@ -195,7 +213,7 @@ public:
 
     KRUST_LOG_DEBUG << "Submitting command buffer " << mCurrentTargetImage << "(" << *(mCommandBuffers[mCurrentTargetImage]) << ")." << Krust::endlog;
     // Execute command buffer on main queue:
-    VK_CALL(vkQueueSubmit, *mDefaultGraphicsQueue, 1, &submitInfo, VK_NULL_HANDLE);
+    VK_CALL(vkQueueSubmit, *mDefaultGraphicsQueue, 1, &submitInfo, *submitFence);
   }
 
   ~ClearApplication()
@@ -212,7 +230,7 @@ int main()
   application.SetName("Clear");
   application.SetVersion(1);
 
-  const int status =  application.Run();
+  const int status =  application.Run(Krust::IO::MainLoopType::Reactive);
 
   KRUST_LOG_INFO << "Exiting cleanly with code " << status << ".\n";
   return status;

@@ -62,7 +62,8 @@ public:
       mDepthFormat,
       NUM_SAMPLES,
       mRenderPasses,
-      mSwapChainFramebuffers))
+      mSwapChainFramebuffers,
+      mSwapChainFences))
     {
       return false;
     }
@@ -99,6 +100,14 @@ public:
   {
     static unsigned frameNumber = 0;
     KRUST_LOG_INFO << "   ------------ Clear Example 2 draw frame! frame: " << frameNumber++ << ". currImage: " << mCurrentTargetImage << ". handle: " << mSwapChainImages[mCurrentTargetImage] << "  ------------\n";
+
+    auto submitFence = mSwapChainFences[mCurrentTargetImage];
+    const VkResult fenceWaitResult = vkWaitForFences(*mGpuInterface, 1, submitFence->GetVkFenceAddress(), true, 1000000000); // Wait one second.
+    if(VK_SUCCESS != fenceWaitResult)
+    {
+      KRUST_LOG_ERROR << "Wait for queue submit of main commandbuffer did not succeed: " << fenceWaitResult << Krust::endlog;
+    }
+    vkResetFences(*mGpuInterface, 1, submitFence->GetVkFenceAddress());
 
     constexpr VkPipelineStageFlags pipelineFlags = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
     auto submitInfo = kr::SubmitInfo(
@@ -199,7 +208,7 @@ public:
 
     // Execute command buffer on main queue:
     KRUST_LOG_DEBUG << "Submitting command buffer " << mCurrentTargetImage << "(" << *(mCommandBuffers[mCurrentTargetImage]) << ")." << Krust::endlog;
-    const VkResult submitResult = vkQueueSubmit(*mDefaultGraphicsQueue, 1, &submitInfo, VK_NULL_HANDLE);
+    const VkResult submitResult = vkQueueSubmit(*mDefaultGraphicsQueue, 1, &submitInfo, *submitFence);
     if(submitResult != VK_SUCCESS)
     {
       KRUST_LOG_ERROR << "Failed to submit command buffer. Result: " << submitResult << Krust::endlog;
