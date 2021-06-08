@@ -146,14 +146,20 @@ public:
     // an image memory barrier:
     auto postPresentImageMemoryBarrier = kr::ImageMemoryBarrier( 0,
       VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
-      VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
+      VK_IMAGE_LAYOUT_PRESENT_SRC_KHR, 
       VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
       VK_QUEUE_FAMILY_IGNORED,
       VK_QUEUE_FAMILY_IGNORED,
       framebufferImage,
       { VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1 });
 
-    vkCmdPipelineBarrier(*commandBuffer, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, 0, 0, nullptr, 0, nullptr, 1, &postPresentImageMemoryBarrier);
+    vkCmdPipelineBarrier(
+      *commandBuffer,
+      VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
+      VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
+       0, 0, nullptr, 0, nullptr,
+      1, &postPresentImageMemoryBarrier
+    );
 
     VkClearValue clearValues[2];
     clearValues[0].color.float32[0] = mClearColor[0];

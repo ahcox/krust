@@ -103,7 +103,7 @@ public:
       auto postPresentImageMemoryBarrier = kr::ImageMemoryBarrier();
         postPresentImageMemoryBarrier.srcAccessMask = 0,
         postPresentImageMemoryBarrier.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
-        postPresentImageMemoryBarrier.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED, //VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
+        postPresentImageMemoryBarrier.oldLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
         postPresentImageMemoryBarrier.newLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
         postPresentImageMemoryBarrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
         postPresentImageMemoryBarrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,

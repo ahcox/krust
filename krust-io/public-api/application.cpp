@@ -648,6 +648,28 @@ bool Application::InitDefaultSwapchain()
   }
   KRUST_LOG_INFO << "Got " << mSwapChainImages.size() << " swapchain images." << endlog;
 
+  // Transition the framebuffer images from undefined layout to one for presentation
+  // so that the first use in a render loop is the same as subsequent uses:
+  for(auto& image : mSwapChainImages)
+  {
+    auto imb = ImageMemoryBarrier();
+    imb.srcAccessMask = VK_ACCESS_MEMORY_READ_BIT | VK_ACCESS_MEMORY_WRITE_BIT,
+    imb.dstAccessMask = VK_ACCESS_MEMORY_READ_BIT | VK_ACCESS_MEMORY_WRITE_BIT,
+    imb.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED,
+    imb.newLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
+    imb.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
+    imb.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
+    imb.image = image,
+    imb.subresourceRange = {VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1};
+
+    const auto depthLayoutResult = ApplyImageBarrierBlocking(*mGpuInterface, image, mDefaultQueue, *mCommandPool, imb);
+    if (VK_SUCCESS != depthLayoutResult)
+    {
+      KRUST_LOG_ERROR << "Failed to change colour framebuffer image layout: " << ResultToString(depthLayoutResult) << " [" __FILE__", " << __LINE__ << "]." << Krust::endlog;
+      return false;
+    }
+  }
+
   // Setup a views for swapchain images so they can be bound to FrameBuffer
   // objects as render targets.
   mSwapChainImageViews.reserve(mSwapChainImages.size());
@@ -730,6 +752,16 @@ void Application::RecordPresentQueueFamilies()
 
 bool Application::DeInit()
 {
+  // Wait for all fences to signal end of frame:
+  for(auto& fence : mSwapChainFences)
+  {
+    const VkResult fenceWaitResult = vkWaitForFences(*mGpuInterface, 1, fence->GetVkFenceAddress(), true, 100000000); // Wait one tenth of a second.
+    if(VK_SUCCESS != fenceWaitResult)
+    {
+      KRUST_LOG_ERROR << "Wait for fences protecting resources in main render loop did not succeed: " << fenceWaitResult << Krust::endlog;
+    }
+  }
+  
   // Give derived application first chance to cleanup:
   DoPreDeInit();
 
@@ -738,11 +770,17 @@ bool Application::DeInit()
   // Eagerly throw away command buffers which may be keeping alive lots of other
   // Vulkan objects:
   mCommandBuffers.clear();
+
+  mSwapChainFences.clear();
   
   if(mSwapChainSemaphore)
   {
     vkDestroySemaphore(*mGpuInterface, mSwapChainSemaphore, Krust::GetAllocationCallbacks());
   }
+
+  for(auto view : mSwapChainImageViews) {
+    vkDestroyImageView(*mGpuInterface, view, Krust::GetAllocationCallbacks());
+  };
 
   // No need to vkDestroyImage() as these images came from the swapchain extension:
   mSwapChainImages.clear();
@@ -756,6 +794,11 @@ bool Application::DeInit()
   mDepthBufferImage.Reset(nullptr);
   
   mDepthBufferMemory.Reset(nullptr);
+
+  for(auto fb : mSwapChainFramebuffers)
+  {
+    vkDestroyFramebuffer(*mGpuInterface, fb, Krust::GetAllocationCallbacks());
+  }
 
   if(mDefaultQueue)
   {
