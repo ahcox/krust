@@ -92,7 +92,7 @@ Application::Application()
 
 }
 
-bool Application::Init()
+bool Application::Init(const VkImageUsageFlags swapchainUsageOverrides)
 {
   // Do platform-specific initialisation:
   if(!mPlatformApplication.Init())
@@ -105,7 +105,7 @@ bool Application::Init()
   mPlatformApplication.WindowCreated(*mDefaultWindow.Get());
 
   // Start up vulkan:
-  if(!InitVulkan())
+  if(!InitVulkan(swapchainUsageOverrides))
   {
     return false;
   }
@@ -118,7 +118,7 @@ bool Application::Init()
   return true;
 }
 
-bool Application::InitVulkan()
+bool Application::InitVulkan(const VkImageUsageFlags swapchainUsageOverrides)
 {
   if(!InitVulkanInstance())
   {
@@ -163,7 +163,7 @@ bool Application::InitVulkan()
   }
 
   // Build a swapchain to get the results of rendering onto a display:
-  if(!InitDefaultSwapchain())
+  if(!InitDefaultSwapchain(swapchainUsageOverrides))
   {
     return false;
   }
@@ -556,7 +556,7 @@ bool Application::InitDepthBuffer(const VkFormat depthFormat)
   return true;
 }
 
-bool Application::InitDefaultSwapchain()
+bool Application::InitDefaultSwapchain(const VkImageUsageFlags swapchainUsageOverrides)
 {
   VkSurfaceCapabilitiesKHR surfaceCapabilities;
   const VkResult result = mGetPhysicalDeviceSurfaceCapabilitiesKHR(mGpu, mSurface, &surfaceCapabilities);
@@ -566,6 +566,12 @@ bool Application::InitDefaultSwapchain()
     return false;
   }
   LogVkSurfaceCapabilitiesKHR(surfaceCapabilities);
+
+  if((surfaceCapabilities.supportedUsageFlags & swapchainUsageOverrides) != swapchainUsageOverrides)
+  {
+    KRUST_LOG_ERROR << "Swapchain images do not support required usage flags (" << swapchainUsageOverrides << ')' << endlog;
+    return false;
+  }
 
   // Choose the fastest non-tearing present mode available:
   auto presentMode = ChooseBestPresentMode(false);
@@ -621,7 +627,7 @@ bool Application::InitDefaultSwapchain()
     swapChainCreateParams.imageColorSpace = mColorspace,
     swapChainCreateParams.imageExtent = extent,
     swapChainCreateParams.imageArrayLayers = 1,
-    swapChainCreateParams.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
+    swapChainCreateParams.imageUsage = swapchainUsageOverrides ? swapchainUsageOverrides : VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
     swapChainCreateParams.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE,
     // We are not sharing the swap chain between queues so there are 0,null:
     swapChainCreateParams.queueFamilyIndexCount = 0,
@@ -662,10 +668,10 @@ bool Application::InitDefaultSwapchain()
     imb.image = image,
     imb.subresourceRange = {VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1};
 
-    const auto depthLayoutResult = ApplyImageBarrierBlocking(*mGpuInterface, image, mDefaultQueue, *mCommandPool, imb);
-    if (VK_SUCCESS != depthLayoutResult)
+    const auto layoutResult = ApplyImageBarrierBlocking(*mGpuInterface, image, mDefaultQueue, *mCommandPool, imb);
+    if (VK_SUCCESS != layoutResult)
     {
-      KRUST_LOG_ERROR << "Failed to change colour framebuffer image layout: " << ResultToString(depthLayoutResult) << " [" __FILE__", " << __LINE__ << "]." << Krust::endlog;
+      KRUST_LOG_ERROR << "Failed to change colour framebuffer image layout: " << ResultToString(layoutResult) << " [" __FILE__", " << __LINE__ << "]." << Krust::endlog;
       return false;
     }
   }
@@ -827,7 +833,7 @@ bool Application::DeInit()
   return true;
 }
 
-int Application::Run(MainLoopType loopType)
+int Application::Run(const MainLoopType loopType, const VkImageUsageFlags swapchainUsageOverrides)
 {
   // Init the Krust core:
   InitKrust(/* Default error policy and allocator for CPU structures. */);
@@ -838,7 +844,7 @@ int Application::Run(MainLoopType loopType)
   // Init ourselves:
   bool initialized = false;
   try {
-    initialized = Init();
+    initialized = Init(swapchainUsageOverrides);
   }
   catch (KrustException& ex)
   {

@@ -112,19 +112,19 @@ public:
    * implementation-specific error code otherwise.
    * @note Only override if the application has special advanced needs.
    */
-  virtual int Run(MainLoopType loopType = MainLoopType::Reactive);
+  virtual int Run(MainLoopType loopType = MainLoopType::Reactive, VkImageUsageFlags swapchainUsageOverrides = 0);
 
   void SetName(const char * const appName) { mAppName = appName; }
   void SetVersion(uint32_t appVersion) { mAppVersion = appVersion; }
 
 protected:
-  virtual bool Init();
+  virtual bool Init(VkImageUsageFlags swapchainUsageOverrides = 0);
   virtual bool DeInit();
 
   /**
    * Do everything to get Vulkan up and running.
    */
-  virtual bool InitVulkan();
+  virtual bool InitVulkan(VkImageUsageFlags swapchainUsageOverrides = 0);
 
   /**
    * Setup layers and extensions and create a Vulkan instance.
@@ -154,7 +154,7 @@ protected:
   /**
    * Make a swapchain to get images displayed in the default window.
    */
-  virtual bool InitDefaultSwapchain();
+  virtual bool InitDefaultSwapchain(VkImageUsageFlags swapchainUsageOverrides = 0);
 
   /**
    * Choose a surface format and colorspace.
