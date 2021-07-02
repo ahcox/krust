@@ -30,7 +30,7 @@ LogChannel log = LogChannel(std::clog);
 LogChannel logDebug = LogChannel(std::clog);
 
 // Per-level channels that will be refactored away:
-LogChannel logErr = LogChannel(std::clog);
+LogChannel logErr = LogChannel(std::cerr);
 LogChannel logWarn = LogChannel(std::clog);
 LogChannel logInfo  = LogChannel(std::clog);
 
