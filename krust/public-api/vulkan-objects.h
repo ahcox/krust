@@ -81,6 +81,7 @@ private:
 
 
 
+// -----------------------------------------------------------------------------
 class Instance;
 /**
 * Shared pointer to automatically manage the lifetime of an Instance object and
@@ -110,6 +111,7 @@ private:
 
 
 
+// -----------------------------------------------------------------------------
 class Device;
 using DevicePtr = IntrusivePointer<Device>;
 
@@ -135,6 +137,7 @@ private:
 
 
 
+// -----------------------------------------------------------------------------
 class CommandPool;
 using CommandPoolPtr = IntrusivePointer<CommandPool>;
 
@@ -158,6 +161,7 @@ private:
 
 
 
+// -----------------------------------------------------------------------------
 class CommandBuffer;
 using CommandBufferPtr = IntrusivePointer<CommandBuffer>;
 
@@ -194,6 +198,131 @@ private:
 
 
 
+// -----------------------------------------------------------------------------
+class ComputePipeline;
+/**
+* Shared pointer to automatically manage the lifetime of a ComputePipeline object and
+* thus the underlying Vulkan API object.
+*/
+using ComputePipelinePtr = IntrusivePointer<ComputePipeline>;
+
+/**
+ * @brief A handle to a Compute Pipeline, wrapped to allow RAII management of its
+ * lifetime.
+ *
+ * @todo Add a factory function which works with pipeline caches.
+ * @todo Consider a single Pipeline object to map directly to VkPipeline.
+ */
+class ComputePipeline : public VulkanObject
+{
+  /** Hidden constructor to prevent users doing naked `new`s.*/
+  ComputePipeline(Device& device, const VkComputePipelineCreateInfo& createInfo);
+public:
+  /** Creation function to return new ComputePipelines via smart pointers. */
+  static ComputePipelinePtr New(Device& device, const VkComputePipelineCreateInfo& createInfo);
+  ~ComputePipeline();
+ /**
+   * Operator to allow the object to be used in raw Vulkan API calls and avoid
+   * having to wrap those too.
+   */
+  operator VkPipeline() const { return mPipeline; }
+private:
+  /// The GPU device this pipeline is tied to. Keep it alive as long as this image is.
+  DevicePtr mDevice;
+  /// The raw vulkan handle.
+  VkPipeline mPipeline = VK_NULL_HANDLE;
+};
+
+
+
+// -----------------------------------------------------------------------------
+class DescriptorPool;
+using DescriptorPoolPtr = IntrusivePointer<DescriptorPool>;
+
+/**
+ * An owner for VkDescriptorPool API objects.
+ * Only handles pools of descriptors which can be individually
+ * freed.
+ */
+class DescriptorPool : public VulkanObject
+{
+  DescriptorPool(Device& device, const VkDescriptorPoolCreateInfo& createInfo);
+public:
+  /// @todo templated std::array<VkDescriptorPoolSize, N> that wraps a call to this and boils away in compilation.
+  static DescriptorPoolPtr New(
+    Device& device,
+    VkDescriptorPoolCreateFlags flags,
+    uint32_t maxSets,
+    uint32_t poolSizeCount,
+    const VkDescriptorPoolSize* pPoolSizes);
+  ~DescriptorPool();
+  Device& GetDevice() const { return *mDevice; }
+  operator VkDescriptorPool() const { return mDescriptorPool; }
+private:
+  /// The GPU device this DescriptorPool is tied to. Keep it alive as long as this DescriptorPool is.
+  DevicePtr mDevice = nullptr;
+  /// The raw Vulkan DescriptorPool handle.
+  VkDescriptorPool mDescriptorPool = VK_NULL_HANDLE;
+};
+
+
+
+// -----------------------------------------------------------------------------
+class DescriptorSetLayout;
+using DescriptorSetLayoutPtr = IntrusivePointer<DescriptorSetLayout>;
+
+/**
+ * @brief A handle to a descriptor set layout object.
+ *
+ */
+class DescriptorSetLayout : public VulkanObject
+{
+  DescriptorSetLayout(Device& device, const VkDescriptorSetLayoutCreateInfo& createInfo);
+public:
+  static DescriptorSetLayoutPtr New(Device& device, VkDescriptorSetLayoutCreateFlags flags,  uint32_t bindingCount,  const VkDescriptorSetLayoutBinding* pBindings);
+  ~DescriptorSetLayout();
+  operator VkDescriptorSetLayout() const { return mDescriptorSetLayout; }
+  const VkDescriptorSetLayout* GetDescriptorSetLayoutAddress() const { return &mDescriptorSetLayout; }
+  VkDescriptorSetLayout*       GetDescriptorSetLayoutAddress()       { return &mDescriptorSetLayout; }
+private:
+  DevicePtr mDevice;
+  VkDescriptorSetLayout mDescriptorSetLayout = VK_NULL_HANDLE;
+};
+
+
+
+// -----------------------------------------------------------------------------
+class DescriptorSet;
+using DescriptorSetPtr = IntrusivePointer<DescriptorSet>;
+
+/**
+ * An owner for VkDescriptorSet API objects.
+ */
+class DescriptorSet : public VulkanObject
+{
+  //DescriptorSet(Device& device, const VkDescriptorSetAllocateInfo& allocateInfo);
+  DescriptorSet(DescriptorPool& pool, const VkDescriptorSetAllocateInfo& allocateInfo);
+public:
+  /// Allocate a single descriptor set.
+  static DescriptorSetPtr Allocate(
+    DescriptorPool& pool,
+    DescriptorSetLayout& setLayout
+  );
+  ~DescriptorSet();
+  DescriptorPool& GetPool() const { return *mPool; }
+  Device& GetDevice() const { return mPool->GetDevice(); }
+  operator VkDescriptorSet() const { return mDescriptorSet; }
+  const VkDescriptorSet* GetHandleAddress() const { return &mDescriptorSet; }
+private:
+  /// The pool this DescriptorSet is allocated from. Keep it alive as long as this DescriptorSet is.
+  DescriptorPoolPtr mPool = nullptr;
+  /// The raw Vulkan DescriptorSet handle.
+  VkDescriptorSet mDescriptorSet = VK_NULL_HANDLE;
+};
+
+
+
+// -----------------------------------------------------------------------------
 class DeviceMemory;
 using DeviceMemoryPtr = IntrusivePointer<DeviceMemory>;
 
@@ -218,29 +347,7 @@ private:
 
 
 
-class DescriptorSetLayout;
-using DescriptorSetLayoutPtr = IntrusivePointer<DescriptorSetLayout>;
-
-/**
- * @brief A handle to a descriptor set layout object.
- *
- */
-class DescriptorSetLayout : public VulkanObject
-{
-  DescriptorSetLayout(Device& device, const VkDescriptorSetLayoutCreateInfo& createInfo);
-public:
-  static DescriptorSetLayoutPtr New(Device& device, VkDescriptorSetLayoutCreateFlags flags,  uint32_t bindingCount,  const VkDescriptorSetLayoutBinding* pBindings);
-  ~DescriptorSetLayout();
-  operator VkDescriptorSetLayout() const { return mDescriptorSetLayout; }
-  const VkDescriptorSetLayout* GetDescriptorSetLayoutAddress() const { return &mDescriptorSetLayout; }
-  VkDescriptorSetLayout*       GetDescriptorSetLayoutAddress()       { return &mDescriptorSetLayout; }
-private:
-  DevicePtr mDevice;
-  VkDescriptorSetLayout mDescriptorSetLayout = VK_NULL_HANDLE;
-};
-
-
-
+// -----------------------------------------------------------------------------
 class Fence;
 using FencePtr = IntrusivePointer<Fence>;
 
@@ -266,6 +373,7 @@ private:
 
 
 
+// -----------------------------------------------------------------------------
 class Image;
 using ImagePtr = IntrusivePointer<Image>;
 
@@ -306,6 +414,8 @@ private:
 };
 
 
+
+// -----------------------------------------------------------------------------
 class ImageView;
 using ImageViewPtr = IntrusivePointer<ImageView>;
 
@@ -342,6 +452,7 @@ private:
 
 
 
+// -----------------------------------------------------------------------------
 class PipelineLayout;
 using PipelineLayoutPtr = IntrusivePointer<PipelineLayout>;
 
@@ -375,6 +486,7 @@ private:
 
 
 
+// -----------------------------------------------------------------------------
 class ShaderModule;
 using ShaderModulePtr = IntrusivePointer<ShaderModule>;
 /// A bundle of SPIR-V static code.
@@ -405,103 +517,6 @@ private:
   DevicePtr mDevice;
   /// The raw Vulkan ShaderModule handle.
   VkShaderModule mShaderModule = VK_NULL_HANDLE;
-};
-
-
-
-class ComputePipeline;
-/**
-* Shared pointer to automatically manage the lifetime of a ComputePipeline object and
-* thus the underlying Vulkan API object.
-*/
-using ComputePipelinePtr = IntrusivePointer<ComputePipeline>;
-
-/**
- * @brief A handle to a Compute Pipeline, wrapped to allow RAII management of its
- * lifetime.
- *
- * @todo Add a factory function which works with pipeline caches.
- * @todo Consider a single Pipeline object to map directly to VkPipeline.
- */
-class ComputePipeline : public VulkanObject
-{
-  /** Hidden constructor to prevent users doing naked `new`s.*/
-  ComputePipeline(Device& device, const VkComputePipelineCreateInfo& createInfo);
-public:
-  /** Creation function to return new ComputePipelines via smart pointers. */
-  static ComputePipelinePtr New(Device& device, const VkComputePipelineCreateInfo& createInfo);
-  ~ComputePipeline();
- /**
-   * Operator to allow the object to be used in raw Vulkan API calls and avoid
-   * having to wrap those too.
-   */
-  operator VkPipeline() const { return mPipeline; }
-private:
-  /// The GPU device this pipeline is tied to. Keep it alive as long as this image is.
-  DevicePtr mDevice;
-  /// The raw vulkan handle.
-  VkPipeline mPipeline = VK_NULL_HANDLE;
-};
-
-
-
-class DescriptorPool;
-using DescriptorPoolPtr = IntrusivePointer<DescriptorPool>;
-
-/**
- * An owner for VkDescriptorPool API objects.
- * Only handles pools of descriptors which can be individually
- * freed.
- */
-class DescriptorPool : public VulkanObject
-{
-  DescriptorPool(Device& device, const VkDescriptorPoolCreateInfo& createInfo);
-public:
-  /// @todo templated std::array<VkDescriptorPoolSize, N> that wraps a call to this and boils away in compilation.
-  static DescriptorPoolPtr New(
-    Device& device,
-    VkDescriptorPoolCreateFlags flags,
-    uint32_t maxSets,
-    uint32_t poolSizeCount,
-    const VkDescriptorPoolSize* pPoolSizes);
-  ~DescriptorPool();
-  Device& GetDevice() const { return *mDevice; }
-  operator VkDescriptorPool() const { return mDescriptorPool; }
-private:
-  /// The GPU device this DescriptorPool is tied to. Keep it alive as long as this DescriptorPool is.
-  DevicePtr mDevice = nullptr;
-  /// The raw Vulkan DescriptorPool handle.
-  VkDescriptorPool mDescriptorPool = VK_NULL_HANDLE;
-};
-
-
-
-class DescriptorSet;
-using DescriptorSetPtr = IntrusivePointer<DescriptorSet>;
-
-/**
- * An owner for VkDescriptorSet API objects.
- */
-class DescriptorSet : public VulkanObject
-{
-  //DescriptorSet(Device& device, const VkDescriptorSetAllocateInfo& allocateInfo);
-  DescriptorSet(DescriptorPool& pool, const VkDescriptorSetAllocateInfo& allocateInfo);
-public:
-  /// Allocate a single descriptor set.
-  static DescriptorSetPtr Allocate(
-    DescriptorPool& pool,
-    DescriptorSetLayout& setLayout
-  );
-  ~DescriptorSet();
-  DescriptorPool& GetPool() const { return *mPool; }
-  Device& GetDevice() const { return mPool->GetDevice(); }
-  operator VkDescriptorSet() const { return mDescriptorSet; }
-  const VkDescriptorSet* GetHandleAddress() const { return &mDescriptorSet; }
-private:
-  /// The pool this DescriptorSet is allocated from. Keep it alive as long as this DescriptorSet is.
-  DescriptorPoolPtr mPool = nullptr;
-  /// The raw Vulkan DescriptorSet handle.
-  VkDescriptorSet mDescriptorSet = VK_NULL_HANDLE;
 };
 
 ///@}

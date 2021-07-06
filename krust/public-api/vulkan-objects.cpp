@@ -36,77 +36,8 @@ namespace Krust
 /// Max size for a temporary buffer on the stack (over this and we do a temp heap alloc).
 constexpr unsigned MAX_STACK_BUFFER_BYTES = 4096U;
 
-Instance::Instance(const VkInstanceCreateInfo & createInfo)
-{
-  auto & threadBase = ThreadBase::Get();
-  const VkResult result = vkCreateInstance(&createInfo, Internal::sAllocator, &mInstance);
-  if (result != VK_SUCCESS)
-  {
-    mInstance = VK_NULL_HANDLE;
-    threadBase.GetErrorPolicy().VulkanError("vkCreateInstance", result, nullptr, __FUNCTION__, __FILE__, __LINE__);
-  }
-}
 
-InstancePtr Instance::New(const VkInstanceCreateInfo & createInfo)
-{
-  return new Instance { createInfo };
-}
-
-Instance::~Instance()
-{
-  vkDestroyInstance(mInstance, Internal::sAllocator);
-}
-
-Device::Device(Instance & instance, VkPhysicalDevice physicalDevice, const VkDeviceCreateInfo & createInfo) :
-  mInstance(instance)
-{
-  KRUST_ASSERT1(instance != VK_NULL_HANDLE, "Invalid instance.");
-  KRUST_ASSERT1(physicalDevice != VK_NULL_HANDLE, "Invalid physical device.");
-
-  mPhysicalDevice = physicalDevice;
-  auto & threadBase = ThreadBase::Get();
-  const VkResult result = vkCreateDevice(physicalDevice, &createInfo, Internal::sAllocator, &mDevice);
-  if (result != VK_SUCCESS)
-  {
-    mDevice = VK_NULL_HANDLE;
-    threadBase.GetErrorPolicy().VulkanError("vkCreateDevice", result, nullptr, __FUNCTION__, __FILE__, __LINE__);
-  }
-}
-
-DevicePtr Device::New(Instance & instance, VkPhysicalDevice physicalDevice, const VkDeviceCreateInfo & createInfo)
-{
-  return new Device{ instance, physicalDevice, createInfo };
-}
-
-Device::~Device()
-{
-  vkDestroyDevice(mDevice, Internal::sAllocator);
-}
-
-CommandPool::CommandPool(Device & device, VkCommandPoolCreateFlags flags, uint32_t queueFamilyIndex) :
-  mDevice(device)
-{
-  auto poolInfo = CommandPoolCreateInfo(flags, queueFamilyIndex);
-  const VkResult result = vkCreateCommandPool(device, &poolInfo, Internal::sAllocator, &mCommandPool);
-  if (result != VK_SUCCESS)
-  {
-    mCommandPool = VK_NULL_HANDLE;
-    auto & threadBase = ThreadBase::Get();
-    threadBase.GetErrorPolicy().VulkanError("vkCreateCommandPool", result, nullptr, __FUNCTION__, __FILE__, __LINE__);
-  }
-
-}
-
-CommandPoolPtr CommandPool::New(Device & device, VkCommandPoolCreateFlags flags, uint32_t queueFamilyIndex)
-{
-  return new CommandPool { device, flags, queueFamilyIndex };
-}
-
-CommandPool::~CommandPool()
-{
-  vkDestroyCommandPool(*mDevice, mCommandPool, Internal::sAllocator);
-}
-
+// -----------------------------------------------------------------------------
 CommandBuffer::CommandBuffer(CommandPool& pool, const VkCommandBufferLevel level) :
   mPool(&pool)
 {
@@ -171,31 +102,118 @@ void CommandBuffer::KeepAlive(VulkanObject & needed)
 
 
 
-DeviceMemory::DeviceMemory(Device & device, const VkMemoryAllocateInfo & info) :
-  mDevice(&device)
+// -----------------------------------------------------------------------------
+CommandPool::CommandPool(Device & device, VkCommandPoolCreateFlags flags, uint32_t queueFamilyIndex) :
+  mDevice(device)
 {
-  const VkResult result = vkAllocateMemory(device, &info, Internal::sAllocator, &mDeviceMemory);
+  auto poolInfo = CommandPoolCreateInfo(flags, queueFamilyIndex);
+  const VkResult result = vkCreateCommandPool(device, &poolInfo, Internal::sAllocator, &mCommandPool);
   if (result != VK_SUCCESS)
   {
-    mDeviceMemory = VK_NULL_HANDLE;
+    mCommandPool = VK_NULL_HANDLE;
     auto & threadBase = ThreadBase::Get();
-    threadBase.GetErrorPolicy().VulkanError("vkAllocateMemory", result, nullptr, __FUNCTION__, __FILE__, __LINE__);
+    threadBase.GetErrorPolicy().VulkanError("vkCreateCommandPool", result, nullptr, __FUNCTION__, __FILE__, __LINE__);
+  }
+
+}
+
+CommandPoolPtr CommandPool::New(Device & device, VkCommandPoolCreateFlags flags, uint32_t queueFamilyIndex)
+{//DescriptorSet::DescriptorSet(Device& device, const VkDescriptorSetAllocateInfo& allocateInfo)
+  return new CommandPool { device, flags, queueFamilyIndex };
+}
+
+CommandPool::~CommandPool()
+{
+  vkDestroyCommandPool(*mDevice, mCommandPool, Internal::sAllocator);
+}
+
+
+
+// -----------------------------------------------------------------------------
+ComputePipeline::ComputePipeline(Device& device, const VkComputePipelineCreateInfo& createInfo) :
+  mDevice(device)
+{
+  const VkResult result = vkCreateComputePipelines(device, VK_NULL_HANDLE, 1, &createInfo, Internal::sAllocator, &mPipeline);
+  if (result != VK_SUCCESS)
+  {
+    mPipeline = VK_NULL_HANDLE;
+    ThreadBase::Get().GetErrorPolicy().VulkanError("vkCreateComputePipelines", result, nullptr, __FUNCTION__, __FILE__, __LINE__);
   }
 }
 
-DeviceMemoryPtr DeviceMemory::New(Device & device, const VkMemoryAllocateInfo & info)
+ComputePipelinePtr ComputePipeline::New(Device& device, const VkComputePipelineCreateInfo& createInfo)
 {
-  return new DeviceMemory { device, info };
+  return new ComputePipeline { device, createInfo };
 }
 
-DeviceMemory::~DeviceMemory()
+ComputePipeline::~ComputePipeline()
 {
-  vkFreeMemory(*mDevice, mDeviceMemory, Internal::sAllocator);
+  vkDestroyPipeline(*mDevice, mPipeline, Internal::sAllocator);
 }
 
 
 
+// -----------------------------------------------------------------------------
+DescriptorPool::DescriptorPool(Device& device, const VkDescriptorPoolCreateInfo& createInfo) :
+  mDevice(device)
+{
+  VkDescriptorPoolCreateInfo ci = createInfo;
+  ci.flags |= VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
+  const VkResult result = vkCreateDescriptorPool(device, &ci, Internal::sAllocator, &mDescriptorPool);
+  if (result != VK_SUCCESS)
+  {
+    mDescriptorPool = VK_NULL_HANDLE;
+    auto & threadBase = ThreadBase::Get();
+    threadBase.GetErrorPolicy().VulkanError("vkCreateDescriptorPool", result, nullptr, __FUNCTION__, __FILE__, __LINE__);
+  }
+}
 
+DescriptorPoolPtr DescriptorPool::New(Device& device, VkDescriptorPoolCreateFlags flags, uint32_t maxSets, uint32_t poolSizeCount, const VkDescriptorPoolSize* pPoolSizes)
+{
+  return new DescriptorPool { device, DescriptorPoolCreateInfo(flags, maxSets, poolSizeCount, pPoolSizes)};
+}
+
+DescriptorPool::~DescriptorPool()
+{
+  vkDestroyDescriptorPool(*mDevice, mDescriptorPool, Internal::sAllocator);
+}
+
+
+
+// -----------------------------------------------------------------------------
+DescriptorSet::DescriptorSet(DescriptorPool& pool, const VkDescriptorSetAllocateInfo& allocateInfo) :
+  mPool(pool)
+{
+  Device& device = pool.GetDevice();
+
+  const VkResult result = vkAllocateDescriptorSets(device, &allocateInfo, &mDescriptorSet);
+  if (result != VK_SUCCESS)
+  {
+    mDescriptorSet = VK_NULL_HANDLE;
+    ThreadBase::Get().GetErrorPolicy().VulkanError("vkAllocateDescriptorSets", result, nullptr, __FUNCTION__, __FILE__, __LINE__);
+  }
+}
+
+DescriptorSetPtr DescriptorSet::Allocate(
+  DescriptorPool& pool,
+  DescriptorSetLayout& setLayout)
+{
+  return new DescriptorSet {pool, DescriptorSetAllocateInfo(pool, 1, setLayout.GetDescriptorSetLayoutAddress())};
+
+}
+
+DescriptorSet::~DescriptorSet()
+{
+  /// @todo Delay freeing until all command buffers referencing the set are free
+  /// and all work on GPUs using them is complete.
+  /// 1. Command buffers must hold a reference to them.
+  /// 2. Queues keep them alive transitively by keeping command buffers alive.
+  vkFreeDescriptorSets(mPool->GetDevice(), *mPool, 1, &mDescriptorSet);
+}
+
+
+
+// -----------------------------------------------------------------------------
 DescriptorSetLayout::DescriptorSetLayout(Device& device, const VkDescriptorSetLayoutCreateInfo& createInfo) :
   mDevice(&device)
 {
@@ -223,7 +241,61 @@ DescriptorSetLayout::~DescriptorSetLayout()
 
 
 
+// -----------------------------------------------------------------------------
+Device::Device(Instance & instance, VkPhysicalDevice physicalDevice, const VkDeviceCreateInfo & createInfo) :
+  mInstance(instance)
+{
+  KRUST_ASSERT1(instance != VK_NULL_HANDLE, "Invalid instance.");
+  KRUST_ASSERT1(physicalDevice != VK_NULL_HANDLE, "Invalid physical device.");
 
+  mPhysicalDevice = physicalDevice;
+  auto & threadBase = ThreadBase::Get();
+  const VkResult result = vkCreateDevice(physicalDevice, &createInfo, Internal::sAllocator, &mDevice);
+  if (result != VK_SUCCESS)
+  {
+    mDevice = VK_NULL_HANDLE;
+    threadBase.GetErrorPolicy().VulkanError("vkCreateDevice", result, nullptr, __FUNCTION__, __FILE__, __LINE__);
+  }
+}
+
+DevicePtr Device::New(Instance & instance, VkPhysicalDevice physicalDevice, const VkDeviceCreateInfo & createInfo)
+{
+  return new Device{ instance, physicalDevice, createInfo };
+}
+
+Device::~Device()
+{
+  vkDestroyDevice(mDevice, Internal::sAllocator);
+}
+
+
+
+// -----------------------------------------------------------------------------
+DeviceMemory::DeviceMemory(Device & device, const VkMemoryAllocateInfo & info) :
+  mDevice(&device)
+{
+  const VkResult result = vkAllocateMemory(device, &info, Internal::sAllocator, &mDeviceMemory);
+  if (result != VK_SUCCESS)
+  {
+    mDeviceMemory = VK_NULL_HANDLE;
+    auto & threadBase = ThreadBase::Get();
+    threadBase.GetErrorPolicy().VulkanError("vkAllocateMemory", result, nullptr, __FUNCTION__, __FILE__, __LINE__);
+  }
+}
+
+DeviceMemoryPtr DeviceMemory::New(Device & device, const VkMemoryAllocateInfo & info)
+{
+  return new DeviceMemory { device, info };
+}
+
+DeviceMemory::~DeviceMemory()
+{
+  vkFreeMemory(*mDevice, mDeviceMemory, Internal::sAllocator);
+}
+
+
+
+// -----------------------------------------------------------------------------
 Fence::Fence(Device& device, const VkFenceCreateFlags flags) :
   mDevice(&device)
 {
@@ -247,8 +319,9 @@ Fence::~Fence()
   vkDestroyFence(*mDevice, mFence, Internal::sAllocator);
 }
 
-// -----------------------------------------------------------------------------
 
+
+// -----------------------------------------------------------------------------
 Image::Image(Device & device, const VkImageCreateInfo & createInfo) :
   mDevice(device)
 {
@@ -283,7 +356,6 @@ void Image::BindMemory(DeviceMemory& memory, const VkDeviceSize offset)
 
 
 // -----------------------------------------------------------------------------
-
 ImageView::ImageView(Image& image, const VkImageViewCreateInfo& createInfo) :
   mImage(&image)
 {
@@ -312,54 +384,30 @@ ImageView::~ImageView()
 
 
 // -----------------------------------------------------------------------------
-
-ShaderModule::ShaderModule(Device& device, const VkShaderModuleCreateFlags flags, const ShaderBuffer& src)
-: mDevice(device)
+Instance::Instance(const VkInstanceCreateInfo & createInfo)
 {
-  const auto createInfo = ShaderModuleCreateInfo(flags, byte_size(src), &src[0]);
-  const VkResult result = vkCreateShaderModule(device, &createInfo, Internal::sAllocator, &mShaderModule);
+  auto & threadBase = ThreadBase::Get();
+  const VkResult result = vkCreateInstance(&createInfo, Internal::sAllocator, &mInstance);
   if (result != VK_SUCCESS)
   {
-    mShaderModule = VK_NULL_HANDLE;
-    ThreadBase::Get().GetErrorPolicy().VulkanError("vkCreateShaderModule", result, nullptr, __FUNCTION__, __FILE__, __LINE__);
+    mInstance = VK_NULL_HANDLE;
+    threadBase.GetErrorPolicy().VulkanError("vkCreateInstance", result, nullptr, __FUNCTION__, __FILE__, __LINE__);
   }
 }
 
-ShaderModulePtr ShaderModule::New(Device& device, const VkShaderModuleCreateFlags flags, const ShaderBuffer& src)
+InstancePtr Instance::New(const VkInstanceCreateInfo & createInfo)
 {
-  return new ShaderModule { device, flags, src };
+  return new Instance { createInfo };
 }
 
-ShaderModule::~ShaderModule(){
-  vkDestroyShaderModule(*mDevice, mShaderModule, Internal::sAllocator);
-}
-
-
-
-
-ComputePipeline::ComputePipeline(Device& device, const VkComputePipelineCreateInfo& createInfo) :
-  mDevice(device)
+Instance::~Instance()
 {
-  const VkResult result = vkCreateComputePipelines(device, VK_NULL_HANDLE, 1, &createInfo, Internal::sAllocator, &mPipeline);
-  if (result != VK_SUCCESS)
-  {
-    mPipeline = VK_NULL_HANDLE;
-    ThreadBase::Get().GetErrorPolicy().VulkanError("vkCreateComputePipelines", result, nullptr, __FUNCTION__, __FILE__, __LINE__);
-  }
-}
-
-ComputePipelinePtr ComputePipeline::New(Device& device, const VkComputePipelineCreateInfo& createInfo)
-{
-  return new ComputePipeline { device, createInfo };
-}
-
-ComputePipeline::~ComputePipeline()
-{
-  vkDestroyPipeline(*mDevice, mPipeline, Internal::sAllocator);
+  vkDestroyInstance(mInstance, Internal::sAllocator);
 }
 
 
 
+// -----------------------------------------------------------------------------
 PipelineLayout::PipelineLayout(Device& device, const VkPipelineLayoutCreateInfo& createInfo) :
   mDevice(&device)
 {
@@ -389,62 +437,26 @@ PipelineLayout::~PipelineLayout()
 
 
 
-DescriptorPool::DescriptorPool(Device& device, const VkDescriptorPoolCreateInfo& createInfo) :
-  mDevice(device)
+// -----------------------------------------------------------------------------
+ShaderModule::ShaderModule(Device& device, const VkShaderModuleCreateFlags flags, const ShaderBuffer& src)
+: mDevice(device)
 {
-  VkDescriptorPoolCreateInfo ci = createInfo;
-  ci.flags |= VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
-  const VkResult result = vkCreateDescriptorPool(device, &ci, Internal::sAllocator, &mDescriptorPool);
+  const auto createInfo = ShaderModuleCreateInfo(flags, byte_size(src), &src[0]);
+  const VkResult result = vkCreateShaderModule(device, &createInfo, Internal::sAllocator, &mShaderModule);
   if (result != VK_SUCCESS)
   {
-    mDescriptorPool = VK_NULL_HANDLE;
-    auto & threadBase = ThreadBase::Get();
-    threadBase.GetErrorPolicy().VulkanError("vkCreateDescriptorPool", result, nullptr, __FUNCTION__, __FILE__, __LINE__);
+    mShaderModule = VK_NULL_HANDLE;
+    ThreadBase::Get().GetErrorPolicy().VulkanError("vkCreateShaderModule", result, nullptr, __FUNCTION__, __FILE__, __LINE__);
   }
 }
 
-DescriptorPoolPtr DescriptorPool::New(Device& device, VkDescriptorPoolCreateFlags flags, uint32_t maxSets, uint32_t poolSizeCount, const VkDescriptorPoolSize* pPoolSizes)
+ShaderModulePtr ShaderModule::New(Device& device, const VkShaderModuleCreateFlags flags, const ShaderBuffer& src)
 {
-  return new DescriptorPool { device, DescriptorPoolCreateInfo(flags, maxSets, poolSizeCount, pPoolSizes)};
+  return new ShaderModule { device, flags, src };
 }
 
-DescriptorPool::~DescriptorPool()
-{
-  vkDestroyDescriptorPool(*mDevice, mDescriptorPool, Internal::sAllocator);
+ShaderModule::~ShaderModule(){
+  vkDestroyShaderModule(*mDevice, mShaderModule, Internal::sAllocator);
 }
-
-
-
-//DescriptorSet::DescriptorSet(Device& device, const VkDescriptorSetAllocateInfo& allocateInfo)
-DescriptorSet::DescriptorSet(DescriptorPool& pool, const VkDescriptorSetAllocateInfo& allocateInfo) :
-  mPool(pool)
-{
-  Device& device = pool.GetDevice();
-
-  const VkResult result = vkAllocateDescriptorSets(device, &allocateInfo, &mDescriptorSet);
-  if (result != VK_SUCCESS)
-  {
-    mDescriptorSet = VK_NULL_HANDLE;
-    ThreadBase::Get().GetErrorPolicy().VulkanError("vkAllocateDescriptorSets", result, nullptr, __FUNCTION__, __FILE__, __LINE__);
-  }
-}
-
-DescriptorSetPtr DescriptorSet::Allocate(
-  DescriptorPool& pool,
-  DescriptorSetLayout& setLayout)
-{
-  return new DescriptorSet {pool, DescriptorSetAllocateInfo(pool, 1, setLayout.GetDescriptorSetLayoutAddress())};
-
-}
-
-DescriptorSet::~DescriptorSet()
-{
-  /// @todo Delay freeing until all command buffers referencing the set are free
-  /// and all work on GPUs using them is complete.
-  /// 1. Command buffers must hold a reference to them.
-  /// 2. Queues keep them alive transitively by keeping command buffers alive.
-  vkFreeDescriptorSets(mPool->GetDevice(), *mPool, 1, &mDescriptorSet);
-}
-
 
 }
