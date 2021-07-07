@@ -303,6 +303,19 @@ const char* SurfaceTransformToString(const VkSurfaceTransformFlagsKHR transform)
   return text;
 }
 
+void BuildFences(
+  Krust::Device& device,
+  const VkFenceCreateFlags flags,
+  const size_t numSwapChainImageViews,
+  std::vector<FencePtr>& outSwapChainFences)
+{
+  outSwapChainFences.resize(numSwapChainImageViews);
+  for(unsigned i = 0; i < numSwapChainImageViews; ++i)
+  {
+    outSwapChainFences[i] = Fence::New(device, flags);
+  }
+}
+
 bool BuildFramebuffersForSwapChain(
   Krust::Device& device,
   const std::vector<VkImageView>& swapChainImageViews,
@@ -404,11 +417,7 @@ bool BuildFramebuffersForSwapChain(
     VK_CALL_RET(vkCreateFramebuffer, device, &framebufferInfo, Krust::Internal::sAllocator, &outSwapChainFramebuffers[i]);
   }
 
-  outSwapChainFences.resize(swapChainImageViews.size());
-  for(unsigned i = 0; i < outSwapChainFences.size(); ++i)
-  {
-    outSwapChainFences[i] = Fence::New(device, VK_FENCE_CREATE_SIGNALED_BIT);
-  }
+  BuildFences(device, VK_FENCE_CREATE_SIGNALED_BIT, swapChainImageViews.size(), outSwapChainFences);
 
   return true;
 }

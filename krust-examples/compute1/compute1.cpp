@@ -63,27 +63,7 @@ public:
   {
     KRUST_LOG_DEBUG << "DoPostInit() entered." << Krust::endlog;
 
-    const unsigned win_width  { mDefaultWindow->GetPlatformWindow().GetWidth()};
-    const unsigned win_height { mDefaultWindow->GetPlatformWindow().GetHeight()};
-
-    // Setup for buffered rendering with a graphics pipeline even though that
-    // does more than we need to write to the swapchain directly in the compute
-    // stage:
-    if(!Krust::BuildFramebuffersForSwapChain(
-      *mGpuInterface,
-      mSwapChainImageViews,
-      mDepthBufferView,
-      win_width,
-      win_height,
-      mFormat,
-      mDepthFormat,
-      NUM_SAMPLES,
-      mRenderPasses,
-      mSwapChainFramebuffers,
-      mSwapChainFences))
-    {
-      return false;
-    }
+    BuildFences(*mGpuInterface, VK_FENCE_CREATE_SIGNALED_BIT, mSwapChainImageViews.size(), mSwapChainFences);
 
     // Allocate a command buffer per swapchain entry:
     KRUST_ASSERT1(mCommandBuffers.size() == 0, "Double init of command buffers.");

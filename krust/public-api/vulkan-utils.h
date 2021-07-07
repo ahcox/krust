@@ -180,6 +180,15 @@ int SortMetric(VkPresentModeKHR mode, bool tearingAllowed = false);
 const char* SurfaceTransformToString(const VkSurfaceTransformFlagsKHR transform);
 
 /**
+ * @brief Create a given number of fences.
+ */
+void BuildFences(
+  Krust::Device& device,
+  const VkFenceCreateFlags flags,
+  const size_t numSwapChainImageViews,
+  std::vector<FencePtr>& outSwapChainFences);
+
+/**
  * @brief Build a framebuffer and renderpass per swapchain image with a simple
  * configuration using a single shared depth buffer.
  */
