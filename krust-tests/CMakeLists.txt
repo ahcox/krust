@@ -16,4 +16,4 @@ add_executable (krust-test-simple
   README.md
 )
 target_include_directories(krust-test-simple SYSTEM PRIVATE ${VULKAN_INCLUDE_DIRECTORY})
-target_link_libraries(krust-test-simple krust-io krust)
+target_link_libraries(krust-test-simple krust-io krust pthread)

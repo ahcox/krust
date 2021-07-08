@@ -5,8 +5,7 @@
  * Test of the RefObject class.
  */
 #include "krust/public-api/ref-object.h"
-TEST_CASE("RefObject", "[simple]")
-{
+namespace {
   namespace kr = Krust;
   struct TestRefObect : public kr::RefObject
   {
@@ -15,6 +14,17 @@ TEST_CASE("RefObject", "[simple]")
     bool& mDestroyed;
   };
 
+  template<typename FutureContainer>
+  void wait_all(FutureContainer& futures)
+  {
+    for(const auto& fut : futures){
+      fut.wait();
+    }
+  }
+}
+
+TEST_CASE("RefObject", "[simple]")
+{
   bool destroyed = false;
   TestRefObect* obj = new TestRefObect(destroyed);
   REQUIRE(destroyed == false);
@@ -34,6 +44,82 @@ TEST_CASE("RefObject", "[simple]")
   REQUIRE(destroyed == false);
   obj->Dec();
   REQUIRE(destroyed == true);
+}
+
+/// Slam a refcounted object from lots of threads at the same time.
+#include <future>
+TEST_CASE("RefObjectAsync", "[simple]")
+{
+  bool destroyed = false;
+  TestRefObect* obj = new TestRefObect(destroyed);
+  REQUIRE(destroyed == false);
+  constexpr int count = 99;
+  constexpr int inner_count = 500000;
+  std::vector<std::future<void>> futures;
+  for (int i = 0; i < count; ++i)
+  {
+    futures.push_back(std::async(std::launch::async, [obj](){
+      for(unsigned j = 0; j < inner_count; ++j){
+        obj->Inc();
+      }
+    }));
+    obj->Inc();
+  }
+  wait_all(futures);
+  REQUIRE(obj->Count() == count * inner_count + count);
+  REQUIRE(destroyed == false);
+
+  obj->Inc();
+  futures.clear();
+  for (int i = 0; i < count; ++i)
+  {
+    futures.push_back(std::async(std::launch::async, [obj](){
+      for(unsigned j = 0; j < inner_count; ++j){
+        obj->Dec();
+      }
+    }));
+    obj->Dec();
+  }
+  wait_all(futures);
+  REQUIRE(obj->Count() == 1);
+  REQUIRE(destroyed == false);
+  obj->Dec();
+  REQUIRE(destroyed == true);
+}
+
+// Interleave incs and decs from multiple threads
+TEST_CASE("RefObjectAsyncJumbled", "[simple]")
+{
+  bool destroyed = false;
+  TestRefObect* obj = new TestRefObect(destroyed);
+  REQUIRE(destroyed == false);
+  constexpr int count = 99;
+  constexpr int inner_count = 500000;
+
+  // Prime the counts so we have a buffer to play with:
+  for (int i = 0; i < count * inner_count; ++i)
+  {
+    obj->Inc();
+  }
+
+  // Launch battling incing and decing threads:
+  std::vector<std::future<void>> futures;
+  for (int i = 0; i < count; ++i)
+  {
+    futures.push_back(std::async(std::launch::async, [obj](){
+      for(unsigned j = 0; j < inner_count; ++j){
+        obj->Inc();
+      }
+    }));
+    futures.push_back(std::async(std::launch::async, [obj](){
+      for(unsigned j = 0; j < inner_count; ++j){
+        obj->Dec();
+      }
+    }));
+  }
+  wait_all(futures);
+  REQUIRE(obj->Count() == count * inner_count);
+  REQUIRE(destroyed == false);
 }
 
 /* -----------------------------------------------------------------------------
