@@ -616,8 +616,7 @@ bool Application::InitDefaultSwapchain(const VkImageUsageFlags swapchainUsageOve
     minNumPresentationFramebuffers = surfaceCapabilities.maxImageCount;
   }
   // minNumPresentationFramebuffers = 2; ///< Try hardcoding this if there are any present issues.
-  mNumSwapchainFramebuffers = minNumPresentationFramebuffers;
-  KRUST_LOG_INFO << "Using " << mNumSwapchainFramebuffers << " swap chain framebuffer images." << endlog;
+  KRUST_LOG_INFO << "Using at least " << minNumPresentationFramebuffers << " swap chain framebuffer images." << endlog;
 
   auto swapChainCreateParams = SwapchainCreateInfoKHR();
     swapChainCreateParams.flags = 0,

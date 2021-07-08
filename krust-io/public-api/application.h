@@ -310,9 +310,6 @@ protected:
   VkColorSpaceKHR mColorspace = VK_COLORSPACE_SRGB_NONLINEAR_KHR;
   /// Depth buffer image format.
   VkFormat mDepthFormat = VK_FORMAT_D24_UNORM_S8_UINT;
-  /// The number of framebuffer images to cycle through when rendering.
-  ///@note Duplicates mSwapChainImages.size(): bad.
-  uint32_t mNumSwapchainFramebuffers = 0;
   /// Object representing the series of images to render into and display.
   VkSwapchainKHR mSwapChain = 0;
   /// One or more image to render into for display to screen.
