@@ -73,7 +73,7 @@ public:
   /** Observe window creation and destruction so can dispatch events by window
    * Later, this will be an unordered map or short array of windows.
    */
-  Window* mDefaultWindow;
+  Window* mWindow;
 };
 
 } /* namespace IO */

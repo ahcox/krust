@@ -229,8 +229,8 @@ public:
     // Here is where we kick off our compute shader.
 
     vkCmdBindPipeline(*commandBuffer,VK_PIPELINE_BIND_POINT_COMPUTE, *mComputePipeline);
-    const unsigned win_width  { mDefaultWindow->GetPlatformWindow().GetWidth()};
-    const unsigned win_height { mDefaultWindow->GetPlatformWindow().GetHeight()};
+    const unsigned win_width  { mWindow->GetPlatformWindow().GetWidth()};
+    const unsigned win_height { mWindow->GetPlatformWindow().GetHeight()};
     vkCmdDispatch(*commandBuffer,
       win_width / WORKGROUP_X + (win_width % WORKGROUP_X ? 1 : 0 ),
       win_height / WORKGROUP_Y + (win_width % WORKGROUP_Y ? 1 : 0 ),

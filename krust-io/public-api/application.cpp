@@ -78,7 +78,7 @@ constexpr size_t NUM_INSTANCE_LAYERS = sizeof(INSTANCE_LAYERS) / sizeof(INSTANCE
 }
 
 Application::Application()
-: mDefaultWindow(0),
+: mWindow(0),
   mAppName("Krust Application"),
   mAppVersion(0),
   mInstance(0),
@@ -101,8 +101,8 @@ bool Application::Init(const VkImageUsageFlags swapchainUsageOverrides)
   }
 
   // Open a default window:
-  mDefaultWindow = WindowPointer(new Window(*this, mAppName));
-  mPlatformApplication.WindowCreated(*mDefaultWindow.Get());
+  mWindow = WindowPointer(new Window(*this, mAppName));
+  mPlatformApplication.WindowCreated(*mWindow.Get());
 
   // Start up vulkan:
   if(!InitVulkan(swapchainUsageOverrides))
@@ -494,8 +494,8 @@ bool Application::InitDepthBuffer(const VkFormat depthFormat)
 {
   // Create an image object for the depth buffer upfront so we can query the
   // amount of storage required for it from the Vulkan implementation:
-  const unsigned width = mDefaultWindow->GetPlatformWindow().GetWidth();
-  const unsigned height = mDefaultWindow->GetPlatformWindow().GetHeight();
+  const unsigned width = mWindow->GetPlatformWindow().GetWidth();
+  const unsigned height = mWindow->GetPlatformWindow().GetHeight();
 
   ImagePtr depthImage = Image::New(*mGpuInterface, CreateDepthImageInfo(mDefaultPresentQueueFamily, depthFormat, width, height));
 
@@ -587,23 +587,23 @@ bool Application::InitDefaultSwapchain(const VkImageUsageFlags swapchainUsageOve
   {
     KRUST_LOG_WARN << "Undefined surface extent. @" << __FILE__ << ":" << __LINE__ << endlog;
     // Try to force the surface extent to match the window but this is untested:
-    extent.width = this->mDefaultWindow->GetPlatformWindow().GetWidth();
-    extent.height = this->mDefaultWindow->GetPlatformWindow().GetHeight();
+    extent.width = this->mWindow->GetPlatformWindow().GetWidth();
+    extent.height = this->mWindow->GetPlatformWindow().GetHeight();
   }
   else
   {
     // Warn if the Vk surface dimensions don't match the window's in release:
-    if(extent.width != this->mDefaultWindow->GetPlatformWindow().GetWidth())
+    if(extent.width != this->mWindow->GetPlatformWindow().GetWidth())
     {
-      KRUST_LOG_WARN << "Surface width doesn't match window." << extent.width << " != " << this->mDefaultWindow->GetPlatformWindow().GetWidth() << endlog;
+      KRUST_LOG_WARN << "Surface width doesn't match window." << extent.width << " != " << this->mWindow->GetPlatformWindow().GetWidth() << endlog;
     }
-    if(extent.height != this->mDefaultWindow->GetPlatformWindow().GetHeight())
+    if(extent.height != this->mWindow->GetPlatformWindow().GetHeight())
     {
-      KRUST_LOG_WARN << "Surface height doesn't match window." << extent.height << " != " << this->mDefaultWindow->GetPlatformWindow().GetHeight() << endlog;
+      KRUST_LOG_WARN << "Surface height doesn't match window." << extent.height << " != " << this->mWindow->GetPlatformWindow().GetHeight() << endlog;
     }
     // Die in debug:
-    KRUST_ASSERT1(extent.width == this->mDefaultWindow->GetPlatformWindow().GetWidth(), "Surface doesn't match window.");
-    KRUST_ASSERT1(extent.height == this->mDefaultWindow->GetPlatformWindow().GetHeight(), "Surface doesn't match window.");
+    KRUST_ASSERT1(extent.width == this->mWindow->GetPlatformWindow().GetWidth(), "Surface doesn't match window.");
+    KRUST_ASSERT1(extent.height == this->mWindow->GetPlatformWindow().GetHeight(), "Surface doesn't match window.");
   }
 
   // Work out a good number of framebuffers to juggle in the presentation queue:
@@ -826,8 +826,8 @@ bool Application::DeInit()
   KRUST_ASSERT1(mInstance->Count() == 1u, "Only the Application should still hold a reference to the Instance: we are going down.");
   mInstance.Reset(nullptr);
 
-  mPlatformApplication.WindowClosing(*mDefaultWindow.Get());
-  mDefaultWindow.Reset(nullptr);
+  mPlatformApplication.WindowClosing(*mWindow.Get());
+  mWindow.Reset(nullptr);
   mPlatformApplication.DeInit();
   return true;
 }
@@ -869,7 +869,7 @@ int Application::Run(const MainLoopType loopType, const VkImageUsageFlags swapch
     // Pre-pump a few frames before settling down into the event loop:
     for (unsigned i = 0; i < this->mSwapChainImageViews.size(); ++i)
     {
-      this->OnRedraw(*mDefaultWindow.Get());
+      this->OnRedraw();
     }
 
     if (loopType == MainLoopType::Busy)
@@ -883,7 +883,7 @@ int Application::Run(const MainLoopType loopType, const VkImageUsageFlags swapch
           // Drain all events so we are up to date before rendering.
         }
         // Render:
-        this->OnRedraw(*mDefaultWindow.Get());
+        this->OnRedraw();
       }
     }
     else
@@ -931,13 +931,12 @@ bool Application::DoPreDeInit()
   return true;
 }
 
-void Application::OnResize(Window&, unsigned, unsigned) {
+void Application::OnResize(unsigned, unsigned) {
     KRUST_LOG_INFO << "Default OnResize() called.\n";
 }
 
-void Application::OnRedraw(Window& window) {
+void Application::OnRedraw() {
   // Verbose: KRUST_LOG_INFO << "Default OnRedraw() called.\n";
-  suppress_unused(&window);
 
   if(!mAcquireNextImageKHR || !mQueuePresentKHR)
   {
@@ -946,9 +945,13 @@ void Application::OnRedraw(Window& window) {
   }
 
   // Acquire an image to draw into from the WSI:
-  const VkResult acquireResult = mAcquireNextImageKHR(*mGpuInterface, mSwapChain,
-    PRESENT_IMAGE_ACQUIRE_TIMEOUT, mSwapChainSemaphore,
-    nullptr /* no fence used! */, &mCurrentTargetImage);
+  const VkResult acquireResult = mAcquireNextImageKHR(
+    *mGpuInterface,
+    mSwapChain,
+    PRESENT_IMAGE_ACQUIRE_TIMEOUT,
+    mSwapChainSemaphore,
+    nullptr, // no fence used!
+    &mCurrentTargetImage);
 
   if(VK_SUCCESS != acquireResult)
   {
@@ -1008,13 +1011,12 @@ void Application::OnRedraw(Window& window) {
   }
 }
 
-void Application::OnKey(Window&, bool, KeyCode) {
+void Application::OnKey(bool, KeyCode) {
   KRUST_LOG_INFO << "Default OnKey() called.\n";
 }
 
-void Application::OnClose(Window &window)
+void Application::OnClose()
 {
-  suppress_unused(&window);
   KRUST_LOG_INFO << "Default OnClose() called.\n";
   mQuit = true;
 }

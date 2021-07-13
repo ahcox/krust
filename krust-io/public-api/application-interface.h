@@ -39,14 +39,14 @@ enum class KeyCode;
  */
 class ApplicationInterface {
 public:
-  virtual void OnResize(Window& window, unsigned width, unsigned height) = 0;
-  virtual void OnRedraw(Window& window) = 0;
-  virtual void OnKey(Window& window, bool up, KeyCode keycode) = 0;
+  virtual void OnResize(unsigned width, unsigned height) = 0;
+  virtual void OnRedraw() = 0;
+  virtual void OnKey(bool up, KeyCode keycode) = 0;
   /**
    * @brief The user has issued a close request for the window (e.g. by clicking
    * the little cross in its corner decoration).
    */
-  virtual void OnClose(Window& window) = 0;
+  virtual void OnClose() = 0;
 };
 
 } /* namespace IO */

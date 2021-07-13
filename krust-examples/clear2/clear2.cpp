@@ -56,8 +56,8 @@ public:
       *mGpuInterface,
       mSwapChainImageViews,
       mDepthBufferView,
-      mDefaultWindow->GetPlatformWindow().GetWidth(),
-      mDefaultWindow->GetPlatformWindow().GetHeight(),
+      mWindow->GetPlatformWindow().GetWidth(),
+      mWindow->GetPlatformWindow().GetHeight(),
       mFormat,
       mDepthFormat,
       NUM_SAMPLES,
@@ -173,8 +173,8 @@ public:
     auto renderArea = kr::Rect2D(
       kr::Offset2D(0, 0),
       kr::Extent2D(
-        mDefaultWindow->GetPlatformWindow().GetWidth(),
-        mDefaultWindow->GetPlatformWindow().GetHeight()));
+        mWindow->GetPlatformWindow().GetWidth(),
+        mWindow->GetPlatformWindow().GetHeight()));
 
     auto beginRenderPass = kr::RenderPassBeginInfo(
       mRenderPasses[mCurrentTargetImage],

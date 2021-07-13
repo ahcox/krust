@@ -41,7 +41,7 @@ Krust::IO::ApplicationPlatform::ApplicationPlatform(ApplicationInterface& callba
     mCallbacks(callbacks),
     mXcbConnection(0),
     mXcbScreen(0),
-    mDefaultWindow(0)
+    mWindow(0)
 {
 
 }
@@ -78,7 +78,7 @@ VkSurfaceKHR Krust::IO::ApplicationPlatform::InitSurface(VkInstance instance)
     .pNext = nullptr,
     .flags = 0,
     .connection = mXcbConnection,
-    .window = mDefaultWindow->GetPlatformWindow().mXcbWindow
+    .window = mWindow->GetPlatformWindow().mXcbWindow
   };
   VkSurfaceKHR surface = nullptr;
   const VkResult result = vkCreateXcbSurfaceKHR(instance, &createInfo, KRUST_DEFAULT_ALLOCATION_CALLBACKS, &surface);
@@ -102,14 +102,14 @@ void Krust::IO::ApplicationPlatform::PreRun() {
 }
 
 void Krust::IO::ApplicationPlatform::WindowCreated(Window& window) {
-  KRUST_ASSERT1(mDefaultWindow == 0, "Window created previously.");
+  KRUST_ASSERT1(mWindow == 0, "Window created previously.");
 
-  mDefaultWindow = &window;
+  mWindow = &window;
 }
 
 void Krust::IO::ApplicationPlatform::WindowClosing(Window& window) {
-  KRUST_ASSERT1(mDefaultWindow == &window, "We only support one window at the moment.");
-  mDefaultWindow = 0;
+  KRUST_ASSERT1(mWindow == &window, "We only support one window at the moment.");
+  mWindow = 0;
 }
 
 bool Krust::IO::ApplicationPlatform::PeekAndDispatchEvent()
@@ -142,8 +142,8 @@ void Krust::IO::ApplicationPlatform::ProcessEvent(const xcb_generic_event_t *eve
         xcb_expose_event_t *expose = (xcb_expose_event_t *) event;
         KRUST_LOG_INFO << "Expose event: window = " << expose->window << ", x,y = " << expose->x << "," << expose->y <<
         "." << endlog;
-        if (mDefaultWindow && mDefaultWindow->GetPlatformWindow().mXcbWindow == expose->window) {
-          mCallbacks.OnRedraw(*mDefaultWindow);
+        if (mWindow && mWindow->GetPlatformWindow().mXcbWindow == expose->window) {
+          mCallbacks.OnRedraw();
         }
         break;
       }
@@ -196,11 +196,11 @@ void Krust::IO::ApplicationPlatform::ProcessEvent(const xcb_generic_event_t *eve
 
       case XCB_CLIENT_MESSAGE: {
         const auto * clientEvent = reinterpret_cast<const xcb_client_message_event_t*>(event);
-        if(mDefaultWindow)
+        if(mWindow)
         {
-          if(mDefaultWindow->GetPlatformWindow().mDeleteWindowEventAtom == clientEvent->data.data32[0])
+          if(mWindow->GetPlatformWindow().mDeleteWindowEventAtom == clientEvent->data.data32[0])
           {
-            mCallbacks.OnClose(*mDefaultWindow);
+            mCallbacks.OnClose();
           }
         }
         break;

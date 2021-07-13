@@ -3,8 +3,10 @@ Krust IO
 
 Krust IO gives you an application class to derive from.
 It comes with a swapchain setup for you to pump your frames into
-(see `krust-examples/clear`for simple example of how to do that).
-Windows to draw into and input to drive applications from.
+(see `krust-examples/clear`for simple example of how to do that),
+a window to draw into and input to drive applications from.
+It aims for GLUT-like simplicity, supporting only one window, with
+either a reactive event loop, or a busy one as a game would use.
 
 The code is distrubuted among the following directories:
 

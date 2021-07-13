@@ -180,14 +180,14 @@ protected:
   ///@{
 
   /** The window has been resized. */
-  virtual void OnResize(Window& window, unsigned width, unsigned height);
+  virtual void OnResize(unsigned width, unsigned height);
   /** The window needs to be redrawn. */
-  virtual void OnRedraw(Window& window);
+  virtual void OnRedraw();
   /** A key was pressed or released. */
-  virtual void OnKey(Window& window, bool up, KeyCode keycode );
-  /** A window is being closed from the platform windowing system. You may wish
-   * to close the app if this was the last window open. */
-  virtual void OnClose(Window& window);
+  virtual void OnKey(bool up, KeyCode keycode );
+  /** The window is being closed. You may wish
+   * to close the app. */
+  virtual void OnClose();
 
   ///@}
 
@@ -244,7 +244,7 @@ protected:
   ///@}
 
   friend class WindowPlatform;
-  WindowPointer mDefaultWindow;
+  WindowPointer mWindow;
   const char * mAppName = 0;
   uint32_t mAppVersion = 0;
 
@@ -299,7 +299,7 @@ protected:
   ///@}
 
   /**
-   * @name ShouldBeInWindow Data that belongs per-window (will refactor).
+   * @name WindowData Data that is associated with the window.
    */
   ///@{
   /// Surface used when binding Vulkan surfaces to a window.
