@@ -78,7 +78,7 @@ WindowPlatform::WindowPlatform(
           XCB_CW_EVENT_MASK;
       XcbValueList values;
       values.values[0] = Screen()->black_pixel;
-      values.values[1] = XCB_EVENT_MASK_KEY_RELEASE | XCB_EVENT_MASK_EXPOSURE
+      values.values[1] = XCB_EVENT_MASK_KEY_RELEASE | XCB_EVENT_MASK_EXPOSURE | XCB_EVENT_MASK_STRUCTURE_NOTIFY
       |
         // The app should control which of these are subscribed to:
         XCB_EVENT_MASK_BUTTON_PRESS   | XCB_EVENT_MASK_BUTTON_RELEASE |
@@ -93,7 +93,7 @@ WindowPlatform::WindowPlatform(
       // primary monitor and size ourself to fit onto that:
       // https://stackoverflow.com/questions/36966900/xcb-get-all-monitors-ands-their-x-y-coordinates
       const unsigned windowClientWidth  = std::min(1800u, Screen()->width_in_pixels  / 4u * 3u);
-      const unsigned windowClientHeight = std::min(960u,  Screen()->height_in_pixels / 4u * 3u);
+      const unsigned windowClientHeight = std::min(windowClientWidth * 100000 / 177778,  Screen()->height_in_pixels / 4u * 3u);
       KRUST_LOG_INFO << "windowClientWidth: "  << windowClientWidth  << '.' << endlog;
       KRUST_LOG_INFO << "windowClientHeight: " << windowClientHeight << '.' << endlog;
       mWidth = windowClientWidth;

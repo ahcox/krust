@@ -20,6 +20,7 @@
 
 // External includes:
 #include "krust-io/public-api/krust-io.h"
+#include "krust-io/public-api/application-graphics-swapchain.h"
 #include "krust/public-api/krust.h"
 
 namespace kr = Krust;
@@ -35,7 +36,11 @@ constexpr VkAllocationCallbacks* ALLOCATION_CALLBACKS = nullptr;
  */
 class ClearApplication : public Krust::IO::Application
 {
+  // Optional components to extend the swapchain for access by graphics pipelines.
+  Krust::IO::ApplicationGraphicsSwapchain mGraphicsSwapchain;
+
 public:
+  ClearApplication() : mGraphicsSwapchain(*this) {}
   /**
    * Called by the default initialization once Krust is initialised and a window
    * has been created. Now is the time to do any additional setup.
@@ -54,14 +59,14 @@ public:
     if(!Krust::BuildFramebuffersForSwapChain(
       *mGpuInterface,
       mSwapChainImageViews,
-      mDepthBufferView,
+      mGraphicsSwapchain.mDepthBufferView,
       mWindow->GetPlatformWindow().GetWidth(),
       mWindow->GetPlatformWindow().GetHeight(),
       mFormat,
-      mDepthFormat,
+      mGraphicsSwapchain.mDepthFormat,
       NUM_SAMPLES,
-      mRenderPasses,
-      mSwapChainFramebuffers,
+      mGraphicsSwapchain.mRenderPasses,
+      mGraphicsSwapchain.mSwapChainFramebuffers,
       mSwapChainFences))
     {
       return false;
@@ -135,8 +140,8 @@ public:
           mWindow->GetPlatformWindow().GetHeight()));
 
       auto beginRenderPass = kr::RenderPassBeginInfo();
-        beginRenderPass.renderPass = mRenderPasses[i],
-        beginRenderPass.framebuffer = mSwapChainFramebuffers[i],
+        beginRenderPass.renderPass = mGraphicsSwapchain.mRenderPasses[i],
+        beginRenderPass.framebuffer = mGraphicsSwapchain.mSwapChainFramebuffers[i],
         beginRenderPass.renderArea = renderArea,
         beginRenderPass.clearValueCount = 2U,
         beginRenderPass.pClearValues = clearValues;
@@ -170,12 +175,6 @@ public:
 
   bool DoPreDeInit()
   {
-    // Destroy VK objects:
-    for(unsigned i = 0; i < mRenderPasses.size(); ++i)
-    {
-      vkDestroyRenderPass(*mGpuInterface, mRenderPasses[i], ALLOCATION_CALLBACKS);
-    }
-
     return true;
   }
 

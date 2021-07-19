@@ -92,6 +92,19 @@ Application::Application()
 
 }
 
+/// @todo Move this. Need a full rejig of the physical design of the project.
+void push_back_unique(std::vector<ApplicationComponent*>& components, ApplicationComponent* const component)
+{
+  if(components.end() == std::find(begin(components), end(components), component)){
+    components.push_back(component);
+  }
+}
+
+void Application::AddComponent(ApplicationComponent& component)
+{
+  push_back_unique(mComponents, &component);
+}
+
 bool Application::Init(const VkImageUsageFlags swapchainUsageOverrides)
 {
   // Do platform-specific initialisation:
@@ -108,6 +121,11 @@ bool Application::Init(const VkImageUsageFlags swapchainUsageOverrides)
   if(!InitVulkan(swapchainUsageOverrides))
   {
     return false;
+  }
+
+  for(auto component : mComponents)
+  {
+    component->Init(*this);
   }
 
   // Allow derived application class to do its own setup:
@@ -154,13 +172,6 @@ bool Application::InitVulkan(const VkImageUsageFlags swapchainUsageOverrides)
   // (Make all command buffers in the default pool resettable)
   mCommandPool = CommandPool::New(*mGpuInterface, VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT, 0);
 
-
-  // Build a depth buffer to be shared by all entries in the swapchain of color
-  // images:
-  if(!InitDepthBuffer(mDepthFormat))
-  {
-    return false;
-  }
 
   // Build a swapchain to get the results of rendering onto a display:
   if(!InitDefaultSwapchain(swapchainUsageOverrides))
@@ -490,71 +501,6 @@ bool Application::ChoosePresentableSurfaceFormat()
   return true;
 }
 
-bool Application::InitDepthBuffer(const VkFormat depthFormat)
-{
-  // Create an image object for the depth buffer upfront so we can query the
-  // amount of storage required for it from the Vulkan implementation:
-  const unsigned width = mWindow->GetPlatformWindow().GetWidth();
-  const unsigned height = mWindow->GetPlatformWindow().GetHeight();
-
-  ImagePtr depthImage = Image::New(*mGpuInterface, CreateDepthImageInfo(mDefaultPresentQueueFamily, depthFormat, width, height));
-
-  if(!depthImage.Get())
-  {
-    return false;
-  }
-
-  // Work out how much memory the depth image requires:
-  VkMemoryRequirements depthMemoryRequirements;
-  vkGetImageMemoryRequirements(*mGpuInterface, *depthImage, &depthMemoryRequirements);
-  KRUST_LOG_INFO << "Depth buffer memory requirements: (Size = " << depthMemoryRequirements.size << ", Alignment = " << depthMemoryRequirements.alignment << ", Flags = " << depthMemoryRequirements.memoryTypeBits << ")." << endlog;
-
-  // Work out which memory type we can use:
-  ConditionalValue<uint32_t> memoryType = FindFirstMemoryTypeWithProperties(mGpuMemoryProperties, depthMemoryRequirements.memoryTypeBits, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
-  if(!memoryType)
-  {
-    KRUST_LOG_ERROR << "No memory suitable for depth buffer." << endlog;
-    return false;
-  }
-
-  // Allocate the memory to back the depth image:
-  auto depthAllocationInfo = MemoryAllocateInfo(depthMemoryRequirements.size,
-    memoryType.GetValue());
-  DeviceMemoryPtr depthMemory{ DeviceMemory::New(*mGpuInterface, depthAllocationInfo) };
-
-  // Tie the memory to the image:
-  depthImage->BindMemory(*depthMemory, 0);
-
-  // Create a view for the depth buffer image:
-  VkImageView depthView = CreateDepthImageView(*mGpuInterface, *depthImage, depthFormat);
-  if(!depthView)
-  {
-    return false;
-  }
-
-  mDepthBufferView = depthView;
-  mDepthBufferImage = depthImage;
-  mDepthBufferMemory = depthMemory;
-
-  // Transition the depth buffer to the ideal layout:
-  auto postPresentImageMemoryBarrier = ImageMemoryBarrier();
-  postPresentImageMemoryBarrier.srcAccessMask = VK_ACCESS_MEMORY_READ_BIT | VK_ACCESS_MEMORY_WRITE_BIT,
-  postPresentImageMemoryBarrier.dstAccessMask = VK_ACCESS_MEMORY_READ_BIT | VK_ACCESS_MEMORY_WRITE_BIT,
-  postPresentImageMemoryBarrier.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED,
-  postPresentImageMemoryBarrier.newLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
-  postPresentImageMemoryBarrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
-  postPresentImageMemoryBarrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
-  postPresentImageMemoryBarrier.image = *mDepthBufferImage,
-  postPresentImageMemoryBarrier.subresourceRange = {VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT, 0, 1, 0, 1};
-
-  const auto depthLayoutResult = ApplyImageBarrierBlocking(*mGpuInterface, *mDepthBufferImage, mDefaultQueue, *mCommandPool, postPresentImageMemoryBarrier);
-  if (VK_SUCCESS != depthLayoutResult)
-  {
-    KRUST_LOG_ERROR << "Failed to change depth image layout: " << ResultToString(depthLayoutResult) << Krust::endlog;
-    return false;
-  }
-  return true;
-}
 
 bool Application::InitDefaultSwapchain(const VkImageUsageFlags swapchainUsageOverrides)
 {
@@ -770,6 +716,11 @@ bool Application::DeInit()
   // Give derived application first chance to cleanup:
   DoPreDeInit();
 
+  for(auto i = rbegin(mComponents), e = rend(mComponents); i != e; ++i)
+  {
+    (*i)->DeInit(*this);
+  }
+
   mCommandPool.Reset(nullptr);
 
   // Eagerly throw away command buffers which may be keeping alive lots of other
@@ -790,20 +741,6 @@ bool Application::DeInit()
   // No need to vkDestroyImage() as these images came from the swapchain extension:
   mSwapChainImages.clear();
   mDestroySwapChainKHR(*mGpuInterface, mSwapChain, Krust::GetAllocationCallbacks());
-
-  if(mDepthBufferView)
-  {
-    vkDestroyImageView(*mGpuInterface, mDepthBufferView, Krust::GetAllocationCallbacks());
-  }
-
-  mDepthBufferImage.Reset(nullptr);
-  
-  mDepthBufferMemory.Reset(nullptr);
-
-  for(auto fb : mSwapChainFramebuffers)
-  {
-    vkDestroyFramebuffer(*mGpuInterface, fb, Krust::GetAllocationCallbacks());
-  }
 
   if(mDefaultQueue)
   {
@@ -931,8 +868,22 @@ bool Application::DoPreDeInit()
   return true;
 }
 
-void Application::OnResize(unsigned, unsigned) {
-    KRUST_LOG_INFO << "Default OnResize() called.\n";
+void Application::DispatchResize(unsigned width, unsigned height)
+{
+  /// @todo Respond to resize.
+  KRUST_LOG_INFO << "Application::DispatchResize(): Need to resize swapchain [ToDo]" << endlog;
+
+  // Let any optional components respond to the size:
+  for(auto comp : mComponents){
+    comp->OnResize(*this, width, height);
+  }
+
+  // Let derived concrete application class know about the resize:
+  this->OnResize(width, height);
+}
+
+void Application::OnResize(unsigned w, unsigned h) {
+    KRUST_LOG_INFO << "Default Application::OnResize() called (" << w << ", " << h << ").\n";
 }
 
 void Application::OnRedraw() {

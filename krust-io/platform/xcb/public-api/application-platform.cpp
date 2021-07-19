@@ -132,6 +132,10 @@ void Krust::IO::ApplicationPlatform::WaitForAndDispatchEvent()
   ProcessEvent(event);
 }
 
+const char* Krust::IO::ApplicationPlatform::GetPlatformSurfaceExtensionName() {
+   return VK_KHR_XCB_SURFACE_EXTENSION_NAME;
+}
+
 void Krust::IO::ApplicationPlatform::ProcessEvent(const xcb_generic_event_t *event)
 {
   if (event) {
@@ -191,6 +195,15 @@ void Krust::IO::ApplicationPlatform::ProcessEvent(const xcb_generic_event_t *eve
       case XCB_CONFIGURE_NOTIFY: {
         const auto* notifyEvent = reinterpret_cast<const xcb_configure_notify_event_t*>(event);
         KRUST_LOG_INFO << "Window configuration changed (x = " << notifyEvent->x << ", y = " << notifyEvent->y << ", width = " << notifyEvent->width << ", height = " << notifyEvent->height <<")." << endlog;
+        auto& platformWindow = mWindow->GetPlatformWindow();
+        if (platformWindow.mXcbWindow == notifyEvent->window) {
+            if(notifyEvent->width != platformWindow.GetWidth() || notifyEvent->height != platformWindow.GetHeight())
+            {
+              platformWindow.SetWidth(notifyEvent->width);
+              platformWindow.SetHeight(notifyEvent->height);
+              mCallbacks.DispatchResize(notifyEvent->width, notifyEvent->height);
+            }
+        }
         break;
       }
 

@@ -20,6 +20,7 @@
 
 // External includes:
 #include "krust-io/public-api/krust-io.h"
+#include "krust-io/public-api/application-graphics-swapchain.h"
 #include "krust/public-api/krust.h"
 
 namespace kr = Krust;
@@ -36,7 +37,12 @@ constexpr VkAllocationCallbacks* ALLOCATION_CALLBACKS = nullptr;
  */
 class Clear2Application : public Krust::IO::Application
 {
+  // Optional components to extend the swapchain for access by graphics pipelines.
+  Krust::IO::ApplicationGraphicsSwapchain mGraphicsSwapchain;
+
 public:
+  Clear2Application() : mGraphicsSwapchain(*this) {}
+
   /**
    * Called by the default initialization once Krust is initialised and a window
    * has been created. Now is the time to do any additional setup.
@@ -55,14 +61,14 @@ public:
     if(!Krust::BuildFramebuffersForSwapChain(
       *mGpuInterface,
       mSwapChainImageViews,
-      mDepthBufferView,
+      mGraphicsSwapchain.mDepthBufferView,
       mWindow->GetPlatformWindow().GetWidth(),
       mWindow->GetPlatformWindow().GetHeight(),
       mFormat,
-      mDepthFormat,
+      mGraphicsSwapchain.mDepthFormat,
       NUM_SAMPLES,
-      mRenderPasses,
-      mSwapChainFramebuffers,
+      mGraphicsSwapchain.mRenderPasses,
+      mGraphicsSwapchain.mSwapChainFramebuffers,
       mSwapChainFences))
     {
       return false;
@@ -80,12 +86,6 @@ public:
 
   bool DoPreDeInit()
   {
-    // Destroy VK objects:
-    for(unsigned i = 0; i < mRenderPasses.size(); ++i)
-    {
-      vkDestroyRenderPass(*mGpuInterface, mRenderPasses[i], ALLOCATION_CALLBACKS);
-    }
-
     return true;
   }
 
@@ -177,8 +177,8 @@ public:
         mWindow->GetPlatformWindow().GetHeight()));
 
     auto beginRenderPass = kr::RenderPassBeginInfo(
-      mRenderPasses[mCurrentTargetImage],
-      mSwapChainFramebuffers[mCurrentTargetImage],
+      mGraphicsSwapchain.mRenderPasses[mCurrentTargetImage],
+      mGraphicsSwapchain.mSwapChainFramebuffers[mCurrentTargetImage],
       renderArea,
       2U,
       clearValues);

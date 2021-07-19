@@ -61,7 +61,7 @@ public:
    * @return true if an event was dispatched, else false.*/
   bool PeekAndDispatchEvent();
 
-  const char* GetPlatformSurfaceExtensionName() { return VK_KHR_WIN32_SURFACE_EXTENSION_NAME; }
+  const char* GetPlatformSurfaceExtensionName();
 
   ApplicationInterface& mCallbacks;
   /** The handle to the process.*/

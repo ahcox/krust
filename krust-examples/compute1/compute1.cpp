@@ -125,12 +125,6 @@ public:
 
   bool DoPreDeInit()
   {
-    // Destroy VK objects:
-    for(unsigned i = 0; i < mRenderPasses.size(); ++i)
-    {
-      vkDestroyRenderPass(*mGpuInterface, mRenderPasses[i], ALLOCATION_CALLBACKS);
-    }
-
     mComputePipeline.Reset();
     mPipelineLayout.Reset();;
     mDescriptorSets.clear();

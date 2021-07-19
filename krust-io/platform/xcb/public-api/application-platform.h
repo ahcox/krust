@@ -26,7 +26,6 @@
 
 // External includes:
 #include <xcb/xcb.h>
-#define VK_USE_PLATFORM_XCB_KHR
 #include <vulkan/vulkan.h>
 
 
@@ -64,9 +63,8 @@ public:
 private:
   void ProcessEvent(const xcb_generic_event_t *event);
 public:
-
-  const char* GetPlatformSurfaceExtensionName() { return VK_KHR_XCB_SURFACE_EXTENSION_NAME; }
-
+  const char* GetPlatformSurfaceExtensionName();
+ 
   ApplicationInterface& mCallbacks;
   xcb_connection_t *mXcbConnection;
   xcb_screen_t *mXcbScreen;

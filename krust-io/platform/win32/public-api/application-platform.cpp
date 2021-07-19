@@ -277,3 +277,7 @@ bool Krust::IO::ApplicationPlatform::PeekAndDispatchEvent()
   }
   return false;
 }
+
+const char* Krust::IO::ApplicationPlatform::GetPlatformSurfaceExtensionName() {
+   return VK_KHR_WIN32_SURFACE_EXTENSION_NAME;
+}

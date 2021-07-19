@@ -42,8 +42,10 @@ class WindowPlatform {
   ~WindowPlatform();
 
 public:
-  unsigned GetWidth() const { return mWidth; }
+  unsigned GetWidth() const  { return mWidth; }
   unsigned GetHeight() const { return mHeight; }
+  void SetWidth(const unsigned w)  { mWidth = w; }
+  void SetHeight(const unsigned h) { mHeight = h; }
 
 private:
   // Shortcut getters for application data:

@@ -25,6 +25,7 @@
 
 // Internal includes:
 #include "application-interface.h"
+#include "application-component.h"
 #include "keyboard.h"
 
 // External includes:
@@ -116,6 +117,7 @@ public:
 
   void SetName(const char * const appName) { mAppName = appName; }
   void SetVersion(uint32_t appVersion) { mAppVersion = appVersion; }
+  void AddComponent(ApplicationComponent& component);
 
 protected:
   virtual bool Init(VkImageUsageFlags swapchainUsageOverrides = 0);
@@ -145,11 +147,6 @@ protected:
    * Setup a queue that we can draw and present on.
    */
   virtual bool InitDefaultQueue();
-
-  /**
-   * Build a depth buffer.
-   */
-  virtual bool InitDepthBuffer(VkFormat depthFormat);
 
   /**
    * Make a swapchain to get images displayed in the default window.
@@ -190,6 +187,9 @@ protected:
   virtual void OnClose();
 
   ///@}
+
+  /** The window has been resized. */
+  void DispatchResize(unsigned width, unsigned height);
 
   /**
    * @name Overridables Template member functions for applications to override
@@ -242,9 +242,10 @@ protected:
   virtual void DoDrawFrame();
 
   ///@}
-
+public:
   friend class WindowPlatform;
   WindowPointer mWindow;
+protected:
   const char * mAppName = 0;
   uint32_t mAppVersion = 0;
 
@@ -252,6 +253,7 @@ protected:
    * @name VkState Vulkan state.
    */
   ///@{
+public:
   InstancePtr mInstance;
   VkPhysicalDevice  mGpu; ///< Physical GPU
   VkPhysicalDeviceProperties mGpuProperties;
@@ -271,6 +273,7 @@ protected:
   VkQueue*  mDefaultPresentQueue = 0;
   ///@}
 
+protected:
   /**
    * @name VkInstanceExtensions Vulkan instance extensions.
    */
@@ -298,6 +301,7 @@ protected:
   PFN_vkQueuePresentKHR mQueuePresentKHR = 0;
   ///@}
 
+public:
   /**
    * @name WindowData Data that is associated with the window.
    */
@@ -308,8 +312,6 @@ protected:
   VkFormat mFormat = VK_FORMAT_B8G8R8A8_UNORM;
   /// The color space for framebuffers.
   VkColorSpaceKHR mColorspace = VK_COLORSPACE_SRGB_NONLINEAR_KHR;
-  /// Depth buffer image format.
-  VkFormat mDepthFormat = VK_FORMAT_D24_UNORM_S8_UINT;
   /// Object representing the series of images to render into and display.
   VkSwapchainKHR mSwapChain = 0;
   /// One or more image to render into for display to screen.
@@ -317,8 +319,6 @@ protected:
   /// Image views into swapchain images for binding them to FrameBuffer objects
   /// as render targets. Correspond to entries in mSwapChainImages.
   std::vector<VkImageView> mSwapChainImageViews;
-  /// FrameBuffers for each image in swapchain:
-  std::vector<VkFramebuffer> mSwapChainFramebuffers;
   /// Fence for each image in swapchain, this is signalled by last queue submit of a frame by apps,
   /// and waited for at start of frame by them:
   std::vector<FencePtr> mSwapChainFences;
@@ -326,20 +326,13 @@ protected:
   CommandPoolPtr mCommandPool = nullptr;
   /// CommandBuffers for each image in swapchain:
   std::vector<CommandBufferPtr> mCommandBuffers;
-  /// Render Passes for each image in the swapchain:
-  std::vector<VkRenderPass> mRenderPasses;
   /// The entry in the mSwapChainImages array that was most recently acquired
   /// from WSI.
   uint32_t mCurrentTargetImage = 0;
   /// Used by WSI to signal to us that an image in the swapchain is available to
   /// render into.
   VkSemaphore mSwapChainSemaphore = 0;
-  /** Depth buffer logical image. */
-  ImagePtr mDepthBufferImage = 0;
-  /** Depth buffer handle for backing device memory storage. */
-  DeviceMemoryPtr mDepthBufferMemory = 0;
-  /** View of depth buffer image. */
-  VkImageView mDepthBufferView = 0;
+
   ///@}
 
 private:
@@ -347,6 +340,9 @@ private:
   bool mQuit = false;
   /// Platform-specific features such as an X11 connection on Linux.
   ApplicationPlatform mPlatformApplication;
+  /// Modules of functionality that need to be plumbed-in to the
+  /// init/deinit/resize events of the app lifecycle.
+  std::vector<ApplicationComponent*> mComponents;
 
   // Ban copying of objects of this type by making it a private operation:
 private:
