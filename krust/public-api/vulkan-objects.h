@@ -22,7 +22,7 @@
 // SOFTWARE.
 
 // Internal includes
-#include "krust/public-api/intrusive-pointer.h"
+#include "krust/public-api/vulkan-objects-fwd.h"
 #include "krust/public-api/ref-object.h"
 
 // External includes:
@@ -66,7 +66,9 @@ namespace Krust
  */
 ///@{
 
-/**
+
+
+/* ----------------------------------------------------------------------- *//**
  * Base class for all ownership wrappers for Vulkan API objects.
  **/
 class VulkanObject : public RefObject
@@ -81,15 +83,7 @@ private:
 
 
 
-// -----------------------------------------------------------------------------
-class Instance;
-/**
-* Shared pointer to automatically manage the lifetime of an Instance object and
-* thus the underlying Vulkan API object.
-*/
-using InstancePtr = IntrusivePointer<Instance>;
-
-/**
+/* ----------------------------------------------------------------------- *//**
  * An owner for a VkInstance Vulkan API object.
  */
 class Instance : public VulkanObject
@@ -111,11 +105,7 @@ private:
 
 
 
-// -----------------------------------------------------------------------------
-class Device;
-using DevicePtr = IntrusivePointer<Device>;
-
-/**
+/* ----------------------------------------------------------------------- *//**
  * An owner for vkDevice instances.
  */
 class Device : public VulkanObject
@@ -137,11 +127,7 @@ private:
 
 
 
-// -----------------------------------------------------------------------------
-class CommandPool;
-using CommandPoolPtr = IntrusivePointer<CommandPool>;
-
-/**
+/* ----------------------------------------------------------------------- *//**
  * An owner for VkCommandPool API objects.
  */
 class CommandPool : public VulkanObject
@@ -161,11 +147,7 @@ private:
 
 
 
-// -----------------------------------------------------------------------------
-class CommandBuffer;
-using CommandBufferPtr = IntrusivePointer<CommandBuffer>;
-
-/**
+/* ----------------------------------------------------------------------- *//**
  * An owner for VkCommandBuffer API objects.
  */
 class CommandBuffer : public VulkanObject
@@ -198,15 +180,7 @@ private:
 
 
 
-// -----------------------------------------------------------------------------
-class ComputePipeline;
-/**
-* Shared pointer to automatically manage the lifetime of a ComputePipeline object and
-* thus the underlying Vulkan API object.
-*/
-using ComputePipelinePtr = IntrusivePointer<ComputePipeline>;
-
-/**
+/* ----------------------------------------------------------------------- *//**
  * @brief A handle to a Compute Pipeline, wrapped to allow RAII management of its
  * lifetime.
  *
@@ -235,11 +209,7 @@ private:
 
 
 
-// -----------------------------------------------------------------------------
-class DescriptorPool;
-using DescriptorPoolPtr = IntrusivePointer<DescriptorPool>;
-
-/**
+/* ----------------------------------------------------------------------- *//**
  * An owner for VkDescriptorPool API objects.
  * Only handles pools of descriptors which can be individually
  * freed.
@@ -267,13 +237,8 @@ private:
 
 
 
-// -----------------------------------------------------------------------------
-class DescriptorSetLayout;
-using DescriptorSetLayoutPtr = IntrusivePointer<DescriptorSetLayout>;
-
-/**
+/* ----------------------------------------------------------------------- *//**
  * @brief A handle to a descriptor set layout object.
- *
  */
 class DescriptorSetLayout : public VulkanObject
 {
@@ -291,11 +256,7 @@ private:
 
 
 
-// -----------------------------------------------------------------------------
-class DescriptorSet;
-using DescriptorSetPtr = IntrusivePointer<DescriptorSet>;
-
-/**
+/* ----------------------------------------------------------------------- *//**
  * An owner for VkDescriptorSet API objects.
  */
 class DescriptorSet : public VulkanObject
@@ -322,11 +283,7 @@ private:
 
 
 
-// -----------------------------------------------------------------------------
-class DeviceMemory;
-using DeviceMemoryPtr = IntrusivePointer<DeviceMemory>;
-
-/**
+/* ----------------------------------------------------------------------- *//**
  * @brief A handle to a block of memory on a device.
  *
  * Memory is allocated on construction and freed on destruction.
@@ -347,11 +304,7 @@ private:
 
 
 
-// -----------------------------------------------------------------------------
-class Fence;
-using FencePtr = IntrusivePointer<Fence>;
-
-/**
+/* ----------------------------------------------------------------------- *//**
  * @brief A handle to a fence.
  *
  * Owns a VkFence object and allows its lifetime to be managed in RAII
@@ -373,11 +326,7 @@ private:
 
 
 
-// -----------------------------------------------------------------------------
-class Image;
-using ImagePtr = IntrusivePointer<Image>;
-
-/**
+/* ----------------------------------------------------------------------- *//**
  * @brief A handle to an instance of Vulkan's abstract image API object.
  *
  * @todo: Don't need a direct device pointer (ask memory for it when needed)
@@ -415,11 +364,7 @@ private:
 
 
 
-// -----------------------------------------------------------------------------
-class ImageView;
-using ImageViewPtr = IntrusivePointer<ImageView>;
-
-/**
+/* ----------------------------------------------------------------------- *//**
  * @brief A handle to an instance of Vulkan's opaque image handle API object.
  */
 class ImageView : public VulkanObject
@@ -452,11 +397,7 @@ private:
 
 
 
-// -----------------------------------------------------------------------------
-class PipelineLayout;
-using PipelineLayoutPtr = IntrusivePointer<PipelineLayout>;
-
-/**
+/* ----------------------------------------------------------------------- *//**
  * @brief A handle to a pipeline layout, wrapped to allow RAII management of its
  * lifetime.
  *
@@ -486,16 +427,13 @@ private:
 
 
 
-// -----------------------------------------------------------------------------
-class ShaderModule;
-using ShaderModulePtr = IntrusivePointer<ShaderModule>;
 /// A bundle of SPIR-V static code.
 /// @todo Make this a lightweight concrete class, just a size, a pmr allocator
 /// pointer, and a pointer to the data.
 using ShaderBuffer = std::vector<uint32_t>;
 inline ShaderBuffer::size_type byte_size(const ShaderBuffer& sb) { return sb.size() * sizeof(ShaderBuffer::value_type); }
 
-/**
+/* ----------------------------------------------------------------------- *//**
  * @brief A handle to an instance of Vulkan's VkShaderModule API object.
  */
 class ShaderModule : public VulkanObject
