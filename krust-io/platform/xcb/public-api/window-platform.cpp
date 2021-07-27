@@ -140,6 +140,21 @@ WindowPlatform::WindowPlatform(
         &mDeleteWindowEventAtom
       );
 
+      // Set the title of the window:
+      if(title && *title)
+      {
+      //xcb_void_cookie_t title_cookie =
+      xcb_change_property(
+        Connection(),
+        XCB_PROP_MODE_REPLACE,
+        mXcbWindow,
+        XCB_ATOM_WM_NAME,
+        XCB_ATOM_STRING,
+        8,
+        strlen(title),
+        title);
+      }
+
       // Show the window:
       xcb_map_window(Connection(), mXcbWindow);
 
