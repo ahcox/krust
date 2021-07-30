@@ -12,6 +12,8 @@ build/vs15/*
 .un~
 *.un~
 *.txt~
+.vscode/settings.json
+.vscode/tasks.json
 
 # Compiled Object files
 *.slo
