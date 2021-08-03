@@ -1,7 +1,7 @@
 #ifndef KRUST_IO_PLATFORM_XCB_PUBLIC_API_APPLICATION_PLATFORM_H_
 #define KRUST_IO_PLATFORM_XCB_PUBLIC_API_APPLICATION_PLATFORM_H_
 
-// Copyright (c) 2016 Andrew Helge Cox
+// Copyright (c) 2016-2021 Andrew Helge Cox
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -27,6 +27,7 @@
 // External includes:
 #include <xcb/xcb.h>
 #include <vulkan/vulkan.h>
+#include <bitset>
 
 
 namespace Krust {
@@ -50,6 +51,8 @@ public:
    * This is what we present rendered frames onto.
    * Should really be in Window class. */
   VkSurfaceKHR InitSurface(VkInstance instance);
+  /// Register the derived application's interest in the specified keyboard scancodes.
+  void ListenToScancodes(uint8_t* keycodes, size_t numKeys);
   void DeInit();
   void PreRun();
   /** Call this so events can be dispatched by window. */
@@ -68,10 +71,10 @@ public:
   ApplicationInterface& mCallbacks;
   xcb_connection_t *mXcbConnection;
   xcb_screen_t *mXcbScreen;
-  /** Observe window creation and destruction so can dispatch events by window
-   * Later, this will be an unordered map or short array of windows.
-   */
+  /// The platform-neutral window.
   Window* mWindow;
+  /// Raw scancodes that the app has registered interest in.
+  std::bitset<256> mRegisteredKeys;
 };
 
 } /* namespace IO */

@@ -118,6 +118,7 @@ public:
   void SetName(const char * const appName) { mAppName = appName; }
   void SetVersion(uint32_t appVersion) { mAppVersion = appVersion; }
   void AddComponent(ApplicationComponent& component);
+  void ListenToScancodes(uint8_t* keycodes, size_t numKeys);
 
 protected:
   virtual bool Init(VkImageUsageFlags swapchainUsageOverrides = 0);

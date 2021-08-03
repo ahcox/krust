@@ -105,6 +105,13 @@ void Application::AddComponent(ApplicationComponent& component)
   push_back_unique(mComponents, &component);
 }
 
+void Application::ListenToScancodes(uint8_t* keycodes, const size_t numKeys)
+{
+  if(keycodes && numKeys){
+    mPlatformApplication.ListenToScancodes(keycodes, numKeys);
+  }
+}
+
 bool Application::Init(const VkImageUsageFlags swapchainUsageOverrides)
 {
   // Do platform-specific initialisation:
@@ -962,8 +969,8 @@ void Application::OnRedraw() {
   }
 }
 
-void Application::OnKey(bool, KeyCode) {
-  KRUST_LOG_INFO << "Default OnKey() called.\n";
+void Application::OnKey(const bool up, const KeyCode keycode) {
+  KRUST_LOG_INFO << "Default OnKey() called: key scancode: " << int(keycode) << (up ? ", up." : ", down." ) << endlog;
 }
 
 void Application::OnClose()

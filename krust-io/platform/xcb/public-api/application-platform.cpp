@@ -90,6 +90,15 @@ VkSurfaceKHR Krust::IO::ApplicationPlatform::InitSurface(VkInstance instance)
   return surface;
 }
 
+void Krust::IO::ApplicationPlatform::ListenToScancodes(uint8_t* keycodes, const size_t numKeys)
+{
+  for(size_t i = 0; i < numKeys; ++i)
+  {
+    mRegisteredKeys.set(keycodes[i]);
+  }
+
+}
+
 void Krust::IO::ApplicationPlatform::DeInit() {
   if(mXcbConnection)
   {
@@ -130,6 +139,7 @@ void Krust::IO::ApplicationPlatform::WaitForAndDispatchEvent()
   event = xcb_wait_for_event(mXcbConnection);
   ScopedFree event_deleter(event);
   ProcessEvent(event);
+
 }
 
 const char* Krust::IO::ApplicationPlatform::GetPlatformSurfaceExtensionName() {
@@ -151,16 +161,45 @@ void Krust::IO::ApplicationPlatform::ProcessEvent(const xcb_generic_event_t *eve
         }
         break;
       }
-      /*case XCB_CLIENT_MESSAGE: {
+      case XCB_FOCUS_IN: {
+        KRUST_LOG_INFO << "Gaining input focus so turning off key repeats." << endlog;
+        uint32_t mask = XCB_KB_AUTO_REPEAT_MODE;
+        uint32_t values[] = {XCB_AUTO_REPEAT_MODE_OFF, 0};
+        xcb_void_cookie_t off_cookie = xcb_change_keyboard_control_checked(mXcbConnection, mask, values);
+        xcb_generic_error_t* off_error = xcb_request_check(mXcbConnection, off_cookie);
+        if(off_error) {
+            KRUST_LOG_ERROR << "off_error: " << off_error->error_code << endlog;
+        }
         break;
-      }*/
+      }
+      case XCB_FOCUS_OUT: {
+        KRUST_LOG_INFO << "Losing input focus event so turning on key rpeats." << endlog;
+        uint32_t mask = XCB_KB_AUTO_REPEAT_MODE;
+        uint32_t values[] = {XCB_AUTO_REPEAT_MODE_ON, 0};
+        xcb_void_cookie_t on_cookie = xcb_change_keyboard_control_checked(mXcbConnection, mask, values);
+        xcb_generic_error_t* on_error = xcb_request_check(mXcbConnection, on_cookie);
+        if(on_error){
+          KRUST_LOG_ERROR << "on_error: " << on_error->error_code << endlog;
+        }
+        break;
+      }
       case XCB_KEY_RELEASE: {
-        ///@todo - Translate keypresses to a Krust define.
+        const auto keyEvent = reinterpret_cast<const xcb_key_release_event_t *>(event);
+        KRUST_COMPILE_ASSERT(sizeof(keyEvent->detail) == 1u, "Need to adjust mRegisteredKeys");
+        const uint8_t scancode = keyEvent->detail;
+        KRUST_LOG_INFO << "Key released in window. Code: " << int(scancode) << "." << endlog;
+        if(mRegisteredKeys[scancode]){
+            mCallbacks.OnKey(KeyUp, scancode);
+        }
         break;
       }
       case XCB_KEY_PRESS: {
-        const auto keyPress = reinterpret_cast<const xcb_key_press_event_t *>(event);
-        KRUST_LOG_INFO << "Key pressed in window. Code: " << int(keyPress->detail) << "." << endlog;
+        const auto keyEvent = reinterpret_cast<const xcb_key_press_event_t *>(event);
+        const uint8_t scancode = keyEvent->detail;
+        KRUST_LOG_INFO << "Key pressed in window. Code: " << int(scancode) << "." << endlog;
+        if(mRegisteredKeys[scancode]){
+            mCallbacks.OnKey(KeyDown, scancode);
+        }
         break;
       }
       case XCB_DESTROY_NOTIFY: {
@@ -208,6 +247,17 @@ void Krust::IO::ApplicationPlatform::ProcessEvent(const xcb_generic_event_t *eve
       }
 
       case XCB_CLIENT_MESSAGE: {
+        KRUST_LOG_DEBUG << "XCB_CLIENT_MESSAGE recieved. Going down." << endlog;
+        // Reset the keyboard repeat mode for other apps before we die:
+        /// @todo Reset the keyboard in an atexit handler (set_terminate(), at_quick_exit()) so it always runs.
+        uint32_t mask = XCB_KB_AUTO_REPEAT_MODE;
+        uint32_t values[] = {XCB_AUTO_REPEAT_MODE_ON, 0};
+        xcb_void_cookie_t on_cookie = xcb_change_keyboard_control_checked(mXcbConnection, mask, values);
+        xcb_generic_error_t* on_error = xcb_request_check(mXcbConnection, on_cookie);
+        if(on_error){
+          KRUST_LOG_INFO << "on_error: " << on_error->error_code << endlog;
+        }
+
         const auto * clientEvent = reinterpret_cast<const xcb_client_message_event_t*>(event);
         if(mWindow)
         {
@@ -222,6 +272,7 @@ void Krust::IO::ApplicationPlatform::ProcessEvent(const xcb_generic_event_t *eve
       default: {
         KRUST_LOG_DEBUG << "Non-handled event received. Response type(" << eventCode << "): " << XcbEventCodeToString(eventCode) << ", Sequence: " <<
         event->sequence << ", Full sequence: " << event->full_sequence << endlog;
+        // We'll get XCB_MAPPING_NOTIFY ("keyboard mapping changed") if two keyboards are plugged in when switching between them.
         break;
       }
     }

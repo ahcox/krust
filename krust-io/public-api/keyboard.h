@@ -26,7 +26,8 @@ namespace Krust
 namespace IO
 {
 
-enum class KeyCode
+/// @todo Delete this
+enum class VirtualKeyCode
 {
   Left,
   Right,

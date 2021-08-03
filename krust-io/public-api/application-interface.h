@@ -22,12 +22,16 @@
 // SOFTWARE.
 
 #include "keyboard.h"
+#include <cstdint>
 
 namespace Krust {
 namespace IO {
 
 class Window;
-enum class KeyCode;
+
+using KeyCode = std::uint8_t;
+constexpr bool KeyUp   {true};
+constexpr bool KeyDown {false};
 
 /**
  * @brief The interface used by the platform specific application to dispatch
