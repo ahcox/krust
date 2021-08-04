@@ -3,7 +3,7 @@
 #version 450 core
 
 layout(local_size_x = 8, local_size_y = 8, local_size_z = 1) in;
-layout(rgba8, set = 0, binding = 0) uniform image2D framebuffer;
+layout(rgba8, set = 0, binding = 0) writeonly lowp uniform image2D framebuffer;
 
 void main()
 {
