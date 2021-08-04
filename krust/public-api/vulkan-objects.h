@@ -416,6 +416,14 @@ public:
     const VkDescriptorSetLayout*    pSetLayouts = nullptr,
     uint32_t                        pushConstantRangeCount = 0,
     const VkPushConstantRange*      pPushConstantRanges = nullptr);
+
+  /// @ A version for when there is a single layout and a single push constant range.
+  static PipelineLayoutPtr New(
+    Device&                         device,
+    VkPipelineLayoutCreateFlags     flags,
+    const VkDescriptorSetLayout&    setLayout,
+    const VkPushConstantRange&      pushConstantRange);
+
   ~PipelineLayout();
   operator VkPipelineLayout() const { return mPipelineLayout; }
   //const VkPipelineLayout* GetPipelineLayoutAddress() const { return &mPipelineLayout; }

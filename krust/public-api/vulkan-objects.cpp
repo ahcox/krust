@@ -430,6 +430,15 @@ PipelineLayoutPtr PipelineLayout::New(
   return new PipelineLayout(device, PipelineLayoutCreateInfo(flags, setLayoutCount, pSetLayouts, pushConstantRangeCount, pPushConstantRanges));
 }
 
+PipelineLayoutPtr PipelineLayout::New(
+    Device&                         device,
+    VkPipelineLayoutCreateFlags     flags,
+    const VkDescriptorSetLayout&    setLayout,
+    const VkPushConstantRange&      pushConstantRange)
+{
+  return new PipelineLayout(device, PipelineLayoutCreateInfo(flags, 1, &setLayout, 1, &pushConstantRange));
+}
+
 PipelineLayout::~PipelineLayout()
 {
   vkDestroyPipelineLayout(*mDevice, mPipelineLayout, Internal::sAllocator);
