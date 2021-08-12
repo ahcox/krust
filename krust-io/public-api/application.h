@@ -180,9 +180,10 @@ protected:
   /** The window has been resized. */
   virtual void OnResize(unsigned width, unsigned height);
   /** The window needs to be redrawn. */
-  virtual void OnRedraw();
+  void OnRedraw() override;
   /** A key was pressed or released. */
-  virtual void OnKey(bool up, KeyCode keycode );
+  void OnKey(bool up, KeyCode keycode ) override;
+  void OnMouseMove(InputTimestamp when, int x, int y, unsigned state) override;
   /** The window is being closed. You may wish
    * to close the app. */
   virtual void OnClose();

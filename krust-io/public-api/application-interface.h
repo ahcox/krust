@@ -32,6 +32,7 @@ class Window;
 using KeyCode = std::uint8_t;
 constexpr bool KeyUp   {true};
 constexpr bool KeyDown {false};
+using InputTimestamp = std::uint32_t;
 
 /**
  * @brief The interface used by the platform specific application to dispatch
@@ -46,6 +47,11 @@ public:
   virtual void DispatchResize(unsigned width, unsigned height) = 0;
   virtual void OnRedraw() = 0;
   virtual void OnKey(bool up, KeyCode keycode) = 0;
+  /** Called when the mouse moves within the window
+   * @param state Platform specific indicator of mouse button and special key
+   * up/down. Special keys include CTRL, ALT, Windows, Shift, ...
+   */
+  virtual void OnMouseMove(InputTimestamp when, int x, int y, unsigned state) = 0;
   /**
    * @brief The user has issued a close request for the window (e.g. by clicking
    * the little cross in its corner decoration).

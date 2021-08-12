@@ -973,6 +973,32 @@ void Application::OnKey(const bool up, const KeyCode keycode) {
   KRUST_LOG_INFO << "Default OnKey() called: key scancode: " << int(keycode) << (up ? ", up." : ", down." ) << endlog;
 }
 
+void Application::OnMouseMove(InputTimestamp when, int x, int y, unsigned state)
+{
+  KRUST_LOG_INFO << "Default OnMouseMove() called: when: " << when << ", (x,y): (" << x << ", " << y << "), state: " << state  << endlog;// "  \r";
+  if(left(state)){
+    KRUST_LOG_INFO << "\tLEFT" << endlog;
+  }
+  if(middle(state)){
+    KRUST_LOG_INFO << "\tMIDDLE" << endlog;
+  }
+  if(right(state)){
+    KRUST_LOG_INFO << "\tRIGHT" << endlog;
+  }
+  if(shift(state)){
+    KRUST_LOG_INFO << "\tSHIFT" << endlog;
+  }
+  if(ctrl(state)){
+    KRUST_LOG_INFO << "\tCTRL" << endlog;
+  }
+  if(super(state)){
+    KRUST_LOG_INFO << "\tSUPER" << endlog;
+  }
+    if(alt(state)){
+    KRUST_LOG_INFO << "\tALT" << endlog;
+  }
+}
+
 void Application::OnClose()
 {
   KRUST_LOG_INFO << "Default OnClose() called.\n";

@@ -20,6 +20,10 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
+/**
+ * @file Platform-specific aspects of the Application class and supporting
+ * types and functions for the XCB / Linux X11 platform.
+ */
 
 // Internal includes:
 #include "krust-io/public-api/window.h"
@@ -34,8 +38,9 @@ namespace Krust {
 namespace IO {
 
 class Window;
-
 class ApplicationInterface;
+
+/// @todo define this here: using InputTimestamp = xcb_timestamp_t;
 
 /**
  * \brief A component encompassing the platform-specific portion of an
@@ -76,6 +81,24 @@ public:
   /// Raw scancodes that the app has registered interest in.
   std::bitset<256> mRegisteredKeys;
 };
+
+/**
+ * @name MouseStateXCB Helpers to query the state passed with mouse move events.
+ * @note Hardcoded numbers determined by experiment, my mouse, my PC, Ubuntu 21.04.
+ */
+///@{
+  constexpr bool left(uint16_t state)   { return state & 256U; }
+  constexpr bool middle(uint16_t state) { return state & 512U; }
+  constexpr bool right(uint16_t state)  { return state & 1024U; }
+  constexpr bool shift(uint16_t state)  { return state & 1U; }
+  constexpr bool ctrl(uint16_t state)   { return state & 4U; }
+  /// The key with the windows icon.
+  constexpr bool super(uint16_t state)  { return state & 64U; }
+  constexpr bool alt(uint16_t state)    { return state & 8U; }
+  constexpr bool altgr(uint16_t state)  { return state & 128U; }
+  constexpr bool caps(uint16_t state)   { return state & 2U; }
+  constexpr bool numlock(uint16_t state){ return state & 16U; }
+///@}
 
 } /* namespace IO */
 } /* namespace Krust */

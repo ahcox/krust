@@ -217,8 +217,18 @@ void Krust::IO::ApplicationPlatform::ProcessEvent(const xcb_generic_event_t *eve
         break;
       }
       case XCB_MOTION_NOTIFY: {
-        //const auto motion = reinterpret_cast<xcb_motion_notify_event_t *>(event);
-        // Too verbose: KRUST_LOG_INFO << "Mouse moved in window ." << endlog;
+        const auto motion = reinterpret_cast<const xcb_motion_notify_event_t *>(event);
+        //KRUST_LOG_INFO << "Mouse moved in window ." << endlog;
+        //KRUST_LOG_INFO << "\t :" << motion->sequence << endlog;
+        //KRUST_LOG_INFO << "\t time:\t" << motion->time << endlog;
+        // window:KRUST_LOG_INFO << "\t :" << motion->root << endlog;
+        // window: KRUST_LOG_INFO << "\t event:\t" << motion->event << endlog;
+        // window:KRUST_LOG_INFO << "\t child:\t" << motion->child << endlog;
+        // Screen coords (in multimon it is the whole virtual screen encompassing them all) KRUST_LOG_INFO << "\t (root_x, root_y):\t(" << motion->root_x << ", " << motion->root_y << ')' << endlog;
+        //KRUST_LOG_INFO << "\t (event_x, event_y):\t(" << motion->event_x << ", " << motion->event_y << ')' << endlog;
+        //KRUST_LOG_INFO << "\t Button and special key state:\t" << motion->state << endlog;
+        ///KRUST_LOG_INFO << "\t same screen\t:" << unsigned(motion->same_screen) << endlog;
+        mCallbacks.OnMouseMove(motion->time, motion->event_x, motion->event_y, motion->state);
         break;
       }
       case XCB_ENTER_NOTIFY: {
