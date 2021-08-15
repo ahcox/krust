@@ -100,6 +100,9 @@ add_subdirectory (krust)
 # Helper library to open a window and respond to input:
 add_subdirectory (krust-io)
 
+# Graphics maths library
+add_subdirectory (krust-gm)
+
 # Examples of Krust using Krust-io:
 add_subdirectory (krust-examples)
 
