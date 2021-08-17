@@ -27,6 +27,7 @@
 #include "krust/public-api/logging.h"
 #include "krust/public-api/krust.h"
 #include <xcb/xcb.h>
+#include <limits>
 
 namespace Krust {
 namespace IO {
@@ -333,3 +334,15 @@ const char* Krust::IO::XcbEventCodeToString(unsigned eventCode)
   return text;
 }
 
+float Krust::IO::durationBetween(const InputTimestamp start, const InputTimestamp end)
+{
+  if(end >= start){
+      [[likely]]
+      return float(end - start) / 1000.0f;
+  } else {
+      // We can roll over once, but not twice:
+      // This should be fine up to 49 days so don't suspend your laptop for 50 days.
+      [[unlikely]]
+      return float(end) / 1000.0f + (std::numeric_limits<InputTimestamp>::max() - start) / 1000.0f;
+  }
+}

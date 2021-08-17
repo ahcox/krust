@@ -26,6 +26,7 @@
  */
 
 // Internal includes:
+#include "krust-io/public-api/application-interface.h"
 #include "krust-io/public-api/window.h"
 
 // External includes:
@@ -99,6 +100,9 @@ public:
   constexpr bool caps(uint16_t state)   { return state & 2U; }
   constexpr bool numlock(uint16_t state){ return state & 16U; }
 ///@}
+
+/// Convert two opaque timestamps into a duration in seconds.
+float durationBetween(const InputTimestamp start, const InputTimestamp end);
 
 } /* namespace IO */
 } /* namespace Krust */
