@@ -39,7 +39,7 @@ namespace Krust
     }
 
 #if defined(KRUST_GM_BUILD_CONFIG_ENABLE_SIMD)
-    inline Vec3 load(Vec3InMemory& vmem)
+    inline Vec3 load(const Vec3InMemory& vmem)
     {
         Vec3 vec;
         //vec.copy_from(&vmem.v[0], std::experimental::vector_aligned); // compiles
@@ -48,9 +48,21 @@ namespace Krust
         return vec;
     }
 
+    inline Vec3 load(const float vmem[3])
+    {
+        Vec3 vec;
+        vec.copy_from(vmem, std::experimental::element_aligned);
+        return vec;
+    }
+
     inline void store(const Vec3 vec, Vec3InMemory& vmem)
     {
         vec.copy_to(&vmem.v[0], std::experimental::overaligned<alignof(Vec3InMemory)>);
+    }
+
+    inline void store(const Vec3 vec, float vmem[3])
+    {
+        vec.copy_to(vmem, std::experimental::element_aligned);
     }
 
     /// Horizontal add components in vector.
@@ -76,6 +88,11 @@ namespace Krust
         vec[0] = x;
         vec[1] = y;
         vec[2] = z;
+        return vec;
+    }
+
+    inline Vec3 make_vec3(const Vec3 vec)
+    {
         return vec;
     }
 
