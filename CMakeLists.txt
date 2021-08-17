@@ -102,6 +102,9 @@ add_subdirectory (krust-io)
 
 # Graphics maths library
 add_subdirectory (krust-gm)
+if(KRUST_GM_BUILD_CONFIG_ENABLE_SIMD)
+    add_compile_definitions(KRUST_GM_BUILD_CONFIG_ENABLE_SIMD)
+endif()
 
 # Examples of Krust using Krust-io:
 add_subdirectory (krust-examples)
