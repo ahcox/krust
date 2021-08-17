@@ -1,6 +1,7 @@
 # Krust graphics maths library
 
-set(KRUST_GM_BUILD_CONFIG_ENABLE_SIMD ON CACHE BOOL "Use the experimental C++ standard SIMD short vector support in GCC-only." PARENT_SCOPE)
+set(KRUST_GM_BUILD_CONFIG_ENABLE_SIMD ON CACHE BOOL "Use the experimental C++ standard SIMD short vector support in GCC-only.")
+set(KRUST_GM_BUILD_CONFIG_ENABLE_SIMD ON BOOL "Use the experimental C++ standard SIMD short vector support in GCC-only." PARENT_SCOPE)
 if(KRUST_GM_BUILD_CONFIG_ENABLE_SIMD)
     add_compile_definitions(KRUST_GM_BUILD_CONFIG_ENABLE_SIMD)
 endif()
