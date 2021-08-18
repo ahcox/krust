@@ -24,6 +24,7 @@
 #include "krust-gm/public-api/vec3_inl.h"
 #include "krust/public-api/krust.h"
 #include "krust/public-api/conditional-value.h"
+#include "krust-kernel/public-api/floats.h"
 #include <fstream>
 
 namespace kr = Krust;
@@ -362,6 +363,7 @@ public:
     if(mKeyDown) {
       kr::store(kr::load(mPushed.ray_origin) + (kr::load(mPushed.ray_target_up) * -5.0f) , mPushed.ray_origin);
     }
+    mPushed.ray_origin[1] = kr::clamp(mPushed.ray_origin[1], 3.7f, 1500.0f);
 
     // Work out camera direction from mouse-defined angles:
     kr::Vec3 right, up, fwd;
@@ -373,32 +375,8 @@ public:
     kr::store(right,             mPushed.ray_target_right);
     kr::store(up,                mPushed.ray_target_up);
 
-/*
-    float fb_width;
-    float fb_height;
-    float pad0[2];
-    float ray_origin[3];
-    float padding1;
-    float ray_target_origin[3];
-    float padding2;
-    float ray_target_right[3];
-    float padding3;
-    float ray_target_up[3];
-    Pushed mPushed = {
-    1, // width
-    1, // height
-    {0,0}, // padding
-    {0,405,900}, 1, // ray_origin
-    {-900,0,0}, 1, // ray_target_origin
-    {1,0,0}, 1,
-    {0,1,0}, 1,
-  };
-*/
-    /// @todo BOOKMARK
 
     vkCmdPushConstants(*commandBuffer, *mPipelineLayout, VK_SHADER_STAGE_COMPUTE_BIT, 0, sizeof(Pushed), &mPushed);
-    //mPushed.ray_origin[2] += creep;
-    //mPushed.ray_target_origin[2] += creep;
 
     vkCmdDispatch(*commandBuffer,
       win_width / WORKGROUP_X + (win_width % WORKGROUP_X ? 1 : 0 ),
