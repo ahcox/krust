@@ -94,7 +94,10 @@ include_directories(${KRUST_IO_PLATFORM_WINDOWING_DIR})
 # #defines for all libraries and executables:
 add_definitions(-DKRUST_ASSERT_LEVEL=${KRUST_ASSERT_LEVEL})
 
-# Core Krust library:
+# Cross-library, fundamental features.
+add_subdirectory (krust-kernel)
+
+# Main Krust library for working with Vulkan:
 add_subdirectory (krust)
 
 # Helper library to open a window and respond to input:

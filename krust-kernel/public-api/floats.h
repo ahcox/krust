@@ -1,0 +1,61 @@
+#ifndef KRUST_KERNEL_PUBLIC_API_FLOATS_H_
+#define KRUST_KERNEL_PUBLIC_API_FLOATS_H_
+
+// Copyright (c) 2021 Andrew Helge Cox
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+
+/**
+ * @file Widely-applicable simple helper functions for working with floats.
+ */
+
+namespace Krust
+{
+    constexpr void swap(float& a, float& b)
+    {
+        const float c = a;
+        a = b;
+        b = c;
+    }
+
+    constexpr float min(const float a, const float b)
+    {
+        float c = a;
+        if(b < a){
+            c = b;
+        }
+        return c;
+    }
+
+    constexpr float max(const float a, const float b)
+    {
+        float c = a;
+        if(b > a){
+            c = b;
+        }
+        return c;
+    }
+
+    constexpr float clamp(const float val, const float lower, const float upper)
+    {
+        return min(upper, max(lower, val));
+    }
+}
+
+#endif // KRUST_KERNEL_PUBLIC_API_FLOATS_H_
