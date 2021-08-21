@@ -184,9 +184,10 @@ void Krust::IO::ApplicationPlatform::ProcessEvent(const xcb_generic_event_t *eve
         }
         // Send key-ups for all registered keys.
         /// @todo Consider passing the focus message to the app as a new callback instead.
-        /// These keys might not be down currently so we are relying on the app not to care about that.
-        /// Alternatively, track what keys are down here, duplicating that work in the app, and only
-        /// key-ups for keys that are down.
+        /// These keys might not be down currently so we are relying on the app not to
+        /// care about that. Alternatively, track what keys are down in
+        /// ApplicationPlatform, duplicating that work in the app, and only send key-ups
+        /// for keys that are currently down.
         for(unsigned scancode = 0, end = mRegisteredKeys.size(); scancode < end; ++scancode)
         {
           if(mRegisteredKeys[scancode]){
