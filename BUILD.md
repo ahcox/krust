@@ -19,6 +19,8 @@ For a debug makefile build do the following:
 On Windows
 ----------
 
+**The Windows platform is currently broken**. Use Linux for now.
+
 The easiest way to build Krust for Windows is to use CMake to generate a
 Visual Studio solution that you can use in Visual Studio 2015 Community Edition.
 
