@@ -174,13 +174,24 @@ void Krust::IO::ApplicationPlatform::ProcessEvent(const xcb_generic_event_t *eve
         break;
       }
       case XCB_FOCUS_OUT: {
-        KRUST_LOG_INFO << "Losing input focus event so turning on key rpeats." << endlog;
+        KRUST_LOG_INFO << "Losing input focus event so turning on key repeats." << endlog;
         uint32_t mask = XCB_KB_AUTO_REPEAT_MODE;
         uint32_t values[] = {XCB_AUTO_REPEAT_MODE_ON, 0};
         xcb_void_cookie_t on_cookie = xcb_change_keyboard_control_checked(mXcbConnection, mask, values);
         xcb_generic_error_t* on_error = xcb_request_check(mXcbConnection, on_cookie);
         if(on_error){
-          KRUST_LOG_ERROR << "on_error: " << on_error->error_code << endlog;
+          KRUST_LOG_ERROR << "\tError: " << on_error->error_code << endlog;
+        }
+        // Send key-ups for all registered keys.
+        /// @todo Consider passing the focus message to the app as a new callback instead.
+        /// These keys might not be down currently so we are relying on the app not to care about that.
+        /// Alternatively, track what keys are down here, duplicating that work in the app, and only
+        /// key-ups for keys that are down.
+        for(unsigned scancode = 0, end = mRegisteredKeys.size(); scancode < end; ++scancode)
+        {
+          if(mRegisteredKeys[scancode]){
+              mCallbacks.OnKey(KeyUp, scancode);
+          }
         }
         break;
       }
