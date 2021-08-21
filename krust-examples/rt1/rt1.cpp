@@ -36,6 +36,7 @@ constexpr VkSampleCountFlagBits NUM_SAMPLES = VK_SAMPLE_COUNT_1_BIT;
 constexpr VkAllocationCallbacks* ALLOCATION_CALLBACKS = nullptr;
 constexpr unsigned WORKGROUP_X = 8u;
 constexpr unsigned WORKGROUP_Y = 8u;
+constexpr const char* const DEFAULT_SHADER = "rt1.comp.spv";
 
 kr::ShaderBuffer loadSpirV(const char* const filename)
 {
@@ -109,7 +110,7 @@ public:
     // Build all resources required to run the compute shader:
 
     // Load the spir-v shader code into a module:
-    kr::ShaderBuffer spirv { loadSpirV("rt1.comp.spv") };
+    kr::ShaderBuffer spirv { loadSpirV(mShaderName) };
     if(spirv.empty()){
       return false;
     }
@@ -452,10 +453,17 @@ private:
   bool mLeftMouse = false;
   int mLastX = 0;
   int mLastY = 0;
+public:
+  const char* mShaderName = DEFAULT_SHADER;
 };
 
-int main()
+int main(const int argc, const char* argv[])
 {
+  puts("Ray Tracing in a GPU compute shader.\n"
+      "Usage:\n"
+      "1. rt1\n"
+      "2. rt1 compiled_spirv_shader_filename\n"
+  );
   Rt1Application application;
   application.SetName("Ray Tracing 1");
   application.SetVersion(1);
@@ -464,6 +472,9 @@ int main()
     111, 116, 113, 114, 112, 117 // up,down,left,right arrows, pgup, pgdn
   };
   application.ListenToScancodes(keycodes, sizeof(keycodes));
+  if(argc > 1){
+    application.mShaderName = argv[1];
+  }
 
   // Request a busy loop which constantly repaints to show the
   // animation:
