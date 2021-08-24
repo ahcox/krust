@@ -36,7 +36,7 @@ constexpr VkSampleCountFlagBits NUM_SAMPLES = VK_SAMPLE_COUNT_1_BIT;
 constexpr VkAllocationCallbacks* ALLOCATION_CALLBACKS = nullptr;
 constexpr unsigned WORKGROUP_X = 8u;
 constexpr unsigned WORKGROUP_Y = 8u;
-constexpr const char* const DEFAULT_SHADER = "rt1.comp.spv";
+constexpr const char* const DEFAULT_SHADER = "rt2.comp.spv";
 
 kr::ShaderBuffer loadSpirV(const char* const filename)
 {
@@ -370,7 +370,12 @@ public:
     kr::Vec3 right, up, fwd;
     viewVecsFromAngles(mCameraPitch, mCameraYaw, right, up, fwd);
     auto ray_origin = kr::make_vec3(mPushed.ray_origin);
-    auto ray_target_origin = ray_origin + fwd * (win_width * 0.5f) + (-right) * (win_width * 0.5f) + (-up) * (win_height * 0.5f);
+    // The ray target origin is the bottom-left corner of the worldspace 2d grid,
+    // equivalent to the pixels of the framebuffer, that we will shoot rays at.
+    auto ray_target_origin = ray_origin
+        + fwd * (win_width * 0.5f)
+        + (-right) * (win_width * 0.5f)
+        + (-up)    * (win_height * 0.5f);
 
     kr::store(ray_target_origin, mPushed.ray_target_origin);
     kr::store(right,             mPushed.ray_target_right);
@@ -457,6 +462,7 @@ public:
   const char* mShaderName = DEFAULT_SHADER;
 };
 
+
 int main(const int argc, const char* argv[])
 {
   puts("Ray Tracing in a GPU compute shader.\n"
@@ -464,6 +470,7 @@ int main(const int argc, const char* argv[])
       "1. rt1\n"
       "2. rt1 compiled_spirv_shader_filename\n"
   );
+
   Rt1Application application;
   application.SetName("Ray Tracing 1");
   application.SetVersion(1);
