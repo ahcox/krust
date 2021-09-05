@@ -4,14 +4,18 @@
 //   > Implement FXAA first on this aliased mess.
 #version 450 core
 #extension GL_GOOGLE_include_directive : require
+#include "header.inc.glsl"
 #include "intersections.inc.glsl"
 
 layout(local_size_x = 8, local_size_y = 8, local_size_z = 1) in;
 layout(rgba8, set = 0, binding = 0) uniform image2D framebuffer;
+/// @todo Pack into minimal number of vec4s.
 layout(push_constant) uniform frame_params_t
 {
-    float fb_width;
-    float fb_height;
+    /// @todo pack width and height into one 32 bit uint.
+    uint32_t fb_width;
+    uint32_t fb_height;
+    uint32_t frame_no;
     vec3 ray_origin;
     vec3 ray_target_origin;
     vec3 ray_target_right;

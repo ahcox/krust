@@ -86,11 +86,22 @@ add_custom_command(COMMENT "Compiling rt2 shader"
                                    ${PROJECT_SOURCE_DIR}/krust-examples/rt1/utils.inc.glsl
                                    ${GLSLANG_VALIDATOR})
 
+add_custom_command(COMMENT "Compiling ray tracing in one week grey diffuse sphere shader"
+                                   OUTPUT rtow_diffuse_grey.comp.spv
+                                   COMMAND ${GLSLANG_VALIDATOR} -V -o ${CMAKE_CURRENT_BINARY_DIR}/rtow_diffuse_grey.comp.spv
+                                           ${PROJECT_SOURCE_DIR}/krust-examples/rt1/rtow_diffuse_grey.comp.glsl
+                                   MAIN_DEPENDENCY ${PROJECT_SOURCE_DIR}/krust-examples/rt1/rtow_diffuse_grey.comp.glsl
+                                   DEPENDS ${PROJECT_SOURCE_DIR}/krust-examples/rt1/rtow_diffuse_grey.comp.glsl
+                                           ${PROJECT_SOURCE_DIR}/krust-examples/rt1/intersections.inc.glsl
+                                           ${PROJECT_SOURCE_DIR}/krust-examples/rt1/utils.inc.glsl
+                                           ${GLSLANG_VALIDATOR})
+
 add_executable (rt1
   rt1/rt1.cpp
   ${KRUST_PUBLIC_API_HEADER_FILES}
   ${PROJECT_SOURCE_DIR}/krust-examples/rt1/rt1.comp.glsl
   ${PROJECT_SOURCE_DIR}/krust-examples/rt1/rt2.comp.glsl
+  ${PROJECT_SOURCE_DIR}/krust-examples/rt1/rtow_diffuse_grey.comp.glsl
   ${PROJECT_SOURCE_DIR}/krust-examples/rt1/intersections.inc.glsl
   ${PROJECT_SOURCE_DIR}/krust-examples/rt1/utils.inc.glsl
   README.md

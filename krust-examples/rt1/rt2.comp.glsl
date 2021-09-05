@@ -2,7 +2,7 @@
 // Draws spheres sitting on a checkerboard plane with a checkerboard ceiling above and gradient sky behind.
 #version 450 core
 #extension GL_GOOGLE_include_directive : require
-#extension GL_EXT_shader_explicit_arithmetic_types_int16 : require
+#include "header.inc.glsl"
 #include "intersections.inc.glsl"
 
 // Define the number of samples of each pixel in X and Y by passing a value for this to the
@@ -20,8 +20,10 @@ layout(rgba8, set = 0, binding = 0) uniform image2D framebuffer;
 /// @todo Pack into minimal number of vec4s.
 layout(push_constant) uniform frame_params_t
 {
-    float fb_width;
-    float fb_height;
+    /// @todo pack width and height into one 32 bit uint.
+    uint32_t fb_width;
+    uint32_t fb_height;
+    uint32_t frame_no;
     vec3 ray_origin;
     vec3 ray_target_origin;
     vec3 ray_target_right;

@@ -36,7 +36,9 @@ constexpr VkSampleCountFlagBits NUM_SAMPLES = VK_SAMPLE_COUNT_1_BIT;
 constexpr VkAllocationCallbacks* ALLOCATION_CALLBACKS = nullptr;
 constexpr unsigned WORKGROUP_X = 8u;
 constexpr unsigned WORKGROUP_Y = 8u;
-constexpr const char* const DEFAULT_SHADER = "rt2.comp.spv";
+constexpr const char* const RT1_SHADER = "rt1.comp.spv";
+constexpr const char* const RT2_SHADER = "rt2.comp.spv";
+constexpr const char* const GREY_SHADER = "rtow_diffuse_grey.comp.spv";
 
 kr::ShaderBuffer loadSpirV(const char* const filename)
 {
@@ -54,9 +56,10 @@ kr::ShaderBuffer loadSpirV(const char* const filename)
 
 struct Pushed
 {
-    float fb_width;
-    float fb_height;
-    float pad0[2];
+    uint32_t fb_width;
+    uint32_t fb_height;
+    uint32_t frame_no;
+    float pad0;
     float ray_origin[3];
     float padding1;
     float ray_target_origin[3];
@@ -67,6 +70,12 @@ struct Pushed
     float padding4;
 };
 KRUST_COMPILE_ASSERT(sizeof(Pushed) <= 128u, "Push Constants are larger than the minimum guaranteed space.")
+
+/// Values which vary between shaders that this app can run.
+struct ShaderParams {
+  Pushed push_defaults;
+  float  move_scale;
+};
 
 void viewVecsFromAngles(
   const float pitch, const float yaw,
@@ -259,8 +268,9 @@ public:
    */
   virtual void DoDrawFrame()
   {
-    // static unsigned frameNumber = 0;
-    // KRUST_LOG_INFO << "   ------------ Ray Tracing Example 1: draw frame! frame: " << frameNumber++ << ". currImage: " << mCurrentTargetImage << ". handle: " << mSwapChainImages[mCurrentTargetImage] << "  ------------\n";
+    static unsigned frameNumber = -1;
+    ++frameNumber;
+    // KRUST_LOG_INFO << "   ------------ Ray Tracing Example 1: draw frame! frame: " << frameNumber << ". currImage: " << mCurrentTargetImage << ". handle: " << mSwapChainImages[mCurrentTargetImage] << "  ------------\n";
 
     auto submitFence = mSwapChainFences[mCurrentTargetImage];
     const VkResult fenceWaitResult = vkWaitForFences(*mGpuInterface, 1, submitFence->GetVkFenceAddress(), true, 1000000000); // Wait one second.
@@ -343,28 +353,30 @@ public:
     const unsigned win_width  { mWindow->GetPlatformWindow().GetWidth()};
     const unsigned win_height { mWindow->GetPlatformWindow().GetHeight()};
 
-    mPushed.fb_width  = float(win_width);
-    mPushed.fb_height = float(win_height);
+    mPushed.fb_width  = win_width;
+    mPushed.fb_height = win_height;
+    mPushed.frame_no = frameNumber;
+    const float MOVE_SCALE = mMoveScale;
 
     if(mKeyLeft) {
-      kr::store(kr::load(mPushed.ray_origin) + (-kr::load(mPushed.ray_target_right) * 5.0f) , mPushed.ray_origin);
+      kr::store(kr::load(mPushed.ray_origin) + (-kr::load(mPushed.ray_target_right) * MOVE_SCALE) , mPushed.ray_origin);
     }
     if(mRightKey) {
-      kr::store(kr::load(mPushed.ray_origin) + (kr::load(mPushed.ray_target_right) * 5.0f) , mPushed.ray_origin);
+      kr::store(kr::load(mPushed.ray_origin) + (kr::load(mPushed.ray_target_right) * MOVE_SCALE) , mPushed.ray_origin);
     }
     if(mKeyFwd) {
-      kr::store(kr::load(mPushed.ray_origin) + kr::cross(kr::load(mPushed.ray_target_up), kr::load(mPushed.ray_target_right)) * 5.0f, mPushed.ray_origin);
+      kr::store(kr::load(mPushed.ray_origin) + kr::cross(kr::load(mPushed.ray_target_up), kr::load(mPushed.ray_target_right)) * MOVE_SCALE, mPushed.ray_origin);
     }
     if(mKeyBack) {
-      kr::store(kr::load(mPushed.ray_origin) + kr::cross(kr::load(mPushed.ray_target_right), kr::load(mPushed.ray_target_up)) * 5.0f, mPushed.ray_origin);
+      kr::store(kr::load(mPushed.ray_origin) + kr::cross(kr::load(mPushed.ray_target_right), kr::load(mPushed.ray_target_up)) * MOVE_SCALE, mPushed.ray_origin);
     }
     if(mKeyUp) {
-      kr::store(kr::load(mPushed.ray_origin) + (kr::load(mPushed.ray_target_up) * 5.0f) , mPushed.ray_origin);
+      kr::store(kr::load(mPushed.ray_origin) + (kr::load(mPushed.ray_target_up) * MOVE_SCALE) , mPushed.ray_origin);
     }
     if(mKeyDown) {
-      kr::store(kr::load(mPushed.ray_origin) + (kr::load(mPushed.ray_target_up) * -5.0f) , mPushed.ray_origin);
+      kr::store(kr::load(mPushed.ray_origin) + (kr::load(mPushed.ray_target_up) * -MOVE_SCALE) , mPushed.ray_origin);
     }
-    mPushed.ray_origin[1] = kr::clamp(mPushed.ray_origin[1], 3.7f, 1500.0f);
+    mPushed.ray_origin[1] = kr::clamp(mPushed.ray_origin[1], -30.0f, 1500.0f);
 
     // Work out camera direction from mouse-defined angles:
     kr::Vec3 right, up, fwd;
@@ -373,7 +385,8 @@ public:
     // The ray target origin is the bottom-left corner of the worldspace 2d grid,
     // equivalent to the pixels of the framebuffer, that we will shoot rays at.
     auto ray_target_origin = ray_origin
-        + fwd * (win_width * 0.5f)
+        //+ fwd * (win_width * 0.5f)
+        + fwd * (win_height * 0.5f)
         + (-right) * (win_width * 0.5f)
         + (-up)    * (win_height * 0.5f);
 
@@ -434,16 +447,7 @@ private:
   /// One descriptor set per swapchain image.
   std::vector<kr::DescriptorSetPtr> mDescriptorSets;
   kr::ComputePipelinePtr mComputePipeline;
-  // Push Constants.
-  Pushed mPushed = {
-    1, // width
-    1, // height
-    {0,0}, // padding
-    {0,405,900}, 1,
-    {-900,0,0}, 1,
-    {1,0,0}, 1,
-    {0,1,0}, 1,
-  };
+
   // Camera euler angles in radians. The mouse will drive these.
   float mCameraPitch = 0;
   float mCameraYaw = 0;
@@ -459,7 +463,36 @@ private:
   int mLastX = 0;
   int mLastY = 0;
 public:
-  const char* mShaderName = DEFAULT_SHADER;
+  // Push Constants for first 2 shaders over checkerboard.
+  Pushed mPushed1 = {
+    1, // width
+    1, // height
+    0, //frame number
+    0.0f, // padding
+    {0,405,900}, 1,
+    {-900,0,0}, 1,
+    {1,0,0}, 1,
+    {0,1,0}, 1,
+  };
+  // Push Constants for third shader based on RTIOW.
+  Pushed mPushed = {
+    1, // width
+    1, // height
+    0, //frame number
+    0.0f, // padding
+    {0,0,0}, 1, // ray_origin
+    {-900,-405,-900}, 1,  // ray_target_origin
+    {1,0,0}, 1,     //  ray_target_right
+    {0,1,0}, 1,     // ray_target_up
+  };
+  float mMoveScale = 0.0625f;
+  std::unordered_map<std::string, ShaderParams> mShaderParamsOptions {
+    {RT1_SHADER,  {mPushed1, 7.5f}},
+    {RT2_SHADER,  {mPushed1, 6.5f}},
+    {GREY_SHADER, {mPushed,  0.0625f}},
+  };
+  ShaderParams* mShaderParams {&mShaderParamsOptions[GREY_SHADER]};
+  const char* mShaderName = GREY_SHADER;
 };
 
 
@@ -481,7 +514,11 @@ int main(const int argc, const char* argv[])
   application.ListenToScancodes(keycodes, sizeof(keycodes));
   if(argc > 1){
     application.mShaderName = argv[1];
+    const ShaderParams& params = application.mShaderParamsOptions[application.mShaderName];
+    application.mPushed = params.push_defaults;
+    application.mMoveScale = params.move_scale;
   }
+
 
   // Request a busy loop which constantly repaints to show the
   // animation:
