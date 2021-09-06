@@ -155,9 +155,10 @@ protected:
   virtual bool InitDefaultSwapchain(VkImageUsageFlags swapchainUsageOverrides = 0);
 
   /**
-   * Choose a surface format and colorspace.
+   * Choose a surface format and colorspace pair supported by the hardware.
+   * @Note SRGB formats may not be supported for image stores.
    */
-  bool ChoosePresentableSurfaceFormat();
+  bool ChoosePresentableSurfaceFormatSpacePair(VkFormat format = VK_FORMAT_B8G8R8A8_UNORM);
 
   /**
    * Choose a present mode.

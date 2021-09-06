@@ -164,7 +164,7 @@ bool Application::InitVulkan(const VkImageUsageFlags swapchainUsageOverrides)
   }
 
   // Choose an image space and format compatible with the presentable surface:
-  if(!ChoosePresentableSurfaceFormat())
+  if(!ChoosePresentableSurfaceFormatSpacePair(VK_FORMAT_B8G8R8A8_UNORM)) ///< @todo Let the app tell us what format it wants.
   {
     return false;
   }
@@ -465,7 +465,7 @@ bool Application::InitDefaultQueue()
   return true;
 }
 
-bool Application::ChoosePresentableSurfaceFormat()
+bool Application::ChoosePresentableSurfaceFormatSpacePair(VkFormat format)
 {
   // Choose an image space and format compatible with the presentable surface:
   std::vector<VkSurfaceFormatKHR> surfaceFormats =
@@ -473,33 +473,45 @@ bool Application::ChoosePresentableSurfaceFormat()
                          mGpu,
                          mSurface);
   KRUST_LOG_INFO << "Num formats compatible with default window surface:" << surfaceFormats.size() << endlog;
-  for(auto format : surfaceFormats)
-  {
-    KRUST_LOG_INFO << "\tFormat: " << FormatToString(format.format) << ", Colorspace: " << KHRColorspaceToString(format.colorSpace) << endlog;
-  }
   if(surfaceFormats.size() == 0)
   {
     KRUST_LOG_ERROR << "Failed to find any surface-compatible formats." << endlog;
     return false;
   }
-  VkFormat format = VK_FORMAT_B8G8R8A8_UNORM;
+  for(auto format : surfaceFormats)
+  {
+    KRUST_LOG_INFO << "\tFormat: " << FormatToString(format.format) << ", Colorspace: " << KHRColorspaceToString(format.colorSpace) << endlog;
+  }
   VkColorSpaceKHR colorspace = VK_COLORSPACE_SRGB_NONLINEAR_KHR;
   bool found = false;
+  // Try to find a pair using the format passed in:
   for(auto surfaceFormat : surfaceFormats)
   {
-    if(surfaceFormat.format != VK_FORMAT_UNDEFINED)
+    // We assume they are listed best to worst and return the first one:
+    if(surfaceFormat.format == format)
     {
-      // We currently just choose the first okay surfaceFormat we find:
-      // (this should be configurable)
-      format = surfaceFormat.format;
       colorspace = surfaceFormat.colorSpace;
       found = true;
       break;
     }
   }
+  // Grab _any_ format/space pair to at least try and run:
+  if(!found){
+    for(auto surfaceFormat : surfaceFormats)
+    {
+      if(surfaceFormat.format != VK_FORMAT_UNDEFINED)
+      {
+        // We currently just choose the first okay surfaceFormat we find:
+        format = surfaceFormat.format;
+        colorspace = surfaceFormat.colorSpace;
+        found = true;
+        break;
+      }
+    }
+  }
   if(!found)
   {
-    KRUST_LOG_WARN << "Using default format and colorspace for images to present to window surface [THIS MAY NOT WORK]." << endlog;
+    KRUST_LOG_WARN << "Using unsupported format and colorspace for images to present to window surface [THIS MAY NOT WORK]." << endlog;
   }
 
   mFormat = format;
