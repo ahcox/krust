@@ -8,13 +8,20 @@
 // Are spheres solids or just infinitely thin surface shells?
 #ifndef SPHERES_ARE_SOLID
 #define SPHERES_ARE_SOLID 0
-#endif // SPHERES_ARE_SOLID
+#endif
+
+// Should we shoot rays from intersection points off into the surface hemisphere
+// or sample an offset unit sphere's surface?
+#ifndef USE_HEMISPHERE
+#define USE_HEMISPHERE 1
+#endif
 
 // Define the number of samples of each pixel in X and Y by passing a value for this to the
 // GLSL compiler (AA = 4 -> 16 samples, AA = 10 -> 100 samples):
 #ifndef AA
 #define AA 4
 #endif
+
 const float INV_NUM_SAMPLES = float(double(1.0) / (AA*AA));
 const float halfpixel_dim = 0.5f;
 const float subpixel_dim = float(double(1.0) / AA);
@@ -155,10 +162,14 @@ vec3 shoot_ray(inout highp uint32_t seed, in vec3 ray_origin, in vec3 ray_dir_un
             vec4 sphere = spheres[uint(hit.prim)];
             const vec3 new_ray_origin = ray_origin + ray_dir_unit * hit.t;
             const vec3 surface_norm = (new_ray_origin - sphere.xyz) * (1.0f / sphere.w) * (hit.front_face ? 1.0f : -1.0f);
-            ray_dir_unit = normalize((new_ray_origin + surface_norm + 
+#if USE_HEMISPHERE
+            ray_dir_unit = rand_point_on_unit_hemisphere(seed, surface_norm);
+#else
+            ray_dir_unit = normalize((new_ray_origin + surface_norm +
                 //rand_point_in_unit_sphere(seed))
                 rand_vector(seed))
                 - new_ray_origin);
+#endif
             ray_origin = new_ray_origin;
             attenuation *= 0.5f;
         } else {

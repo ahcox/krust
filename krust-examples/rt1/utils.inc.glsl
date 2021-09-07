@@ -185,6 +185,17 @@ vec3 rand_vector(inout highp uint32_t seed)
   return normalize(rand_point_in_unit_sphere(seed));
 }
 
+/// @return A random unit vector pointing into .
+vec3 rand_point_on_unit_hemisphere(inout highp uint32_t seed, in vec3 norm)
+{
+  vec3 sp = rand_point_in_unit_sphere(seed);
+  // If distance projected onto normal is negative, we need to multiply by -1 to flip it,
+  // but rather than branch we multiply by the distance, which has an appropriate sign,
+  // since the result is normalised to unit length afterwards anyway.
+  const float dist = dot(norm, sp);
+  return normalize(sp * dist);
+}
+
 /// @}
 
 #endif // KRUST_UTILS_INC_INCLUDED
