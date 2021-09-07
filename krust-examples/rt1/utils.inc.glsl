@@ -179,6 +179,12 @@ vec3 rand_point_in_unit_sphere(inout highp uint32_t seed)
   return candidate;
 }
 
+/// @return A random unit vector.
+vec3 rand_vector(inout highp uint32_t seed)
+{
+  return normalize(rand_point_in_unit_sphere(seed));
+}
+
 /// @}
 
 #endif // KRUST_UTILS_INC_INCLUDED

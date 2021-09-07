@@ -155,7 +155,10 @@ vec3 shoot_ray(inout highp uint32_t seed, in vec3 ray_origin, in vec3 ray_dir_un
             vec4 sphere = spheres[uint(hit.prim)];
             const vec3 new_ray_origin = ray_origin + ray_dir_unit * hit.t;
             const vec3 surface_norm = (new_ray_origin - sphere.xyz) * (1.0f / sphere.w) * (hit.front_face ? 1.0f : -1.0f);
-            ray_dir_unit = normalize((new_ray_origin + surface_norm + rand_point_in_unit_sphere(seed)) - new_ray_origin);
+            ray_dir_unit = normalize((new_ray_origin + surface_norm + 
+                //rand_point_in_unit_sphere(seed))
+                rand_vector(seed))
+                - new_ray_origin);
             ray_origin = new_ray_origin;
             attenuation *= 0.5f;
         } else {
