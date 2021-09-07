@@ -43,6 +43,7 @@ const vec3 roof_check_blur = (check_c + check_d) * 0.5f;
 const vec4 spheres[] = {
     vec4(0,0,-1, 0.5),
     vec4(0,-100.5,-1, 100),
+#if 1
     vec4(vec3(0,-100.5,-1) + normalize(vec3(1,  88,-1)) * 100, 0.5f),
     vec4(vec3(0,-100.5,-1) + normalize(vec3(1,  88, 0)) * 100, 0.5f),
     vec4(vec3(0,-100.5,-1) + normalize(vec3(1,  88, 1)) * 100, 0.5f),
@@ -51,6 +52,20 @@ const vec4 spheres[] = {
     vec4(vec3(0,-100.5,-1) + normalize(vec3(-1, 88, 1)) * 100, 0.5f),
     vec4(vec3(0,-100.5,-1) + normalize(vec3(0,  88,-1)) * 100, 0.5f),
     vec4(vec3(0,-100.5,-1) + normalize(vec3(0,  88, 1)) * 100, 0.5f),
+
+    vec4(vec3(0,-100.5,-1) + normalize(vec3(0.5,  88, 0.5)) * 100, 0.25f),
+    vec4(vec3(0,-100.5,-1) + normalize(vec3(0.25,  88, 0.25)) * 100, 0.125f),
+    vec4(vec3(0,-100.5,-1) + normalize(vec3(0.125,  88, 0.125)) * 100, 0.0625f),
+    vec4(vec3(0,-100.5,-1) + normalize(vec3(-0.5,  88, 0.5)) * 100, 0.25f),
+    vec4(vec3(0,-100.5,-1) + normalize(vec3(-0.25,  88, 0.25)) * 100, 0.125f),
+    vec4(vec3(0,-100.5,-1) + normalize(vec3(-0.125,  88, 0.125)) * 100, 0.0625f),
+    vec4(vec3(0,-100.5,-1) + normalize(vec3(0.5,  88, -0.5)) * 100, 0.25f),
+    vec4(vec3(0,-100.5,-1) + normalize(vec3(0.25,  88, -0.25)) * 100, 0.125f),
+    vec4(vec3(0,-100.5,-1) + normalize(vec3(0.125,  88, -0.125)) * 100, 0.0625f),
+    vec4(vec3(0,-100.5,-1) + normalize(vec3(-0.5,  88, -0.5)) * 100, 0.25f),
+    vec4(vec3(0,-100.5,-1) + normalize(vec3(-0.25,  88, -0.25)) * 100, 0.125f),
+    vec4(vec3(0,-100.5,-1) + normalize(vec3(-0.125,  88, -0.125)) * 100, 0.0625f),
+#endif
 };
 
 /// A way to track the chosen intersection while traversing a number of primitives.
@@ -199,6 +214,13 @@ void main()
         }
     }
     pixel *= INV_NUM_SAMPLES;
+    // We need to do gamma correction manually as automatic Linear->sRGB conversion
+    // is not supported for image stores like it is when graphics pipelines write to
+    // sRGB surfaces after blending:
+    pixel = linear_to_gamma(pixel); // Rough version using a 2.2 exponent.
+    // pixel = linear_to_gamma_precise(pixel); // A version with branches based on IEC 61966-2-1 spec.
+    // Cheaper Gamma of 2:
+    // pixel = linear_to_gamma_2_0(pixel);
 #endif
     imageStore(framebuffer, ivec2(gl_GlobalInvocationID.xy), vec4(pixel, 1.0f));
 #endif

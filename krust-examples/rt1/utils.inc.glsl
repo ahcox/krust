@@ -7,6 +7,54 @@ float length_squared(const vec3 v)
     return dot(v, v);
 }
 
+vec3 pow(in vec3 v, in float p)
+{
+  return vec3(pow(v.x, p), pow(v.y, p), pow(v.z, p));
+}
+
+mediump float pow_mp(in mediump float v, in mediump float p)
+{
+  return pow(v, p);
+}
+mediump vec3 pow_mp(in mediump vec3 v, in mediump float p)
+{
+  return vec3(pow(v.x, p), pow(v.y, p), pow(v.z, p));
+}
+
+mediump vec3 linear_to_gamma(in mediump vec3 colour)
+{
+  return pow_mp(colour, float(1.0/2.2));
+}
+
+/// Cheaper gamma correction assuming 2.0 gamma
+mediump vec3 linear_to_gamma_2_0(in mediump vec3 colour)
+{
+  return sqrt(colour);
+}
+
+/// Nasty version of sRGB gamma correction.
+/// See the standard:
+/// <https://web.archive.org/web/20200608215908/https://www.sis.se/api/document/preview/562720/>
+mediump float linear_to_gamma_precise(in mediump float comp)
+{
+  if(comp > 0.0031308f){
+    return 1.055f * pow_mp(comp, float(1.0/2.4)) - 0.055f;
+  }
+  // If the value is negative, keep it so after correction:
+  if(comp < -0.0031308f){
+    return -1.055f * pow_mp(-comp, float(1.0/2.4)) + 0.055f;
+  }
+  // Linear close to zero:
+  return 12.92f * comp;
+}
+
+/// Nasty version of sRGB gamma correction
+mediump vec3 linear_to_gamma_precise(in mediump vec3 colour)
+{
+    return vec3(linear_to_gamma_precise(colour.r), linear_to_gamma_precise(colour.g), linear_to_gamma_precise(colour.b));
+}
+
+
 highp uint32_t interleave12bits(in highp uint32_t a, in highp uint32_t b)
 {
     highp uint32_t re = 0u;
