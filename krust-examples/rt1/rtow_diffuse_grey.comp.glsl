@@ -260,6 +260,7 @@ void main()
         }
     }
     pixel *= INV_NUM_SAMPLES;
+#endif
     // We need to do gamma correction manually as automatic Linear->sRGB conversion
     // is not supported for image stores like it is when graphics pipelines write to
     // sRGB surfaces after blending:
@@ -267,7 +268,6 @@ void main()
     // pixel = linear_to_gamma_precise(pixel); // A version with branches based on IEC 61966-2-1 spec.
     // Cheaper Gamma of 2:
     // pixel = linear_to_gamma_2_0(pixel);
-#endif
     imageStore(framebuffer, ivec2(gl_GlobalInvocationID.xy), vec4(pixel, 1.0f));
 #endif
 }
