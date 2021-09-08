@@ -32,6 +32,8 @@ Building
 =======
 See [BUILD.md](./BUILD.md) in this directory for instructions.
 
+*** Note: `krust-io` currently only builds for Linux and the example apps only run on Nvidia. *** 
+
 Using Krust
 ===========
 Struct Initializers
