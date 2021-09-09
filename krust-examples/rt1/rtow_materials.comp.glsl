@@ -22,32 +22,36 @@
 #define AA 4
 #endif
 
-const float INV_NUM_SAMPLES = float(double(1.0) / (AA*AA));
+#ifndef MAX_BOUNCE
+const uint MAX_BOUNCE = 9u;
+#endif
+
+const float inv_num_samples = float(double(1.0) / (AA*AA));
 const float halfpixel_dim = 0.5f;
 const float subpixel_dim = float(double(1.0) / AA);
 const float half_subpixel_dim = subpixel_dim * 0.5f;
 
 layout(local_size_x = 8, local_size_y = 8, local_size_z = 1) in;
 layout(rgba8, set = 0, binding = 0) uniform image2D framebuffer;
-/// @todo Pack into minimal number of vec4s.
+
 layout(push_constant) uniform frame_params_t
 {
-    /// @todo pack width and height into one 32 bit uint.
     uint32_t fb_width;
     uint32_t fb_height;
     uint32_t frame_no;
     vec3 ray_origin;
+    // The ray target is the grid we are shooting prmary rays at.
     vec3 ray_target_origin;
     vec3 ray_target_right;
     vec3 ray_target_up;
 } fp;
-
 
 // Our scene (a sphere is {x,y,x,radius}):
 const vec4 spheres[] = {
     vec4(0,0,-1, 0.5),
     vec4(0,-100.5,-1, 100),
 #if 1
+    // 8 small spheres poking up from inside the big one:
     vec4(vec3(0,-100.5,-1) + normalize(vec3(1,  88,-1)) * 100, 0.5f),
     vec4(vec3(0,-100.5,-1) + normalize(vec3(1,  88, 0)) * 100, 0.5f),
     vec4(vec3(0,-100.5,-1) + normalize(vec3(1,  88, 1)) * 100, 0.5f),
@@ -56,7 +60,8 @@ const vec4 spheres[] = {
     vec4(vec3(0,-100.5,-1) + normalize(vec3(-1, 88, 1)) * 100, 0.5f),
     vec4(vec3(0,-100.5,-1) + normalize(vec3(0,  88,-1)) * 100, 0.5f),
     vec4(vec3(0,-100.5,-1) + normalize(vec3(0,  88, 1)) * 100, 0.5f),
-
+    // Lines of smaller and smaller sphere stepping in from the corners towards the
+    // middle one for a bit more compexity in the shadows at different scales:
     vec4(vec3(0,-100.5,-1) + normalize(vec3(0.5,  88, 0.5)) * 100, 0.25f),
     vec4(vec3(0,-100.5,-1) + normalize(vec3(0.25,  88, 0.25)) * 100, 0.125f),
     vec4(vec3(0,-100.5,-1) + normalize(vec3(0.125,  88, 0.125)) * 100, 0.0625f),
@@ -134,7 +139,6 @@ bool closest_solid_sphere_hit(in vec3 ray_origin, in vec3 ray_dir_unit, in float
     return found_hit;
 }
 
-const uint MAX_BOUNCE = 9u;
 /// Equivalent to `ray_color()`in section 8.2 of Ray Tracing in One Week
 /// but with recursion replaced by a loop.
 vec3 shoot_ray(inout highp uint32_t seed, in vec3 ray_origin, in vec3 ray_dir_unit)
@@ -240,7 +244,7 @@ void main()
             pixel += shoot_ray(random_seed, fp.ray_origin, ray_dir_unit);
         }
     }
-    pixel *= INV_NUM_SAMPLES;
+    pixel *= inv_num_samples;
 #endif
     // We need to do gamma correction manually as automatic Linear->sRGB conversion
     // is not supported for image stores like it is when graphics pipelines write to

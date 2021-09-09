@@ -39,6 +39,8 @@ constexpr unsigned WORKGROUP_Y = 8u;
 constexpr const char* const RT1_SHADER = "rt1.comp.spv";
 constexpr const char* const RT2_SHADER = "rt2.comp.spv";
 constexpr const char* const GREY_SHADER = "rtow_diffuse_grey.comp.spv";
+constexpr const char* const MATERIALS_SHADER = "rtow_materials.comp.spv";
+
 
 kr::ShaderBuffer loadSpirV(const char* const filename)
 {
@@ -490,9 +492,10 @@ public:
     {RT1_SHADER,  {mPushed1, 7.5f}},
     {RT2_SHADER,  {mPushed1, 6.5f}},
     {GREY_SHADER, {mPushed,  0.0625f}},
+    {MATERIALS_SHADER, {mPushed,  0.0625f}},
   };
-  ShaderParams* mShaderParams {&mShaderParamsOptions[GREY_SHADER]};
-  const char* mShaderName = GREY_SHADER;
+  ShaderParams* mShaderParams {&mShaderParamsOptions[MATERIALS_SHADER]};
+  const char* mShaderName = MATERIALS_SHADER;
 };
 
 

@@ -87,7 +87,7 @@ highp uint32_t interleave8and24bits(in highp uint32_t a, in highp uint32_t b)
         re |= ((a >> i) & 1u) << i * 2;
         re |= ((b >> i) & 1u) << i * 2 + 1u;
     }
-    re += (b & 0xffffff00u) << 8u;
+    re += (b & 0xffffff00u) << 16u;
 
     return re;
 }
@@ -127,6 +127,29 @@ void pump_seed_n(inout highp uint32_t seed, in uint iters)
   }
 }
 
+// Seed a random number generator based on 2D position and a monotonically
+// increasing frame number.
+highp uint32_t make_seed(in highp uint32_t x, in highp uint32_t y, in highp uint32_t frame)
+{
+    //const highp uint32_t pos_part = 0;
+    //const highp uint32_t pos_part = (y << 1u) ^ x; // Note this is deliberately making patterns.
+    //const highp uint32_t pos_part = concat12bits(x, x);
+    const highp uint32_t pos_part = interleave12bits(x, y);
+    //const highp uint32_t pos_part = interleave16bits(x, y);
+
+    // Add some bits that change every frame:
+    const highp uint32_t with_frame = pos_part;  // Ignore the changing frame number and generate identical sequence of random numbers every frame.
+    //const highp uint32_t with_frame = pos_part ^ frame; // Looks okay but doesn't change much each frame
+    //const highp uint32_t with_frame = pos_part * 256u + (frame & 255u); // Looks the best of these
+    //const highp uint32_t with_frame = pos_part * 16u + (frame & 15u);
+    //const highp uint32_t with_frame = (pos_part & 0x00ffffffu) + (frame << 24u); //* 16777216u; // Shadow seems to be flowing horizontally with interleaved bits and 1 SPP
+    //const highp uint32_t with_frame = interleave8and24bits(frame, pos_part);
+    //const highp uint32_t with_frame = pos_part + frame;
+
+    const highp uint32_t seed = with_frame;
+
+    return seed;
+}
 
 /// Random floating point number in the -1 to 1 range.
 /// Assumes a 1:8:23 bit representation of floats.
