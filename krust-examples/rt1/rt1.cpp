@@ -103,6 +103,54 @@ void viewVecsFromAngles(
  */
 class Rt1Application : public Krust::IO::Application
 {
+  VkPhysicalDeviceFeatures DoDeviceFeatureConfiguration(
+    const VkPhysicalDeviceFeatures &original_features) override
+  {
+    VkPhysicalDeviceFeatures features {original_features};
+
+    // Turn off things we don't need:
+    features.independentBlend = VK_FALSE;
+    features.geometryShader = VK_FALSE;
+    features.tessellationShader = VK_FALSE;
+    features.sampleRateShading = VK_FALSE;
+    features.dualSrcBlend = VK_FALSE;
+    features.logicOp = VK_FALSE;
+    features.multiDrawIndirect = VK_FALSE;
+    features.drawIndirectFirstInstance = VK_FALSE;
+    features.depthClamp = VK_FALSE;
+    features.depthBiasClamp = VK_FALSE;
+    features.fillModeNonSolid = VK_FALSE;
+    features.depthBounds = VK_FALSE;
+    features.wideLines = VK_FALSE;
+    features.largePoints = VK_FALSE;
+    features.alphaToOne = VK_FALSE;
+    features.multiViewport = VK_FALSE;
+    features.occlusionQueryPrecise = VK_FALSE;
+    features.shaderClipDistance = VK_FALSE;
+    features.shaderCullDistance = VK_FALSE;
+    features.shaderResourceResidency = VK_FALSE;
+    features.shaderResourceMinLod = VK_FALSE;
+    // Might want these turned back on at some point:
+    features.sparseBinding = VK_FALSE;
+    features.sparseResidencyBuffer = VK_FALSE;
+    features.sparseResidencyImage2D = VK_FALSE;
+    features.sparseResidencyImage3D = VK_FALSE;
+    features.sparseResidency2Samples = VK_FALSE;
+    features.sparseResidency4Samples = VK_FALSE;
+    features.sparseResidency8Samples = VK_FALSE;
+    features.sparseResidency16Samples = VK_FALSE;
+    features.sparseResidencyAliased = VK_FALSE;
+    features.variableMultisampleRate = VK_FALSE;
+    features.inheritedQueries = VK_FALSE;
+
+    // Check we have things we do need:
+    KRUST_ASSERT1(features.shaderInt16, "16 bit ints are required in shaders.");
+    if(!features.shaderInt16){
+      KRUST_LOG_ERROR << "The current implementation lacks support for the required feature shaderInt16.";
+    }
+
+    return features;
+  }
 public:
   /**
    * Called by the default initialization once Krust is initialised and a window

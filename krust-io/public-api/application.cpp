@@ -425,7 +425,7 @@ bool Application::InitVulkanGpus() {
     queuePriorities);
 
   // Turn everything required by application on:
-  VkPhysicalDeviceFeatures enabledPhysicalDeviceFeatures = DoDeviceFeatureConfiguration(mGpuFeatures);
+  const VkPhysicalDeviceFeatures enabledPhysicalDeviceFeatures = DoDeviceFeatureConfiguration(mGpuFeatures);
 
   // Request a device with one queue, no layers enabled, and the extensions we
   // setup above:
