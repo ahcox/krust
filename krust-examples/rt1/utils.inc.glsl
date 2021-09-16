@@ -2,9 +2,40 @@
 #define KRUST_UTILS_INC_INCLUDED
 /// @file Utilities used widely in shaders.
 
-float length_squared(const vec3 v)
+float length_squared(in const vec3 v)
 {
     return dot(v, v);
+}
+
+float sqr(const in float x){
+  return x * x;
+}
+
+int sqr(const in int x){
+  return x * x;
+}
+
+uint sqr(const in uint x){
+  return x * x;
+}
+
+/// Schlick's approximation for reflectance (the proportion of light rays
+/// incoming at the specified cosine of angle from the surface normal which
+/// are reflected as opposed to refracted, given the indexes of refraction
+/// of the two materials).
+/// <https://en.wikipedia.org/wiki/Schlick%27s_approximation>
+float reflectance(const in float cos_norm_ray_angle, const in float n2)
+{
+  const float n1 = 1.0f; /// Hardcode for air.
+  const float R_0 = sqr((n1 - n2) / (n1+n2));
+
+  return R_0 + (1.0f - R_0) * pow(1.0f - cos_norm_ray_angle, 5);
+}
+
+bool near_zero(in const vec3 v)
+{
+  const float s = 1e-8;
+  return (abs(v.x) < s) && (abs(v.y) < s) && (abs(v.z) < s);
 }
 
 vec3 pow(in vec3 v, in float p)
