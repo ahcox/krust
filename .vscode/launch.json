@@ -99,6 +99,25 @@
                     "ignoreFailures": true
                 }
             ]
+        },
+        {
+            "name": "(gdb) rt1 - shader 3 (materials)",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/linux/vscode/krust-examples/rt1",
+            "args": ["rtow_materials.comp.spv"],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/build/linux/vscode/krust-examples/",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
         }
     ]
 }
