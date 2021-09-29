@@ -23,9 +23,11 @@
 #include "krust-gm/public-api/vec3_fwd.h"
 #include "krust-gm/public-api/vec3_inl.h"
 #include "krust/public-api/krust.h"
+#include "krust/public-api/line-printer.h"
 #include "krust/public-api/vulkan-utils.h"
 #include "krust/public-api/conditional-value.h"
 #include "krust-kernel/public-api/floats.h"
+#include <chrono>
 
 namespace kr = Krust;
 
@@ -222,6 +224,8 @@ public:
       vkUpdateDescriptorSets(*mGpuInterface, 1, &write, 0, nullptr);
     }
 
+    mLinePrinter = std::make_unique<kr::LinePrinter>(*mGpuInterface, kr::span {mSwapChainImageViews});
+
     return true;
   }
 
@@ -231,6 +235,7 @@ public:
     mPipelineLayout.Reset();;
     mDescriptorSets.clear();
     mDescriptorPool.Reset();
+    mLinePrinter.reset();
 
     return true;
   }
@@ -315,6 +320,8 @@ public:
    */
   virtual void DoDrawFrame()
   {
+    auto start = std::chrono::high_resolution_clock::now();
+
     static unsigned frameNumber = -1;
     ++frameNumber;
     // KRUST_LOG_INFO << "   ------------ Ray Tracing Example 1: draw frame! frame: " << frameNumber << ". currImage: " << mCurrentTargetImage << ". handle: " << mSwapChainImages[mCurrentTargetImage] << "  ------------\n";
@@ -449,6 +456,24 @@ public:
       win_height / WORKGROUP_Y + (win_width % WORKGROUP_Y ? 1 : 0 ),
       1);
 
+    /// @todo Memory barrier here waiting for writes to the framebuffer from the main kernel to complete.
+
+    mLinePrinter->SetFramebuffer(mSwapChainImageViews[mCurrentTargetImage], mCurrentTargetImage);
+    mLinePrinter->BindCommandBuffer(*commandBuffer, mCurrentTargetImage);
+
+    // These Xs in bottom corners flicker, showing we need to pause after main kernel.
+    mLinePrinter->PrintLine(*commandBuffer, 0, 49, 6, 2, false, false, "X");
+    mLinePrinter->PrintLine(*commandBuffer, 224, 49, 7, 3, false, true, "X");
+    mLinePrinter->PrintLine(*commandBuffer, 224, 0, 5, 4, true, false, "X");
+    std::chrono::duration<double> diff = start - mFrameInstant;
+    const float fps = 1.0f / diff.count();
+    mAmortisedFPS = (mAmortisedFPS * 7 + fps) * 0.125f;
+    char buffer[125];
+    snprintf(buffer, sizeof(buffer), "FPS: %.1f", mAmortisedFPS);
+    mLinePrinter->PrintLine(*commandBuffer, 0, 0, 3, 0, true, true, buffer);
+    snprintf(buffer, sizeof(buffer), "MS: %.2f", float(diff.count() * 1000));
+    mLinePrinter->PrintLine(*commandBuffer, 0, 1, 3, 0, true, true, buffer);
+
     // Assume the framebuffer will be presented so insert an image memory
     // barrier here first:
     auto presentBarrier = kr::ImageMemoryBarrier(
@@ -480,6 +505,7 @@ public:
       return;
     }
 
+    mFrameInstant = start;
   }
 
   ~Rt1Application()
@@ -496,6 +522,9 @@ private:
   /// One descriptor set per swapchain image.
   std::vector<kr::DescriptorSetPtr> mDescriptorSets;
   kr::ComputePipelinePtr mComputePipeline;
+  std::unique_ptr<kr::LinePrinter> mLinePrinter;
+  std::chrono::time_point<std::chrono::high_resolution_clock> mFrameInstant = std::chrono::high_resolution_clock::now();
+  float mAmortisedFPS = 30;
 
   // Camera euler angles in radians. The mouse will drive these.
   float mCameraPitch = 0;
