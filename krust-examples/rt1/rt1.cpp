@@ -23,9 +23,9 @@
 #include "krust-gm/public-api/vec3_fwd.h"
 #include "krust-gm/public-api/vec3_inl.h"
 #include "krust/public-api/krust.h"
+#include "krust/public-api/vulkan-utils.h"
 #include "krust/public-api/conditional-value.h"
 #include "krust-kernel/public-api/floats.h"
-#include <fstream>
 
 namespace kr = Krust;
 
@@ -40,21 +40,6 @@ constexpr const char* const RT1_SHADER = "rt1.comp.spv";
 constexpr const char* const RT2_SHADER = "rt2.comp.spv";
 constexpr const char* const GREY_SHADER = "rtow_diffuse_grey.comp.spv";
 constexpr const char* const MATERIALS_SHADER = "rtow_materials.comp.spv";
-
-
-kr::ShaderBuffer loadSpirV(const char* const filename)
-{
-  kr::ShaderBuffer spirv;
-  if(std::ifstream is{filename, std::ios::binary | std::ios::ate}) {
-    auto size = is.tellg();
-    spirv.resize(size / sizeof(kr::ShaderBuffer::value_type));
-    is.seekg(0);
-    is.read((char*)&spirv[0], size);
-  } else {
-    KRUST_LOG_ERROR << "Failed to open shader file \"" << filename << "\"." << Krust::endlog;
-  }
-  return spirv;
-}
 
 struct Pushed
 {
@@ -148,6 +133,7 @@ class Rt1Application : public Krust::IO::Application
     if(!features.shaderInt16){
       KRUST_LOG_ERROR << "The current implementation lacks support for the required feature shaderInt16.";
     }
+    features.shaderInt16 = VK_TRUE;
 
     return features;
   }
@@ -169,7 +155,7 @@ public:
     // Build all resources required to run the compute shader:
 
     // Load the spir-v shader code into a module:
-    kr::ShaderBuffer spirv { loadSpirV(mShaderName) };
+    kr::ShaderBuffer spirv { kr::loadSpirV(mShaderName) };
     if(spirv.empty()){
       return false;
     }
@@ -311,10 +297,6 @@ public:
 
   /**
    * Called by the default run loop to repaint the screen.
-   *
-   * Debugging tips:
-   * 1. Try adding VK_CALL(vkQueueWaitIdle, *mDefaultPresentQueue); at start and
-   *    end of this function.
    */
   virtual void DoDrawFrame()
   {
