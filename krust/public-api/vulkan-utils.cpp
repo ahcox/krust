@@ -33,6 +33,7 @@
 
 // External includes:
 #include <algorithm>
+#include <fstream> /// For loadSPIRV()
 #include <cstring>
 
 namespace Krust
@@ -894,6 +895,20 @@ ScopedDeviceMemoryOwner::~ScopedDeviceMemoryOwner()
     KRUST_ASSERT2(device, "No device so can't free.");
     vkFreeMemory(device, memory, Krust::Internal::sAllocator);
   }
+}
+
+ShaderBuffer loadSpirV(const char* const filename)
+{
+  ShaderBuffer spirv;
+  if(std::ifstream is{filename, std::ios::binary | std::ios::ate}) {
+    auto size = is.tellg();
+    spirv.resize(size / sizeof(ShaderBuffer::value_type));
+    is.seekg(0);
+    is.read((char*)&spirv[0], size);
+  } else {
+    KRUST_LOG_ERROR << "Failed to open shader file \"" << filename << "\"." << Krust::endlog;
+  }
+  return spirv;
 }
 
 }

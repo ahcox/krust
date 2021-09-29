@@ -307,6 +307,11 @@ struct ScopedImageOwner
   VkImage image;
 };
 
+/**
+ * Simple synchronous load of a SPIR-V shader from a file.
+ */
+ShaderBuffer loadSpirV(const char* const filename);
+
 ///@}
 
 } /* namespace Krust */
