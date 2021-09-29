@@ -32,7 +32,7 @@ const float subpixel_dim = float(double(1.0) / AA);
 const float half_subpixel_dim = subpixel_dim * 0.5f;
 
 layout(local_size_x = 8, local_size_y = 8, local_size_z = 1) in;
-layout(rgba8, set = 0, binding = 0) uniform image2D framebuffer;
+layout(rgba8, set = 0, binding = 0) uniform restrict writeonly image2D framebuffer;
 
 layout(push_constant) uniform frame_params_t
 {
@@ -460,6 +460,7 @@ void main()
     // pixel = linear_to_gamma_precise(pixel); // A version with branches based on IEC 61966-2-1 spec.
     // Cheaper Gamma of 2:
     // pixel = linear_to_gamma_2_0(pixel);
+    // Show that increasing Y coordinates are visually going down the image: pixel.r = gl_GlobalInvocationID.y / float(fp.fb_height); pixel.g *= 0.1; pixel.b *= 0.1;
     imageStore(framebuffer, ivec2(gl_GlobalInvocationID.xy), vec4(pixel, 1.0f));
 #endif
 }
