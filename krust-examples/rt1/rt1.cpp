@@ -88,55 +88,70 @@ void viewVecsFromAngles(
  */
 class Rt1Application : public Krust::IO::Application
 {
-  VkPhysicalDeviceFeatures DoDeviceFeatureConfiguration(
-    const VkPhysicalDeviceFeatures &original_features) override
+  uint32_t DoChooseVulkanVersion() const override
   {
-    VkPhysicalDeviceFeatures features {original_features};
+    // Request version 1.2 so we can use later shader features and ray queries:
+    return VK_API_VERSION_1_2;
+  }
 
-    // Turn off things we don't need:
-    features.independentBlend = VK_FALSE;
-    features.geometryShader = VK_FALSE;
-    features.tessellationShader = VK_FALSE;
-    features.sampleRateShading = VK_FALSE;
-    features.dualSrcBlend = VK_FALSE;
-    features.logicOp = VK_FALSE;
-    features.multiDrawIndirect = VK_FALSE;
-    features.drawIndirectFirstInstance = VK_FALSE;
-    features.depthClamp = VK_FALSE;
-    features.depthBiasClamp = VK_FALSE;
-    features.fillModeNonSolid = VK_FALSE;
-    features.depthBounds = VK_FALSE;
-    features.wideLines = VK_FALSE;
-    features.largePoints = VK_FALSE;
-    features.alphaToOne = VK_FALSE;
-    features.multiViewport = VK_FALSE;
-    features.occlusionQueryPrecise = VK_FALSE;
-    features.shaderClipDistance = VK_FALSE;
-    features.shaderCullDistance = VK_FALSE;
-    features.shaderResourceResidency = VK_FALSE;
-    features.shaderResourceMinLod = VK_FALSE;
-    // Might want these turned back on at some point:
-    features.sparseBinding = VK_FALSE;
-    features.sparseResidencyBuffer = VK_FALSE;
-    features.sparseResidencyImage2D = VK_FALSE;
-    features.sparseResidencyImage3D = VK_FALSE;
-    features.sparseResidency2Samples = VK_FALSE;
-    features.sparseResidency4Samples = VK_FALSE;
-    features.sparseResidency8Samples = VK_FALSE;
-    features.sparseResidency16Samples = VK_FALSE;
-    features.sparseResidencyAliased = VK_FALSE;
-    features.variableMultisampleRate = VK_FALSE;
-    features.inheritedQueries = VK_FALSE;
+  void DoExtendDeviceFeatureChain(VkPhysicalDeviceFeatures2 &features) override
+  {
+    mDeviceFeature11.pNext = &mDeviceFeature12;
+    mDeviceFeature12.pNext = features.pNext;
+    features.pNext = &mDeviceFeature11;
+  }
+
+  void DoCustomizeDeviceFeatureChain(VkPhysicalDeviceFeatures2 &f2) override
+  {
+    #define REQUIRE_VK_FEATURE(FEATURE, MSG) \
+    KRUST_ASSERT1((FEATURE), (MSG)); \
+    if(!(FEATURE)){ \
+      KRUST_LOG_ERROR << (MSG); \
+    } \
+    (FEATURE) = VK_TRUE;
 
     // Check we have things we do need:
-    KRUST_ASSERT1(features.shaderInt16, "16 bit ints are required in shaders.");
-    if(!features.shaderInt16){
-      KRUST_LOG_ERROR << "The current implementation lacks support for the required feature shaderInt16.";
-    }
-    features.shaderInt16 = VK_TRUE;
+    REQUIRE_VK_FEATURE(f2.features.shaderInt16, "16 bit ints are required in shaders.");
+    REQUIRE_VK_FEATURE(mDeviceFeature12.storagePushConstant8, "8 bit ints are required in shader push Constant buffers.");
+    REQUIRE_VK_FEATURE(mDeviceFeature12.shaderInt8, "Eight bit integers in shader code required.");
 
-    return features;
+    // Turn off things we don't need:
+    f2.features.independentBlend = VK_FALSE;
+    f2.features.geometryShader = VK_FALSE;
+    f2.features.tessellationShader = VK_FALSE;
+    f2.features.sampleRateShading = VK_FALSE;
+    f2.features.dualSrcBlend = VK_FALSE;
+    f2.features.logicOp = VK_FALSE;
+    f2.features.multiDrawIndirect = VK_FALSE;
+    f2.features.drawIndirectFirstInstance = VK_FALSE;
+    f2.features.depthClamp = VK_FALSE;
+    f2.features.depthBiasClamp = VK_FALSE;
+    f2.features.fillModeNonSolid = VK_FALSE;
+    f2.features.depthBounds = VK_FALSE;
+    f2.features.wideLines = VK_FALSE;
+    f2.features.largePoints = VK_FALSE;
+    f2.features.alphaToOne = VK_FALSE;
+    f2.features.multiViewport = VK_FALSE;
+    f2.features.occlusionQueryPrecise = VK_FALSE;
+    f2.features.shaderClipDistance = VK_FALSE;
+    f2.features.shaderCullDistance = VK_FALSE;
+    f2.features.shaderResourceResidency = VK_FALSE;
+    f2.features.shaderResourceMinLod = VK_FALSE;
+    // Might want these turned back on at some point:
+    f2.features.sparseBinding = VK_FALSE;
+    f2.features.sparseResidencyBuffer = VK_FALSE;
+    f2.features.sparseResidencyImage2D = VK_FALSE;
+    f2.features.sparseResidencyImage3D = VK_FALSE;
+    f2.features.sparseResidency2Samples = VK_FALSE;
+    f2.features.sparseResidency4Samples = VK_FALSE;
+    f2.features.sparseResidency8Samples = VK_FALSE;
+    f2.features.sparseResidency16Samples = VK_FALSE;
+    f2.features.sparseResidencyAliased = VK_FALSE;
+    f2.features.variableMultisampleRate = VK_FALSE;
+    f2.features.inheritedQueries = VK_FALSE;
   }
+
+
 public:
   /**
    * Called by the default initialization once Krust is initialised and a window
@@ -474,6 +489,8 @@ public:
 
 private:
   // Data:
+  VkPhysicalDeviceVulkan11Features mDeviceFeature11 = kr::PhysicalDeviceVulkan11Features();
+  VkPhysicalDeviceVulkan12Features mDeviceFeature12 = kr::PhysicalDeviceVulkan12Features();
   kr::PipelineLayoutPtr mPipelineLayout;
   kr::DescriptorPoolPtr mDescriptorPool;
   /// One descriptor set per swapchain image.

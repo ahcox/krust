@@ -197,7 +197,7 @@ bool Application::InitVulkanInstance()
     mAppVersion,
     KRUST_ENGINE_NAME,
     KRUST_ENGINE_VERSION_NUMBER,
-    VK_API_VERSION_1_0);
+    DoChooseVulkanVersion());
 
   // Find the extensions to initialise the API instance with:
   std::vector<VkExtensionProperties> extensionProperties = GetGlobalExtensionProperties();
@@ -377,8 +377,9 @@ bool Application::InitVulkanGpus() {
   vkGetPhysicalDeviceProperties(mGpu, &mGpuProperties);
   LogVkPhysicalDeviceLimits(mGpuProperties.limits);
 
-  vkGetPhysicalDeviceFeatures(mGpu, &mGpuFeatures);
-  LogVkPhysicalDeviceFeatures(mGpuFeatures);
+  DoExtendDeviceFeatureChain(mGpuFeatures);
+  vkGetPhysicalDeviceFeatures2(mGpu, &mGpuFeatures);
+  LogVkPhysicalDeviceFeatures(mGpuFeatures.features);
 
   vkGetPhysicalDeviceMemoryProperties(mGpu, &mGpuMemoryProperties);
 
@@ -425,12 +426,13 @@ bool Application::InitVulkanGpus() {
     queuePriorities);
 
   // Turn everything required by application on:
-  const VkPhysicalDeviceFeatures enabledPhysicalDeviceFeatures = DoDeviceFeatureConfiguration(mGpuFeatures);
+  DoCustomizeDeviceFeatureChain(mGpuFeatures);
 
   // Request a device with one queue, no layers enabled, and the extensions we
   // setup above:
   auto deviceInfo = DeviceCreateInfo(0, 1, &queueCreateInfo, 0, 0,
-    static_cast<uint32_t>(extensionNames.size()), &extensionNames[0], &enabledPhysicalDeviceFeatures);
+    static_cast<uint32_t>(extensionNames.size()), &extensionNames[0], nullptr);
+  deviceInfo.pNext = &mGpuFeatures;
 
   mGpuInterface = Device::New(*mInstance, mGpu, deviceInfo);
 
@@ -869,11 +871,17 @@ int Application::Run(const MainLoopType loopType, const VkImageUsageFlags swapch
   return 0;
 }
 
-VkPhysicalDeviceFeatures Application::DoDeviceFeatureConfiguration(
-  const VkPhysicalDeviceFeatures &features)
+uint32_t Application::DoChooseVulkanVersion() const
 {
-  // Default to leaving everything turned on:
-  return features;
+  // We need 1.1 to use the VkPhysicalDeviceFeatures2 configuration mechanism.
+  return VK_API_VERSION_1_1;
+}
+
+void Application::DoExtendDeviceFeatureChain(VkPhysicalDeviceFeatures2 &features)
+{
+}
+void Application::DoCustomizeDeviceFeatureChain(VkPhysicalDeviceFeatures2 &features)
+{
 }
 
 bool Application::DoPostInit()

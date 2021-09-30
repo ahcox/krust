@@ -200,17 +200,34 @@ protected:
    */
   ///@{
 
+  virtual uint32_t DoChooseVulkanVersion() const;
+
+  /**
+   * @brief Allow derived application classes to add additional groups of features
+   *        to the chain that this base Application class will query for.
+   * @see DoCustomizeDeviceFeatureChain,
+   *      VkPhysicalDeviceVulkan11Features,
+   *      VkPhysicalDeviceVulkan12Features,
+   *      VkPhysicalDeviceProtectedMemoryFeatures,
+   *      VkPhysicalDevice16BitStorageFeatures,
+   *      VkPhysicalDeviceShaderSubgroupExtendedTypesFeatures,
+   *      VkPhysicalDeviceShaderAtomicInt64Features,
+   *      and countless others.
+   */
+  virtual void DoExtendDeviceFeatureChain(VkPhysicalDeviceFeatures2 &features);
+
   /**
    * @brief Called during init so app can turn off GPU features it won't use.
    *
    * For example, if doing simple GLES 2.0 rendering, turn off geometry and
    * tesselation shaders etc. for potential speed ups.
+   * Only necessary if the implementation runs faster / lighter with some disabled.
    * The default implementation simply returns the parameter passed in
    * unmodified, thus leaving all features turned-on.
-   * @param[in] features Features supported by GPU.
-   * @return Features to enable on GPU.
+   * @param[in] features Listed list chain of features supported by GPU.
+   * @see DoExtendDeviceFeatureChain
    */
-  virtual VkPhysicalDeviceFeatures DoDeviceFeatureConfiguration(const VkPhysicalDeviceFeatures &features);
+  virtual void DoCustomizeDeviceFeatureChain(VkPhysicalDeviceFeatures2 &features);
 
   /**
    * @brief Called once Vulkan and a window are up and running.
@@ -260,7 +277,7 @@ public:
   InstancePtr mInstance;
   VkPhysicalDevice  mGpu; ///< Physical GPU
   VkPhysicalDeviceProperties mGpuProperties;
-  VkPhysicalDeviceFeatures mGpuFeatures;
+  VkPhysicalDeviceFeatures2 mGpuFeatures = PhysicalDeviceFeatures2();
   std::vector<VkQueueFamilyProperties> mPhysicalQueueFamilyProperties;
   /// Addendum to mPhysicalQueueFamilyProperties: Records whether the
   /// corresponding queue families can present through WSI.
