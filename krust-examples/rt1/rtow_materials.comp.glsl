@@ -22,6 +22,14 @@
 #define AA 4
 #endif
 
+// Should we turn on defocus blur (depth of field)?
+#ifndef DOF
+#define DOF 1
+/// Define the radius of the lens. Rays are started from random poisitions on a
+/// disk of this radius, distributed around the reference ray origin.
+const float lens_radius = 0.01f;
+#endif
+
 #ifndef MAX_BOUNCE
 const uint MAX_BOUNCE = 9u;
 #endif
@@ -444,11 +452,16 @@ void main()
         for(int i = 0; i < AA; ++i){
             const float x_offset = i * subpixel_dim + half_subpixel_dim;
             const float sample_x = screen_coord_x + x_offset;
-
-            const vec3 ray_dir_raw = (fp.ray_target_origin + fp.ray_target_right * sample_x + fp.ray_target_up * sample_y) - fp.ray_origin;
+            vec3 ray_origin = fp.ray_origin;
+#if DOF > 0
+            const vec2 offset = rand_in_unit_disk(random_seed) * lens_radius;
+            ray_origin += fp.ray_target_right * offset.x;
+            ray_origin += fp.ray_target_up * offset.y;
+#endif
+            const vec3 ray_dir_raw = (fp.ray_target_origin + fp.ray_target_right * sample_x + fp.ray_target_up * sample_y) - ray_origin;
             const vec3 ray_dir_unit = vec3(normalize(ray_dir_raw));
 
-            pixel += shoot_ray(random_seed, fp.ray_origin, ray_dir_unit);
+            pixel += shoot_ray(random_seed, ray_origin, ray_dir_unit);
         }
     }
     pixel *= inv_num_samples;
