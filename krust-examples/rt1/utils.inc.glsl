@@ -7,6 +7,11 @@ float length_squared(in const vec3 v)
     return dot(v, v);
 }
 
+float length_squared(in const vec2 v)
+{
+    return dot(v, v);
+}
+
 float sqr(const in float x){
   return x * x;
 }
@@ -219,6 +224,14 @@ vec3 rand_point(inout highp uint32_t seed)
   return vec3(x, y, z);
 }
 
+/// @return Point in -1 to 1 square.
+vec2 rand_point_2d(inout highp uint32_t seed)
+{
+  const float x = randf_one_to_one(seed);
+  const float y = randf_one_to_one(seed);
+  return vec2(x, y);
+}
+
 /// @return Point inside or on surface of sphere of radius one.
 vec3 rand_point_in_unit_sphere(inout highp uint32_t seed)
 {
@@ -248,6 +261,19 @@ vec3 rand_point_on_unit_hemisphere(inout highp uint32_t seed, in vec3 norm)
   // since the result is normalised to unit length afterwards anyway.
   const float dist = dot(norm, sp);
   return normalize(sp * dist);
+}
+
+/// @return Point inside or on surface of sphere of radius one.
+vec2 rand_in_unit_disk(inout highp uint32_t seed)
+{
+  vec2 candidate;
+  while(true){
+    candidate = rand_point_2d(seed);
+    if(length_squared(candidate) <= 1.0f){
+      break;
+    }
+  }
+  return candidate;
 }
 
 /// @}
