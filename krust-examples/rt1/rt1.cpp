@@ -581,6 +581,7 @@ int main(const int argc, const char* argv[])
       "Usage:\n"
       "1. rt1\n"
       "2. rt1 compiled_spirv_shader_filename\n"
+      "3. rt1 compiled_spirv_shader_filename true # To disable vsync\n"
   );
 
   Rt1Application application;
@@ -597,11 +598,17 @@ int main(const int argc, const char* argv[])
     application.mPushed = params.push_defaults;
     application.mMoveScale = params.move_scale;
   }
-
+  bool allowTearing = false;
+  if(argc > 2){
+    const char * tr = "true";
+    if(!strcasecmp(tr, argv[2])){
+      allowTearing = true;
+    }
+  }
 
   // Request a busy loop which constantly repaints to show the
   // animation:
-  const int status = application.Run(Krust::IO::MainLoopType::Busy, VK_IMAGE_USAGE_STORAGE_BIT);
+  const int status = application.Run(Krust::IO::MainLoopType::Busy, VK_IMAGE_USAGE_STORAGE_BIT, allowTearing);
 
   KRUST_LOG_INFO << "Exiting cleanly with code " << status << ".\n";
   return status;

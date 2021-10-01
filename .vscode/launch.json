@@ -105,7 +105,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/build/linux/vscode/krust-examples/rt1",
-            "args": ["rtow_materials.comp.spv"],
+            "args": ["rtow_materials.comp.spv", "true"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/build/linux/vscode/krust-examples/",
             "environment": [],

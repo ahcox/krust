@@ -113,7 +113,7 @@ public:
    * implementation-specific error code otherwise.
    * @note Only override if the application has special advanced needs.
    */
-  virtual int Run(MainLoopType loopType = MainLoopType::Reactive, VkImageUsageFlags swapchainUsageOverrides = 0);
+  virtual int Run(MainLoopType loopType = MainLoopType::Reactive, VkImageUsageFlags swapchainUsageOverrides = 0, bool allowTearing = false);
 
   void SetName(const char * const appName) { mAppName = appName; }
   void SetVersion(uint32_t appVersion) { mAppVersion = appVersion; }
@@ -121,13 +121,13 @@ public:
   void ListenToScancodes(uint8_t* keycodes, size_t numKeys);
 
 protected:
-  virtual bool Init(VkImageUsageFlags swapchainUsageOverrides = 0);
+  virtual bool Init(VkImageUsageFlags swapchainUsageOverrides = 0, bool allowTearing = false);
   virtual bool DeInit();
 
   /**
    * Do everything to get Vulkan up and running.
    */
-  virtual bool InitVulkan(VkImageUsageFlags swapchainUsageOverrides = 0);
+  virtual bool InitVulkan(VkImageUsageFlags swapchainUsageOverrides = 0, bool allowTearing = false);
 
   /**
    * Setup layers and extensions and create a Vulkan instance.
@@ -152,7 +152,7 @@ protected:
   /**
    * Make a swapchain to get images displayed in the default window.
    */
-  virtual bool InitDefaultSwapchain(VkImageUsageFlags swapchainUsageOverrides = 0);
+  virtual bool InitDefaultSwapchain(VkImageUsageFlags swapchainUsageOverrides = 0, bool allowTearing = false);
 
   /**
    * Choose a surface format and colorspace pair supported by the hardware.

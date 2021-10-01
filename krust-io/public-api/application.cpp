@@ -112,7 +112,7 @@ void Application::ListenToScancodes(uint8_t* keycodes, const size_t numKeys)
   }
 }
 
-bool Application::Init(const VkImageUsageFlags swapchainUsageOverrides)
+bool Application::Init(const VkImageUsageFlags swapchainUsageOverrides, bool allowTearing)
 {
   // Do platform-specific initialisation:
   if(!mPlatformApplication.Init())
@@ -125,7 +125,7 @@ bool Application::Init(const VkImageUsageFlags swapchainUsageOverrides)
   mPlatformApplication.WindowCreated(*mWindow.Get());
 
   // Start up vulkan:
-  if(!InitVulkan(swapchainUsageOverrides))
+  if(!InitVulkan(swapchainUsageOverrides, allowTearing))
   {
     return false;
   }
@@ -143,7 +143,7 @@ bool Application::Init(const VkImageUsageFlags swapchainUsageOverrides)
   return true;
 }
 
-bool Application::InitVulkan(const VkImageUsageFlags swapchainUsageOverrides)
+bool Application::InitVulkan(const VkImageUsageFlags swapchainUsageOverrides, bool allowTearing)
 {
   if(!InitVulkanInstance())
   {
@@ -181,7 +181,7 @@ bool Application::InitVulkan(const VkImageUsageFlags swapchainUsageOverrides)
 
 
   // Build a swapchain to get the results of rendering onto a display:
-  if(!InitDefaultSwapchain(swapchainUsageOverrides))
+  if(!InitDefaultSwapchain(swapchainUsageOverrides, allowTearing))
   {
     return false;
   }
@@ -523,7 +523,7 @@ bool Application::ChoosePresentableSurfaceFormatSpacePair(VkFormat format)
 }
 
 
-bool Application::InitDefaultSwapchain(const VkImageUsageFlags swapchainUsageOverrides)
+bool Application::InitDefaultSwapchain(const VkImageUsageFlags swapchainUsageOverrides, bool allowTearing)
 {
   VkSurfaceCapabilitiesKHR surfaceCapabilities;
   const VkResult result = mGetPhysicalDeviceSurfaceCapabilitiesKHR(mGpu, mSurface, &surfaceCapabilities);
@@ -541,7 +541,7 @@ bool Application::InitDefaultSwapchain(const VkImageUsageFlags swapchainUsageOve
   }
 
   // Choose the fastest non-tearing present mode available:
-  auto presentMode = ChooseBestPresentMode(false);
+  auto presentMode = ChooseBestPresentMode(allowTearing);
   if(!presentMode)
   {
     return false;
@@ -790,7 +790,7 @@ bool Application::DeInit()
   return true;
 }
 
-int Application::Run(const MainLoopType loopType, const VkImageUsageFlags swapchainUsageOverrides)
+int Application::Run(const MainLoopType loopType, const VkImageUsageFlags swapchainUsageOverrides, bool allowTearing)
 {
   // Init the Krust core:
   InitKrust(/* Default error policy and allocator for CPU structures. */);
@@ -801,7 +801,7 @@ int Application::Run(const MainLoopType loopType, const VkImageUsageFlags swapch
   // Init ourselves:
   bool initialized = false;
   try {
-    initialized = Init(swapchainUsageOverrides);
+    initialized = Init(swapchainUsageOverrides, allowTearing);
   }
   catch (KrustException& ex)
   {
