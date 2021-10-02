@@ -558,8 +558,8 @@ public:
     1, // height
     0, //frame number
     0.0f, // padding
-    {0,0,0}, 1, // ray_origin
-    {-900,-405,-900}, 1,  // ray_target_origin
+    {0,0,0 + 10}, 1, // ray_origin
+    {-900,-405,-900 + 10}, 1,  // ray_target_origin
     {1,0,0}, 1,     //  ray_target_right
     {0,1,0}, 1,     // ray_target_up
   };

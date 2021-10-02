@@ -74,6 +74,7 @@ add_custom_command(COMMENT "Compiling rt1 shader"
                    DEPENDS ${PROJECT_SOURCE_DIR}/krust-examples/rt1/rt1.comp.glsl
                            ${PROJECT_SOURCE_DIR}/krust-examples/rt1/intersections.inc.glsl
                            ${PROJECT_SOURCE_DIR}/krust-examples/rt1/utils.inc.glsl
+                           ${PROJECT_SOURCE_DIR}/krust-examples/rt1/header.inc.glsl
                            ${GLSLANG_VALIDATOR})
 
 add_custom_command(COMMENT "Compiling rt2 shader"
@@ -84,6 +85,7 @@ add_custom_command(COMMENT "Compiling rt2 shader"
                            DEPENDS ${PROJECT_SOURCE_DIR}/krust-examples/rt1/rt2.comp.glsl
                                    ${PROJECT_SOURCE_DIR}/krust-examples/rt1/intersections.inc.glsl
                                    ${PROJECT_SOURCE_DIR}/krust-examples/rt1/utils.inc.glsl
+                                   ${PROJECT_SOURCE_DIR}/krust-examples/rt1/header.inc.glsl
                                    ${GLSLANG_VALIDATOR})
 
 add_custom_command(COMMENT "Compiling ray tracing in one week grey diffuse sphere shader"
@@ -94,9 +96,10 @@ add_custom_command(COMMENT "Compiling ray tracing in one week grey diffuse spher
                                    DEPENDS ${PROJECT_SOURCE_DIR}/krust-examples/rt1/rtow_diffuse_grey.comp.glsl
                                            ${PROJECT_SOURCE_DIR}/krust-examples/rt1/intersections.inc.glsl
                                            ${PROJECT_SOURCE_DIR}/krust-examples/rt1/utils.inc.glsl
+                                           ${PROJECT_SOURCE_DIR}/krust-examples/rt1/header.inc.glsl
                                            ${GLSLANG_VALIDATOR})
 
-add_custom_command(COMMENT "Compiling ray tracing in one week grey diffuse sphere shader"
+add_custom_command(COMMENT "Compiling ray tracing in one week materials and final image shader"
                                            OUTPUT rtow_materials.comp.spv
                                            COMMAND ${GLSLANG_VALIDATOR} -V -o ${CMAKE_CURRENT_BINARY_DIR}/rtow_materials.comp.spv
                                                    ${PROJECT_SOURCE_DIR}/krust-examples/rt1/rtow_materials.comp.glsl
@@ -104,6 +107,8 @@ add_custom_command(COMMENT "Compiling ray tracing in one week grey diffuse spher
                                            DEPENDS ${PROJECT_SOURCE_DIR}/krust-examples/rt1/rtow_materials.comp.glsl
                                                    ${PROJECT_SOURCE_DIR}/krust-examples/rt1/intersections.inc.glsl
                                                    ${PROJECT_SOURCE_DIR}/krust-examples/rt1/utils.inc.glsl
+                                                   ${PROJECT_SOURCE_DIR}/krust-examples/rt1/header.inc.glsl
+                                                   ${PROJECT_SOURCE_DIR}/krust-examples/rt1/rtow_final_scene.inc.glsl
                                                    ${GLSLANG_VALIDATOR})
 
 add_custom_command(COMMENT "Compiling text printing shader"
@@ -112,6 +117,7 @@ add_custom_command(COMMENT "Compiling text printing shader"
                                                            ${PROJECT_SOURCE_DIR}/krust-examples/rt1/text_print.comp.glsl
                                                    MAIN_DEPENDENCY ${PROJECT_SOURCE_DIR}/krust-examples/rt1/text_print.comp.glsl
                                                    DEPENDS ${PROJECT_SOURCE_DIR}/krust-examples/rt1/text_print.comp.glsl
+                                                           ${PROJECT_SOURCE_DIR}/krust-examples/rt1/header.inc.glsl
                                                            ${GLSLANG_VALIDATOR})
 
 add_executable (rt1

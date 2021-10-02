@@ -34,6 +34,10 @@ const float lens_radius = 0.01f;
 const uint MAX_BOUNCE = 9u;
 #endif
 
+#ifndef USE_FINAL_SCENE
+#define USE_FINAL_SCENE 1
+#endif
+
 const float inv_num_samples = float(double(1.0) / (AA*AA));
 const float halfpixel_dim = 0.5f;
 const float subpixel_dim = float(double(1.0) / AA);
@@ -73,6 +77,12 @@ struct HitRecord {
     uint16_t prim;
     bool front_face;
 };
+
+#if USE_FINAL_SCENE == 1
+// Regenerate this using the following easily built code:
+// https://github.com/ahcox/raytracing.github.io/blob/ahc-2021-10-01-dump_scene/src/InOneWeekend/main.cc
+#include "rtow_final_scene.inc.glsl"
+#else
 
 // Our scene (a sphere is {x,y,x,radius}):
 const vec4 spheres[] = {
@@ -173,6 +183,8 @@ const vec4 dielectric_params[] = {
     {0.98f, 0.98f, 0.4f,  1.5f}, // Yellow albedo 
     {0.90f, 0.95f, 0.98f, 1.5f}, // Blue tint albedo
 };
+
+#endif // USE_FINAL_SCENE == 1
 
 /// Traverse our scene, which is just a single list of spheres in worldspace,
 /// and determine the distance to the first hit point.
