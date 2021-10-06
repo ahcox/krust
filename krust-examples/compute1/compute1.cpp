@@ -72,7 +72,7 @@ public:
     // Build all resources required to run the compute shader:
 
     // Load the spir-v shader code into a module:
-    kr::ShaderBuffer spirv { loadSpirV("compute1_cmake.comp.spv") };
+    kr::ShaderBuffer spirv { loadSpirV("compute1.comp.spv") };
     if(spirv.empty()){
       return false;
     }
