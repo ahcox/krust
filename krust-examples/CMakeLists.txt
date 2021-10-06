@@ -51,14 +51,14 @@ target_link_libraries(clear2 krust-io krust)
 add_custom_command(COMMENT "Compiling compute1 shader"
                    OUTPUT compute1.comp.spv
                    COMMAND ${GLSLANG_VALIDATOR} -V -o ${CMAKE_CURRENT_BINARY_DIR}/compute1_cmake.comp.spv
-                           ${PROJECT_SOURCE_DIR}/krust-examples/compute1/compute1.comp.glsl
-                   MAIN_DEPENDENCY ${PROJECT_SOURCE_DIR}/krust-examples/compute1/compute1.comp.glsl
-                   DEPENDS ${PROJECT_SOURCE_DIR}/krust-examples/compute1/compute1.comp.glsl ${GLSLANG_VALIDATOR})
+                           ${PROJECT_SOURCE_DIR}/krust-examples/shaders/compute1.comp.glsl
+                   MAIN_DEPENDENCY ${PROJECT_SOURCE_DIR}/krust-examples/shaders/compute1.comp.glsl
+                   DEPENDS ${PROJECT_SOURCE_DIR}/krust-examples/shaders/compute1.comp.glsl ${GLSLANG_VALIDATOR})
 
 add_executable (compute1
   compute1/compute1.cpp
   ${KRUST_PUBLIC_API_HEADER_FILES}
-  ${PROJECT_SOURCE_DIR}/krust-examples/compute1/compute1.comp.glsl
+  ${PROJECT_SOURCE_DIR}/krust-examples/shaders/compute1.comp.glsl
   README.md
 )
 target_include_directories(compute1 SYSTEM PRIVATE ${VULKAN_INCLUDE_DIRECTORY})
@@ -69,67 +69,67 @@ target_link_libraries(compute1 krust-io krust)
 add_custom_command(COMMENT "Compiling rt1 shader"
                    OUTPUT rt1.comp.spv
                    COMMAND ${GLSLANG_VALIDATOR} -V -o ${CMAKE_CURRENT_BINARY_DIR}/rt1.comp.spv
-                           ${PROJECT_SOURCE_DIR}/krust-examples/rt1/rt1.comp.glsl
-                   MAIN_DEPENDENCY ${PROJECT_SOURCE_DIR}/krust-examples/rt1/rt1.comp.glsl
-                   DEPENDS ${PROJECT_SOURCE_DIR}/krust-examples/rt1/rt1.comp.glsl
-                           ${PROJECT_SOURCE_DIR}/krust-examples/rt1/intersections.inc.glsl
-                           ${PROJECT_SOURCE_DIR}/krust-examples/rt1/utils.inc.glsl
-                           ${PROJECT_SOURCE_DIR}/krust-examples/rt1/header.inc.glsl
+                           ${PROJECT_SOURCE_DIR}/krust-examples/shaders/rt1.comp.glsl
+                   MAIN_DEPENDENCY ${PROJECT_SOURCE_DIR}/krust-examples/shaders/rt1.comp.glsl
+                   DEPENDS ${PROJECT_SOURCE_DIR}/krust-examples/shaders/rt1.comp.glsl
+                           ${PROJECT_SOURCE_DIR}/krust-examples/shaders/intersections.inc.glsl
+                           ${PROJECT_SOURCE_DIR}/krust-examples/shaders/utils.inc.glsl
+                           ${PROJECT_SOURCE_DIR}/krust-examples/shaders/header.inc.glsl
                            ${GLSLANG_VALIDATOR})
 
 add_custom_command(COMMENT "Compiling rt2 shader"
                            OUTPUT rt2.comp.spv
                            COMMAND ${GLSLANG_VALIDATOR} -V -o ${CMAKE_CURRENT_BINARY_DIR}/rt2.comp.spv
-                                   ${PROJECT_SOURCE_DIR}/krust-examples/rt1/rt2.comp.glsl
-                           MAIN_DEPENDENCY ${PROJECT_SOURCE_DIR}/krust-examples/rt1/rt2.comp.glsl
-                           DEPENDS ${PROJECT_SOURCE_DIR}/krust-examples/rt1/rt2.comp.glsl
-                                   ${PROJECT_SOURCE_DIR}/krust-examples/rt1/intersections.inc.glsl
-                                   ${PROJECT_SOURCE_DIR}/krust-examples/rt1/utils.inc.glsl
-                                   ${PROJECT_SOURCE_DIR}/krust-examples/rt1/header.inc.glsl
+                                   ${PROJECT_SOURCE_DIR}/krust-examples/shaders/rt2.comp.glsl
+                           MAIN_DEPENDENCY ${PROJECT_SOURCE_DIR}/krust-examples/shaders/rt2.comp.glsl
+                           DEPENDS ${PROJECT_SOURCE_DIR}/krust-examples/shaders/rt2.comp.glsl
+                                   ${PROJECT_SOURCE_DIR}/krust-examples/shaders/intersections.inc.glsl
+                                   ${PROJECT_SOURCE_DIR}/krust-examples/shaders/utils.inc.glsl
+                                   ${PROJECT_SOURCE_DIR}/krust-examples/shaders/header.inc.glsl
                                    ${GLSLANG_VALIDATOR})
 
 add_custom_command(COMMENT "Compiling ray tracing in one week grey diffuse sphere shader"
                                    OUTPUT rtow_diffuse_grey.comp.spv
                                    COMMAND ${GLSLANG_VALIDATOR} -V -o ${CMAKE_CURRENT_BINARY_DIR}/rtow_diffuse_grey.comp.spv
-                                           ${PROJECT_SOURCE_DIR}/krust-examples/rt1/rtow_diffuse_grey.comp.glsl
-                                   MAIN_DEPENDENCY ${PROJECT_SOURCE_DIR}/krust-examples/rt1/rtow_diffuse_grey.comp.glsl
-                                   DEPENDS ${PROJECT_SOURCE_DIR}/krust-examples/rt1/rtow_diffuse_grey.comp.glsl
-                                           ${PROJECT_SOURCE_DIR}/krust-examples/rt1/intersections.inc.glsl
-                                           ${PROJECT_SOURCE_DIR}/krust-examples/rt1/utils.inc.glsl
-                                           ${PROJECT_SOURCE_DIR}/krust-examples/rt1/header.inc.glsl
+                                           ${PROJECT_SOURCE_DIR}/krust-examples/shaders/rtow_diffuse_grey.comp.glsl
+                                   MAIN_DEPENDENCY ${PROJECT_SOURCE_DIR}/krust-examples/shaders/rtow_diffuse_grey.comp.glsl
+                                   DEPENDS ${PROJECT_SOURCE_DIR}/krust-examples/shaders/rtow_diffuse_grey.comp.glsl
+                                           ${PROJECT_SOURCE_DIR}/krust-examples/shaders/intersections.inc.glsl
+                                           ${PROJECT_SOURCE_DIR}/krust-examples/shaders/utils.inc.glsl
+                                           ${PROJECT_SOURCE_DIR}/krust-examples/shaders/header.inc.glsl
                                            ${GLSLANG_VALIDATOR})
 
 add_custom_command(COMMENT "Compiling ray tracing in one week materials and final image shader"
                                            OUTPUT rtow_materials.comp.spv
                                            COMMAND ${GLSLANG_VALIDATOR} -V -o ${CMAKE_CURRENT_BINARY_DIR}/rtow_materials.comp.spv
-                                                   ${PROJECT_SOURCE_DIR}/krust-examples/rt1/rtow_materials.comp.glsl
-                                           MAIN_DEPENDENCY ${PROJECT_SOURCE_DIR}/krust-examples/rt1/rtow_materials.comp.glsl
-                                           DEPENDS ${PROJECT_SOURCE_DIR}/krust-examples/rt1/rtow_materials.comp.glsl
-                                                   ${PROJECT_SOURCE_DIR}/krust-examples/rt1/intersections.inc.glsl
-                                                   ${PROJECT_SOURCE_DIR}/krust-examples/rt1/utils.inc.glsl
-                                                   ${PROJECT_SOURCE_DIR}/krust-examples/rt1/header.inc.glsl
-                                                   ${PROJECT_SOURCE_DIR}/krust-examples/rt1/rtow_final_scene.inc.glsl
+                                                   ${PROJECT_SOURCE_DIR}/krust-examples/shaders/rtow_materials.comp.glsl
+                                           MAIN_DEPENDENCY ${PROJECT_SOURCE_DIR}/krust-examples/shaders/rtow_materials.comp.glsl
+                                           DEPENDS ${PROJECT_SOURCE_DIR}/krust-examples/shaders/rtow_materials.comp.glsl
+                                                   ${PROJECT_SOURCE_DIR}/krust-examples/shaders/intersections.inc.glsl
+                                                   ${PROJECT_SOURCE_DIR}/krust-examples/shaders/utils.inc.glsl
+                                                   ${PROJECT_SOURCE_DIR}/krust-examples/shaders/header.inc.glsl
+                                                   ${PROJECT_SOURCE_DIR}/krust-examples/shaders/rtow_final_scene.inc.glsl
                                                    ${GLSLANG_VALIDATOR})
 
 add_custom_command(COMMENT "Compiling text printing shader"
                                                    OUTPUT text_print.comp.spv
                                                    COMMAND ${GLSLANG_VALIDATOR} -V -o ${CMAKE_CURRENT_BINARY_DIR}/text_print.comp.spv
-                                                           ${PROJECT_SOURCE_DIR}/krust-examples/rt1/text_print.comp.glsl
-                                                   MAIN_DEPENDENCY ${PROJECT_SOURCE_DIR}/krust-examples/rt1/text_print.comp.glsl
-                                                   DEPENDS ${PROJECT_SOURCE_DIR}/krust-examples/rt1/text_print.comp.glsl
-                                                           ${PROJECT_SOURCE_DIR}/krust-examples/rt1/header.inc.glsl
+                                                           ${PROJECT_SOURCE_DIR}/krust-examples/shaders/text_print.comp.glsl
+                                                   MAIN_DEPENDENCY ${PROJECT_SOURCE_DIR}/krust-examples/shaders/text_print.comp.glsl
+                                                   DEPENDS ${PROJECT_SOURCE_DIR}/krust-examples/shaders/text_print.comp.glsl
+                                                           ${PROJECT_SOURCE_DIR}/krust-examples/shaders/header.inc.glsl
                                                            ${GLSLANG_VALIDATOR})
 
 add_executable (rt1
   rt1/rt1.cpp
   ${KRUST_PUBLIC_API_HEADER_FILES}
-  ${PROJECT_SOURCE_DIR}/krust-examples/rt1/rt1.comp.glsl
-  ${PROJECT_SOURCE_DIR}/krust-examples/rt1/rt2.comp.glsl
-  ${PROJECT_SOURCE_DIR}/krust-examples/rt1/rtow_diffuse_grey.comp.glsl
-  ${PROJECT_SOURCE_DIR}/krust-examples/rt1/rtow_materials.comp.glsl
-  ${PROJECT_SOURCE_DIR}/krust-examples/rt1/intersections.inc.glsl
-  ${PROJECT_SOURCE_DIR}/krust-examples/rt1/utils.inc.glsl
-  ${PROJECT_SOURCE_DIR}/krust-examples/rt1/text_print.comp.glsl
+  ${PROJECT_SOURCE_DIR}/krust-examples/shaders/rt1.comp.glsl
+  ${PROJECT_SOURCE_DIR}/krust-examples/shaders/rt2.comp.glsl
+  ${PROJECT_SOURCE_DIR}/krust-examples/shaders/rtow_diffuse_grey.comp.glsl
+  ${PROJECT_SOURCE_DIR}/krust-examples/shaders/rtow_materials.comp.glsl
+  ${PROJECT_SOURCE_DIR}/krust-examples/shaders/intersections.inc.glsl
+  ${PROJECT_SOURCE_DIR}/krust-examples/shaders/utils.inc.glsl
+  ${PROJECT_SOURCE_DIR}/krust-examples/shaders/text_print.comp.glsl
   README.md
 )
 target_include_directories(rt1 SYSTEM PRIVATE ${VULKAN_INCLUDE_DIRECTORY})
