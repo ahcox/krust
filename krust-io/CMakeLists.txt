@@ -32,13 +32,13 @@ add_library(krust-io
   README.md
 )
 target_include_directories(krust-io SYSTEM PRIVATE ${VULKAN_INCLUDE_DIRECTORY})
-target_link_libraries(krust-io ${VULKAN_LIBRARY})
+target_link_libraries(krust-io PRIVATE ${VULKAN_LIBRARY} krust-kernel krust)
 
 # Platform detection:
 find_package(XCB)
 IF(XCB_FOUND)
   message(STATUS "XCB Found. Header in ${XCB_INCLUDE_PATH}/xcb, library: ${XCB_LIBRARIES}")
   target_include_directories(krust-io SYSTEM PRIVATE ${XCB_INCLUDE_PATH})
-  target_link_libraries(krust-io ${XCB_LIBRARIES})
+  target_link_libraries(krust-io PRIVATE ${XCB_LIBRARIES})
   target_compile_definitions(krust-io PRIVATE "VK_USE_PLATFORM_XCB_KHR")
 ENDIF(XCB_FOUND)

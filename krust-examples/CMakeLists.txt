@@ -52,7 +52,7 @@ add_executable (clear
   README.md
 )
 target_include_directories(clear SYSTEM PRIVATE ${VULKAN_INCLUDE_DIRECTORY})
-target_link_libraries(clear krust-io krust)
+target_link_libraries(clear krust-io krust krust-kernel)
 
 
 add_executable (clear2
@@ -61,7 +61,7 @@ add_executable (clear2
   README.md
 )
 target_include_directories(clear2 SYSTEM PRIVATE ${VULKAN_INCLUDE_DIRECTORY})
-target_link_libraries(clear2 krust-io krust)
+target_link_libraries(clear2 krust-io krust krust-kernel)
 
 
 add_executable (compute1
@@ -71,7 +71,7 @@ add_executable (compute1
   README.md
 )
 target_include_directories(compute1 SYSTEM PRIVATE ${VULKAN_INCLUDE_DIRECTORY})
-target_link_libraries(compute1 krust-io krust)
+target_link_libraries(compute1 krust-io krust krust-kernel)
 add_shader_command(compute1.comp)
 
 add_executable (rt1
@@ -85,8 +85,9 @@ add_executable (rt1
   README.md
 )
 target_include_directories(rt1 SYSTEM PRIVATE ${VULKAN_INCLUDE_DIRECTORY})
-target_link_libraries(rt1 krust-io krust)
+target_link_libraries(rt1 krust-io krust krust-kernel)
 # ToDo: target_link_libraries(rt1 krust-io krust-gm krust)
+
 # Shaders to compile and for each one its list of included shader code dependencies:
 add_shader_command(rt1.comp header.inc.glsl utils.inc.glsl intersections.inc.glsl)
 add_shader_command(rt2.comp header.inc.glsl utils.inc.glsl intersections.inc.glsl)

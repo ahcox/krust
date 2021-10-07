@@ -16,7 +16,7 @@ add_executable (krust-test-simple
   README.md
 )
 target_include_directories(krust-test-simple SYSTEM PRIVATE ${VULKAN_INCLUDE_DIRECTORY})
-target_link_libraries(krust-test-simple krust-io krust pthread)
+target_link_libraries(krust-test-simple krust-io krust krust-kernel pthread)
 
 # ToDo: move this test to the krust-gm directory.
 
@@ -26,4 +26,4 @@ add_executable (krust-test-gm
   ${KRUST_GM_PUBLIC_API_HEADER_FILES}
 )
 target_include_directories(krust-test-simple SYSTEM PRIVATE ${VULKAN_INCLUDE_DIRECTORY})
-target_link_libraries(krust-test-simple krust-io krust pthread)
+target_link_libraries(krust-test-simple krust-kernel krust krust-io pthread)

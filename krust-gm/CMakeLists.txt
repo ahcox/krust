@@ -27,3 +27,4 @@ add_library(krust-gm
    ${KRUST_GM_PUBLIC_API_HEADER_FILES}
    README.md
 )
+target_link_libraries(krust-gm PUBLIC krust-kernel)
