@@ -404,6 +404,8 @@ bool Application::InitVulkanGpus() {
   }
   extensionNames.push_back(VK_KHR_SWAPCHAIN_EXTENSION_NAME);
 
+  DoAddRequiredDeviceExtensions(extensionNames);
+
   // Get info for all queues on the GPU and log it:
 
   if(!InitQueueInfo())
@@ -877,9 +879,14 @@ uint32_t Application::DoChooseVulkanVersion() const
   return VK_API_VERSION_1_1;
 }
 
+void Application::DoAddRequiredDeviceExtensions(std::vector<const char*>& extensionNames) const
+{
+}
+
 void Application::DoExtendDeviceFeatureChain(VkPhysicalDeviceFeatures2 &features)
 {
 }
+
 void Application::DoCustomizeDeviceFeatureChain(VkPhysicalDeviceFeatures2 &features)
 {
 }

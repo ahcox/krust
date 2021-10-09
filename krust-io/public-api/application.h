@@ -203,6 +203,15 @@ protected:
   virtual uint32_t DoChooseVulkanVersion() const;
 
   /**
+   * @brief Allow derived applications to turn on required extensions.
+   *
+   * If a requested extension is not available, initialisation will fail.
+   * @param extensionNames A list of already-enabled extensions which may be
+   * added-to.
+   */
+  virtual void DoAddRequiredDeviceExtensions(std::vector<const char*>& extensionNames) const;
+
+  /**
    * @brief Allow derived application classes to add additional groups of features
    *        to the chain that this base Application class will query for.
    * @see DoCustomizeDeviceFeatureChain,
