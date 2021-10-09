@@ -41,7 +41,7 @@ constexpr unsigned WORKGROUP_Y = 8u;
 constexpr const char* const RT1_SHADER = "rt1.comp.spv";
 constexpr const char* const RT2_SHADER = "rt2.comp.spv";
 constexpr const char* const GREY_SHADER = "rtow_diffuse_grey.comp.spv";
-constexpr const char* const MATERIALS_SHADER = "rtow_materials.comp.spv";
+constexpr const char* const MATERIALS_SHADER = "rtow_ray_query.comp.spv";
 
 struct Pushed
 {
@@ -96,10 +96,19 @@ class RayQueries1Application : public Krust::IO::Application
     return VK_API_VERSION_1_2;
   }
 
+  void DoAddRequiredDeviceExtensions(std::vector<const char*>& extensionNames) const override
+  {
+    extensionNames.push_back(VK_KHR_ACCELERATION_STRUCTURE_EXTENSION_NAME);
+    extensionNames.push_back(VK_KHR_DEFERRED_HOST_OPERATIONS_EXTENSION_NAME);
+    extensionNames.push_back(VK_KHR_RAY_QUERY_EXTENSION_NAME);
+  }
+
   void DoExtendDeviceFeatureChain(VkPhysicalDeviceFeatures2 &features) override
   {
     mDeviceFeature11.pNext = &mDeviceFeature12;
-    mDeviceFeature12.pNext = features.pNext;
+    mDeviceFeature12.pNext = &mDeviceRayQueryFeatures;
+    mDeviceRayQueryFeatures.pNext = &mDeviceAccelerationStructureFeatures;
+    mDeviceAccelerationStructureFeatures.pNext = features.pNext;
     features.pNext = &mDeviceFeature11;
   }
 
@@ -116,6 +125,13 @@ class RayQueries1Application : public Krust::IO::Application
     REQUIRE_VK_FEATURE(f2.features.shaderInt16, "16 bit ints are required in shaders.");
     REQUIRE_VK_FEATURE(mDeviceFeature12.storagePushConstant8, "8 bit ints are required in shader push Constant buffers.");
     REQUIRE_VK_FEATURE(mDeviceFeature12.shaderInt8, "Eight bit integers in shader code required.");
+    REQUIRE_VK_FEATURE(mDeviceRayQueryFeatures.rayQuery, "This is a ray query demo so we gotta have the ray query extension.");
+    REQUIRE_VK_FEATURE(mDeviceAccelerationStructureFeatures.accelerationStructure, "Ray tracing acceleration structures required.");
+    // Need them?
+    //VkBool32           accelerationStructureCaptureReplay;
+    //VkBool32           accelerationStructureIndirectBuild;
+    //VkBool32           accelerationStructureHostCommands;
+    //VkBool32           descriptorBindingAccelerationStructureUpdateAfterBind;
 
     // Turn off things we don't need:
     f2.features.independentBlend = VK_FALSE;
@@ -162,6 +178,12 @@ public:
   virtual bool DoPostInit()
   {
     KRUST_LOG_DEBUG << "DoPostInit() entered." << Krust::endlog;
+
+    if( 0 == (mCmdBuildAccelerationStructuresKHR = KRUST_GET_DEVICE_EXTENSION(*mGpuInterface, CmdBuildAccelerationStructuresKHR)))
+    {
+      KRUST_LOG_ERROR << "Failed to get pointers to required extension functions.";
+      return false;
+    }
 
     BuildFences(*mGpuInterface, VK_FENCE_CREATE_SIGNALED_BIT, mSwapChainImageViews.size(), mSwapChainFences);
 
@@ -515,8 +537,12 @@ public:
 
 private:
   // Data:
-  VkPhysicalDeviceVulkan11Features mDeviceFeature11 = kr::PhysicalDeviceVulkan11Features();
-  VkPhysicalDeviceVulkan12Features mDeviceFeature12 = kr::PhysicalDeviceVulkan12Features();
+  VkPhysicalDeviceVulkan11Features    mDeviceFeature11 = kr::PhysicalDeviceVulkan11Features();
+  VkPhysicalDeviceVulkan12Features    mDeviceFeature12 = kr::PhysicalDeviceVulkan12Features();
+  VkPhysicalDeviceRayQueryFeaturesKHR mDeviceRayQueryFeatures = kr::PhysicalDeviceRayQueryFeaturesKHR();
+  VkPhysicalDeviceAccelerationStructureFeaturesKHR mDeviceAccelerationStructureFeatures = kr::PhysicalDeviceAccelerationStructureFeaturesKHR();
+  // Functions from required extensions:
+  PFN_vkCmdBuildAccelerationStructuresKHR mCmdBuildAccelerationStructuresKHR = nullptr;
   kr::PipelineLayoutPtr mPipelineLayout;
   kr::DescriptorPoolPtr mDescriptorPool;
   /// One descriptor set per swapchain image.
