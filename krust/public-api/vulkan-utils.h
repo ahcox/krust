@@ -34,6 +34,14 @@
 #include <stdint.h>
 #include <vector>
 
+/** Save a little typing when getting a pointer to an extension. */
+#define KRUST_GET_INSTANCE_EXTENSION(instance, extensionSuffix) \
+    (PFN_vk##extensionSuffix) Krust::GetInstanceProcAddr(instance, "vk"#extensionSuffix)
+
+/** Save a little typing when getting a pointer to an extension. */
+#define KRUST_GET_DEVICE_EXTENSION(device, extensionSuffix) \
+    (PFN_vk##extensionSuffix) Krust::GetDeviceProcAddr(device, "vk"#extensionSuffix)
+
 
 /**
  * @brief A little wrapper to make sure errors from Vulkan calls are logged.
@@ -203,6 +211,12 @@ bool BuildFramebuffersForSwapChain(
   std::vector<VkRenderPass>& outRenderPasses,
   std::vector<VkFramebuffer>& outSwapChainFramebuffers,
   std::vector<FencePtr>& outSwapChainFences);
+
+/** Get a function pointer for a device extension and log the error if it fails. */
+PFN_vkVoidFunction GetInstanceProcAddr(VkInstance instance, const char * const name);
+
+/** Get a function pointer for a device extension and log the error if it fails. */
+PFN_vkVoidFunction GetDeviceProcAddr(VkDevice device, const char * const name);
 
 /**
 * @brief Find the named extension in the list of extension property structs

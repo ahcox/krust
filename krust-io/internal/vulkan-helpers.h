@@ -33,14 +33,6 @@
 // System external includes:
 #include <vector>
 
-/** Save a little typing when getting a pointer to an extension. */
-#define KRUST_GET_INSTANCE_EXTENSION(instance, extensionSuffix) \
-    (PFN_vk##extensionSuffix) Krust::IO::GetInstanceProcAddr(instance, "vk"#extensionSuffix)
-
-/** Save a little typing when getting a pointer to an extension. */
-#define KRUST_GET_DEVICE_EXTENSION(device, extensionSuffix) \
-    (PFN_vk##extensionSuffix) Krust::IO::GetDeviceProcAddr(device, "vk"#extensionSuffix)
-
 namespace Krust
 {
 
@@ -50,12 +42,6 @@ enum class LogLevel : uint8_t;
 
 namespace IO
 {
-
-/** Get a function pointer for a device extension and log the error if it fails. */
-PFN_vkVoidFunction GetInstanceProcAddr(VkInstance instance, const char * const name);
-
-/** Get a function pointer for a device extension and log the error if it fails. */
-PFN_vkVoidFunction GetDeviceProcAddr(VkDevice device, const char * const name);
 
 /**
  * @brief Can be registered with Vk to output errors.

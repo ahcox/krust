@@ -40,23 +40,6 @@ namespace Krust
 {
 namespace IO {
 
-PFN_vkVoidFunction GetInstanceProcAddr(VkInstance instance, const char *const name) {
-  KRUST_ASSERT1(name, "Must pass a name to look up.");
-  const PFN_vkVoidFunction address = vkGetInstanceProcAddr(instance, name);
-  if (!address) {
-    KRUST_LOG_ERROR << "Failed to get the address of instance proc: " << name << endlog;
-  }
-  return address;
-}
-
-PFN_vkVoidFunction GetDeviceProcAddr(VkDevice device, const char *const name) {
-  KRUST_ASSERT1(name, "Must pass a name to look up.");
-  const PFN_vkVoidFunction address = vkGetDeviceProcAddr(device, name);
-  if (!address) {
-    KRUST_LOG_ERROR << "Failed to get the address of device proc: " << name << endlog;
-  }
-  return address;
-}
 
 VkBool32 DebugCallback(
   VkFlags flags,
