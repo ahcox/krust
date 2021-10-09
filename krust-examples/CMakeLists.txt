@@ -101,12 +101,14 @@ add_executable (ray_queries1
   ${PROJECT_SOURCE_DIR}/krust-examples/shaders/rt1.comp.glsl
   ${PROJECT_SOURCE_DIR}/krust-examples/shaders/rt2.comp.glsl
   ${PROJECT_SOURCE_DIR}/krust-examples/shaders/rtow_diffuse_grey.comp.glsl
-  ${PROJECT_SOURCE_DIR}/krust-examples/shaders/rtow_materials.comp.glsl
+  ${PROJECT_SOURCE_DIR}/krust-examples/shaders/rtow_ray_query.comp.glsl
   ${PROJECT_SOURCE_DIR}/krust-examples/shaders/text_print.comp.glsl
   README.md
 )
 target_include_directories(ray_queries1 SYSTEM PRIVATE ${VULKAN_INCLUDE_DIRECTORY})
 target_link_libraries(ray_queries1 krust-io krust krust-kernel)
+
+add_shader_command(rtow_ray_query.comp header.inc.glsl utils.inc.glsl intersections.inc.glsl rtow_final_scene.inc.glsl)
 
 # I could add more of these to trigger shader compilation from commandline:
 add_custom_target(text_print_shader DEPENDS text_print.comp.spv)
