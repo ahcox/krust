@@ -2,6 +2,7 @@
 // Draws spheres sitting on a checkerboard plane with a checkerboard ceiling above and gradient sky behind.
 #version 460 core
 #extension GL_EXT_ray_query : require
+#extension GL_EXT_ray_flags_primitive_culling : require // May not actually require this: usually we want to hit everything.
 #extension GL_GOOGLE_include_directive : require
 #include "header.inc.glsl"
 #include "intersections.inc.glsl"
