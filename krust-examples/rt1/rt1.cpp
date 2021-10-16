@@ -461,18 +461,18 @@ public:
     mLinePrinter->SetFramebuffer(mSwapChainImageViews[mCurrentTargetImage], mCurrentTargetImage);
     mLinePrinter->BindCommandBuffer(*commandBuffer, mCurrentTargetImage);
 
-    // These Xs in bottom corners flicker, showing we need to pause after main kernel.
-    mLinePrinter->PrintLine(*commandBuffer, 0, 49, 6, 2, false, false, "X");
-    mLinePrinter->PrintLine(*commandBuffer, 224, 49, 7, 3, false, true, "X");
-    mLinePrinter->PrintLine(*commandBuffer, 224, 0, 5, 4, true, false, "X");
     std::chrono::duration<double> diff = start - mFrameInstant;
     const float fps = 1.0f / diff.count();
     mAmortisedFPS = (mAmortisedFPS * 7 + fps) * 0.125f;
-    char buffer[125];
-    snprintf(buffer, sizeof(buffer), "FPS: %.1f", mAmortisedFPS);
+    char buffer[126];
+    snprintf(buffer, sizeof(buffer)-1, "FPS: %.1f", mAmortisedFPS);
     mLinePrinter->PrintLine(*commandBuffer, 0, 0, 3, 0, true, true, buffer);
-    snprintf(buffer, sizeof(buffer), "MS: %.2f", float(diff.count() * 1000));
+    snprintf(buffer, sizeof(buffer)-1, "MS: %.2f", float(diff.count() * 1000));
     mLinePrinter->PrintLine(*commandBuffer, 0, 1, 3, 0, true, true, buffer);
+    strcpy(buffer, "GPU: ");
+    std::copy(&mGpuProperties.deviceName[0], &(mGpuProperties.deviceName[120]), &buffer[5]);
+    buffer[125] = 0;
+    mLinePrinter->PrintLine(*commandBuffer, 0, 2, 2, 0, true, true, buffer);
 
     // Assume the framebuffer will be presented so insert an image memory
     // barrier here first:

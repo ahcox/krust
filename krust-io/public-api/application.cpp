@@ -375,6 +375,7 @@ bool Application::InitVulkanGpus() {
   // Get the info for our GPU:
 
   vkGetPhysicalDeviceProperties(mGpu, &mGpuProperties);
+  KRUST_LOG_INFO << "Running on a " << mGpuProperties.deviceName << " GPU." << endlog;
   LogVkPhysicalDeviceLimits(mGpuProperties.limits);
 
   DoExtendDeviceFeatureChain(mGpuFeatures);
