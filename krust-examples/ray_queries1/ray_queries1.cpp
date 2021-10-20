@@ -33,6 +33,7 @@ namespace kr = Krust;
 
 namespace
 {
+
 /** Number of samples per framebuffer pixel. */
 constexpr VkSampleCountFlagBits NUM_SAMPLES = VK_SAMPLE_COUNT_1_BIT;
 constexpr VkAllocationCallbacks* ALLOCATION_CALLBACKS = nullptr;
@@ -80,6 +81,65 @@ void viewVecsFromAngles(
   fwdOut = kr::make_vec3(sinYaw * cosPitch, sinPitch, cosPitch * (-cosYaw));
   upOut  = kr::make_vec3(-cosYaw * sinRoll - sinYaw * sinPitch * cosRoll, cosPitch * cosRoll, -sinYaw * sinRoll - sinPitch * cosRoll * -cosYaw);
   rightOut = kr::cross(fwdOut, upOut);
+}
+
+using Vec4 = std::experimental::simd<float, std::experimental::simd_abi::fixed_size<4>>;
+class Vec4Scalar;
+
+#if defined(KRUST_GM_BUILD_CONFIG_ENABLE_SIMD)
+
+    struct alignas(16) Vec4InMemory {
+        float v[4];
+    };
+#else
+    struct Vec4InMemory {
+        float v[4];
+    };
+#endif
+
+inline Vec4 load(const Vec4InMemory& vmem)
+{
+    Vec4 vec;
+    vec.copy_from(&vmem.v[0], std::experimental::overaligned<alignof(Vec4InMemory)>);
+    return vec;
+}
+
+inline kr::Vec3 xyz(const Vec4& v4){
+  return kr::make_vec3(v4[0], v4[1], v4[2]);
+}
+
+inline kr::Vec3 xxx(const Vec4& v4){
+  return kr::make_vec3(v4[0], v4[0], v4[0]);
+}
+/// @todo All the swizzles but put them elsewhere.
+
+struct AABBf {
+  float minX;
+  float minY;
+  float minZ;
+  float maxX;
+  float maxY;
+  float maxZ;
+};
+
+inline std::vector<AABBf> spheresToAABBs(kr::span<Vec4InMemory> spheres)
+{
+  using kr::Vec3;
+
+  std::vector<AABBf> aabbs;
+  aabbs.resize(spheres.size());
+  for(size_t i = 0, end = spheres.size(); i < end; ++i)
+  {
+    /// @todo Examine the SIMD code generated for this. It might be worse than a scalar version.
+    const Vec4 sphere {load(spheres[i])};
+    const Vec3 centre = xyz(sphere);
+    const auto radius = sphere[3];
+    const Vec3 min_corner = centre - radius;
+    const Vec3 max_corner = centre + radius;
+    kr::store(min_corner, &aabbs[i].minX);
+    kr::store(max_corner, &aabbs[i].maxX);
+  }
+  return aabbs;
 }
 
 }
@@ -179,6 +239,7 @@ public:
   {
     KRUST_LOG_DEBUG << "DoPostInit() entered." << Krust::endlog;
 
+    /// @note Don't need to do this if don't mind calling through the full Vulkan layer mechanism as vulkan_core.h has a declaration we can call from v1.2.
     if( 0 == (mCmdBuildAccelerationStructuresKHR = KRUST_GET_DEVICE_EXTENSION(*mGpuInterface, CmdBuildAccelerationStructuresKHR)))
     {
       KRUST_LOG_ERROR << "Failed to get pointers to required extension functions.";
