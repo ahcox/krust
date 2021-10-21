@@ -83,6 +83,11 @@ void LogVkPhysicalDeviceFeatures(const VkPhysicalDeviceFeatures& features);
 void LogVkPhysicalDeviceLimits(const VkPhysicalDeviceLimits &limits);
 
 /**
+ * @brief Output device memory types and heaps to info log.
+ */
+void LogMemoryTypes(const VkPhysicalDeviceMemoryProperties& memory_properties);
+
+/**
  * @brief Output surface capabilities to log.
  */
 void LogVkSurfaceCapabilitiesKHR(const VkSurfaceCapabilitiesKHR &capabilities,

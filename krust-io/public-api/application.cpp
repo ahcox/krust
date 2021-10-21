@@ -383,6 +383,7 @@ bool Application::InitVulkanGpus() {
   LogVkPhysicalDeviceFeatures(mGpuFeatures.features);
 
   vkGetPhysicalDeviceMemoryProperties(mGpu, &mGpuMemoryProperties);
+  LogMemoryTypes(mGpuMemoryProperties);
 
   std::vector<VkLayerProperties> layerProperties =
     EnumerateDeviceLayerProperties(mGpu);

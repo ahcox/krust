@@ -337,6 +337,48 @@ void LogVkPhysicalDeviceLimits(const VkPhysicalDeviceLimits &limits)
   << "\n}" << endlog;
 }
 
+void LogMemoryTypes(const VkPhysicalDeviceMemoryProperties& memory_properties)
+{
+  KRUST_LOG_INFO << "VkPhysicalDeviceMemoryProperties.memoryTypeCount = " << memory_properties.memoryTypeCount << endlog;
+  for(unsigned i = 0; i < memory_properties.memoryTypeCount; ++i)
+  {
+    KRUST_LOG_INFO << "\tmemoryTypes[" << i << "]:" << endlog;
+    auto& mem_type = memory_properties.memoryTypes[i];
+    KRUST_LOG_INFO << "\t\t.heapIndex: " << mem_type.heapIndex << endlog;
+    KRUST_LOG_INFO << "\t\t.propertyFlags: " << mem_type.propertyFlags << endlog;
+    if(mem_type.propertyFlags & VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT)
+      KRUST_LOG_INFO << "\t\t  VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT" << endlog;
+    if(mem_type.propertyFlags & VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT)
+      KRUST_LOG_INFO << "\t\t  VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT" << endlog;
+    if(mem_type.propertyFlags & VK_MEMORY_PROPERTY_HOST_COHERENT_BIT)
+      KRUST_LOG_INFO << "\t\t  VK_MEMORY_PROPERTY_HOST_COHERENT_BIT" << endlog;
+    if(mem_type.propertyFlags & VK_MEMORY_PROPERTY_HOST_CACHED_BIT)
+      KRUST_LOG_INFO << "\t\t  VK_MEMORY_PROPERTY_HOST_CACHED_BIT" << endlog;
+    if(mem_type.propertyFlags & VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT)
+      KRUST_LOG_INFO << "\t\t  VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT" << endlog;
+    if(mem_type.propertyFlags & VK_MEMORY_PROPERTY_PROTECTED_BIT)
+      KRUST_LOG_INFO << "\t\t  VK_MEMORY_PROPERTY_PROTECTED_BIT" << endlog;
+    if(mem_type.propertyFlags & VK_MEMORY_PROPERTY_DEVICE_COHERENT_BIT_AMD)
+      KRUST_LOG_INFO << "\t\t  VK_MEMORY_PROPERTY_DEVICE_COHERENT_BIT_AMD" << endlog;
+    if(mem_type.propertyFlags & VK_MEMORY_PROPERTY_DEVICE_UNCACHED_BIT_AMD)
+      KRUST_LOG_INFO << "\t\t  VK_MEMORY_PROPERTY_DEVICE_UNCACHED_BIT_AMD" << endlog;
+    if(mem_type.propertyFlags & VK_MEMORY_PROPERTY_RDMA_CAPABLE_BIT_NV)
+      KRUST_LOG_INFO << "\t\t  VK_MEMORY_PROPERTY_RDMA_CAPABLE_BIT_NV" << endlog;
+  }
+  KRUST_LOG_INFO << "VkPhysicalDeviceMemoryProperties.memoryHeapCount = " << memory_properties.memoryHeapCount << endlog;
+  for(unsigned i = 0; i < memory_properties.memoryHeapCount; ++i)
+  {
+    KRUST_LOG_INFO << "\tmemory_properties.memoryHeaps[" << i << "]" << endlog;
+    const auto& heap = memory_properties.memoryHeaps[i];
+    KRUST_LOG_INFO << "\t\t.size: " << heap.size << endlog;
+    KRUST_LOG_INFO << "\t\t.flags: " << heap.flags << endlog;
+    if(heap.flags & VK_MEMORY_HEAP_DEVICE_LOCAL_BIT)
+      KRUST_LOG_INFO << "\t\t  VK_MEMORY_HEAP_DEVICE_LOCAL_BIT" << endlog;
+    if(heap.flags & VK_MEMORY_HEAP_MULTI_INSTANCE_BIT)
+      KRUST_LOG_INFO << "\t\t  VK_MEMORY_HEAP_MULTI_INSTANCE_BIT" << endlog;
+  }
+}
+
 void LogVkSurfaceCapabilitiesKHR(const VkSurfaceCapabilitiesKHR &capabilities,
                                  LogChannel &logChannel, LogLevel level)
 {
