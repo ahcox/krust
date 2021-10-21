@@ -94,8 +94,8 @@ WindowPlatform::WindowPlatform(
       // screen encompassing both monitors. We should really figure out the
       // primary monitor and size ourself to fit onto that:
       // https://stackoverflow.com/questions/36966900/xcb-get-all-monitors-ands-their-x-y-coordinates
-      const unsigned windowClientWidth  = std::min(1800u, Screen()->width_in_pixels  / 4u * 3u);
-      const unsigned windowClientHeight = std::min(windowClientWidth * 100000 / 177778,  Screen()->height_in_pixels / 4u * 3u);
+      const unsigned windowClientWidth  = std::min(1280u, unsigned(Screen()->width_in_pixels * 0.75f));
+      const unsigned windowClientHeight = std::min(windowClientWidth * 0.625f,  Screen()->height_in_pixels * 0.75f);
       KRUST_LOG_INFO << "windowClientWidth: "  << windowClientWidth  << '.' << endlog;
       KRUST_LOG_INFO << "windowClientHeight: " << windowClientHeight << '.' << endlog;
       mWidth = windowClientWidth;
