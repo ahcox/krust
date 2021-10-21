@@ -153,6 +153,29 @@ FindFirstMemoryTypeWithProperties(const VkPhysicalDeviceMemoryProperties& memory
 ConditionalValue<uint32_t>
 FindMemoryTypeMatchingProperties(const VkPhysicalDeviceMemoryProperties& memoryProperties, uint32_t candidateTypeBitset, VkMemoryPropertyFlags properties);
 
+/**
+ * @brief Examines the memory types offered by the device, looking for one which
+ * is both one of the input candidate types and both has the desired properties
+ * and doesn't have the banned properties associated with it.
+ * The type may have any other properties.
+ * @param[in] memoryProperties The device memory properties that should be
+ *            examined.
+ * @param[in] candidateTypeBitset A set of bits: if bit x of this is set then
+ *            type x in the device's list of memory types can be considered.
+ * @param[in] properties A set of VkMemoryPropertyFlagBits memory properties to
+ *            be searched for. E.g. `VK_MEMORY_PROPERTY_DEVICE_ONLY`.
+ * @param[in] avoided_properties A set of VkMemoryPropertyFlagBits memory properties to
+ *            be avoide. E.g. `VK_MEMORY_PROPERTY_HOST_VISIBLE`.
+ * @returns A pair of the index of a compatible memory type and true if one
+ *          could be found, or a pair of an undefined value and false otherwise.
+ *
+ */
+ConditionalValue<uint32_t>
+FindMemoryTypeWithAndWithout(
+  const VkPhysicalDeviceMemoryProperties& memoryProperties,
+  uint32_t candidateTypeBitset,
+  VkMemoryPropertyFlags properties,
+  VkMemoryPropertyFlags avoided_properties);
 
 /**
  * @brief Determines whether format argument is usable for a depth buffer.

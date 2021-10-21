@@ -193,6 +193,31 @@ FindMemoryTypeMatchingProperties(const VkPhysicalDeviceMemoryProperties& memoryP
   return ConditionalValue<uint32_t>(0, false);
 }
 
+ConditionalValue<uint32_t>
+FindMemoryTypeWithAndWithout(
+  const VkPhysicalDeviceMemoryProperties& memoryProperties,
+  uint32_t candidateTypeBitset,
+  VkMemoryPropertyFlags properties,
+  VkMemoryPropertyFlags avoided_properties)
+{
+  const uint32_t count = std::min(uint32_t(VK_MAX_MEMORY_TYPES), memoryProperties.memoryTypeCount);
+  for(uint32_t memoryType = 0; memoryType < count; ++memoryType)
+  {
+    // Check whether the memory type is in the bitset of allowable options:
+    if(candidateTypeBitset & (1u << memoryType))
+    {
+      // Check whether all the requested properties are set for the memory type:
+      if((memoryProperties.memoryTypes[memoryType].propertyFlags & properties) &&
+         ((memoryProperties.memoryTypes[memoryType].propertyFlags & avoided_properties) == 0))
+      {
+        return ConditionalValue<uint32_t>(memoryType, true);
+      }
+    }
+  }
+  KRUST_LOG_WARN << "No suitable memory type found with the requested properties (" << properties << ") but without the avoided properties (" << avoided_properties << ") among the allowed types in the flag set (" << candidateTypeBitset << ")." << endlog;
+  return ConditionalValue<uint32_t>(0, false);
+}
+
 bool IsDepthFormat(const VkFormat format)
 {
   // Use this to find out the new number if the assert below fires:
