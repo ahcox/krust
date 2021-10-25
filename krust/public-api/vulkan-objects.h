@@ -162,6 +162,7 @@ public:
   operator VkCommandBuffer() const { return mCommandBuffer;  }
   VkCommandBuffer GetVkCommandBuffer() const { return mCommandBuffer; }
   const VkCommandBuffer* GetVkCommandBufferAddress() const { return &mCommandBuffer; }
+  Device& GetDevice() const { return mPool->GetDevice(); }
   /**
    * Keep the parameter alive as long as this command buffer is.
    * Use for resources required for the execution of these commands.
