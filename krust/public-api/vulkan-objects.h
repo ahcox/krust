@@ -340,7 +340,7 @@ private:
  */
 class Fence : public VulkanObject
 {
-  Fence(Device& device, const VkFenceCreateFlags flags);
+  Fence(Device& device, const VkFenceCreateInfo& info);
 public:
   static FencePtr New(Device& device, const VkFenceCreateFlags flags);
   ~Fence();
@@ -475,7 +475,7 @@ inline ShaderBuffer::size_type byte_size(const ShaderBuffer& sb) { return sb.siz
 class ShaderModule : public VulkanObject
 {
   /** Hidden constructor to prevent users doing naked `new`s.*/
-  ShaderModule(Device& device, VkShaderModuleCreateFlags flags, const ShaderBuffer& src);
+  ShaderModule(Device& device, const VkShaderModuleCreateInfo& info);
 
 public:
   /**

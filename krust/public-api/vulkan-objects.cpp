@@ -29,6 +29,30 @@
 #include "krust/internal/krust-internal.h"
 #include "krust/internal/scoped-temp-array.h"
 
+#define KRUST_CALL_CREATOR(NAME) \
+const VkResult result = vkCreate##NAME(device, &info, Internal::sAllocator, &m##NAME);\
+  if (result != VK_SUCCESS)\
+  {\
+    m##NAME = VK_NULL_HANDLE;\
+    ThreadBase::Get().GetErrorPolicy().VulkanError("vkCreate"#NAME, result, nullptr, __FUNCTION__, __FILE__, __LINE__);\
+  }
+
+#define KRUST_VKOBJ_CONSTRUCTOR(NAME) \
+NAME::NAME(Device& device, const Vk##NAME##CreateInfo& info) : \
+  mDevice(&device)\
+{\
+    KRUST_CALL_CREATOR(NAME);\
+}
+
+#define KRUST_VKOBJ_DESTRUCTOR(NAME) \
+NAME::~NAME() \
+{\
+    vkDestroy##NAME(*mDevice, m##NAME, Internal::sAllocator);\
+}
+
+#define KRUST_VKOBJ_LIFETIME(NAME) \
+KRUST_VKOBJ_CONSTRUCTOR(NAME)\
+KRUST_VKOBJ_DESTRUCTOR(NAME)
 
 namespace Krust
 {
@@ -173,10 +197,8 @@ DescriptorPoolPtr DescriptorPool::New(Device& device, VkDescriptorPoolCreateFlag
   return new DescriptorPool { device, DescriptorPoolCreateInfo(flags, maxSets, poolSizeCount, pPoolSizes)};
 }
 
-DescriptorPool::~DescriptorPool()
-{
-  vkDestroyDescriptorPool(*mDevice, mDescriptorPool, Internal::sAllocator);
-}
+KRUST_VKOBJ_DESTRUCTOR(DescriptorPool)
+
 
 
 
@@ -214,16 +236,7 @@ DescriptorSet::~DescriptorSet()
 
 
 // -----------------------------------------------------------------------------
-DescriptorSetLayout::DescriptorSetLayout(Device& device, const VkDescriptorSetLayoutCreateInfo& createInfo) :
-  mDevice(&device)
-{
-  const VkResult result = vkCreateDescriptorSetLayout(device, &createInfo, Internal::sAllocator, &mDescriptorSetLayout);
-  if (result != VK_SUCCESS)
-  {
-    mDescriptorSetLayout = VK_NULL_HANDLE;
-    ThreadBase::Get().GetErrorPolicy().VulkanError("vkCreateDescriptorSetLayout", result, nullptr, __FUNCTION__, __FILE__, __LINE__);
-  }
-}
+KRUST_VKOBJ_LIFETIME(DescriptorSetLayout)
 
 DescriptorSetLayoutPtr DescriptorSetLayout::New(
   Device& device,
@@ -232,11 +245,6 @@ DescriptorSetLayoutPtr DescriptorSetLayout::New(
   const VkDescriptorSetLayoutBinding* pBindings)
 {
     return new DescriptorSetLayout {device, DescriptorSetLayoutCreateInfo(flags, bindingCount, pBindings)};
-}
-
-DescriptorSetLayout::~DescriptorSetLayout()
-{
-  vkDestroyDescriptorSetLayout(*mDevice, mDescriptorSetLayout, Internal::sAllocator);
 }
 
 
@@ -293,32 +301,7 @@ DeviceMemory::~DeviceMemory()
   vkFreeMemory(*mDevice, mDeviceMemory, Internal::sAllocator);
 }
 
-/// @todo move to top of file <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< BOOKMARK
-/// @todo Use this macro for all create functions in constructors.
-#define KRUST_CALL_CREATOR(NAME) \
-const VkResult result = vkCreate##NAME(device, &info, Internal::sAllocator, &m##NAME);\
-  if (result != VK_SUCCESS)\
-  {\
-    m##NAME = VK_NULL_HANDLE;\
-    ThreadBase::Get().GetErrorPolicy().VulkanError("vkCreate##NAME", result, nullptr, __FUNCTION__, __FILE__, __LINE__);\
-  }
 
-#define KRUST_VKOBJ_CONSTRUCTOR(NAME) \
-NAME::NAME(Device& device, const Vk##NAME##CreateInfo& info) : \
-  mDevice(&device)\
-{\
-    KRUST_CALL_CREATOR(NAME);\
-}
-
-#define KRUST_VKOBJ_DESTRUCTOR(NAME) \
-NAME::~NAME() \
-{\
-    vkDestroy##NAME(*mDevice, m##NAME, Internal::sAllocator);\
-}
-
-#define KRUST_VKOBJ_LIFETIME(NAME) \
-KRUST_VKOBJ_CONSTRUCTOR(NAME)\
-KRUST_VKOBJ_DESTRUCTOR(NAME)
 
 // -----------------------------------------------------------------------------
 // Buffer
@@ -341,51 +324,21 @@ VkResult Buffer::BindMemory(DeviceMemory& memory, VkDeviceSize memoryOffset)
 
 
 // -----------------------------------------------------------------------------
-Fence::Fence(Device& device, const VkFenceCreateFlags flags) :
-  mDevice(&device)
-{
-  const auto createInfo = FenceCreateInfo(flags);
-  const VkResult result = vkCreateFence(device, &createInfo, Internal::sAllocator, &mFence);
-  if (result != VK_SUCCESS)
-  {
-    mFence = VK_NULL_HANDLE;
-    auto & threadBase = ThreadBase::Get();
-    threadBase.GetErrorPolicy().VulkanError("vkCreateFence", result, nullptr, __FUNCTION__, __FILE__, __LINE__);
-  }
-}
+KRUST_VKOBJ_LIFETIME(Fence);
 
 FencePtr Fence::New(Device& device, const VkFenceCreateFlags flags)
 {
-  return new Fence {device, flags};
-}
-
-Fence::~Fence()
-{
-  vkDestroyFence(*mDevice, mFence, Internal::sAllocator);
+  return new Fence {device, FenceCreateInfo(flags)};
 }
 
 
 
 // -----------------------------------------------------------------------------
-Image::Image(Device & device, const VkImageCreateInfo & createInfo) :
-  mDevice(device)
-{
-  const VkResult result = vkCreateImage(device, &createInfo, Internal::sAllocator, &mImage);
-  if (result != VK_SUCCESS)
-  {
-    mImage = VK_NULL_HANDLE;
-    ThreadBase::Get().GetErrorPolicy().VulkanError("vkCreateImage", result, nullptr, __FUNCTION__, __FILE__, __LINE__);
-  }
-}
+KRUST_VKOBJ_LIFETIME(Image);
 
 ImagePtr Image::New(Device & device, const VkImageCreateInfo & createInfo)
 {
   return new Image{ device, createInfo };
-}
-
-Image::~Image()
-{
-  vkDestroyImage(*mDevice, mImage, Internal::sAllocator);
 }
 
 void Image::BindMemory(DeviceMemory& memory, const VkDeviceSize offset)
@@ -453,16 +406,7 @@ Instance::~Instance()
 
 
 // -----------------------------------------------------------------------------
-PipelineLayout::PipelineLayout(Device& device, const VkPipelineLayoutCreateInfo& createInfo) :
-  mDevice(&device)
-{
-  const VkResult result = vkCreatePipelineLayout(device, &createInfo, Internal::sAllocator, &mPipelineLayout);
-  if (result != VK_SUCCESS)
-  {
-    mPipelineLayout = VK_NULL_HANDLE;
-    ThreadBase::Get().GetErrorPolicy().VulkanError("vkCreatePipelineLayout", result, nullptr, __FUNCTION__, __FILE__, __LINE__);
-  }
-}
+KRUST_VKOBJ_LIFETIME(PipelineLayout);
 
 PipelineLayoutPtr PipelineLayout::New(
   Device&                         device,
@@ -484,33 +428,14 @@ PipelineLayoutPtr PipelineLayout::New(
   return new PipelineLayout(device, PipelineLayoutCreateInfo(flags, 1, &setLayout, 1, &pushConstantRange));
 }
 
-PipelineLayout::~PipelineLayout()
-{
-  vkDestroyPipelineLayout(*mDevice, mPipelineLayout, Internal::sAllocator);
-}
-
 
 
 // -----------------------------------------------------------------------------
-ShaderModule::ShaderModule(Device& device, const VkShaderModuleCreateFlags flags, const ShaderBuffer& src)
-: mDevice(device)
-{
-  const auto createInfo = ShaderModuleCreateInfo(flags, byte_size(src), &src[0]);
-  const VkResult result = vkCreateShaderModule(device, &createInfo, Internal::sAllocator, &mShaderModule);
-  if (result != VK_SUCCESS)
-  {
-    mShaderModule = VK_NULL_HANDLE;
-    ThreadBase::Get().GetErrorPolicy().VulkanError("vkCreateShaderModule", result, nullptr, __FUNCTION__, __FILE__, __LINE__);
-  }
-}
+KRUST_VKOBJ_LIFETIME(ShaderModule)
 
 ShaderModulePtr ShaderModule::New(Device& device, const VkShaderModuleCreateFlags flags, const ShaderBuffer& src)
 {
-  return new ShaderModule { device, flags, src };
-}
-
-ShaderModule::~ShaderModule(){
-  vkDestroyShaderModule(*mDevice, mShaderModule, Internal::sAllocator);
+  return new ShaderModule { device, ShaderModuleCreateInfo(flags, byte_size(src), &src[0]) };
 }
 
 }
