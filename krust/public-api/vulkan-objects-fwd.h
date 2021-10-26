@@ -55,6 +55,10 @@ class Device;
 using DevicePtr = IntrusivePointer<Device>;
 
 // -----------------------------------------------------------------------------
+class Buffer;
+using BufferPtr = IntrusivePointer<Buffer>;
+
+// -----------------------------------------------------------------------------
 class CommandPool;
 using CommandPoolPtr = IntrusivePointer<CommandPool>;
 

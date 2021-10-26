@@ -306,6 +306,33 @@ private:
 
 
 /* ----------------------------------------------------------------------- *//**
+ * An owner for VkBuffer API objects.
+ * It keeps its own handle alive and the device it came from.
+ */
+class Buffer : public VulkanObject
+{
+  Buffer(Device& device, const VkBufferCreateInfo& info);
+public:
+  /// @todo A factory function which allows more than one queue family.
+  static BufferPtr New(Device& device, VkBufferCreateFlags flags, VkDeviceSize size, VkBufferUsageFlags usage, VkSharingMode sharingMode, uint32_t queueFamilyIndex);
+  ~Buffer();
+  /// Back this buffer with a region of memory as vkBindBufferMemory() would, but also establish that this object keepsthe memory alive.
+  VkResult BindMemory(DeviceMemory& memory, VkDeviceSize memoryOffset);
+  Device& GetDevice() const { return *mDevice; }
+  DeviceMemory& GetMemory() const { return *mMemory; }
+  operator VkBuffer() const { return mBuffer; }
+private:
+  /// The GPU device this Buffer is tied to. Keep it alive as long as this Buffer is.
+  DevicePtr mDevice = nullptr;
+  /// The memory this buffer is associated with. At creation time this is null.
+  DeviceMemoryPtr mMemory = nullptr;
+  /// The raw Vulkan Buffer handle.
+  VkBuffer mBuffer = VK_NULL_HANDLE;
+};
+
+
+
+/* ----------------------------------------------------------------------- *//**
  * @brief A handle to a fence.
  *
  * Owns a VkFence object and allows its lifetime to be managed in RAII

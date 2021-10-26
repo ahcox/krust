@@ -293,6 +293,51 @@ DeviceMemory::~DeviceMemory()
   vkFreeMemory(*mDevice, mDeviceMemory, Internal::sAllocator);
 }
 
+/// @todo move to top of file <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< BOOKMARK
+/// @todo Use this macro for all create functions in constructors.
+#define KRUST_CALL_CREATOR(NAME) \
+const VkResult result = vkCreate##NAME(device, &info, Internal::sAllocator, &m##NAME);\
+  if (result != VK_SUCCESS)\
+  {\
+    m##NAME = VK_NULL_HANDLE;\
+    ThreadBase::Get().GetErrorPolicy().VulkanError("vkCreate##NAME", result, nullptr, __FUNCTION__, __FILE__, __LINE__);\
+  }
+
+#define KRUST_VKOBJ_CONSTRUCTOR(NAME) \
+NAME::NAME(Device& device, const Vk##NAME##CreateInfo& info) : \
+  mDevice(&device)\
+{\
+    KRUST_CALL_CREATOR(NAME);\
+}
+
+#define KRUST_VKOBJ_DESTRUCTOR(NAME) \
+NAME::~NAME() \
+{\
+    vkDestroy##NAME(*mDevice, m##NAME, Internal::sAllocator);\
+}
+
+#define KRUST_VKOBJ_LIFETIME(NAME) \
+KRUST_VKOBJ_CONSTRUCTOR(NAME)\
+KRUST_VKOBJ_DESTRUCTOR(NAME)
+
+// -----------------------------------------------------------------------------
+// Buffer
+KRUST_VKOBJ_LIFETIME(Buffer)
+
+BufferPtr Buffer::New(Device& device, VkBufferCreateFlags flags, VkDeviceSize size, VkBufferUsageFlags usage, VkSharingMode sharingMode, uint32_t queueFamilyIndex)
+{
+  return new Buffer(device, BufferCreateInfo(flags, size, usage, sharingMode, 1, &queueFamilyIndex));
+}
+
+VkResult Buffer::BindMemory(DeviceMemory& memory, VkDeviceSize memoryOffset)
+{
+  const VkResult result = vkBindBufferMemory(*mDevice, mBuffer, memory, memoryOffset);
+  if(result == VK_SUCCESS){
+    mMemory = memory;
+  }
+  return result;
+}
+
 
 
 // -----------------------------------------------------------------------------
