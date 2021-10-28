@@ -39,5 +39,5 @@ add_library(krust
    README.md
 )
 target_include_directories(krust SYSTEM PRIVATE ${VULKAN_INCLUDE_DIRECTORY})
-target_link_libraries(krust PRIVATE ${VULKAN_LIBRARY})
+target_link_libraries(krust PUBLIC volk)
 target_link_libraries(krust PUBLIC krust-kernel)

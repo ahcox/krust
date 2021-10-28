@@ -30,6 +30,11 @@ There are currently three modules:
 
 Building
 =======
+
+Use the `--recurse-submodules` when `git clone`ing the repository to pull in the
+third party dependencies.
+They can be [retrieved later](https://git-scm.com/book/en/v2/Git-Tools-Submodules)
+if the initial clone was not recursive.
 See [BUILD.md](./BUILD.md) in this directory for instructions.
 
 *** Note: `krust-io` currently only builds for Linux and the example apps only run on Nvidia. *** 

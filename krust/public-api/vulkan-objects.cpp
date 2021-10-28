@@ -28,6 +28,7 @@
 #include "krust/internal/keep-alive-set.h"
 #include "krust/internal/krust-internal.h"
 #include "krust/internal/scoped-temp-array.h"
+#include "krust/public-api/vulkan.h"
 
 #define KRUST_CALL_CREATOR(NAME) \
 const VkResult result = vkCreate##NAME(device, &info, Internal::sAllocator, &m##NAME);\

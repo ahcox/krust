@@ -32,7 +32,7 @@
 #include "krust-kernel/public-api/span.h"
 
 // External includes:
-#include <vulkan/vulkan.h>
+#include "krust/public-api/vulkan.h"
 #include <vector>
 
 namespace Krust

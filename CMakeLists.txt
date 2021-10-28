@@ -27,7 +27,8 @@ MESSAGE( STATUS "[top] VULKAN_INCLUDE_DIRECTORY:" ${VULKAN_INCLUDE_DIRECTORY} )
 MESSAGE( STATUS "[top] VULKAN_LIBRARY_DIRECTORY:" ${VULKAN_LIBRARY_DIRECTORY} )
 set(KRUST_ASSERT_LEVEL "5" CACHE STRING "Level for Krust assertions from 1 (fewest, rarest assertions), to 5 (most, most frequent assertions)" )
 
-find_library(VULKAN_LIBRARY NAMES vulkan-1 vulkan HINTS ${VULKAN_LIBRARY_DIRECTORY})
+# We use the volk vulkan dynamic loader now so don't need to link to the library:
+# find_library(VULKAN_LIBRARY NAMES vulkan-1 vulkan HINTS ${VULKAN_LIBRARY_DIRECTORY})
 
 # Compiler options:
 if(CMAKE_BUILD_TOOL MATCHES "${VS_BUILD_REGEX}")
@@ -85,13 +86,17 @@ if(WIN32)
   # ToDo try: add_definitions(-DWIN32_LEAN_AND_MEAN)
   SET(KRUST_IO_PLATFORM_WINDOWING_DIR "${PROJECT_SOURCE_DIR}/krust-io/platform/win32")
   SET(KRUST_IO_PLATFORM_WINDOWING_PUBLIC_API_DIR "${PROJECT_SOURCE_DIR}/krust-io/platform/win32/public-api")
+  add_definitions(-DVK_USE_PLATFORM_WIN32_KHR=1)
 else()
   SET(KRUST_IO_PLATFORM_WINDOWING_DIR "${PROJECT_SOURCE_DIR}/krust-io/platform/xcb")
   SET(KRUST_IO_PLATFORM_WINDOWING_PUBLIC_API_DIR "${PROJECT_SOURCE_DIR}/krust-io/platform/xcb/public-api")
+  add_definitions(-DVK_USE_PLATFORM_XCB_KHR=1)
 endif()
 
-# Global include directories for all targets:
+# Build third-party volk vulkan function pointer loader library:
+add_subdirectory (thirdparty/volk)
 
+# Global include directories for all targets:
 include_directories(${PROJECT_SOURCE_DIR})
 include_directories(${KRUST_PUBLIC_API_DIR})
 include_directories(${KRUST_IO_PUBLIC_API_DIR})

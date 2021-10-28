@@ -27,10 +27,10 @@
 
 // Internal includes:
 #include "krust/public-api/vulkan-objects.h"
+#include <krust/public-api/vulkan_types_and_macros.h>
 
 // External includes:
 #include "conditional-value.h"
-#include <vulkan/vulkan.h>
 #include <stdint.h>
 #include <vector>
 

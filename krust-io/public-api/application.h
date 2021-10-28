@@ -32,7 +32,7 @@
 #include "krust/public-api/krust.h"
 #include "krust/public-api/intrusive-pointer.h"
 #include "krust/public-api/conditional-value.h"
-#include <vulkan/vulkan.h>
+#include <krust/public-api/vulkan_types_and_macros.h>
 #include <vector>
 #include <bitset>
 

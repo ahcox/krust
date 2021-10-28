@@ -27,7 +27,7 @@
 // External includes:
 #define WIN32_LEAN_AND_MEAN
 #define VK_USE_PLATFORM_WIN32_KHR
-#include <vulkan/vulkan.h>
+#include "krust/public-api/vulkan_types_and_macros.h"
 
 namespace Krust {
 namespace IO {

@@ -28,7 +28,7 @@
 #include "krust/public-api/vulkan-objects-fwd.h"
 
 // System headers:
-#include <vulkan/vulkan.h>
+#include <krust/public-api/vulkan_types_and_macros.h>
 #include <vector>
 
 namespace Krust {

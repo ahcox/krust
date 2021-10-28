@@ -24,9 +24,9 @@
 // Internal includes
 #include "krust/public-api/vulkan-objects-fwd.h"
 #include "krust/public-api/ref-object.h"
+#include <krust/public-api/vulkan_types_and_macros.h>
 
 // External includes:
-#include <vulkan/vulkan.h>
 #include <vector>
 
 /**

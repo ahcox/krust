@@ -36,7 +36,7 @@
 #include "krust/public-api/vulkan-utils.h"
 
 // External includes:
-#include <vulkan/vulkan.h>
+#include <krust/public-api/vulkan_types_and_macros.h>
 
 /**
  * @file

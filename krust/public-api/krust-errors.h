@@ -24,9 +24,9 @@
 // Internal includes
 #include "krust/public-api/logging.h"
 #include "krust/public-api/krust-assertions.h"
+#include "krust/public-api/vulkan_types_and_macros.h"
 
 // External includes:
-#include <vulkan/vulkan.h>
 
 namespace Krust
 {

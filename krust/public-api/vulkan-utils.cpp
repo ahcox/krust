@@ -30,6 +30,7 @@
 #include "krust/public-api/vulkan_struct_init.h"
 #include "krust/public-api/vulkan-objects.h"
 #include "krust/internal/krust-internal.h"
+#include <krust/public-api/vulkan.h>
 
 // External includes:
 #include <algorithm>

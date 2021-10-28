@@ -21,6 +21,7 @@
 // Internal includes
 #include "krust/public-api/krust.h"
 #include "krust/internal/krust-internal.h"
+#include <volk.h>
 
 namespace Krust
 {
@@ -44,7 +45,12 @@ bool InitKrust(ErrorPolicy * errorPolicy, VkAllocationCallbacks * allocator)
 {
   sErrorPolicy = errorPolicy ? errorPolicy : &sDefaultErrorPolicy;
   Internal::sAllocator = allocator ? allocator : KRUST_DEFAULT_ALLOCATION_CALLBACKS;
-  return false;
+  const VkResult volkOk = volkInitialize();
+  if(volkOk != VK_SUCCESS){
+    KRUST_LOG_ERROR << "Volk lbrary init failed with code: " << volkOk << endlog;
+    return false;
+  }
+  return true;
 }
 
 ErrorPolicy* GetGlobalErrorPolicy()

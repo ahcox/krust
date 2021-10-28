@@ -31,7 +31,7 @@
 
 // External includes:
 #include <xcb/xcb.h>
-#include <vulkan/vulkan.h>
+#include "krust/public-api/vulkan.h"
 #include <bitset>
 
 

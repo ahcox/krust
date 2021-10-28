@@ -26,7 +26,7 @@
 #include "krust/public-api/logging.h"
 #include "krust/public-api/vulkan-logging.h"
 #include "krust/public-api/vulkan-utils.h"
-#include <vulkan/vulkan.h>
+#include "krust/public-api/vulkan.h"
 #include <iostream>
 #include <algorithm>
 #include <string.h> // for memset.
@@ -276,6 +276,8 @@ bool Application::InitVulkanInstance()
     return false;
   }
 
+  volkLoadInstance(*mInstance);
+
   // Setup the debug reporting function:
   // This lets us get information out of validation layers.
   mCreateDebugReportCallback = KRUST_GET_INSTANCE_EXTENSION((*mInstance), CreateDebugReportCallbackEXT);
@@ -439,6 +441,9 @@ bool Application::InitVulkanGpus() {
   deviceInfo.pNext = &mGpuFeatures;
 
   mGpuInterface = Device::New(*mInstance, mGpu, deviceInfo);
+
+  // Make dispatches faster as we only ever use one device:
+  volkLoadDevice(*mGpuInterface);
 
   // Get the device WSI extensions:
   if( 0 == (mAcquireNextImageKHR = KRUST_GET_DEVICE_EXTENSION(*mGpuInterface, AcquireNextImageKHR)) ||
