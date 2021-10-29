@@ -55,6 +55,10 @@ class Device;
 using DevicePtr = IntrusivePointer<Device>;
 
 // -----------------------------------------------------------------------------
+class AccelerationStructure;
+using AccelerationStructurePtr = IntrusivePointer<AccelerationStructure>;
+
+// -----------------------------------------------------------------------------
 class Buffer;
 using BufferPtr = IntrusivePointer<Buffer>;
 

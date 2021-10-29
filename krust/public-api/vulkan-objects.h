@@ -128,6 +128,33 @@ private:
 
 
 /* ----------------------------------------------------------------------- *//**
+ * @brief A handle to an instance of Vulkan's VkAccelerationStructure API
+   object.
+ */
+class AccelerationStructure : public VulkanObject
+{
+  /** Hidden constructor to prevent users doing naked `new`s.*/
+  AccelerationStructure(Device& device, const VkAccelerationStructureCreateInfoKHR& info);
+
+public:
+  /**
+   * @brief Creator for new AccelerationStructure objects.
+   * @return Smart pointer wrapper to keep the AccelerationStructure alive.
+   */
+  static AccelerationStructurePtr New(Device& device, VkAccelerationStructureCreateFlagsKHR createFlags, VkBuffer buffer, VkDeviceSize offset, VkDeviceSize size,  VkAccelerationStructureTypeKHR type, VkDeviceAddress deviceAddress);
+  ~AccelerationStructure();
+  operator VkAccelerationStructureKHR() const { return mAccelerationStructure; }
+
+private:
+  /// The GPU device this AccelerationStructure is tied to. Keep it alive as long as this AccelerationStructure is.
+  DevicePtr mDevice;
+  /// The raw Vulkan AccelerationStructure handle.
+  VkAccelerationStructureKHR mAccelerationStructure = VK_NULL_HANDLE;
+};
+
+
+
+/* ----------------------------------------------------------------------- *//**
  * An owner for VkCommandPool API objects.
  */
 class CommandPool : public VulkanObject
@@ -492,6 +519,7 @@ private:
   /// The raw Vulkan ShaderModule handle.
   VkShaderModule mShaderModule = VK_NULL_HANDLE;
 };
+
 
 ///@}
 

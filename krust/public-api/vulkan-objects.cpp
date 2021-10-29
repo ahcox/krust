@@ -55,6 +55,31 @@ NAME::~NAME() \
 KRUST_VKOBJ_CONSTRUCTOR(NAME)\
 KRUST_VKOBJ_DESTRUCTOR(NAME)
 
+#define KRUST_CALL_CREATOR_EX(NAME, SUFFIX) \
+const VkResult result = vkCreate##NAME##SUFFIX(device, &info, Internal::sAllocator, &m##NAME);\
+  if (result != VK_SUCCESS)\
+  {\
+    m##NAME = VK_NULL_HANDLE;\
+    ThreadBase::Get().GetErrorPolicy().VulkanError("vkCreate"#NAME##SUFFIX, result, nullptr, __FUNCTION__, __FILE__, __LINE__);\
+  }
+
+#define KRUST_VKOBJ_CONSTRUCTOR_EX(NAME, SUFFIX) \
+NAME::NAME(Device& device, const Vk##NAME##CreateInfo##SUFFIX& info) : \
+  mDevice(&device)\
+{\
+    KRUST_CALL_CREATOR_EX(NAME, SUFFIX);\
+}
+
+#define KRUST_VKOBJ_DESTRUCTOR_EX(NAME, SUFFIX) \
+NAME::~NAME() \
+{\
+    vkDestroy##NAME##SUFFIX(*mDevice, m##NAME, Internal::sAllocator);\
+}
+
+#define KRUST_VKOBJ_LIFETIME_EX(NAME, SUFFIX) \
+KRUST_VKOBJ_DESTRUCTOR_EX(NAME, SUFFIX)
+//KRUST_VKOBJ_CONSTRUCTOR_EX(NAME, SUFFIX)
+
 namespace Krust
 {
 
@@ -125,6 +150,10 @@ void CommandBuffer::KeepAlive(VulkanObject & needed)
   reinterpret_cast<KeepAliveSet*>(mKeepAlives)->Add(needed);
 }
 
+
+
+// -----------------------------------------------------------------------------
+KRUST_VKOBJ_LIFETIME_EX(AccelerationStructure, KHR);
 
 
 // -----------------------------------------------------------------------------
