@@ -29,6 +29,7 @@
 namespace Krust
 {
     using std::span;
+    using std::dynamic_extent;
 }
 
 #endif // KRUST_KERNEL_PUBLIC_API_SPAN_H_
