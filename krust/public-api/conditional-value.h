@@ -20,6 +20,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
+#include "krust/public-api/krust-assertions.h"
 
 namespace Krust
 {
@@ -33,14 +34,28 @@ template <typename Value>
 class ConditionalValue
 {
 public:
-  ConditionalValue(Value value, bool condition) :
+  constexpr ConditionalValue(Value value, bool condition) :
     mValue(value), mCondition(condition) {}
-  operator bool() const { return mCondition; }
-  Value GetValue() { return mValue; }
+  constexpr operator bool() const { return mCondition; }
+  constexpr operator Value() const { return mValue; }
+  constexpr Value GetValue() { return mValue; }
 private:
   Value mValue;
   bool mCondition;
 };
+
+constexpr inline void ConditionalValuetester01()
+{
+  constexpr ConditionalValue<unsigned> zero_true{0u, true};
+  constexpr ConditionalValue<unsigned> one_false{1u, false};
+  constexpr ConditionalValue<unsigned> zero_false{0u, false};
+  constexpr ConditionalValue<unsigned> one_true{1u, true};
+
+  KRUST_COMPILE_ASSERT(zero_true, "comparing to a bool, the condition should be used.");
+  KRUST_COMPILE_ASSERT(!one_false, "comparing to a bool, the condition should be used.");
+  KRUST_COMPILE_ASSERT(!zero_false, "comparing to a bool, the condition should be used.");
+  KRUST_COMPILE_ASSERT(one_true, "comparing to a bool, the condition should be used.");
+}
 
 } // namespace Krust
 
