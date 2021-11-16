@@ -51,10 +51,10 @@ constexpr inline void ConditionalValuetester01()
   constexpr ConditionalValue<unsigned> zero_false{0u, false};
   constexpr ConditionalValue<unsigned> one_true{1u, true};
 
-  KRUST_COMPILE_ASSERT(zero_true, "comparing to a bool, the condition should be used.");
-  KRUST_COMPILE_ASSERT(!one_false, "comparing to a bool, the condition should be used.");
-  KRUST_COMPILE_ASSERT(!zero_false, "comparing to a bool, the condition should be used.");
-  KRUST_COMPILE_ASSERT(one_true, "comparing to a bool, the condition should be used.");
+  KRUST_COMPILE_ASSERT(zero_true,   "ConditionValue should be true");
+  KRUST_COMPILE_ASSERT(!one_false,  "ConditionValue should be false");
+  KRUST_COMPILE_ASSERT(!zero_false, "ConditionValue should be false");
+  KRUST_COMPILE_ASSERT(one_true,    "ConditionValue should be true");
 }
 
 } // namespace Krust
