@@ -164,7 +164,8 @@ FindFirstMemoryTypeWithProperties(const VkPhysicalDeviceMemoryProperties& memory
     if(candidateTypeBitset & (1u << memoryType))
     {
       // Check whether all the requested properties are set for the memory type:
-      if((memoryProperties.memoryTypes[memoryType].propertyFlags & properties) == properties)
+      const auto memory_flags = memoryProperties.memoryTypes[memoryType].propertyFlags;
+      if((memory_flags & properties) == properties)
       {
         return ConditionalValue<uint32_t>(memoryType, true);
       }
