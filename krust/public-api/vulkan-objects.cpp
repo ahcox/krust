@@ -458,6 +458,14 @@ PipelineLayoutPtr PipelineLayout::New(
   return new PipelineLayout(device, PipelineLayoutCreateInfo(flags, 1, &setLayout, 1, &pushConstantRange));
 }
 
+PipelineLayoutPtr PipelineLayout::New(
+    Device&                         device,
+    VkPipelineLayoutCreateFlags     flags,
+    const VkDescriptorSetLayout&    setLayout)
+{
+  return new PipelineLayout(device, PipelineLayoutCreateInfo(flags, 1, &setLayout, 0, nullptr));
+}
+
 
 
 // -----------------------------------------------------------------------------

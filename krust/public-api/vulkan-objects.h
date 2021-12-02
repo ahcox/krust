@@ -134,6 +134,7 @@ private:
 class AccelerationStructure : public VulkanObject
 {
   /** Hidden constructor to prevent users doing naked `new`s.*/
+  /// @todo Should the buffer be owned???????????????????????????????????????????????????????????????????????/ @fixme ?
   AccelerationStructure(Device& device, const VkAccelerationStructureCreateInfoKHR& info);
 
 public:
@@ -325,6 +326,7 @@ public:
   static DeviceMemoryPtr New(Device& device, const VkMemoryAllocateInfo& info);
   ~DeviceMemory();
   operator VkDeviceMemory() const { return mDeviceMemory; }
+  Device& GetDevice() const { return *mDevice; }
 private:
   DevicePtr mDevice;
   VkDeviceMemory mDeviceMemory = VK_NULL_HANDLE;
@@ -472,12 +474,18 @@ public:
     uint32_t                        pushConstantRangeCount = 0,
     const VkPushConstantRange*      pPushConstantRanges = nullptr);
 
-  /// @ A version for when there is a single layout and a single push constant range.
+  /// A version for when there is a single layout and a single push constant range.
   static PipelineLayoutPtr New(
     Device&                         device,
     VkPipelineLayoutCreateFlags     flags,
     const VkDescriptorSetLayout&    setLayout,
     const VkPushConstantRange&      pushConstantRange);
+
+  /// A version for when there is a single layout and no push constants.
+  static PipelineLayoutPtr New(
+    Device&                         device,
+    VkPipelineLayoutCreateFlags     flags,
+    const VkDescriptorSetLayout&    setLayout);
 
   ~PipelineLayout();
   operator VkPipelineLayout() const { return mPipelineLayout; }
