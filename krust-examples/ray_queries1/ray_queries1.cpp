@@ -24,6 +24,7 @@
 #include "krust-gm/public-api/vec3_inl.h"
 #include "krust/public-api/krust.h"
 #include "krust/public-api/line-printer.h"
+#include "krust/public-api/device-memory-mapper.h"
 #include "krust/public-api/vulkan-utils.h"
 #include "krust/public-api/conditional-value.h"
 #include "krust-kernel/public-api/floats.h"
@@ -34,26 +35,6 @@ namespace kr = Krust;
 namespace
 {
 
-// Functions from required extensions:
-PFN_vkCreateAccelerationStructureKHR                 pVkCreateAccelerationStructureKHR = nullptr;
-PFN_vkDestroyAccelerationStructureKHR                pVkDestroyAccelerationStructureKHR = nullptr;
-PFN_vkCmdBuildAccelerationStructuresKHR              pVkCmdBuildAccelerationStructuresKHR = nullptr;
-PFN_vkCmdBuildAccelerationStructuresIndirectKHR      pVkCmdBuildAccelerationStructuresIndirectKHR = nullptr;
-PFN_vkBuildAccelerationStructuresKHR                 pVkBuildAccelerationStructuresKHR = nullptr;
-PFN_vkCopyAccelerationStructureKHR                   pVkCopyAccelerationStructureKHR = nullptr;
-PFN_vkCopyAccelerationStructureToMemoryKHR           pVkCopyAccelerationStructureToMemoryKHR = nullptr;
-PFN_vkCopyMemoryToAccelerationStructureKHR           pVkCopyMemoryToAccelerationStructureKHR = nullptr;
-PFN_vkWriteAccelerationStructuresPropertiesKHR       pVkWriteAccelerationStructuresPropertiesKHR = nullptr;
-PFN_vkCmdCopyAccelerationStructureKHR                pVkCmdCopyAccelerationStructureKHR = nullptr;
-PFN_vkCmdCopyAccelerationStructureToMemoryKHR        pVkCmdCopyAccelerationStructureToMemoryKHR = nullptr;
-PFN_vkCmdCopyMemoryToAccelerationStructureKHR        pVkCmdCopyMemoryToAccelerationStructureKHR = nullptr;
-PFN_vkGetAccelerationStructureDeviceAddressKHR       pVkGetAccelerationStructureDeviceAddressKHR = nullptr;
-PFN_vkCmdWriteAccelerationStructuresPropertiesKHR    pVkCmdWriteAccelerationStructuresPropertiesKHR = nullptr;
-PFN_vkGetDeviceAccelerationStructureCompatibilityKHR pVkGetDeviceAccelerationStructureCompatibilityKHR = nullptr;
-PFN_vkGetAccelerationStructureBuildSizesKHR          pVkGetAccelerationStructureBuildSizesKHR = nullptr;
-
-
-
 /** Number of samples per framebuffer pixel. */
 constexpr VkSampleCountFlagBits NUM_SAMPLES = VK_SAMPLE_COUNT_1_BIT;
 constexpr VkAllocationCallbacks* ALLOCATION_CALLBACKS = nullptr;
@@ -63,6 +44,7 @@ constexpr const char* const RT1_SHADER = "rt1.comp.spv";
 constexpr const char* const RT2_SHADER = "rt2.comp.spv";
 constexpr const char* const GREY_SHADER = "rtow_diffuse_grey.comp.spv";
 constexpr const char* const MATERIALS_SHADER = "rtow_ray_query.comp.spv";
+constexpr const char* const SPHERE_TO_AABB_SHADER_NAME = "spheres_to_aabbs.comp.spv";
 
 struct Pushed
 {
@@ -142,7 +124,7 @@ struct AABBf {
   float maxZ;
 };
 
-inline std::vector<AABBf> spheresToAABBs(kr::span<const Vec4InMemory> spheres)
+inline std::vector<AABBf> spheresToAABBs(kr::span<const Vec4InMemory, kr::dynamic_extent> spheres)
 {
   using kr::Vec3;
 
@@ -162,16 +144,549 @@ inline std::vector<AABBf> spheresToAABBs(kr::span<const Vec4InMemory> spheres)
   return aabbs;
 }
 
-/**
- * Optimisations:
- * @todo Restructure so that caller generates bboxes directing into host-visible memory to avoid a copy here.
- */
-inline void buildAABBLAS(const kr::span<AABBf> abbs)
+inline kr::BufferPtr createSingleAllocBuffer(
+  kr::Device& device,
+  const uint32_t memory_type,
+  VkBufferCreateFlags flags,
+  VkDeviceSize size,
+  VkBufferUsageFlags usage,
+  VkSharingMode sharingMode,
+  const uint32_t queueFamilyIndex)
 {
+  auto buffer = kr::Buffer::New(device, flags, size, usage, sharingMode, queueFamilyIndex);
+  // Work out how much memory the buffer needs, and then allocate and bind that:
+  VkMemoryRequirements memReq;
+  vkGetBufferMemoryRequirements(device, *buffer, &memReq);
+  if(((1u<<memory_type) & memReq.memoryTypeBits) == 0u){
+    buffer.Reset();
+    KRUST_LOG_ERROR << "Can't put buffer in requested memory_type (" << memory_type << ')' << kr::endlog;
+    kr::ThreadBase::Get().GetErrorPolicy().Error(kr::Errors::IllegalArgument, "Buffer not compatible with memory_type requested.", __FUNCTION__, __FILE__, __LINE__);
+  } else {
+    auto dedicatedInfo = kr::MemoryDedicatedAllocateInfo(VK_NULL_HANDLE, *buffer);
+    auto memoryAllocateInfo = kr::MemoryAllocateInfo(memReq.size, memory_type);
+    memoryAllocateInfo.pNext = &dedicatedInfo;
+    auto memory = kr::DeviceMemory::New(device, memoryAllocateInfo);
+    buffer->BindMemory(*memory, 0);
+  }
+  return buffer;
+}
+
+inline kr::BufferPtr createStagingBuffer(
+  kr::Device& device,
+  const uint32_t memory_type,
+  const VkDeviceSize size,
+  const uint32_t queueFamilyIndex)
+{
+  return createSingleAllocBuffer(device,
+    memory_type,
+    0,
+    size,
+    VK_BUFFER_USAGE_TRANSFER_SRC_BIT | // To allow staging from host to device.
+    VK_BUFFER_USAGE_TRANSFER_DST_BIT,  // To allow staging from device back to host.
+    VkSharingMode::VK_SHARING_MODE_EXCLUSIVE,
+    queueFamilyIndex);
+}
+
+/**
+ * @return A buffer with the data in staging memory (host visible) if
+ * successful, else return a null pointer.*/
+inline kr::BufferPtr uploadToStagingBuffer(
+  kr::Device& device,
+  const VkDeviceSize size,
+  const void* hostData,
+  const uint32_t memory_type,
+  const uint32_t queueFamilyIndex)
+{
+  auto stagingBuffer = createStagingBuffer(
+    device,
+    memory_type,
+    size,
+    queueFamilyIndex);
+  if(stagingBuffer.Get())
+  {
+    kr::DeviceMemoryMapper mapper(stagingBuffer->GetMemory(), 0, size);
+    void* stagingData = mapper.GetHostAccess();
+    if(stagingData){
+      mempcpy(stagingData, hostData, size);
+    } else {
+      stagingBuffer.Reset();
+    }
+  }
+  return stagingBuffer;
+}
+
+/// Copy between buffers.
+inline bool CopyBuffer(
+  /// Queue to schedule the copy on.
+  VkQueue queue,
+  /// Pool to get a command buffer to run the copy from.
+  kr::CommandPool& commandPool,
+  /// Must have been created with VK_BUFFER_USAGE_TRANSFER_SRC_BIT.
+  const kr::Buffer& sourceBuffer,
+  /// Must have been created with VK_BUFFER_USAGE_TRANSFER_DST_BIT.
+  kr::Buffer& destBuffer,
+  VkDeviceSize srcOffset,
+  VkDeviceSize dstOffset,
+  VkDeviceSize size)
+{
+  kr::Device& device = sourceBuffer.GetDevice();
+  KRUST_ASSERT1(&device == &destBuffer.GetDevice(), "Buffers must belong to same device when copying.");
+
+  auto commandBuffer = kr::CommandBuffer::New(commandPool, VK_COMMAND_BUFFER_LEVEL_PRIMARY);
+  auto beginInfo = kr::CommandBufferBeginInfo(VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT, nullptr);
+  VkResult result = VK_SUCCESS;
+  if(VK_SUCCESS == (result = vkBeginCommandBuffer(*commandBuffer, &beginInfo)))
+  {
+    const auto region = kr::BufferCopy(srcOffset, dstOffset, size);
+    vkCmdCopyBuffer(*commandBuffer, sourceBuffer, destBuffer, 1, &region);
+    if(VK_SUCCESS == (result = vkEndCommandBuffer(*commandBuffer)))
+    {
+      const auto submitInfo = kr::SubmitInfo(0, nullptr, nullptr, 1, commandBuffer->GetVkCommandBufferAddress(), 0, nullptr);
+      if(VK_SUCCESS == (result = vkQueueSubmit(queue, 1, &submitInfo, VK_NULL_HANDLE)))
+      {
+        if(VK_SUCCESS == (result = vkQueueWaitIdle(queue))) /// @todo Fixme: an idle queue is the last thing we should be creating. <--------------------------------------[FixMe]
+        {
+          return true;
+        }
+      }
+    }
+  }
+  KRUST_LOG_ERROR << "Failed to copy buffer with error " << result << kr::endlog;
+  return false;
+}
+
+/// Copy buffer contents from the start of the source to the start of the destination.
+inline bool CopyBuffer(
+  /// Queue to schedule the copy on.
+  VkQueue queue,
+  /// Pool to get a command buffer to run the copy from.
+  kr::CommandPool& commandPool,
+  /// Must have been created with VK_BUFFER_USAGE_TRANSFER_SRC_BIT.
+  const kr::Buffer& sourceBuffer,
+  /// Must have been created with VK_BUFFER_USAGE_TRANSFER_DST_BIT.
+  kr::Buffer& destBuffer,
+  VkDeviceSize size)
+{
+  return CopyBuffer(queue, commandPool, sourceBuffer, destBuffer, 0, 0, size);
+}
+
+/**
+ * Given a buffer in device-visible memory (e.g. staging memory on-device but
+ * host visible), return a new buffer in device-visible memory with a copy of
+ * the source buffer's contents, doing the copy on the device.
+ * @return A buffer with the data in device memory if successful, else return
+ * a null pointer.*/
+inline kr::BufferPtr transferToDeviceBuffer(
+  /// Queue to schedule the copy on.
+  VkQueue queue,
+  /// Pool to get a command buffer to run the copy from.
+  kr::CommandPool& commandPool,
+  /// The buffer in, e.g., "staging" memory.
+  kr::Buffer& sourceBuffer,
+  VkDeviceSize size,
+  /// Extra flags to configure the buffer we create as well as VK_BUFFER_USAGE_TRANSFER_DST_BIT.
+  VkBufferUsageFlags bufferUsages,
+  /// The type of memory to allocate for the new buffer. This must be device visible.
+  const uint32_t memory_type,
+  uint32_t queueFamilyIndex)
+{
+  kr::Device& device = sourceBuffer.GetDevice();
+  auto destBuffer = createSingleAllocBuffer(device,
+    memory_type,
+    0,
+    size,
+    bufferUsages | VK_BUFFER_USAGE_TRANSFER_DST_BIT,
+    VkSharingMode::VK_SHARING_MODE_EXCLUSIVE,
+    queueFamilyIndex);
+  if(!destBuffer.Get()){
+    KRUST_LOG_ERROR << "Failed to create a new buffer to copy into in function \"" << __FUNCTION__ << "\"." << kr::endlog;
+  } else {
+    // Initiate a transfer between the buffers:
+    if(!CopyBuffer(queue, commandPool, sourceBuffer, *destBuffer, size)){
+      destBuffer.Reset();
+      KRUST_LOG_ERROR << "Copy of buffer contents failed in \"" << __FUNCTION__ << "\"." << kr::endlog;
+    }
+  }
+  return destBuffer;
+}
+
+/**
+ * @return A buffer with the data in staging memory (host visible) if
+ * successful, else return a null pointer.*/
+inline kr::BufferPtr downloadToStagingBuffer(
+  kr::Device& device,
+  /// Queue to schedule the copy on.
+  VkQueue queue,
+  /// Pool to get a command buffer to run the copy from.
+  kr::CommandPool& commandPool,
+  /// The buffer in, e.g., "staging" memory.
+  kr::Buffer& sourceBuffer,
+  const VkDeviceSize size,
+  /// The type of memory to allocate for the new buffer. This must be device visible and host visible.
+  const uint32_t memory_type,
+  const uint32_t queueFamilyIndex)
+{
+  auto stagingBuffer = createStagingBuffer(
+    device,
+    memory_type,
+    size,
+    queueFamilyIndex);
+  if(stagingBuffer.Get())
+  {
+    // Initiate a transfer between the buffers:
+    if(!CopyBuffer(queue, commandPool, sourceBuffer, *stagingBuffer, size)){
+      stagingBuffer.Reset();
+      KRUST_LOG_ERROR << "Copy of buffer contents failed in \"" << __FUNCTION__ << "\"." << kr::endlog;
+    }
+  }
+  return stagingBuffer;
+}
+
+/// @return A buffer with a dedicated memory allocation backing it, or a null
+/// pointer if a step in the process failed.
+inline kr::BufferPtr uploadToDeviceBuffer(
+  kr::Device& device,
+  /// Queue to schedule the copy on.
+  VkQueue queue,
+  /// Pool to get a command buffer to run the copy from.
+  kr::CommandPool& commandPool,
+  VkDeviceSize size,
+  /// Extra flags to configure the buffer we create as well as VK_BUFFER_USAGE_TRANSFER_DST_BIT.
+  VkBufferUsageFlags bufferUsages,
+  const void* hostData,
+  const uint32_t staging_memory_type,
+  const uint32_t device_memory_type,
+  uint32_t queueFamilyIndex)
+{
+  auto stagingBuffer = uploadToStagingBuffer(device, size, hostData, staging_memory_type, queueFamilyIndex);
+  if(!stagingBuffer.Get())
+  {
+    return nullptr;
+  }
+  auto deviceBuffer = transferToDeviceBuffer(queue, commandPool, *stagingBuffer, size, bufferUsages, device_memory_type, queueFamilyIndex);
+  return deviceBuffer;
+}
+
+template<typename T>
+inline kr::BufferPtr uploadToDeviceBuffer(
+  kr::Device& device,
+  /// Queue to schedule the copy on.
+  VkQueue queue,
+  /// Pool to get a command buffer to run the copy from.
+  kr::CommandPool& commandPool,
+  const kr::span<const T, kr::dynamic_extent> hostData,
+  /// Extra flags to configure the buffer we create as well as VK_BUFFER_USAGE_TRANSFER_DST_BIT.
+  VkBufferUsageFlags bufferUsages,
+  const uint32_t staging_memory_type,
+  const uint32_t device_memory_type,
+  const uint32_t queueFamilyIndex)
+{
+  return uploadToDeviceBuffer(device, queue, commandPool, hostData.size_bytes(), bufferUsages, hostData.data(), staging_memory_type, device_memory_type, queueFamilyIndex);
+}
+
+/// Slow, basic utility for getting data from device to host.
+/// @return true if the download worked, else false.
+inline bool downloadFromDeviceBuffer(
+  kr::Device& device,
+  kr::Buffer& buffer,
+  /// Queue to schedule the copy on.
+  VkQueue queue,
+  /// Pool to get a command buffer to run the copy from.
+  kr::CommandPool& commandPool,
+  const VkDeviceSize size,
+  void* hostData,
+  const uint32_t staging_memory_type,
+  uint32_t queueFamilyIndex)
+{
+  auto stagingBuffer = downloadToStagingBuffer(
+    device,
+    queue,
+    commandPool,
+    buffer,
+    size,
+    staging_memory_type,
+    queueFamilyIndex);
+  if(stagingBuffer.Get()){
+    kr::DeviceMemoryMapper mapper(stagingBuffer->GetMemory(), 0, VK_WHOLE_SIZE); // We map the whole buffer to avoid worrying about memory sizes that are not a multiple of VkPhysicalDeviceLimits::nonCoherentAtomSize.
+    const void* stagingData = mapper.GetHostAccess();
+    if(stagingData){
+      mempcpy(hostData, stagingData, size);
+      return true;
+    }
+  }
+  return false;
+}
+
+template <typename T>
+inline bool downloadFromDeviceBuffer(
+  kr::Device& device,
+  kr::Buffer& buffer,
+  /// Queue to schedule the copy on.
+  VkQueue queue,
+  /// Pool to get a command buffer to run the copy from.
+  kr::CommandPool& commandPool,
+  kr::span<T, kr::dynamic_extent> hostData,
+  const uint32_t staging_memory_type,
+  uint32_t queueFamilyIndex)
+{
+  return downloadFromDeviceBuffer(device, buffer, queue, commandPool, VkDeviceSize{hostData.size_bytes()}, hostData.data(), staging_memory_type, queueFamilyIndex);
+}
+
+/// @return A buffer with a dedicated memory allocation backing it and the
+/// min/max extents of a set of bounding boxes in i, or a null pointer if a step
+/// in the process failed.
+/// @note This function has horrendous overheads for running a simple kernel on
+/// the GPU. It would be faster to run the algorithm on the CPU ad uploasd the
+/// result. Doing things this way does, however, allow evolving towards the most
+/// optimal variant that would upload using mostly resources that were created
+/// once at startup and reused.
+/// @todo FixMe: hoist all this one-time stuff like pipeline creation out of the function so it can be reused to turn many sets of spheres into AABBoxes.
+inline kr::BufferPtr spheresToAABBs(
+  /// Queue to schedule the upload and compute shader on.
+  VkQueue queue,
+  /// Pool to get a command buffer to run on.
+  kr::CommandPool& commandPool,
+  /// Number of spheres in sphereBuffer we care about (byte size is 16 times this).
+  const VkDeviceSize numSpheres,
+  /// A packed list of x,y,z,radius vec4s representing spheres.
+  kr::Buffer& sphereBuffer,
+  /// Extra flags to configure the buffer we create as well as VK_BUFFER_USAGE_STORAGE_BUFFER_BIT.
+  VkBufferUsageFlags bufferUsages,
+  /// The type of memory to put the AABBs in.
+  const uint32_t memory_type,
+  uint32_t queueFamilyIndex)
+{
+  kr::Device& device = sphereBuffer.GetDevice();
+  const auto aabbBuffersize = numSpheres * sizeof(VkAabbPositionsKHR);
+  auto aabbBuffer = createSingleAllocBuffer(device,
+    memory_type,
+    0,
+    aabbBuffersize,
+    bufferUsages | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
+    VkSharingMode::VK_SHARING_MODE_EXCLUSIVE,
+    queueFamilyIndex);
+  if(!aabbBuffer.Get()){
+    KRUST_LOG_ERROR << "Failed to create a new buffer to generate AABBs into in function \"" << __FUNCTION__ << "\"." << kr::endlog;
+  } else {
+    // Build all resources required to run the compute shader:
+
+    // Load the spir-v shader code into a module:
+    kr::ShaderBuffer spirv { kr::loadSpirV(SPHERE_TO_AABB_SHADER_NAME) };
+    if(spirv.empty()){
+      return nullptr;
+    }
+
+    auto shaderModule = kr::ShaderModule::New(device, 0, spirv);
+
+    const auto ssci = kr::PipelineShaderStageCreateInfo(
+      0,
+      VK_SHADER_STAGE_COMPUTE_BIT,
+      *shaderModule,
+      "main",
+      nullptr // VkSpecializationInfo
+    );
+
+    // Define the descriptor and pipeline layouts:
+
+    const VkDescriptorSetLayoutBinding bindings[] {
+      kr::DescriptorSetLayoutBinding(
+        0, // Binding to the first location
+        VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
+        1,
+        VK_SHADER_STAGE_COMPUTE_BIT,
+        nullptr // No immutable samplers.
+      ),
+
+      kr::DescriptorSetLayoutBinding(
+        1, // Binding to the second location
+        VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
+        1,
+        VK_SHADER_STAGE_COMPUTE_BIT,
+        nullptr // No immutable samplers.
+      )
+    };
+
+    auto descriptorSetLayout = kr::DescriptorSetLayout::New(device, 0, 2, bindings);
+    auto pipelineLayout = kr::PipelineLayout::New(device,
+      0,
+      *descriptorSetLayout
+    );
+
+    // Construct our compute pipeline:
+    auto computePipeline = kr::ComputePipeline::New(device, kr::ComputePipelineCreateInfo(
+      0,    // no flags
+      ssci,
+      *pipelineLayout,
+      VK_NULL_HANDLE, // No base pipeline
+      -1              // No index of a base pipeline.
+    ));
+
+    auto descriptorPool = kr::DescriptorPool::New(device, 0, 2, {VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 2});
+    auto set = kr::DescriptorSet::Allocate(*descriptorPool, *descriptorSetLayout);
+    VkDescriptorBufferInfo bufferInfos[] = {
+      kr::DescriptorBufferInfo(sphereBuffer, 0, VK_WHOLE_SIZE),
+      kr::DescriptorBufferInfo(*aabbBuffer, 0, VK_WHOLE_SIZE),
+    };
+    VkWriteDescriptorSet writes[] = {
+      kr::WriteDescriptorSet(*set, 0, 0, 1, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, nullptr, &bufferInfos[0], nullptr),
+      kr::WriteDescriptorSet(*set, 1, 0, 1, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, nullptr, &bufferInfos[1], nullptr)
+    };
+    vkUpdateDescriptorSets(device, 2, writes, 0, nullptr);
+
+    auto commandBuffer = kr::CommandBuffer::New(commandPool, VK_COMMAND_BUFFER_LEVEL_PRIMARY);
+    auto commandBufferInheritanceInfo = kr::CommandBufferInheritanceInfo(nullptr, 0,
+      nullptr, VK_FALSE, 0, 0);
+    auto bufferBeginInfo = kr::CommandBufferBeginInfo(0, &commandBufferInheritanceInfo);
+
+    VkResult result = vkBeginCommandBuffer(*commandBuffer, &bufferBeginInfo);
+    if(VK_SUCCESS != result)
+    {
+      KRUST_LOG_ERROR << "Failed to begin command buffer in " << __FUNCTION__ << ". Error: " << kr::ResultToString(result) << Krust::endlog;
+      return nullptr;
+    }
+
+    // Barrier at start to make sure the spheres are ready to be accessed:
+    /// @note Design-wise this is commiting special knowledge of what has previously happened to the buffer to fixed code. we shouldn't have to know that a barrier is needed inside this function.
+    /*auto barrier = kr::BufferMemoryBarrier2KHR(
+      VK_PIPELINE_STAGE_TRANSFER_BIT, VK_ACCESS_TRANSFER_WRITE_BIT,
+      VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, VK_ACCESS_SHADER_READ_BIT,
+      queueFamilyIndex, queueFamilyIndex, sphereBuffer, 0, VK_WHOLE_SIZE);*/
+    auto barrier = kr::BufferMemoryBarrier(VK_ACCESS_TRANSFER_WRITE_BIT, VK_ACCESS_SHADER_READ_BIT, queueFamilyIndex, queueFamilyIndex, sphereBuffer, 0, VK_WHOLE_SIZE);
+    vkCmdPipelineBarrier(
+        *commandBuffer,
+        VK_PIPELINE_STAGE_TRANSFER_BIT,
+        VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT,
+        0, // VkDependencyFlags
+        0, nullptr,
+        1, &barrier,
+        0, nullptr);
+
+    /// bind descriptors
+    vkCmdBindDescriptorSets(
+      *commandBuffer,
+      VK_PIPELINE_BIND_POINT_COMPUTE,
+      *pipelineLayout,
+      0,
+      1,
+      set->GetHandleAddress(),
+      0, nullptr // No dynamic offsets.
+      );
+
+    /// Run shader kernel
+    vkCmdBindPipeline(*commandBuffer,VK_PIPELINE_BIND_POINT_COMPUTE, *computePipeline);
+    vkCmdDispatch(*commandBuffer, numSpheres, 1, 1);
+
+    if(VK_SUCCESS != (result = vkEndCommandBuffer(*commandBuffer)))
+    {
+      KRUST_LOG_ERROR << "Failed to end command buffer in " << __FUNCTION__ << ". Error: " << kr::ResultToString(result) << Krust::endlog;
+      return nullptr;
+    }
+    const auto submitInfo = kr::SubmitInfo(0, nullptr, nullptr, 1, commandBuffer->GetVkCommandBufferAddress(), 0, nullptr);
+    if(VK_SUCCESS != (result = vkQueueSubmit(queue, 1, &submitInfo, VK_NULL_HANDLE)))
+    {
+      return nullptr;
+    }
+    if(VK_SUCCESS != (result = vkQueueWaitIdle(queue))) /// @todo Fixme: an idle queue is the last thing we should be creating. <--------------------------------------[FixMe]
+    {
+      KRUST_LOG_WARN << "vkQueueWaitIdle() failed  in " << __FUNCTION__ << " but carrying on regardless. Error: " << kr::ResultToString(result) << Krust::endlog;
+    }
+  }
+  return aabbBuffer;
+}
+
+/// @todo <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< BOOKMARK
+
+/**
+ * Synchronously build a single BLAS, allocating and cleaning up resources.
+ * ## Optimisations:
+ * @todo Restructure so that caller generates bboxes directing into host-visible memory to avoid a copy here.
+ * @todo Send up 4 float spheres and generate the six aabb components is a CS kernel.
+ */
+inline void buildSingleGeomAABBBLAS(kr::CommandBufferPtr commandBuffer,
+/// @todo Make this a buffer that is already in device memory.
+const kr::span<AABBf> abbs,
+const uint32_t staging_memory_type, uint32_t device_memory_type, uint32_t queueFamilyIndex)
+{
+  /// @todo BOOKMARK
+
+  kr::DevicePtr device {commandBuffer->GetDevice()};
+  VkDeviceOrHostAddressKHR nullAddress;
+  nullAddress.deviceAddress = 0;
+ //const auto bboxes_memsize = abbs.size_bytes();
   // Allocate buffers: 1 host-visible for upload of the bboxes, 1 permanent, and one for scratch.
-  
-  
-  //pVkCmdBuildAccelerationStructuresKHR(VK_NULL_HANDLE, 0, nullptr, nullptr);
+  //auto sphere_staging = createStagingBuffer(*device, staging_memory_type, bb
+  //auto staging_memory = kr::DeviceMemory::New(*device, kr::MemoryAllocateInfo(bboxes_memsize, staging_memory_type));
+
+  // Copy the AABBs intothe staging memory/buffer: ---------------- [ToDo]
+
+  VkDeviceOrHostAddressConstKHR aabbsAddress;
+  aabbsAddress.deviceAddress = 0u; /// @todo Get the real address of te buffer in memory.
+  VkAccelerationStructureGeometryDataKHR geodata;
+  geodata.aabbs = kr::AccelerationStructureGeometryAabbsDataKHR(
+      aabbsAddress, // VkDeviceOrHostAddressConstKHR /// @todo Address on deviceof the staging buffer.<-------------------------------------------------------------- TODO
+      24u // VkDeviceSize                     stride;
+    );
+  const auto asg = kr::AccelerationStructureGeometryKHR(
+    VK_GEOMETRY_TYPE_AABBS_KHR,
+    geodata,
+    VK_GEOMETRY_OPAQUE_BIT_KHR | VK_GEOMETRY_NO_DUPLICATE_ANY_HIT_INVOCATION_BIT_KHR // VkGeometryFlagsKHR                        flags;
+  );
+
+  // Work out how big the scratch buffer for building the AS and the final buffer
+  // to hold it need to be:
+  auto buildInfo = kr::AccelerationStructureBuildGeometryInfoKHR(
+    VK_ACCELERATION_STRUCTURE_TYPE_BOTTOM_LEVEL_KHR,
+    VK_BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_TRACE_BIT_KHR |
+    VK_BUILD_ACCELERATION_STRUCTURE_ALLOW_COMPACTION_BIT_KHR,
+    VK_BUILD_ACCELERATION_STRUCTURE_MODE_BUILD_KHR,
+    VK_NULL_HANDLE, // Src acceleration structure.
+    VK_NULL_HANDLE, // Src acceleration structure.
+    uint32_t(1), // geometryCount,
+    &asg, //const VkAccelerationStructureGeometryKHR* pGeometries,
+    nullptr, // const VkAccelerationStructureGeometryKHR* const* ppGeometries,
+    nullAddress // (Currently 0) VkDeviceOrHostAddressKHR scratchData
+  );
+  auto buildSizes = kr::AccelerationStructureBuildSizesInfoKHR();
+  uint32_t maxPrimitiveCount = abbs.size();
+  vkGetAccelerationStructureBuildSizesKHR(*device,
+    VK_ACCELERATION_STRUCTURE_BUILD_TYPE_DEVICE_KHR,
+    &buildInfo,
+    &maxPrimitiveCount, // Or just make this nullptr?
+    &buildSizes
+  );
+
+  /*auto asBuffer = kr::Buffer::New(*device, 
+  0, // VkBufferCreateFlagBits No special flags needed.
+  deviceSize, /// @todo <-------------
+  VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_STORAGE_BIT_KHR,
+  VK_SHARING_MODE_EXCLUSIVE, // VUID-vkQueueSubmit-pSubmits-02808 Any resource created with VK_SHARING_MODE_EXCLUSIVE that is read by an operation specified by pSubmits must not be owned by any queue family other than the one which queue belongs to, at the time it is executed.
+  queueFamilyIndex
+  );
+  // Bind the buffer to some backing memory:
+  /// @todo <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+  auto accelerationStructure = kr::AccelerationStructure::New(*device, 0,
+    *asBuffer,
+    offset,  /// @todo <-------------
+    size,    /// @todo <-------------
+    VK_ACCELERATION_STRUCTURE_TYPE_BOTTOM_LEVEL_KHR,
+    0   // used in trace capture / replay  
+  );*/
+
+
+/*const auto build_geo_info = kr::AccelerationStructureBuildGeometryInfoKHR(
+    VK_ACCELERATION_STRUCTURE_TYPE_BOTTOM_LEVEL_KHR,
+    // Maybe: VK_BUILD_ACCELERATION_STRUCTURE_ALLOW_COMPACTION_BIT_KHR ||
+    VK_BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_TRACE_BIT_KHR,
+    VK_BUILD_ACCELERATION_STRUCTURE_MODE_BUILD_KHR,
+    nullptr,
+    accelerationStructure, /// @todo <------------------------------------
+    1,
+    &asg,
+    nullptr,
+    scratchDataAddress /// @todo <------------------------------------
+  );
+  pVkCmdBuildAccelerationStructuresKHR(VK_NULL_HANDLE, 1, &build_geo_info, nullptr);*/
 }
 
 const Vec4InMemory g_spheres[] = {
@@ -342,29 +857,28 @@ public:
   {
     KRUST_LOG_DEBUG << "DoPostInit() entered." << Krust::endlog;
 
-    #define KRUST_ASSIGN_EXT_PTR(device, extension) (0 == (pVk##extension = KRUST_GET_DEVICE_EXTENSION(device, extension)))
+    #define KRUST_VALIDATE_EXT_PTR(extension) (0 == (vk##extension))
 
-    /// @note Don't need to do this if don't mind calling through the full Vulkan layer mechanism as vulkan_core.h has a declaration we can call from v1.2.
-    if( 0 == (mCmdBuildAccelerationStructuresKHR = KRUST_GET_DEVICE_EXTENSION(*mGpuInterface, CmdBuildAccelerationStructuresKHR)) ||
-        KRUST_ASSIGN_EXT_PTR(*mGpuInterface, CreateAccelerationStructureKHR) ||
-        KRUST_ASSIGN_EXT_PTR(*mGpuInterface, DestroyAccelerationStructureKHR) ||
-        KRUST_ASSIGN_EXT_PTR(*mGpuInterface, CmdBuildAccelerationStructuresKHR) ||
-        KRUST_ASSIGN_EXT_PTR(*mGpuInterface, CmdBuildAccelerationStructuresIndirectKHR) ||
-        KRUST_ASSIGN_EXT_PTR(*mGpuInterface, BuildAccelerationStructuresKHR) ||
-        KRUST_ASSIGN_EXT_PTR(*mGpuInterface, CopyAccelerationStructureKHR) ||
-        KRUST_ASSIGN_EXT_PTR(*mGpuInterface, CopyAccelerationStructureToMemoryKHR) ||
-        KRUST_ASSIGN_EXT_PTR(*mGpuInterface, CopyMemoryToAccelerationStructureKHR) ||
-        KRUST_ASSIGN_EXT_PTR(*mGpuInterface, WriteAccelerationStructuresPropertiesKHR) ||
-        KRUST_ASSIGN_EXT_PTR(*mGpuInterface, CmdCopyAccelerationStructureKHR) ||
-        KRUST_ASSIGN_EXT_PTR(*mGpuInterface, CmdCopyAccelerationStructureToMemoryKHR) ||
-        KRUST_ASSIGN_EXT_PTR(*mGpuInterface, CmdCopyMemoryToAccelerationStructureKHR) ||
-        KRUST_ASSIGN_EXT_PTR(*mGpuInterface, GetAccelerationStructureDeviceAddressKHR) ||
-        KRUST_ASSIGN_EXT_PTR(*mGpuInterface, CmdWriteAccelerationStructuresPropertiesKHR) ||
-        KRUST_ASSIGN_EXT_PTR(*mGpuInterface, GetDeviceAccelerationStructureCompatibilityKHR) ||
-        KRUST_ASSIGN_EXT_PTR(*mGpuInterface, GetAccelerationStructureBuildSizesKHR)
+    if( KRUST_VALIDATE_EXT_PTR(CmdBuildAccelerationStructuresKHR) ||
+        KRUST_VALIDATE_EXT_PTR(CreateAccelerationStructureKHR) ||
+        KRUST_VALIDATE_EXT_PTR(DestroyAccelerationStructureKHR) ||
+        KRUST_VALIDATE_EXT_PTR(CmdBuildAccelerationStructuresKHR) ||
+        KRUST_VALIDATE_EXT_PTR(CmdBuildAccelerationStructuresIndirectKHR) ||
+        KRUST_VALIDATE_EXT_PTR(BuildAccelerationStructuresKHR) ||
+        KRUST_VALIDATE_EXT_PTR(CopyAccelerationStructureKHR) ||
+        KRUST_VALIDATE_EXT_PTR(CopyAccelerationStructureToMemoryKHR) ||
+        KRUST_VALIDATE_EXT_PTR(CopyMemoryToAccelerationStructureKHR) ||
+        KRUST_VALIDATE_EXT_PTR(WriteAccelerationStructuresPropertiesKHR) ||
+        KRUST_VALIDATE_EXT_PTR(CmdCopyAccelerationStructureKHR) ||
+        KRUST_VALIDATE_EXT_PTR(CmdCopyAccelerationStructureToMemoryKHR) ||
+        KRUST_VALIDATE_EXT_PTR(CmdCopyMemoryToAccelerationStructureKHR) ||
+        KRUST_VALIDATE_EXT_PTR(GetAccelerationStructureDeviceAddressKHR) ||
+        KRUST_VALIDATE_EXT_PTR(CmdWriteAccelerationStructuresPropertiesKHR) ||
+        KRUST_VALIDATE_EXT_PTR(GetDeviceAccelerationStructureCompatibilityKHR) ||
+        KRUST_VALIDATE_EXT_PTR(GetAccelerationStructureBuildSizesKHR)
       )
     {
-      KRUST_LOG_ERROR << "Failed to get pointers to required extension functions.";
+      KRUST_LOG_ERROR << "Some required extension functions are null.";
       return false;
     }
 
@@ -431,9 +945,89 @@ public:
 
     mLinePrinter = std::make_unique<kr::LinePrinter>(*mGpuInterface, kr::span {mSwapChainImageViews});
 
+    // Examine heaps and decide on staging and on-device storage types and heaps:
+    const auto staging_mem_type = kr::FindFirstMemoryTypeWithProperties(mGpuMemoryProperties, 0xffffffff, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT | VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
+    if(!staging_mem_type){
+      KRUST_LOG_ERROR << "No memory type suitable for staging host->device transfers found." << kr::endlog;
+      return false;
+    }
+    const auto device_mem_type = kr::FindMemoryTypeWithAndWithout(mGpuMemoryProperties, 0xffffffff, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
+    if(!device_mem_type){
+      KRUST_LOG_ERROR << "No memory type suitable for device-only buffers found." << kr::endlog;
+      return false;
+    }
+
+
     // Build the acceleration structures for the scene:
-    auto aabbs = spheresToAABBs(kr::span(g_spheres));
-    buildAABBLAS(aabbs);
+    auto spheresSpan = kr::span<const Vec4InMemory, kr::dynamic_extent>(g_spheres);
+    auto aabbs = spheresToAABBs(spheresSpan);  ///< @todo FixMe. TEMP: we can convert on the GPU in the future when running a compute pass is async.
+    auto sphereBuffer = uploadToDeviceBuffer<Vec4InMemory>(
+      *mGpuInterface,
+      mDefaultQueue,
+      *mCommandPool,
+      spheresSpan,
+      VK_BUFFER_USAGE_STORAGE_BUFFER_BIT |
+      VK_BUFFER_USAGE_TRANSFER_SRC_BIT, // So we can download it again for confirmation that it uploaded correctly. Hopefully not an anti-optimisation trigger.
+      staging_mem_type,
+      device_mem_type,
+      mDefaultDrawingQueueFamily); ///< @todo Should be on a transfer queue (queue with transfer flag set and fewest other flags also set).
+
+    std::vector<Vec4InMemory> roundtriped_spheres;
+    roundtriped_spheres.resize(spheresSpan.size());
+    auto downloadedSpheresSpan = kr::span<Vec4InMemory, kr::dynamic_extent>(roundtriped_spheres);
+    const bool spheresDownloaded = downloadFromDeviceBuffer(
+      *mGpuInterface,
+      *sphereBuffer,
+      mDefaultQueue,
+      *mCommandPool,
+      downloadedSpheresSpan,
+      staging_mem_type,
+      mDefaultDrawingQueueFamily
+    );
+    KRUST_ASSERT1(spheresDownloaded, "Spheres couldn't be downloaded to host");
+    for(unsigned i = 0; i < spheresSpan.size(); ++i)
+    {
+      const auto& a = g_spheres[i];
+      const auto& b = roundtriped_spheres[i];
+      KRUST_ASSERT2(all_of(load(a) == load(b)), "Failed to roundtrip a sphere to device memory and back.");
+    }
+
+    kr::BufferPtr aabbBuffer = spheresToAABBs(
+      mDefaultQueue,
+      *mCommandPool,
+      spheresSpan.size(),
+      *sphereBuffer,
+      VK_BUFFER_USAGE_TRANSFER_SRC_BIT, // Only needed while debugging so we can download it and compare to a CPU reference.
+      device_mem_type,
+      mDefaultDrawingQueueFamily
+    );
+
+    // Download the buffer full of AABBs to be sure it matches the ones generated on the CPU:
+    std::vector<float> downloaded_aabbs;
+    downloaded_aabbs.resize(spheresSpan.size() * 6);
+    const bool aabbsDownloaded = downloadFromDeviceBuffer(
+      *mGpuInterface,
+      *aabbBuffer,
+      mDefaultQueue,
+      *mCommandPool,
+      kr::span<float, kr::dynamic_extent>(downloaded_aabbs),
+      staging_mem_type,
+      mDefaultDrawingQueueFamily
+    );
+    KRUST_ASSERT1(aabbsDownloaded, "Downloading the GPU-generated AABBs failed.");
+    KRUST_ASSERT1(std::equal(&aabbs[0].minX, &aabbs[spheresSpan.size()].minX, &downloaded_aabbs[0], &downloaded_aabbs[spheresSpan.size()*6]), "The AABBs generated on the GPU differ from the reference made on the CPU.");
+
+    //
+    // For aabb bufer: VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT
+    //         Memory must be: VK_MEMORY_ALLOCATE_DEVICE_ADDRESS_BIT
+
+    kr::CommandBufferPtr buildBuffer = kr::CommandBuffer::New(*mCommandPool, VK_COMMAND_BUFFER_LEVEL_PRIMARY);
+    buildSingleGeomAABBBLAS(buildBuffer, aabbs, staging_mem_type, device_mem_type, mDefaultPresentQueueFamily);
+
+
+
+
+    // BOOKMARK <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
     return true;
   }
