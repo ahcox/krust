@@ -103,15 +103,18 @@ add_executable (ray_queries1
   ${PROJECT_SOURCE_DIR}/krust-examples/shaders/rtow_diffuse_grey.comp.glsl
   ${PROJECT_SOURCE_DIR}/krust-examples/shaders/rtow_ray_query.comp.glsl
   ${PROJECT_SOURCE_DIR}/krust-examples/shaders/text_print.comp.glsl
+  ${PROJECT_SOURCE_DIR}/krust-examples/shaders/spheres_to_aabbs.comp.glsl
   README.md
 )
 target_include_directories(ray_queries1 SYSTEM PRIVATE ${VULKAN_INCLUDE_DIRECTORY})
 target_link_libraries(ray_queries1 krust-io krust krust-kernel)
 
 add_shader_command(rtow_ray_query.comp header.inc.glsl utils.inc.glsl intersections.inc.glsl rtow_final_scene.inc.glsl)
+add_shader_command(spheres_to_aabbs.comp)
 
 # I could add more of these to trigger shader compilation from commandline:
 add_custom_target(text_print_shader DEPENDS text_print.comp.spv)
+add_custom_target(spheres_to_aabbs_shader DEPENDS spheres_to_aabbs.comp.spv)
 
 # Diagnostic messages:
 MESSAGE( STATUS "[examples] KRUST_PUBLIC_API_HEADER_FILES: " ${KRUST_PUBLIC_API_HEADER_FILES})
