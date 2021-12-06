@@ -252,8 +252,16 @@ public:
     Device& device,
     VkDescriptorPoolCreateFlags flags,
     uint32_t maxSets,
+    /// Number of different types of descriptor in the pool.
     uint32_t poolSizeCount,
+    /// For each type of descriptor in the pool, the number of that type.
     const VkDescriptorPoolSize* pPoolSizes);
+  /// For creating a pool of a single type of descriptor.
+  static DescriptorPoolPtr New(
+    Device& device,
+    VkDescriptorPoolCreateFlags flags,
+    uint32_t maxSets,
+    const VkDescriptorPoolSize& poolSize);
   ~DescriptorPool();
   Device& GetDevice() const { return *mDevice; }
   operator VkDescriptorPool() const { return mDescriptorPool; }

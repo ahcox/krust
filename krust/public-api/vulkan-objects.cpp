@@ -227,6 +227,11 @@ DescriptorPoolPtr DescriptorPool::New(Device& device, VkDescriptorPoolCreateFlag
   return new DescriptorPool { device, DescriptorPoolCreateInfo(flags, maxSets, poolSizeCount, pPoolSizes)};
 }
 
+DescriptorPoolPtr DescriptorPool::New(Device& device, VkDescriptorPoolCreateFlags flags, uint32_t maxSets, const VkDescriptorPoolSize& poolSize)
+{
+  return new DescriptorPool { device, DescriptorPoolCreateInfo(flags, maxSets, 1, &poolSize)};
+}
+
 KRUST_VKOBJ_DESTRUCTOR(DescriptorPool)
 
 
