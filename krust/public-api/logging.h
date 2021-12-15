@@ -21,12 +21,17 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+/// @file Logging support for Krust libraries and apps. As of 2021 it is still a
+/// simple wrapper around stdout and stderr but is structured to be able to be
+/// converted to a more robust logging framework without disrupting code that
+/// uses it. It can also be compiled-out everywhere with a change of #define.
+
 #if !defined(KRUST_BUILD_CONFIG_DISABLE_LOGGING)
 // Internal includes:
 #include "krust/public-api/compiler.h"
 // External includes:
 #include <cstdint>
-#include <iostream>
+#include <iostream> ///< @note this include will go away when the logging system is implemented properly.
 #endif
 
 /**
@@ -127,6 +132,8 @@ private:
  *
  * Dummied-up to give the same syntax at the call site that there will be when
  * the logging system is implemented.
+ * Future: A log event is gotten from the channel and reset on construction,
+ * and passed into the channel on destruction.
  */
 class LogBuilder
 {
@@ -144,6 +151,7 @@ public:
   template<typename T>
   LogBuilder &operator<<(const T &t)
   {
+    // In the future this will append to the message string of a LogEvent instance.
     mChannel.GetStream() << t;
     return *this;
   }
