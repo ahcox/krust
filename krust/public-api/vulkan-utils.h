@@ -48,6 +48,7 @@
  *
  * Pass the function identifier followed by the parameters to the function.
  * @param[in] FUNC A function or function pointer which returns a VkResult.
+ * @todo Call standard error handling mechanism and take a dependency on threadbase in this file? Krust::ThreadBase::Get().GetErrorPolicy().VulkanError(""#FUNC, FUNC##result, nullptr, __FUNCTION__, __FILE__, __LINE__);
  */
 #define VK_CALL(FUNC, ...) \
 { \
