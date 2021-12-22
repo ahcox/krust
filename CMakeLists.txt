@@ -25,7 +25,16 @@ else()
 endif()
 MESSAGE( STATUS "[top] VULKAN_INCLUDE_DIRECTORY:" ${VULKAN_INCLUDE_DIRECTORY} )
 MESSAGE( STATUS "[top] VULKAN_LIBRARY_DIRECTORY:" ${VULKAN_LIBRARY_DIRECTORY} )
-set(KRUST_ASSERT_LEVEL "5" CACHE STRING "Level for Krust assertions from 1 (fewest, rarest assertions), to 5 (most, most frequent assertions)" )
+
+set(KRUST_ASSERT_LEVEL_DEBUG    "5" CACHE STRING "Level for Krust assertions in debug-type builds from 0 (no assertions), to 5 (most expensive, most frequent assertions)" )
+set(KRUST_ASSERT_LEVEL_RELEASE  "0" CACHE STRING "Level for Krust assertions in release-type builds from 0 (no assertions), to 5 (most expensive, most frequent assertions)" )
+
+if((CMAKE_BUILD_TYPE STREQUAL "Release") OR (CMAKE_BUILD_TYPE STREQUAL "MinSizeRel" ))
+  set(KRUST_DEBUG_CODE_ON "0" CACHE STRING "Whether extra debug code should be generated. Suggested values are 0 for release builds and 1 for debug." )
+else()
+  set(KRUST_DEBUG_CODE_ON "1" CACHE STRING "Whether extra debug code should be generated. Suggested values are 0 for release builds and 1 for debug." )
+endif()
+message(STATUS "KRUST_DEBUG_CODE_ON = " ${KRUST_DEBUG_CODE_ON})
 
 # We use the volk vulkan dynamic loader now so don't need to link to the library:
 # find_library(VULKAN_LIBRARY NAMES vulkan-1 vulkan HINTS ${VULKAN_LIBRARY_DIRECTORY})
@@ -103,7 +112,13 @@ include_directories(${KRUST_IO_PUBLIC_API_DIR})
 include_directories(${KRUST_IO_PLATFORM_WINDOWING_DIR})
 
 # #defines for all libraries and executables:
-add_definitions(-DKRUST_ASSERT_LEVEL=${KRUST_ASSERT_LEVEL})
+if((CMAKE_BUILD_TYPE STREQUAL "Debug") OR (CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo" ))
+  add_definitions(-DKRUST_ASSERT_LEVEL=${KRUST_ASSERT_LEVEL_DEBUG})
+  add_definitions(-DKRUST_DEBUG_CODE_ON=${KRUST_DEBUG_CODE_ON})
+else()
+  add_definitions(-DKRUST_ASSERT_LEVEL=${KRUST_ASSERT_LEVEL_RELEASE})
+endif()
+
 
 # Cross-library, fundamental features.
 add_subdirectory (krust-kernel)

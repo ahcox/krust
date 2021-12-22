@@ -27,6 +27,7 @@
 #include "krust/public-api/vulkan-logging.h"
 #include "krust/public-api/vulkan-utils.h"
 #include "krust/public-api/vulkan.h"
+#include "krust-kernel/public-api/debug.h"
 #include <iostream>
 #include <algorithm>
 #include <string.h> // for memset.
@@ -470,6 +471,19 @@ bool Application::InitDefaultQueue()
       queueFamilyIndex, //< queueFamilyIndex
       0, //< [queueindex] Default to using the first queue in the family.
       &mDefaultQueue);
+
+  // Check assumption that the same handle is returned when the same queue index is requesed:
+  KRUST_BEGIN_DEBUG_BLOCK
+  VkQueue queue_dups[100];
+  for(unsigned i = 0; i < 100; ++i){
+    vkGetDeviceQueue(
+        *mGpuInterface,
+        queueFamilyIndex, //< queueFamilyIndex
+        0, //< [queueindex] Default to using the first queue in the family.
+        &queue_dups[i]);
+    KRUST_ASSERT2(queue_dups[i] == mDefaultQueue, "Repeatedly getting the same queue should return the same handle.");
+  }
+  KRUST_END_DEBUG_BLOCK
 
   mDefaultPresentQueue = &mDefaultQueue;
   mDefaultGraphicsQueue = &mDefaultQueue;
