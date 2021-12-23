@@ -56,6 +56,11 @@ public:
    */
   void Add(const RefObject& obj);
 
+  /**
+   * @brief Allow anything being kept alive to die if no other reference is held to it.
+   */
+  void Clear();
+
 private:
   std::vector<RefObjectPtr> mKeepAlives;
 };

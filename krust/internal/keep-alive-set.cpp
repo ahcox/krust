@@ -31,3 +31,8 @@ void Krust::KeepAliveSet::Add(const RefObject & obj)
     mKeepAlives.push_back(RefObjectPtr(obj_alias));
   }
 }
+
+void Krust::KeepAliveSet::Clear()
+{
+  mKeepAlives.clear();
+}
