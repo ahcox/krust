@@ -30,6 +30,8 @@
 #include "krust/internal/scoped-temp-array.h"
 #include "krust/public-api/vulkan.h"
 
+#include "krust-kernel/public-api/debug.h"
+
 #define KRUST_CALL_CREATOR(NAME) \
 const VkResult result = vkCreate##NAME(device, &info, Internal::sAllocator, &m##NAME);\
   if (result != VK_SUCCESS)\
@@ -148,6 +150,20 @@ void CommandBuffer::KeepAlive(VulkanObject & needed)
     mKeepAlives = new KeepAliveSet{};
   }
   reinterpret_cast<KeepAliveSet*>(mKeepAlives)->Add(needed);
+}
+
+void CommandBuffer::Reset(const VkCommandBufferResetFlags flags, bool deleteKeepAlives)
+{
+  if (mKeepAlives)
+  {
+    if(deleteKeepAlives){
+      delete reinterpret_cast<KeepAliveSet*>(mKeepAlives);
+      mKeepAlives = nullptr;
+    } else {
+      /// @todo reinterpret_cast<KeepAliveSet*>(mKeepAlives)->Clear();
+    }
+  }
+  /// @todo Unfinished function. Never actually resets the underlying Vulkan object. [FixMe]
 }
 
 
@@ -471,6 +487,32 @@ PipelineLayoutPtr PipelineLayout::New(
   return new PipelineLayout(device, PipelineLayoutCreateInfo(flags, 1, &setLayout, 0, nullptr));
 }
 
+
+
+// -----------------------------------------------------------------------------
+Queue::Queue(Device& device, const uint32_t queueFamilyIndex, const uint32_t queueIndex)
+    : mDevice(&device), mQueue(VK_NULL_HANDLE)
+{
+    vkGetDeviceQueue(
+      device,
+      queueFamilyIndex,
+      queueIndex,
+      &mQueue);
+    if(VK_NULL_HANDLE == mQueue)
+    {
+      ThreadBase::Get().GetErrorPolicy().VulkanUnexpected("vkGetDeviceQueue", "Returned a null handle.", __FUNCTION__, __FILE__, __LINE__);\
+    }
+}
+
+Queue::~Queue()
+{
+  vkQueueWaitIdle(mQueue);
+}
+
+QueuePtr Queue::New(Device& device, const uint32_t queueFamilyIndex, const uint32_t queueIndex)
+{
+  return new Queue(device, queueFamilyIndex, queueIndex);
+}
 
 
 // -----------------------------------------------------------------------------

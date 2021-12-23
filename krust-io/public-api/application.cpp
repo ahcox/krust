@@ -466,11 +466,11 @@ bool Application::InitDefaultQueue()
   const uint32_t queueFamilyIndex = mDefaultPresentQueueFamily;
 
   // Create a default queue:
-  vkGetDeviceQueue(
-      *mGpuInterface,
-      queueFamilyIndex, //< queueFamilyIndex
-      0, //< [queueindex] Default to using the first queue in the family.
-      &mDefaultQueue);
+  mDefaultQueue = Queue::New(
+    *mGpuInterface,
+    queueFamilyIndex,
+    0                 //< queueindex Default to using the first queue in the family.
+    );
 
   // Check assumption that the same handle is returned when the same queue index is requesed:
   KRUST_BEGIN_DEBUG_BLOCK
@@ -481,12 +481,12 @@ bool Application::InitDefaultQueue()
         queueFamilyIndex, //< queueFamilyIndex
         0, //< [queueindex] Default to using the first queue in the family.
         &queue_dups[i]);
-    KRUST_ASSERT2(queue_dups[i] == mDefaultQueue, "Repeatedly getting the same queue should return the same handle.");
+    KRUST_ASSERT2(queue_dups[i] == *mDefaultQueue, "Repeatedly getting the same queue should return the same handle.");
   }
   KRUST_END_DEBUG_BLOCK
 
-  mDefaultPresentQueue = &mDefaultQueue;
-  mDefaultGraphicsQueue = &mDefaultQueue;
+  mDefaultPresentQueue = &*mDefaultQueue;
+  mDefaultGraphicsQueue = &*mDefaultQueue;
   return true;
 }
 
@@ -657,7 +657,7 @@ bool Application::InitDefaultSwapchain(const VkImageUsageFlags swapchainUsageOve
     imb.image = image,
     imb.subresourceRange = {VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1};
 
-    const auto layoutResult = ApplyImageBarrierBlocking(*mGpuInterface, image, mDefaultQueue, *mCommandPool, imb);
+    const auto layoutResult = ApplyImageBarrierBlocking(*mGpuInterface, image, *mDefaultQueue, *mCommandPool, imb);
     if (VK_SUCCESS != layoutResult)
     {
       KRUST_LOG_ERROR << "Failed to change colour framebuffer image layout: " << ResultToString(layoutResult) << " [" __FILE__", " << __LINE__ << "]." << Krust::endlog;
@@ -756,7 +756,7 @@ bool Application::DeInit()
       KRUST_LOG_ERROR << "Wait for fences protecting resources in main render loop did not succeed: " << fenceWaitResult << Krust::endlog;
     }
   }
-  
+
   // Give derived application first chance to cleanup:
   DoPreDeInit();
 
@@ -772,7 +772,7 @@ bool Application::DeInit()
   mCommandBuffers.clear();
 
   mSwapChainFences.clear();
-  
+
   if(mSwapChainSemaphore)
   {
     vkDestroySemaphore(*mGpuInterface, mSwapChainSemaphore, Krust::GetAllocationCallbacks());
@@ -786,15 +786,15 @@ bool Application::DeInit()
   mSwapChainImages.clear();
   mDestroySwapChainKHR(*mGpuInterface, mSwapChain, Krust::GetAllocationCallbacks());
 
-  if(mDefaultQueue)
+  if(mDefaultQueue.Get())
   {
-    /// No funcion vkDestroyDeviceQueue() [It came from a GetX(), not a CreateX(), so maybe no destruction is required.]
+    mDefaultQueue = nullptr;
   }
   if(mSurface)
   {
     vkDestroySurfaceKHR(*mInstance, mSurface, Krust::GetAllocationCallbacks());
   }
-  
+
   mGpuInterface.Reset(nullptr);
 
 

@@ -97,7 +97,7 @@ bool ApplicationGraphicsSwapchain::InitDepthBuffer(Application& app, VkFormat de
   postPresentImageMemoryBarrier.image = *mDepthBufferImage,
   postPresentImageMemoryBarrier.subresourceRange = {VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT, 0, 1, 0, 1};
 
-  const auto depthLayoutResult = ApplyImageBarrierBlocking(*app.mGpuInterface, *mDepthBufferImage, app.mDefaultQueue, *app.mCommandPool, postPresentImageMemoryBarrier);
+  const auto depthLayoutResult = ApplyImageBarrierBlocking(*app.mGpuInterface, *mDepthBufferImage, *app.mDefaultQueue, *app.mCommandPool, postPresentImageMemoryBarrier);
   if (VK_SUCCESS != depthLayoutResult)
   {
     KRUST_LOG_ERROR << "Failed to change depth image layout: " << ResultToString(depthLayoutResult) << Krust::endlog;

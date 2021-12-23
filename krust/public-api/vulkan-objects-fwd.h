@@ -40,7 +40,7 @@ namespace Krust
  * keep them alive as long as necessary and clean them up when they are no
  * longer in use.
  */
-///@{
+/// @{
 
 // -----------------------------------------------------------------------------
 class Instance;
@@ -53,6 +53,10 @@ using InstancePtr = IntrusivePointer<Instance>;
 // -----------------------------------------------------------------------------
 class Device;
 using DevicePtr = IntrusivePointer<Device>;
+
+// -----------------------------------------------------------------------------
+class Queue;
+using QueuePtr = IntrusivePointer<Queue>;
 
 // -----------------------------------------------------------------------------
 class AccelerationStructure;
@@ -114,7 +118,7 @@ using PipelineLayoutPtr = IntrusivePointer<PipelineLayout>;
 class ShaderModule;
 using ShaderModulePtr = IntrusivePointer<ShaderModule>;
 
-///@}
+/// @}
 
 }
 

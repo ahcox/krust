@@ -295,11 +295,11 @@ public:
   unsigned  mDefaultPresentQueueFamily = 0;
   VkPhysicalDeviceMemoryProperties mGpuMemoryProperties;
   DevicePtr mGpuInterface; ///< Logical GPU.
-  VkQueue   mDefaultQueue;
+  QueuePtr   mDefaultQueue;
   /// Draw through this.
-  VkQueue*  mDefaultGraphicsQueue = 0;
+  Queue*  mDefaultGraphicsQueue = 0;
   /// Present using this.
-  VkQueue*  mDefaultPresentQueue = 0;
+  Queue*  mDefaultPresentQueue = 0;
   ///@}
 
 protected:

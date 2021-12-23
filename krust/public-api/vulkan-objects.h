@@ -125,6 +125,55 @@ private:
   VkDevice mDevice = VK_NULL_HANDLE;
 };
 
+/* ----------------------------------------------------------------------- *//**
+ * @brief A handle to an instance of Vulkan's Queue API object.
+ *
+ * Queues are a little bit special in turns of lifetime as they are created
+ * when the logical device is created and destroyed when the device is.
+ * Handles to them are gotten from the logical device rather than created.
+ * There are a fixed number of them per device, with some implementations
+ * being limited to a single queue.
+ * That noted, we wouldn't want to destroy a device while its queues were
+ * in use and we need to track which command buffers are in-flight on a queue
+ * so we include Queues in the object lifetime management and suggest
+ * applications to be careful to only get each queue once.
+ * Getting more than one wrapper for a given queue should be harmless.
+ *
+ * From the specification:
+ *
+ * > ### 5.3.6. Queue Destruction
+ * > Queues are created along with a logical device during vkCreateDevice.
+ * > All queues associated with a logical device are destroyed when
+ * > vkDestroyDevice is called on that device.
+ */
+class Queue : public VulkanObject
+{
+  /** Hidden constructor to prevent users doing naked `new`s.*/
+  Queue(Device& device, const uint32_t queueFamilyIndex, const uint32_t queueIndex);
+
+public:
+  /**
+   * @brief Creator for new handles to Queue objects.
+   * @note This function should ideally be called exactly once for each unique
+   * combination of queue family and queue indexes.
+   * @return Smart pointer wrapper to keep the Queue alive.
+   */
+  static QueuePtr New(Device& device, const uint32_t queueFamilyIndex, const uint32_t queueIndex);
+  /**
+   * Destruction requires waiting for the queue to go idle so the smart pointer
+   * to the device can be released.
+   */
+  ~Queue();
+  operator VkQueue() const { return mQueue; }
+  Device& GetDevice() const { return *mDevice; }
+
+private:
+  /// The GPU device this Queue is tied to. Keep it alive as long as this Queue is.
+  DevicePtr mDevice;
+  /// The raw Vulkan Queue handle.
+  VkQueue mQueue = VK_NULL_HANDLE;
+};
+
 
 
 /* ----------------------------------------------------------------------- *//**
@@ -192,10 +241,18 @@ public:
   const VkCommandBuffer* GetVkCommandBufferAddress() const { return &mCommandBuffer; }
   Device& GetDevice() const { return mPool->GetDevice(); }
   /**
-   * Keep the parameter alive as long as this command buffer is.
-   * Use for resources required for the execution of these commands.
+   * Keep the parameter alive as long as this command buffer is, or until it
+   * is reset.
+   * Use for resources required for the execution of these commands so that the
+   * API objects representing them on the CPU side are not cleaned up while they
+   * are still in use asynchronously by the GPU.
    */
   void KeepAlive(VulkanObject& needed);
+  /**
+   * Allow the command buffer to be reused (make sure the flags you used at
+   * creation allow resetting), forgetting objects it is keeping alive.
+   */
+  void Reset(const VkCommandBufferResetFlags flags, bool deleteKeepAlives);
 
 private:
   /// The command buffer pool this command buffers was allocated out of.
