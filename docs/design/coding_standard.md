@@ -3,14 +3,14 @@ Krust Coding Standard
 
 Introduction
 ------------
-Krust is written in forward-looking C++, so all C++11, C++14 and even C++17
-level features are allowed as long as they are supported by GCC, Clang,
+Krust is written in forward-looking C++, so all C++11, C++14, C++17 and even
+C++20 level features are allowed as long as they are supported by GCC, Clang,
 and the latest available Visual Studio free edition.
 It is intended to be usable on constrained mobile and embedded devices however
 so library and runtime features are chosen with care.
 For example, the error handling strategy is deferred to the client so while
-it is written to be thread-safe using RAII, it does not necessarily throw any
-exceptions itself other than standard library ones.
+it is written to be weakly exception-safe using RAII, it does not necessarily
+throw any exceptions itself other than standard library ones.
 Similarly, with an eye to code size, templates should be used sparingly.
 
 File Inclusion
@@ -77,7 +77,7 @@ differences:
     are avoided.
 1.  Enumerations in Krust use C++11 enum classes and so a simple naming can be
     used: `EnumerationType::Enumerant` rather than
-    Vk's `VK_ENUMERATION_TYPE_ENUMERANT`.
+    Vulkan's `VK_ENUMERATION_TYPE_ENUMERANT`.
 
 Namespaces
 ----------
