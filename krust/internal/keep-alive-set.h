@@ -35,14 +35,9 @@ using RefObjectPtr = IntrusivePointer<RefObject>;
 /**
  * @brief A set of reference counted objects that are kept alive as long as the
  * set is.
- *
- * The lifecycle of this class is very simple. It is created, references are
- * added to it and it is destroyed.
  */
 class KeepAliveSet
 {
-  KeepAliveSet& operator=(const KeepAliveSet& rhs) = delete;
-  KeepAliveSet(const KeepAliveSet& rhs) = delete;
 public:
   KeepAliveSet(){}
 
