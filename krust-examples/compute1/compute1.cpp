@@ -155,7 +155,7 @@ public:
 
     constexpr VkPipelineStageFlags pipelineFlags = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
     auto submitInfo = kr::SubmitInfo(
-      1, &mSwapChainSemaphore,
+      1, mSwapChainSemaphore->GetVkSemaphoreAddress(),
       &pipelineFlags,
       // We have one command buffer per presentable image, so submit the right one:
       1, mCommandBuffers[mCurrentTargetImage]->GetVkCommandBufferAddress(),

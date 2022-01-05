@@ -563,6 +563,34 @@ private:
 
 
 
+/* ----------------------------------------------------------------------- *//**
+ * @brief A handle to an instance of Vulkan's VkSemaphore API object.
+ */
+class Semaphore : public VulkanObject
+{
+  /** Hidden constructor to prevent users doing naked `new`s.*/
+  Semaphore(Device& device, const VkSemaphoreCreateInfo& info);
+
+public:
+  /**
+   * @brief Creator for new Semaphore objects.
+   * @return Smart pointer wrapper to keep the Semaphore alive.
+   */
+  static SemaphorePtr New(Device& device);
+  ~Semaphore();
+  operator VkSemaphore() const { return mSemaphore; }
+  const VkSemaphore* GetVkSemaphoreAddress() const { return &mSemaphore; }
+  VkSemaphore* GetVkSemaphoreAddress() { return &mSemaphore; }
+
+private:
+  /// The GPU device this Semaphore is tied to. Keep it alive as long as this Semaphore is.
+  DevicePtr mDevice;
+  /// The raw Vulkan Semaphore handle.
+  VkSemaphore mSemaphore = VK_NULL_HANDLE;
+};
+
+
+
 /// A bundle of SPIR-V static code.
 /// @todo Make this a lightweight concrete class, just a size, a pmr allocator
 /// pointer, and a pointer to the data.

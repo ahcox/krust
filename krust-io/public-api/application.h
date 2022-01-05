@@ -360,7 +360,7 @@ public:
   uint32_t mCurrentTargetImage = 0;
   /// Used by WSI to signal to us that an image in the swapchain is available to
   /// render into.
-  VkSemaphore mSwapChainSemaphore = 0;
+  SemaphorePtr mSwapChainSemaphore = nullptr;
 
   ///@}
 

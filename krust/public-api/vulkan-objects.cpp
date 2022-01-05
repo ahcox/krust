@@ -515,6 +515,17 @@ QueuePtr Queue::New(Device& device, const uint32_t queueFamilyIndex, const uint3
 }
 
 
+
+// -----------------------------------------------------------------------------
+KRUST_VKOBJ_LIFETIME(Semaphore)
+
+SemaphorePtr Semaphore::New(Device& device)
+{
+  return new Semaphore { device, SemaphoreCreateInfo(0) };
+}
+
+
+
 // -----------------------------------------------------------------------------
 KRUST_VKOBJ_LIFETIME(ShaderModule)
 

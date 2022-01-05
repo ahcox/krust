@@ -109,14 +109,6 @@ public:
     }
     vkResetFences(*mGpuInterface, 1, submitFence->GetVkFenceAddress());
 
-    constexpr VkPipelineStageFlags pipelineFlags = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
-    auto submitInfo = kr::SubmitInfo(
-      1, &mSwapChainSemaphore,
-      &pipelineFlags,
-      // We have one command buffer per presentable image, so submit the right one:
-      1, mCommandBuffers[mCurrentTargetImage]->GetVkCommandBufferAddress(),
-      0, nullptr);
-
     // Build a command buffer for the current swapchain entry:
 
     kr::CommandBufferPtr commandBuffer = mCommandBuffers[mCurrentTargetImage];
@@ -214,6 +206,13 @@ public:
 
     // Execute command buffer on main queue:
     KRUST_LOG_DEBUG << "Submitting command buffer " << mCurrentTargetImage << "(" << *(mCommandBuffers[mCurrentTargetImage]) << ")." << Krust::endlog;
+    constexpr VkPipelineStageFlags pipelineFlags = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
+    auto submitInfo = kr::SubmitInfo(
+      1, mSwapChainSemaphore->GetVkSemaphoreAddress(),
+      &pipelineFlags,
+      // We have one command buffer per presentable image, so submit the right one:
+      1, mCommandBuffers[mCurrentTargetImage]->GetVkCommandBufferAddress(),
+      0, nullptr);
     const VkResult submitResult = vkQueueSubmit(*mDefaultGraphicsQueue, 1, &submitInfo, *submitFence);
     if(submitResult != VK_SUCCESS)
     {

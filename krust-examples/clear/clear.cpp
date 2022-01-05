@@ -202,7 +202,7 @@ public:
     constexpr VkPipelineStageFlags pipelineFlags = VK_PIPELINE_STAGE_ALL_COMMANDS_BIT; // VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
     auto submitInfo = kr::SubmitInfo();
       submitInfo.waitSemaphoreCount = 1,
-      submitInfo.pWaitSemaphores = &mSwapChainSemaphore,
+      submitInfo.pWaitSemaphores = mSwapChainSemaphore->GetVkSemaphoreAddress(),
       submitInfo.pWaitDstStageMask = &pipelineFlags,
       submitInfo.commandBufferCount = 1,
       // We have one command buffer per presentable image, so submit the right one:

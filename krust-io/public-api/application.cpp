@@ -695,10 +695,8 @@ bool Application::InitDefaultSwapchain(const VkImageUsageFlags swapchainUsageOve
 
   // Make a semaphore to control the swapchain:
   KRUST_ASSERT1(!mSwapChainSemaphore, "Semaphore already initialised.");
-  auto semaphoreCreateInfo = SemaphoreCreateInfo(0);
-
-  VkResult semaphoreResult = vkCreateSemaphore(*mGpuInterface, &semaphoreCreateInfo, Krust::GetAllocationCallbacks(), &mSwapChainSemaphore);
-  if(semaphoreResult != VK_SUCCESS)
+  mSwapChainSemaphore = Semaphore::New(*mGpuInterface);
+  if(mSwapChainSemaphore.Get() == nullptr)
   {
     KRUST_LOG_ERROR << "Failed to create the swapchain semaphore." << endlog;
     return false;
@@ -773,9 +771,9 @@ bool Application::DeInit()
 
   mSwapChainFences.clear();
 
-  if(mSwapChainSemaphore)
+  if(mSwapChainSemaphore.Get())
   {
-    vkDestroySemaphore(*mGpuInterface, mSwapChainSemaphore, Krust::GetAllocationCallbacks());
+    mSwapChainSemaphore.Reset();
   }
 
   for(auto view : mSwapChainImageViews) {
@@ -955,7 +953,7 @@ void Application::OnRedraw() {
     *mGpuInterface,
     mSwapChain,
     PRESENT_IMAGE_ACQUIRE_TIMEOUT,
-    mSwapChainSemaphore,
+    *mSwapChainSemaphore,
     nullptr, // no fence used!
     &mCurrentTargetImage);
 

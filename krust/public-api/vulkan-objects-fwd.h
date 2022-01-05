@@ -115,6 +115,10 @@ class PipelineLayout;
 using PipelineLayoutPtr = IntrusivePointer<PipelineLayout>;
 
 // -----------------------------------------------------------------------------
+class Semaphore;
+using SemaphorePtr = IntrusivePointer<Semaphore>;
+
+// -----------------------------------------------------------------------------
 class ShaderModule;
 using ShaderModulePtr = IntrusivePointer<ShaderModule>;
 
