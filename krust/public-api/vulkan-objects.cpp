@@ -86,7 +86,7 @@ namespace Krust
 {
 
 /// Max size for a temporary buffer on the stack (over this and we do a temp heap alloc).
-constexpr unsigned MAX_STACK_BUFFER_BYTES = 4096U;
+constexpr unsigned MAX_STACK_BUFFER_BYTES = DEFAULT_MAX_LOCAL_BUFFER_BYTES;
 
 
 // -----------------------------------------------------------------------------
@@ -506,6 +506,7 @@ Queue::Queue(Device& device, const uint32_t queueFamilyIndex, const uint32_t que
 
 Queue::~Queue()
 {
+  // Keep the device from being destroyed while this queue is busy:
   vkQueueWaitIdle(mQueue);
 }
 
