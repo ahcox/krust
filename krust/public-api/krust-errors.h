@@ -78,12 +78,20 @@ inline LogBuilder & LogBuilder::operator<< <Errors>(const Errors &t)
 /**
   * Used by Krust internally to report errors as they happen and defer the policy
   * for error handling to the library user.
+  *
   * Reasonable reporting strategies for the using module (user) include:
   * - Throw an exception for the user to catch.
+  * - Log error and terminate (AKA there are no errors after release).
+  *
+  * Unreasonable or fragile strategies include:
   * - Set a sticky error flag that the user can query later.
-  * - Log error and terminate.
   * - Record all errors since the user last checked for it to query later.
   * - Log errors and try to keep going.
+  *
+  * These can't work for parts of the library which use other parts which report
+  * errors since the intermediate components would need to know the strategy in
+  * order to check for errors and avoid doing things that would lead to hard crashes
+  * like dereferencing null pointers.
   *
   * ## References on error Handling
   * - http://web.archive.org/web/20160305130913/http://accu.org/index.php/journals/546
