@@ -21,6 +21,7 @@
 // External includes:
 #include "krust-io/public-api/krust-io.h"
 #include "krust-io/public-api/application-graphics-swapchain.h"
+#include "krust/public-api/queue_janitor.h"
 #include "krust/public-api/krust.h"
 
 namespace kr = Krust;

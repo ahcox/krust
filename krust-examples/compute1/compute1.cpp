@@ -21,6 +21,7 @@
 // External includes:
 #include "krust-io/public-api/krust-io.h"
 #include "krust/public-api/krust.h"
+#include "krust/public-api/queue_janitor.h"
 #include "krust/public-api/conditional-value.h"
 #include <fstream>
 

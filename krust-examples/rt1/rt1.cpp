@@ -23,6 +23,7 @@
 #include "krust-gm/public-api/vec3_fwd.h"
 #include "krust-gm/public-api/vec3_inl.h"
 #include "krust/public-api/krust.h"
+#include "krust/public-api/queue_janitor.h"
 #include "krust/public-api/line-printer.h"
 #include "krust/public-api/vulkan-utils.h"
 #include "krust/public-api/conditional-value.h"

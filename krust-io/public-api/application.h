@@ -1,15 +1,15 @@
-// Copyright (c) 2016 Andrew Helge Cox
-// 
+// Copyright (c) 2016-2022 Andrew Helge Cox
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all
 // copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -37,6 +37,10 @@
 #include <bitset>
 
 namespace Krust {
+
+class QueueJanitor;
+using QueueJanitorPtr = IntrusivePointer<QueueJanitor>;
+
 namespace IO {
 
 /// The name of the engine passed to Vulkan.
@@ -295,11 +299,11 @@ public:
   unsigned  mDefaultPresentQueueFamily = 0;
   VkPhysicalDeviceMemoryProperties mGpuMemoryProperties;
   DevicePtr mGpuInterface; ///< Logical GPU.
-  QueuePtr   mDefaultQueue;
+  QueueJanitorPtr   mDefaultQueue;
   /// Draw through this.
-  Queue*  mDefaultGraphicsQueue = 0;
+  QueueJanitor*  mDefaultGraphicsQueue = 0;
   /// Present using this.
-  Queue*  mDefaultPresentQueue = 0;
+  QueueJanitor*  mDefaultPresentQueue = 0;
   ///@}
 
 protected:

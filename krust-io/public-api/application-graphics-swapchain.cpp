@@ -1,4 +1,4 @@
-// Copyright (c) 2021 Andrew Helge Cox
+// Copyright (c) 2021-2022 Andrew Helge Cox
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -20,6 +20,7 @@
 
 #include "application-graphics-swapchain.h"
 #include "application.h"
+#include "krust/public-api/queue_janitor.h"
 
 namespace Krust {
 namespace IO {

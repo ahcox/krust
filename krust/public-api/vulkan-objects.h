@@ -125,6 +125,8 @@ private:
   VkDevice mDevice = VK_NULL_HANDLE;
 };
 
+
+
 /* ----------------------------------------------------------------------- *//**
  * @brief A handle to an instance of Vulkan's Queue API object.
  *
@@ -134,8 +136,7 @@ private:
  * There are a fixed number of them per device, with some implementations
  * being limited to a single queue.
  * That noted, we wouldn't want to destroy a device while its queues were
- * in use and we need to track which command buffers are in-flight on a queue
- * so we include Queues in the object lifetime management and suggest
+ * in use so we include Queues in the object lifetime management and suggest
  * applications to be careful to only get each queue once.
  * Getting more than one wrapper for a given queue should be harmless.
  *
@@ -164,6 +165,7 @@ public:
    * to the device can be released.
    */
   ~Queue();
+
   operator VkQueue() const { return mQueue; }
   Device& GetDevice() const { return *mDevice; }
 

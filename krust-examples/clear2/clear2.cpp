@@ -21,6 +21,7 @@
 // External includes:
 #include "krust-io/public-api/krust-io.h"
 #include "krust-io/public-api/application-graphics-swapchain.h"
+#include "krust/public-api/queue_janitor.h"
 #include "krust/public-api/krust.h"
 
 namespace kr = Krust;
@@ -138,7 +139,7 @@ public:
     // an image memory barrier:
     auto postPresentImageMemoryBarrier = kr::ImageMemoryBarrier( 0,
       VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
-      VK_IMAGE_LAYOUT_PRESENT_SRC_KHR, 
+      VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
       VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
       VK_QUEUE_FAMILY_IGNORED,
       VK_QUEUE_FAMILY_IGNORED,
