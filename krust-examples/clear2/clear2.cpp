@@ -75,6 +75,8 @@ public:
       return false;
     }
 
+    mLastSubmits.resize(mSwapChainImages.size());
+
     // Allocate a command buffer per swapchain entry:
     KRUST_ASSERT1(mCommandBuffers.size() == 0, "Double init of command buffers.");
     kr::CommandBuffer::Allocate(*mCommandPool, VK_COMMAND_BUFFER_LEVEL_PRIMARY, unsigned(mSwapChainImageViews.size()), mCommandBuffers);
@@ -102,16 +104,13 @@ public:
     static unsigned frameNumber = 0;
     KRUST_LOG_INFO << "   ------------ Clear Example 2 draw frame! frame: " << frameNumber++ << ". currImage: " << mCurrentTargetImage << ". handle: " << mSwapChainImages[mCurrentTargetImage] << "  ------------\n";
 
-    auto submitFence = mSwapChainFences[mCurrentTargetImage];
-    const VkResult fenceWaitResult = vkWaitForFences(*mGpuInterface, 1, submitFence->GetVkFenceAddress(), true, 1000000000); // Wait one second.
-    if(VK_SUCCESS != fenceWaitResult)
-    {
-      KRUST_LOG_ERROR << "Wait for queue submit of main commandbuffer did not succeed: " << fenceWaitResult << Krust::endlog;
+    // Wait up to one second for the frame to complete for the previous time it was submitted:
+    if(VK_SUCCESS != mDefaultGraphicsQueue->WaitComplete(mLastSubmits[mCurrentTargetImage], 1000000000)){
+      KRUST_LOG_ERROR << "Wait for queue submit of main commandbuffer did not succeed." << Krust::endlog;
+      return;
     }
-    vkResetFences(*mGpuInterface, 1, submitFence->GetVkFenceAddress());
 
     // Build a command buffer for the current swapchain entry:
-
     kr::CommandBufferPtr commandBuffer = mCommandBuffers[mCurrentTargetImage];
     VkImage framebufferImage = mSwapChainImages[mCurrentTargetImage];
 
@@ -207,19 +206,13 @@ public:
 
     // Execute command buffer on main queue:
     KRUST_LOG_DEBUG << "Submitting command buffer " << mCurrentTargetImage << "(" << *(mCommandBuffers[mCurrentTargetImage]) << ")." << Krust::endlog;
-    constexpr VkPipelineStageFlags pipelineFlags = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
-    auto submitInfo = kr::SubmitInfo(
-      1, mSwapChainSemaphore->GetVkSemaphoreAddress(),
-      &pipelineFlags,
-      // We have one command buffer per presentable image, so submit the right one:
-      1, mCommandBuffers[mCurrentTargetImage]->GetVkCommandBufferAddress(),
-      0, nullptr);
-    const VkResult submitResult = vkQueueSubmit(*mDefaultGraphicsQueue, 1, &submitInfo, *submitFence);
-    if(submitResult != VK_SUCCESS)
+    const kr::SubmitResult sr = mDefaultGraphicsQueue->Submit(*mSwapChainSemaphore, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, *mCommandBuffers[mCurrentTargetImage]);
+    if(sr.result() != VK_SUCCESS)
     {
-      KRUST_LOG_ERROR << "Failed to submit command buffer. Result: " << submitResult << Krust::endlog;
+      KRUST_LOG_ERROR << "Failed to submit command buffer. Result: " << sr.result() << Krust::endlog;
       return;
     }
+    mLastSubmits[mCurrentTargetImage] = sr.counter();
 
     // Animate the clear color with wrap around:
     mClearColor[0] -= 0.007f;
@@ -238,6 +231,7 @@ public:
 private:
   // Data:
   float mClearColor[3] = {0.9f, 0.7f, 0.2f};
+  std::vector<kr::SubmitCounter> mLastSubmits;
 };
 
 int main()

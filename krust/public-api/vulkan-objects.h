@@ -443,6 +443,7 @@ public:
   operator VkFence() const { return mFence; }
   const VkFence* GetVkFenceAddress() const { return &mFence; }
   VkFence* GetVkFenceAddress() { return &mFence; }
+  Device& device() const { return *mDevice; }
 private:
   DevicePtr mDevice;
   VkFence mFence = VK_NULL_HANDLE;

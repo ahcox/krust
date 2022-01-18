@@ -100,25 +100,36 @@ public:
    * command buffers alive while the underlying data structures that they
    * represent are in use on the GPU.
    */
-  SubmitResult Submit(span<QueueSubmitInfo, dynamic_extent> submits);
+  SubmitResult Submit(span<const QueueSubmitInfo, dynamic_extent> submits);
+  /// Helper submit for when there is only one submit per call.
+  SubmitResult Submit(const QueueSubmitInfo& submit) {
+    return Submit({&submit, 1});
+  }
+  /// Single-command buffer, single wait semaphore wrapper submit helper.
+  SubmitResult Submit(Semaphore& wait, const VkPipelineStageFlags waitFlags, CommandBuffer& commandbuffer);
 
   /**
-   * Call this to signal any completion Fences passed to Submit() for completed
-   * submits and to free any Command Buffers and Semaphores previously kept alive
+   * Call this to free any Command Buffers and Semaphores previously kept alive
    * while in use on the GPU.
    */
   void CheckCompletions();
+
+  bool IsComplete(SubmitCounter submit);
+  /// Returns what vkWaitForFences() returns.
+  VkResult WaitComplete(SubmitCounter submit, uint64_t timeout);
 
   operator VkQueue() const { return *mQueue; }
   Queue& GetQueue() const { return *mQueue; }
   Device& GetDevice() const { return mQueue->GetDevice(); }
 
-  SubmitLiveBatch& GetLiveBatch();
+private:
+  SubmitLiveBatch& GetLiveBatch(SubmitCounter submitCounter);
   void RecycleLiveBatch(SubmitLiveBatch& batch);
 
-private:
   /// A monotonic counter of submissions.
-  SubmitCounter mNextSubmit = 0;
+  SubmitCounter mNextSubmit = 1;
+  /// Record of the highest submission yet to complete:
+  SubmitCounter mHighestCompletion = 0;
   QueuePtr mQueue = nullptr;
   /// The submitted batches of command buffers "live" in-flight on the GPU.
   SubmitLiveBatches* mLiveBatches = nullptr;

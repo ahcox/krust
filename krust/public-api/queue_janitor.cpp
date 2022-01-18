@@ -24,6 +24,7 @@
 
 // Internal includes:
 #include "krust/public-api/queue_janitor.h"
+#include "krust/public-api/vulkan-utils.h"
 #include "krust/public-api/krust-errors.h"
 #include "krust/public-api/thread-base.h"
 #include "krust/internal/keep-alive-set.h"
@@ -39,9 +40,15 @@ namespace Krust
 /// during a submit's execution.
 struct QueueJanitor::SubmitLiveBatch {
   bool InFlight(){
-    return liveCommandbuffers.size() > 0;
+    return submitCounter > 0;
   }
-  void KeepAlive(const span<QueueSubmitInfo, dynamic_extent> submits);
+  void Inactivate() {
+    submitCounter = 0;
+    VK_CALL(vkResetFences, completionSignal->device(), 1, completionSignal->GetVkFenceAddress());
+    liveCommandbuffers.clear();
+    liveOthers.Clear();
+  }
+  void KeepAlive(const span<const QueueSubmitInfo, dynamic_extent> submits);
   /// Command buffers that we will inform when a batch of submits completes on the GPU.
   std::vector<CommandBufferPtr> liveCommandbuffers;
   /// All semaphores and possible future resources used by a submit are added in here.
@@ -50,10 +57,11 @@ struct QueueJanitor::SubmitLiveBatch {
   FencePtr completionSignal;
   /// Which submit in monotonically increasing order for the associated queue this
   /// batch represents.
+  /// If zero, this batch is not in-flight on the GPU.
   SubmitCounter submitCounter = 0;
 };
 
-void QueueJanitor::SubmitLiveBatch::KeepAlive(const span<QueueSubmitInfo, dynamic_extent> submits)
+void QueueJanitor::SubmitLiveBatch::KeepAlive(const span<const QueueSubmitInfo, dynamic_extent> submits)
 {
   for(const auto& submit : submits)
   {
@@ -96,6 +104,7 @@ QueueJanitorPtr QueueJanitor::New(Device& device, const uint32_t queueFamilyInde
 
 QueueJanitor::~QueueJanitor()
 {
+  // Deleting the queue waits for it to go idle:
   mQueue.Reset();
   delete mLiveBatches;
   mLiveBatches = nullptr;
@@ -108,17 +117,42 @@ void QueueJanitor::CheckCompletions()
       Fence* fence = b.completionSignal.Get();
       VkResult wait_res = vkWaitForFences(mQueue->GetDevice(), 1, fence->GetVkFenceAddress(), true, 0);
       if(wait_res == VK_SUCCESS){
+        mHighestCompletion = std::max(mHighestCompletion, b.submitCounter);
         this->RecycleLiveBatch(b);
       } else if(wait_res == VK_ERROR_DEVICE_LOST){
         KRUST_LOG_ERROR << "VK_ERROR_DEVICE_LOST calling vkWaitForFences() from " << __FUNCTION__ << " in File " __FILE__ " at line " << __LINE__  << endlog;
         mLiveBatches->clear();
+        mHighestCompletion = mNextSubmit - 1;
         break;
       }
     }
-  };
+  }
 }
 
-QueueJanitor::SubmitLiveBatch& QueueJanitor::GetLiveBatch()
+VkResult QueueJanitor::WaitComplete(const SubmitCounter submit, const uint64_t timeout)
+{
+  for(SubmitLiveBatch& b : *mLiveBatches){
+    if(b.InFlight() && (b.submitCounter == submit)){
+      Fence* fence = b.completionSignal.Get();
+      VkResult wait_res = vkWaitForFences(mQueue->GetDevice(), 1, fence->GetVkFenceAddress(), true, timeout);
+      if(wait_res == VK_SUCCESS){
+        mHighestCompletion = std::max(mHighestCompletion, b.submitCounter);
+        this->RecycleLiveBatch(b);
+      }
+      return wait_res;
+    }
+  }
+  // It's so complete we already deleted it:
+  return VK_SUCCESS;
+}
+
+bool QueueJanitor::IsComplete(const SubmitCounter submit)
+{
+  CheckCompletions();
+  return submit <= mHighestCompletion;
+}
+
+QueueJanitor::SubmitLiveBatch& QueueJanitor::GetLiveBatch(const SubmitCounter submitCounter)
 {
   SubmitLiveBatch* batch = nullptr;
   for(SubmitLiveBatch& b : *mLiveBatches){
@@ -130,18 +164,18 @@ QueueJanitor::SubmitLiveBatch& QueueJanitor::GetLiveBatch()
   if(batch == nullptr){
     mLiveBatches->resize(mLiveBatches->size() + 1);
     batch = & mLiveBatches->back();
+    batch->completionSignal = Fence::New(mQueue->GetDevice(), 0U);
   }
+  batch->submitCounter = submitCounter;
   return *batch;
 }
 
 void QueueJanitor::RecycleLiveBatch(QueueJanitor::SubmitLiveBatch& batch)
 {
-  batch.liveCommandbuffers.clear();
-  batch.liveOthers.Clear();
-  vkResetFences(mQueue->GetDevice(), 1, batch.completionSignal->GetVkFenceAddress());
+  batch.Inactivate();
 }
 
-std::array<size_t, 3> CountSubmits(span<QueueSubmitInfo, dynamic_extent> submits)
+std::array<size_t, 3> CountSubmits(const span<const QueueSubmitInfo, dynamic_extent> submits)
 {
   size_t buffers = 0;
   size_t semaphores = 0;
@@ -156,7 +190,7 @@ std::array<size_t, 3> CountSubmits(span<QueueSubmitInfo, dynamic_extent> submits
   return {buffers, semaphores, wait_flags};
 }
 
-SubmitResult QueueJanitor::Submit(span<QueueSubmitInfo, dynamic_extent> submits)
+SubmitResult QueueJanitor::Submit(span<const QueueSubmitInfo, dynamic_extent> submits)
 {
   VkResult result = VK_ERROR_UNKNOWN;
   auto submitCounter = mNextSubmit++;
@@ -177,7 +211,7 @@ SubmitResult QueueJanitor::Submit(span<QueueSubmitInfo, dynamic_extent> submits)
 
   for(size_t submit_i = 0; submit_i < submits.size(); ++submit_i)
   {
-    QueueSubmitInfo& submit = submits[submit_i];
+    const QueueSubmitInfo& submit = submits[submit_i];
     VkSubmitInfo&   vk_submit = vk_submits.Get()[submit_i];
     vk_submit.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
     vk_submit.pNext = submit.pNext;
@@ -205,12 +239,28 @@ SubmitResult QueueJanitor::Submit(span<QueueSubmitInfo, dynamic_extent> submits)
   }
   // See if any previous submits have finished, and release their resources:
   CheckCompletions();
-  // Get a record to keep resource alive on the host while they are in use on the device:
-  SubmitLiveBatch& live_batch = GetLiveBatch();
-  live_batch.submitCounter = submitCounter;
+  // Get a record to keep resources alive on the host while they are in use on the
+  // device:
+  SubmitLiveBatch& live_batch = GetLiveBatch(submitCounter);
   live_batch.KeepAlive(submits);
-  result = vkQueueSubmit(*mQueue, submits.size(), vk_submits.Get(), *live_batch.completionSignal);
+  result = vkQueueSubmit(
+    *mQueue,
+    submits.size(),
+    vk_submits.Get(),
+    *live_batch.completionSignal
+  );
   return {result, submitCounter};
+}
+
+SubmitResult QueueJanitor::Submit(Semaphore& wait, const VkPipelineStageFlags waitFlags, CommandBuffer& commandbuffer)
+{
+  std::pair<SemaphorePtr, const VkPipelineStageFlags> waits[1] {
+    {SemaphorePtr(&wait), waitFlags}
+  };
+  CommandBufferPtr commandptr(&commandbuffer);
+  span<CommandBufferPtr, dynamic_extent> commands(&commandptr, 1u);
+  span<SemaphorePtr, dynamic_extent> signals;
+  return Submit({waits, commands, signals});
 }
 
 } /* namespace Krust */
