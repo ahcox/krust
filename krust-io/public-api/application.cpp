@@ -746,15 +746,8 @@ void Application::RecordPresentQueueFamilies()
 
 bool Application::DeInit()
 {
-  // Wait for all fences to signal end of frame:
-  for(auto& fence : mSwapChainFences)
-  {
-    const VkResult fenceWaitResult = vkWaitForFences(*mGpuInterface, 1, fence->GetVkFenceAddress(), true, 100000000); // Wait one tenth of a second.
-    if(VK_SUCCESS != fenceWaitResult)
-    {
-      KRUST_LOG_ERROR << "Wait for fences protecting resources in main render loop did not succeed: " << fenceWaitResult << Krust::endlog;
-    }
-  }
+  // Wait for queues to idle before deleting resources which might be in use:
+  VK_CALL(vkDeviceWaitIdle, *mGpuInterface);
 
   // Give derived application first chance to cleanup:
   DoPreDeInit();
