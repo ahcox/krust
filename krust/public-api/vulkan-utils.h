@@ -56,7 +56,7 @@
 { \
 const VkResult FUNC##result = FUNC( __VA_ARGS__ ); \
 if(FUNC##result != VK_SUCCESS) { \
-  KRUST_LOG_ERROR << "Call to " #FUNC " failed with error: " << FUNC##result << Krust::endlog; \
+  KRUST_LOG_ERROR << "Call to " #FUNC " failed with error: " << Krust::ResultToString(FUNC##result) << Krust::endlog; \
 } \
 }
 
@@ -69,7 +69,7 @@ if(FUNC##result != VK_SUCCESS) { \
 { \
 const VkResult FUNC##result = FUNC( __VA_ARGS__ ); \
 if(FUNC##result != VK_SUCCESS) { \
-  KRUST_LOG_ERROR << "Call to " #FUNC " failed with error: " << FUNC##result << Krust::endlog; \
+  KRUST_LOG_ERROR << "Call to " #FUNC " failed with error: " << Krust::ResultToString(FUNC##result) << Krust::endlog; \
   return false; \
 } \
 }
@@ -83,7 +83,7 @@ if(FUNC##result != VK_SUCCESS) { \
 { \
 const VkResult FUNC##result = FUNC( __VA_ARGS__ ); \
 if(FUNC##result != VK_SUCCESS) { \
-  KRUST_LOG_ERROR << "Call to " #FUNC " failed with error: " << FUNC##result << Krust::endlog; \
+  KRUST_LOG_ERROR << "Call to " #FUNC " failed with error: " << Krust::ResultToString(FUNC##result) << Krust::endlog; \
   return FUNC##result; \
 } \
 }
