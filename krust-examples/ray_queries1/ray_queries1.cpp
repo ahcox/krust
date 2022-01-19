@@ -23,6 +23,7 @@
 #include "krust-gm/public-api/vec3_fwd.h"
 #include "krust-gm/public-api/vec3_inl.h"
 #include "krust/public-api/krust.h"
+#include "krust/public-api/queue_janitor.h"
 #include "krust/public-api/line-printer.h"
 #include "krust/public-api/device-memory-mapper.h"
 #include "krust/public-api/vulkan-utils.h"
@@ -963,7 +964,7 @@ public:
     auto aabbs = spheresToAABBs(spheresSpan);  ///< @todo FixMe. TEMP: we can convert on the GPU in the future when running a compute pass is async.
     auto sphereBuffer = uploadToDeviceBuffer<Vec4InMemory>(
       *mGpuInterface,
-      mDefaultQueue,
+      *mDefaultQueue,
       *mCommandPool,
       spheresSpan,
       VK_BUFFER_USAGE_STORAGE_BUFFER_BIT |
@@ -978,7 +979,7 @@ public:
     const bool spheresDownloaded = downloadFromDeviceBuffer(
       *mGpuInterface,
       *sphereBuffer,
-      mDefaultQueue,
+      *mDefaultQueue,
       *mCommandPool,
       downloadedSpheresSpan,
       staging_mem_type,
@@ -993,7 +994,7 @@ public:
     }
 
     kr::BufferPtr aabbBuffer = spheresToAABBs(
-      mDefaultQueue,
+      *mDefaultQueue,
       *mCommandPool,
       spheresSpan.size(),
       *sphereBuffer,
@@ -1008,7 +1009,7 @@ public:
     const bool aabbsDownloaded = downloadFromDeviceBuffer(
       *mGpuInterface,
       *aabbBuffer,
-      mDefaultQueue,
+      *mDefaultQueue,
       *mCommandPool,
       kr::span<float, kr::dynamic_extent>(downloaded_aabbs),
       staging_mem_type,
@@ -1139,7 +1140,7 @@ public:
 
     constexpr VkPipelineStageFlags pipelineFlags = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
     auto submitInfo = kr::SubmitInfo(
-      1, &mSwapChainSemaphore,
+      1, mSwapChainSemaphore->GetVkSemaphoreAddress(),
       &pipelineFlags,
       // We have one command buffer per presentable image, so submit the right one:
       1, mCommandBuffers[mCurrentTargetImage]->GetVkCommandBufferAddress(),
