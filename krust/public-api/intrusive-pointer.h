@@ -23,6 +23,7 @@
 
 #include "krust/public-api/krust-assertions.h"
 #include "krust/public-api/ref-object.h"
+#include "krust-kernel/public-api/debug.h"
 
 namespace Krust {
 
@@ -55,12 +56,13 @@ class IntrusivePointer : public IntrusivePointerBase
 {
 public:
   IntrusivePointer() {}
-  IntrusivePointer(const IntrusivePointer<T>& counted) : IntrusivePointerBase(counted.Get()) {}
-  IntrusivePointer(T* counted) : IntrusivePointerBase(counted) {}
-  IntrusivePointer(T& counted) : IntrusivePointerBase(counted) {}
+  IntrusivePointer(const IntrusivePointer<T>& counted) : IntrusivePointerBase(counted.Get()) { KRUST_DEBUG_CODE( mPointee = Get() ); }
+  IntrusivePointer(T* counted) : IntrusivePointerBase(counted) { KRUST_DEBUG_CODE( mPointee = Get() ); }
+  IntrusivePointer(T& counted) : IntrusivePointerBase(counted) { KRUST_DEBUG_CODE( mPointee = Get() );}
   IntrusivePointer<T>& operator=(const IntrusivePointer<T>& other)
   {
     Reset(other.Get());
+    KRUST_DEBUG_CODE( mPointee = Get() );
     return *this;
   }
 
@@ -68,7 +70,10 @@ public:
   T* operator->() const { return Get(); }
   T& operator*() const { return *Get(); }
 
-  void Reset(T* other = nullptr){ IntrusivePointerBase::Reset(other); }
+  void Reset(T* other = nullptr){ IntrusivePointerBase::Reset(other); KRUST_DEBUG_CODE( mPointee = Get() ); }
+private:
+  // Typed alias of the thing pointed at that we can look through in a debugger.
+  KRUST_DEBUG_CODE(T* mPointee = nullptr);
 };
 
 } /* namespace Krust */
