@@ -41,5 +41,11 @@
 #define KRUST_BEGIN_DEBUG_BLOCK if (KRUST_DEBUG_LEVEL){
 #define KRUST_END_DEBUG_BLOCK }
 
+#define KRUST_UNUSED_VAR(T) krust::unused_var(T)
+
+namespace krust {
+template<typename T>
+void unused_var(const T& t) {}
+}
 
 #endif /* KRUST_KERNEL_PUBLIC_API_DEBUG_H_ */
