@@ -148,6 +148,7 @@ inline std::vector<AABBf> spheresToAABBs(kr::span<const Vec4InMemory, kr::dynami
 inline kr::BufferPtr createSingleAllocBuffer(
   kr::Device& device,
   const uint32_t memory_type,
+  VkMemoryAllocateFlags memoryFlags,
   VkBufferCreateFlags flags,
   VkDeviceSize size,
   VkBufferUsageFlags usage,
@@ -163,9 +164,11 @@ inline kr::BufferPtr createSingleAllocBuffer(
     KRUST_LOG_ERROR << "Can't put buffer in requested memory_type (" << memory_type << ')' << kr::endlog;
     kr::ThreadBase::Get().GetErrorPolicy().Error(kr::Errors::IllegalArgument, "Buffer not compatible with memory_type requested.", __FUNCTION__, __FILE__, __LINE__);
   } else {
+    auto flagsInfo = kr::MemoryAllocateFlagsInfo(memoryFlags, 0u);
     auto dedicatedInfo = kr::MemoryDedicatedAllocateInfo(VK_NULL_HANDLE, *buffer);
     auto memoryAllocateInfo = kr::MemoryAllocateInfo(memReq.size, memory_type);
     memoryAllocateInfo.pNext = &dedicatedInfo;
+    dedicatedInfo.pNext = &flagsInfo;
     auto memory = kr::DeviceMemory::New(device, memoryAllocateInfo);
     buffer->BindMemory(*memory, 0);
   }
@@ -180,6 +183,25 @@ inline kr::BufferPtr createStagingBuffer(
 {
   return createSingleAllocBuffer(device,
     memory_type,
+    0,
+    0,
+    size,
+    VK_BUFFER_USAGE_TRANSFER_SRC_BIT | // To allow staging from host to device.
+    VK_BUFFER_USAGE_TRANSFER_DST_BIT,  // To allow staging from device back to host.
+    VkSharingMode::VK_SHARING_MODE_EXCLUSIVE,
+    queueFamilyIndex);
+}
+
+inline kr::BufferPtr createStagingBuffer(
+  kr::Device& device,
+  const uint32_t memory_type,
+  const VkMemoryAllocateFlags memory_flags,
+  const VkDeviceSize size,
+  const uint32_t queueFamilyIndex)
+{
+  return createSingleAllocBuffer(device,
+    memory_type,
+    memory_flags,
     0,
     size,
     VK_BUFFER_USAGE_TRANSFER_SRC_BIT | // To allow staging from host to device.
@@ -230,8 +252,7 @@ inline bool CopyBuffer(
   VkDeviceSize dstOffset,
   VkDeviceSize size)
 {
-  kr::Device& device = sourceBuffer.GetDevice();
-  KRUST_ASSERT1(&device == &destBuffer.GetDevice(), "Buffers must belong to same device when copying.");
+  KRUST_ASSERT1(&sourceBuffer.GetDevice() == &destBuffer.GetDevice(), "Buffers must belong to same device when copying.");
 
   auto commandBuffer = kr::CommandBuffer::New(commandPool, VK_COMMAND_BUFFER_LEVEL_PRIMARY);
   auto beginInfo = kr::CommandBufferBeginInfo(VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT, nullptr);
@@ -289,11 +310,14 @@ inline kr::BufferPtr transferToDeviceBuffer(
   VkBufferUsageFlags bufferUsages,
   /// The type of memory to allocate for the new buffer. This must be device visible.
   const uint32_t memory_type,
+  /// Flags for the memory allocated such as allowing addresses to be exposed.
+  const VkMemoryAllocateFlags memory_flags,
   uint32_t queueFamilyIndex)
 {
   kr::Device& device = sourceBuffer.GetDevice();
   auto destBuffer = createSingleAllocBuffer(device,
     memory_type,
+    memory_flags,
     0,
     size,
     bufferUsages | VK_BUFFER_USAGE_TRANSFER_DST_BIT,
@@ -357,6 +381,7 @@ inline kr::BufferPtr uploadToDeviceBuffer(
   const void* hostData,
   const uint32_t staging_memory_type,
   const uint32_t device_memory_type,
+  const VkMemoryAllocateFlags device_memory_flags,
   uint32_t queueFamilyIndex)
 {
   auto stagingBuffer = uploadToStagingBuffer(device, size, hostData, staging_memory_type, queueFamilyIndex);
@@ -364,7 +389,7 @@ inline kr::BufferPtr uploadToDeviceBuffer(
   {
     return nullptr;
   }
-  auto deviceBuffer = transferToDeviceBuffer(queue, commandPool, *stagingBuffer, size, bufferUsages, device_memory_type, queueFamilyIndex);
+  auto deviceBuffer = transferToDeviceBuffer(queue, commandPool, *stagingBuffer, size, bufferUsages, device_memory_type, device_memory_flags, queueFamilyIndex);
   return deviceBuffer;
 }
 
@@ -380,9 +405,10 @@ inline kr::BufferPtr uploadToDeviceBuffer(
   VkBufferUsageFlags bufferUsages,
   const uint32_t staging_memory_type,
   const uint32_t device_memory_type,
+  const VkMemoryAllocateFlags device_memory_flags,
   const uint32_t queueFamilyIndex)
 {
-  return uploadToDeviceBuffer(device, queue, commandPool, hostData.size_bytes(), bufferUsages, hostData.data(), staging_memory_type, device_memory_type, queueFamilyIndex);
+  return uploadToDeviceBuffer(device, queue, commandPool, hostData.size_bytes(), bufferUsages, hostData.data(), staging_memory_type, device_memory_type, device_memory_flags, queueFamilyIndex);
 }
 
 /// Slow, basic utility for getting data from device to host.
@@ -461,6 +487,7 @@ inline kr::BufferPtr spheresToAABBs(
   const auto aabbBuffersize = numSpheres * sizeof(VkAabbPositionsKHR);
   auto aabbBuffer = createSingleAllocBuffer(device,
     memory_type,
+    VK_MEMORY_ALLOCATE_DEVICE_ADDRESS_BIT,
     0,
     aabbBuffersize,
     bufferUsages | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
@@ -595,36 +622,38 @@ inline kr::BufferPtr spheresToAABBs(
   return aabbBuffer;
 }
 
-/// @todo <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< BOOKMARK
+/// @return The device address of the start of the given buffer on the given device.
+inline VkDeviceOrHostAddressConstKHR getBufferAddress(kr::Device& device, const VkBuffer buffer)
+{
+  VkBufferDeviceAddressInfo addressInfo = kr::BufferDeviceAddressInfo(buffer);
+  VkDeviceOrHostAddressConstKHR address {vkGetBufferDeviceAddress(device, &addressInfo)};
+  return address;
+}
 
 /**
  * Synchronously build a single BLAS, allocating and cleaning up resources.
- * ## Optimisations:
- * @todo Restructure so that caller generates bboxes directing into host-visible memory to avoid a copy here.
- * @todo Send up 4 float spheres and generate the six aabb components is a CS kernel.
+ * @note We IDLE the GPU.
+ * @todo Just build the command buffer here, and return the AS, and scratch for
+ * the caller to submit the build and wait idle.
  */
-inline void buildSingleGeomAABBBLAS(kr::CommandBufferPtr commandBuffer,
-/// @todo Make this a buffer that is already in device memory.
-const kr::span<AABBf> abbs,
-const uint32_t staging_memory_type, uint32_t device_memory_type, uint32_t queueFamilyIndex)
+inline kr::AccelerationStructurePtr buildSingleGeomAABBBLAS(
+  VkQueue queue,
+  kr::CommandPool& commandPool,
+  VkDeviceSize numAabbs,
+  /// A buffer of AABBs that is already in device memory and has VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR set.
+  kr::BufferPtr aabbs,
+  const uint32_t staging_memory_type,
+  uint32_t device_memory_type,
+  uint32_t queueFamilyIndex)
 {
-  /// @todo BOOKMARK
+  kr::Device& device = commandPool.GetDevice();
 
-  kr::DevicePtr device {commandBuffer->GetDevice()};
-  VkDeviceOrHostAddressKHR nullAddress;
-  nullAddress.deviceAddress = 0;
- //const auto bboxes_memsize = abbs.size_bytes();
-  // Allocate buffers: 1 host-visible for upload of the bboxes, 1 permanent, and one for scratch.
-  //auto sphere_staging = createStagingBuffer(*device, staging_memory_type, bb
-  //auto staging_memory = kr::DeviceMemory::New(*device, kr::MemoryAllocateInfo(bboxes_memsize, staging_memory_type));
+  // Get device address of aabb buffer memory:
+  VkDeviceOrHostAddressConstKHR aabbsAddress = getBufferAddress(device, *aabbs);
 
-  // Copy the AABBs intothe staging memory/buffer: ---------------- [ToDo]
-
-  VkDeviceOrHostAddressConstKHR aabbsAddress;
-  aabbsAddress.deviceAddress = 0u; /// @todo Get the real address of te buffer in memory.
   VkAccelerationStructureGeometryDataKHR geodata;
   geodata.aabbs = kr::AccelerationStructureGeometryAabbsDataKHR(
-      aabbsAddress, // VkDeviceOrHostAddressConstKHR /// @todo Address on deviceof the staging buffer.<-------------------------------------------------------------- TODO
+      aabbsAddress,
       24u // VkDeviceSize                     stride;
     );
   const auto asg = kr::AccelerationStructureGeometryKHR(
@@ -645,49 +674,232 @@ const uint32_t staging_memory_type, uint32_t device_memory_type, uint32_t queueF
     uint32_t(1), // geometryCount,
     &asg, //const VkAccelerationStructureGeometryKHR* pGeometries,
     nullptr, // const VkAccelerationStructureGeometryKHR* const* ppGeometries,
-    nullAddress // (Currently 0) VkDeviceOrHostAddressKHR scratchData
+    VkDeviceOrHostAddressKHR(0) // (Currently 0) VkDeviceOrHostAddressKHR scratchData
   );
   auto buildSizes = kr::AccelerationStructureBuildSizesInfoKHR();
-  uint32_t maxPrimitiveCount = abbs.size();
-  vkGetAccelerationStructureBuildSizesKHR(*device,
+  uint32_t maxPrimitiveCount = numAabbs;
+  vkGetAccelerationStructureBuildSizesKHR(device,
     VK_ACCELERATION_STRUCTURE_BUILD_TYPE_DEVICE_KHR,
     &buildInfo,
     &maxPrimitiveCount, // Or just make this nullptr?
     &buildSizes
   );
+  KRUST_LOG_INFO << "BLAS buildSizes: accelerationStructureSize=" << buildSizes.accelerationStructureSize << ", buildScratchSize=" << buildSizes.buildScratchSize << ", updateScratchSize=" << buildSizes.updateScratchSize << kr::endlog;
 
-  /*auto asBuffer = kr::Buffer::New(*device, 
-  0, // VkBufferCreateFlagBits No special flags needed.
-  deviceSize, /// @todo <-------------
-  VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_STORAGE_BIT_KHR,
-  VK_SHARING_MODE_EXCLUSIVE, // VUID-vkQueueSubmit-pSubmits-02808 Any resource created with VK_SHARING_MODE_EXCLUSIVE that is read by an operation specified by pSubmits must not be owned by any queue family other than the one which queue belongs to, at the time it is executed.
-  queueFamilyIndex
+  // Allocate a scratch buffer for the implementation to use while building our
+  // bottom level acceleration structure:
+  auto asScratchBuffer = createSingleAllocBuffer(
+    device,
+    device_memory_type,
+    VK_MEMORY_ALLOCATE_DEVICE_ADDRESS_BIT,
+    0, // VK_BUFFER_CREATE_...
+    buildSizes.buildScratchSize,
+    VK_BUFFER_USAGE_STORAGE_BUFFER_BIT |
+    VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT,
+    VK_SHARING_MODE_EXCLUSIVE,
+    queueFamilyIndex
   );
-  // Bind the buffer to some backing memory:
-  /// @todo <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-  auto accelerationStructure = kr::AccelerationStructure::New(*device, 0,
-    *asBuffer,
-    offset,  /// @todo <-------------
-    size,    /// @todo <-------------
-    VK_ACCELERATION_STRUCTURE_TYPE_BOTTOM_LEVEL_KHR,
-    0   // used in trace capture / replay  
-  );*/
+  // Allocate a buffer to hold the opaque acceleration structure in GPU memory:
+  auto asBackingBuffer = createSingleAllocBuffer(
+    device,
+    device_memory_type,
+    VK_MEMORY_ALLOCATE_DEVICE_ADDRESS_BIT,
+    0, // VK_BUFFER_CREATE_... sparse / protected / replay stuff.
+    buildSizes.accelerationStructureSize,
+    VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_STORAGE_BIT_KHR |
+    VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT,
+    VK_SHARING_MODE_EXCLUSIVE,
+    queueFamilyIndex
+  );
 
+  // Create the Vulkan API handle to the acceleration stucture, bound to the
+  // buffer we allocated for it:
+  auto accelerationStructure = kr::AccelerationStructure::New(
+    *asBackingBuffer,
+    0,
+    buildSizes.accelerationStructureSize,
+    VK_ACCELERATION_STRUCTURE_TYPE_BOTTOM_LEVEL_KHR
+  );
 
-/*const auto build_geo_info = kr::AccelerationStructureBuildGeometryInfoKHR(
+  // Let's get the build going on the GPU:
+
+  const auto rangeInfo = kr::AccelerationStructureBuildRangeInfoKHR(
+    numAabbs,
+    0,
+    0,
+    0 // transformationOffset not used for AABBs.
+  );
+  const VkAccelerationStructureBuildRangeInfoKHR* const rangeInfos = &rangeInfo;
+  const VkAccelerationStructureBuildRangeInfoKHR* const* pprangeInfos = &rangeInfos;
+
+  const auto scratchAddressInfo = kr::BufferDeviceAddressInfo(*asScratchBuffer);
+  auto scratchDataAddress = vkGetBufferDeviceAddress(device, &scratchAddressInfo);
+  const auto build_geo_info = kr::AccelerationStructureBuildGeometryInfoKHR(
     VK_ACCELERATION_STRUCTURE_TYPE_BOTTOM_LEVEL_KHR,
     // Maybe: VK_BUILD_ACCELERATION_STRUCTURE_ALLOW_COMPACTION_BIT_KHR ||
     VK_BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_TRACE_BIT_KHR,
     VK_BUILD_ACCELERATION_STRUCTURE_MODE_BUILD_KHR,
-    nullptr,
-    accelerationStructure, /// @todo <------------------------------------
+    VK_NULL_HANDLE,
+    *accelerationStructure,
     1,
     &asg,
     nullptr,
-    scratchDataAddress /// @todo <------------------------------------
+    VkDeviceOrHostAddressKHR(scratchDataAddress)
   );
-  pVkCmdBuildAccelerationStructuresKHR(VK_NULL_HANDLE, 1, &build_geo_info, nullptr);*/
+  kr::CommandBufferPtr commandBuffer = kr::CommandBuffer::New(commandPool, VK_COMMAND_BUFFER_LEVEL_PRIMARY);
+  VkCommandBufferBeginInfo begin = kr::CommandBufferBeginInfo(VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT, nullptr);
+  vkBeginCommandBuffer(*commandBuffer, &begin);
+  vkCmdBuildAccelerationStructuresKHR(*commandBuffer, 1, &build_geo_info, pprangeInfos);
+  vkEndCommandBuffer(*commandBuffer);
+  vkQueueWaitIdle(queue); /// @todo temp, belt and braces.
+  const auto submit = kr::SubmitInfo(
+    0, // waitSemaphoreCount,
+    nullptr, //pWaitSemaphores,
+    nullptr, // pWaitDstStageMask,
+    1, // commandBufferCount,
+    commandBuffer->GetVkCommandBufferAddress(),
+    0, // signalSemaphoreCount,
+    nullptr // pSignalSemaphores
+  );
+  vkQueueSubmit(queue, 1, &submit, VK_NULL_HANDLE);
+  vkQueueWaitIdle(queue);
+  return accelerationStructure;
+}
+
+/**
+ * Synchronously build a single BLAS, allocating and cleaning up resources.
+ * @note We IDLE the GPU.
+ * @todo Just build the command buffer here, and return the AS, and scratch for
+ * the caller to submit the build and wait idle.
+ */
+inline kr::AccelerationStructurePtr buildTLAS(
+  VkQueue queue,
+  kr::CommandPool& commandPool,
+  VkDeviceSize numInstances,
+  /// A buffer of AABBs that is already in device memory and has VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR set.
+  kr::BufferPtr instances,
+  const uint32_t staging_memory_type,
+  uint32_t device_memory_type,
+  uint32_t queueFamilyIndex)
+{
+   kr::Device& device = commandPool.GetDevice();
+
+  // Work out the storage and scratch space required:
+
+  const VkDeviceOrHostAddressConstKHR instancesAddress = getBufferAddress(device, *instances);
+
+  VkAccelerationStructureGeometryDataKHR geodata;
+  geodata.instances = kr::AccelerationStructureGeometryInstancesDataKHR(
+    false,
+    instancesAddress
+  );
+  const auto asg = kr::AccelerationStructureGeometryKHR(
+    VK_GEOMETRY_TYPE_INSTANCES_KHR,
+    geodata,
+    VK_GEOMETRY_OPAQUE_BIT_KHR | VK_GEOMETRY_NO_DUPLICATE_ANY_HIT_INVOCATION_BIT_KHR
+  );
+
+  auto buildInfo = kr::AccelerationStructureBuildGeometryInfoKHR(
+    VK_ACCELERATION_STRUCTURE_TYPE_TOP_LEVEL_KHR,
+    VK_BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_TRACE_BIT_KHR |
+    VK_BUILD_ACCELERATION_STRUCTURE_ALLOW_COMPACTION_BIT_KHR,
+    VK_BUILD_ACCELERATION_STRUCTURE_MODE_BUILD_KHR,
+    VK_NULL_HANDLE, // Src acceleration structure.
+    VK_NULL_HANDLE, // Dst acceleration structure.
+    uint32_t(1), // geometryCount,
+    &asg, //const VkAccelerationStructureGeometryKHR* pGeometries,
+    nullptr, // const VkAccelerationStructureGeometryKHR* const* ppGeometries,
+    VkDeviceOrHostAddressKHR(0) // (Currently 0) VkDeviceOrHostAddressKHR scratchData
+  );
+
+  auto buildSizes = kr::AccelerationStructureBuildSizesInfoKHR();
+  uint32_t maxPrimitiveCount = numInstances;
+  vkGetAccelerationStructureBuildSizesKHR(device,
+    VK_ACCELERATION_STRUCTURE_BUILD_TYPE_DEVICE_KHR,
+    &buildInfo,
+    &maxPrimitiveCount, // Or just make this nullptr?
+    &buildSizes
+  );
+  KRUST_LOG_INFO << "TLAS buildSizes: accelerationStructureSize=" << buildSizes.accelerationStructureSize << ", buildScratchSize=" << buildSizes.buildScratchSize << ", updateScratchSize=" << buildSizes.updateScratchSize << kr::endlog;
+
+  // Allocate a scratch buffer for the implementation to use while building our
+  // bottom level acceleration structure:
+  auto asScratchBuffer = createSingleAllocBuffer(
+    device,
+    device_memory_type,
+    VK_MEMORY_ALLOCATE_DEVICE_ADDRESS_BIT,
+    0, // VK_BUFFER_CREATE_...
+    buildSizes.buildScratchSize,
+    VK_BUFFER_USAGE_STORAGE_BUFFER_BIT |
+    VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT,
+    VK_SHARING_MODE_EXCLUSIVE,
+    queueFamilyIndex
+  );
+
+  // Allocate a buffer to hold the opaque acceleration structure in GPU memory:
+  auto asBackingBuffer = createSingleAllocBuffer(
+    device,
+    device_memory_type,
+    VK_MEMORY_ALLOCATE_DEVICE_ADDRESS_BIT,
+    0, // VK_BUFFER_CREATE_... sparse / protected / replay stuff.
+    buildSizes.accelerationStructureSize,
+    VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_STORAGE_BIT_KHR |
+    VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT,
+    VK_SHARING_MODE_EXCLUSIVE,
+    queueFamilyIndex
+  );
+
+  // Create the Vulkan API handle to the acceleration stucture, bound to the
+  // buffer we allocated for it:
+  auto accelerationStructure = kr::AccelerationStructure::New(
+    *asBackingBuffer,
+    0,
+    buildSizes.accelerationStructureSize,
+    VK_ACCELERATION_STRUCTURE_TYPE_TOP_LEVEL_KHR
+  );
+
+  // Let's get the build going on the GPU:
+
+  const auto rangeInfo = kr::AccelerationStructureBuildRangeInfoKHR(
+    numInstances,
+    0,
+    0,
+    0
+  );
+  const VkAccelerationStructureBuildRangeInfoKHR* const rangeInfos = &rangeInfo;
+  const VkAccelerationStructureBuildRangeInfoKHR* const* pprangeInfos = &rangeInfos;
+
+  const auto build_geo_info = kr::AccelerationStructureBuildGeometryInfoKHR(
+    VK_ACCELERATION_STRUCTURE_TYPE_TOP_LEVEL_KHR,
+    // Maybe: VK_BUILD_ACCELERATION_STRUCTURE_ALLOW_COMPACTION_BIT_KHR ||
+    VK_BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_TRACE_BIT_KHR,
+    VK_BUILD_ACCELERATION_STRUCTURE_MODE_BUILD_KHR,
+    VK_NULL_HANDLE,
+    *accelerationStructure,
+    1,
+    &asg,
+    nullptr,
+    VkDeviceOrHostAddressKHR(getBufferAddress(device, *asScratchBuffer).deviceAddress)
+  );
+  kr::CommandBufferPtr commandBuffer = kr::CommandBuffer::New(commandPool, VK_COMMAND_BUFFER_LEVEL_PRIMARY);
+  VkCommandBufferBeginInfo begin = kr::CommandBufferBeginInfo(VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT, nullptr);
+  vkBeginCommandBuffer(*commandBuffer, &begin);
+  vkCmdBuildAccelerationStructuresKHR(*commandBuffer, 1, &build_geo_info, pprangeInfos);
+  vkEndCommandBuffer(*commandBuffer);
+  vkQueueWaitIdle(queue); /// @todo temp, belt and braces.
+  const auto submit = kr::SubmitInfo(
+    0, // waitSemaphoreCount,
+    nullptr, //pWaitSemaphores,
+    nullptr, // pWaitDstStageMask,
+    1, // commandBufferCount,
+    commandBuffer->GetVkCommandBufferAddress(),
+    0, // signalSemaphoreCount,
+    nullptr // pSignalSemaphores
+  );
+  vkQueueSubmit(queue, 1, &submit, VK_NULL_HANDLE);
+  vkQueueWaitIdle(queue);
+  return accelerationStructure;
 }
 
 const Vec4InMemory g_spheres[] = {
@@ -778,7 +990,7 @@ class RayQueries1Application : public Krust::IO::Application
   void DoAddRequiredDeviceExtensions(std::vector<const char*>& extensionNames) const override
   {
     extensionNames.push_back(VK_KHR_ACCELERATION_STRUCTURE_EXTENSION_NAME);
-    extensionNames.push_back(VK_KHR_DEFERRED_HOST_OPERATIONS_EXTENSION_NAME);
+    extensionNames.push_back(VK_KHR_DEFERRED_HOST_OPERATIONS_EXTENSION_NAME); ///< @todo Do I need this for queries or just for pipeline?
     extensionNames.push_back(VK_KHR_RAY_QUERY_EXTENSION_NAME);
   }
 
@@ -959,9 +1171,11 @@ public:
     }
 
 
-    // Build the acceleration structures for the scene:
+    // Upload the spheres to GPU memory and build the acceleration structures for
+    // the scene:
+
     auto spheresSpan = kr::span<const Vec4InMemory, kr::dynamic_extent>(g_spheres);
-    auto aabbs = spheresToAABBs(spheresSpan);  ///< @todo FixMe. TEMP: we can convert on the GPU in the future when running a compute pass is async.
+    auto aabbs = spheresToAABBs(spheresSpan);
     auto sphereBuffer = uploadToDeviceBuffer<Vec4InMemory>(
       *mGpuInterface,
       *mDefaultQueue,
@@ -971,8 +1185,10 @@ public:
       VK_BUFFER_USAGE_TRANSFER_SRC_BIT, // So we can download it again for confirmation that it uploaded correctly. Hopefully not an anti-optimisation trigger.
       staging_mem_type,
       device_mem_type,
+      0, // device_mem_allocate_flags
       mDefaultDrawingQueueFamily); ///< @todo Should be on a transfer queue (queue with transfer flag set and fewest other flags also set).
 
+    KRUST_BEGIN_DEBUG_BLOCK
     std::vector<Vec4InMemory> roundtriped_spheres;
     roundtriped_spheres.resize(spheresSpan.size());
     auto downloadedSpheresSpan = kr::span<Vec4InMemory, kr::dynamic_extent>(roundtriped_spheres);
@@ -985,19 +1201,25 @@ public:
       staging_mem_type,
       mDefaultDrawingQueueFamily
     );
+    KRUST_UNUSED_VAR(spheresDownloaded);
     KRUST_ASSERT1(spheresDownloaded, "Spheres couldn't be downloaded to host");
     for(unsigned i = 0; i < spheresSpan.size(); ++i)
     {
       const auto& a = g_spheres[i];
       const auto& b = roundtriped_spheres[i];
       KRUST_ASSERT2(all_of(load(a) == load(b)), "Failed to roundtrip a sphere to device memory and back.");
+      KRUST_UNUSED_VAR(a);
+      KRUST_UNUSED_VAR(b);
     }
+    KRUST_END_DEBUG_BLOCK
 
     kr::BufferPtr aabbBuffer = spheresToAABBs(
       *mDefaultQueue,
       *mCommandPool,
       spheresSpan.size(),
       *sphereBuffer,
+      VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT |
+      VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR |
       VK_BUFFER_USAGE_TRANSFER_SRC_BIT, // Only needed while debugging so we can download it and compare to a CPU reference.
       device_mem_type,
       mDefaultDrawingQueueFamily
@@ -1015,20 +1237,94 @@ public:
       staging_mem_type,
       mDefaultDrawingQueueFamily
     );
+    KRUST_UNUSED_VAR(aabbsDownloaded);
     KRUST_ASSERT1(aabbsDownloaded, "Downloading the GPU-generated AABBs failed.");
     KRUST_ASSERT1(std::equal(&aabbs[0].minX, &aabbs[spheresSpan.size()].minX, &downloaded_aabbs[0], &downloaded_aabbs[spheresSpan.size()*6]), "The AABBs generated on the GPU differ from the reference made on the CPU.");
 
-    //
-    // For aabb bufer: VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT
-    //         Memory must be: VK_MEMORY_ALLOCATE_DEVICE_ADDRESS_BIT
+    // Build the bottom-level acceleration structure:
+    kr::AccelerationStructurePtr blas = buildSingleGeomAABBBLAS(
+      *mDefaultQueue,
+      *mCommandPool,
+      spheresSpan.size(),
+      *aabbBuffer,
+      staging_mem_type,
+      device_mem_type,
+      mDefaultPresentQueueFamily
+    );
 
-    kr::CommandBufferPtr buildBuffer = kr::CommandBuffer::New(*mCommandPool, VK_COMMAND_BUFFER_LEVEL_PRIMARY);
-    buildSingleGeomAABBBLAS(buildBuffer, aabbs, staging_mem_type, device_mem_type, mDefaultPresentQueueFamily);
+
+    // Build the top-level AS:
+
+    // Put a single instance with an identity transformation into a device-visible
+    // buffer readable for AS builds:
+    VkTransformMatrixKHR identity {
+      1, 0, 0, 0, // x
+      0, 1, 0, 0, // y
+      0, 0, 1, 0  // z
+    };
+    const auto blasAddressInfo = kr::AccelerationStructureDeviceAddressInfoKHR(*blas);
+    VkAccelerationStructureInstanceKHR instance = kr::AccelerationStructureInstanceKHR(
+      identity,
+      0,
+      0xff, // "an 8-bit visibility mask for the geometry. The instance may only be hit if rayMask & instance.mask != 0"
+      0, // instanceShaderBindingTableRecordOffset (not important for us)
+      0, // flags (e.g. make the instance opaque)
+      vkGetAccelerationStructureDeviceAddressKHR(*mGpuInterface, &blasAddressInfo)
+    );
+    KRUST_ASSERT1(instance.accelerationStructureReference != 0, "Failed to get the address of the BLAS.");
 
 
+    auto instanceSpan = kr::span<const VkAccelerationStructureInstanceKHR, kr::dynamic_extent>(&instance, 1);
+    auto instanceBuffer = uploadToDeviceBuffer<VkAccelerationStructureInstanceKHR>(
+      *mGpuInterface,
+      *mDefaultQueue,
+      *mCommandPool,
+      instanceSpan,
+      VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT |
+      VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR |
+      VK_BUFFER_USAGE_TRANSFER_SRC_BIT |  // So we can download it again for confirmation that it uploaded correctly. Hopefully not an anti-optimisation trigger.
+      VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, ///< @todo Need this one?
+      staging_mem_type,
+      device_mem_type,
+      VK_MEMORY_ALLOCATE_DEVICE_ADDRESS_BIT,
+      mDefaultDrawingQueueFamily);
+    KRUST_ASSERT1(instanceBuffer.Get(), "Failed to upload instances to GPU buffer.");
 
+    // Download the buffer we just uploaded to be sure it contains what we expect:
+    KRUST_BEGIN_DEBUG_BLOCK
+    VkAccelerationStructureInstanceKHR downloaded_instance;
+    const bool instanceDownloaded = downloadFromDeviceBuffer(
+      *mGpuInterface,
+      *instanceBuffer,
+      *mDefaultQueue,
+      *mCommandPool,
+      kr::span<VkAccelerationStructureInstanceKHR, kr::dynamic_extent>(&downloaded_instance, 1),
+      staging_mem_type,
+      mDefaultDrawingQueueFamily
+    );
+    KRUST_UNUSED_VAR(instanceDownloaded);
+    KRUST_ASSERT1(instanceDownloaded, "Download of instance failed.");
+    KRUST_ASSERT1(0 == memcmp(&instance, &downloaded_instance, sizeof(VkAccelerationStructureInstanceKHR)), "GPU roundtripped instance not the same.");
+    KRUST_END_DEBUG_BLOCK
 
-    // BOOKMARK <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+    auto tlas = buildTLAS(
+      *mDefaultQueue,
+      *mCommandPool,
+      instanceSpan.size(),
+      *instanceBuffer,
+      staging_mem_type,
+      device_mem_type,
+      mDefaultPresentQueueFamily
+    );
+
+    /// @todo: ...
+    /// > Save the AS structures and the sphere buffer to member vars.
+    if(!tlas || !blas || !sphereBuffer){
+      return false;
+    }
+    mSphereBuffer = sphereBuffer;
+    mBlas = blas;
+    mTlas = tlas;
 
     return true;
   }
@@ -1380,6 +1676,11 @@ public:
   };
   ShaderParams* mShaderParams {&mShaderParamsOptions[MATERIALS_SHADER]};
   const char* mShaderName = MATERIALS_SHADER;
+
+  // The scene uploaded abnd ready for ray queries:
+  kr::BufferPtr mSphereBuffer;
+  kr::AccelerationStructurePtr mBlas;
+  kr::AccelerationStructurePtr mTlas;
 };
 
 
