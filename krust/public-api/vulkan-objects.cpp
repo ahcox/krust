@@ -62,7 +62,7 @@ const VkResult result = vkCreate##NAME##SUFFIX(device, &info, Internal::sAllocat
   if (result != VK_SUCCESS)\
   {\
     m##NAME = VK_NULL_HANDLE;\
-    ThreadBase::Get().GetErrorPolicy().VulkanError("vkCreate"#NAME##SUFFIX, result, nullptr, __FUNCTION__, __FILE__, __LINE__);\
+    ThreadBase::Get().GetErrorPolicy().VulkanError("vkCreate"#NAME#SUFFIX, result, nullptr, __FUNCTION__, __FILE__, __LINE__);\
   }
 
 #define KRUST_VKOBJ_CONSTRUCTOR_EX(NAME, SUFFIX) \
@@ -79,8 +79,9 @@ NAME::~NAME() \
 }
 
 #define KRUST_VKOBJ_LIFETIME_EX(NAME, SUFFIX) \
+KRUST_VKOBJ_CONSTRUCTOR_EX(NAME, SUFFIX) \
 KRUST_VKOBJ_DESTRUCTOR_EX(NAME, SUFFIX)
-//KRUST_VKOBJ_CONSTRUCTOR_EX(NAME, SUFFIX)
+
 
 namespace Krust
 {
