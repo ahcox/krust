@@ -185,21 +185,44 @@ private:
 class AccelerationStructure : public VulkanObject
 {
   /** Hidden constructor to prevent users doing naked `new`s.*/
-  /// @todo Should the buffer be owned???????????????????????????????????????????????????????????????????????/ @fixme ?
-  AccelerationStructure(Device& device, const VkAccelerationStructureCreateInfoKHR& info);
+  AccelerationStructure(Buffer& device, const VkAccelerationStructureCreateInfoKHR& info);
 
 public:
   /**
    * @brief Creator for new AccelerationStructure objects.
    * @return Smart pointer wrapper to keep the AccelerationStructure alive.
    */
-  static AccelerationStructurePtr New(Device& device, VkAccelerationStructureCreateFlagsKHR createFlags, VkBuffer buffer, VkDeviceSize offset, VkDeviceSize size,  VkAccelerationStructureTypeKHR type, VkDeviceAddress deviceAddress);
+  static AccelerationStructurePtr New(
+    Buffer& buffer,
+    VkDeviceSize offset,
+    VkDeviceSize size,
+    VkAccelerationStructureTypeKHR type,
+    /// Extension structs for passing extra parameters to the Vulkan create function.
+    const void* pNext = nullptr,
+    /// Zero is usually what you want as of Vulkan 1.2.
+    VkAccelerationStructureCreateFlagsKHR createFlags = 0,
+    /// **Don't use this in a normal application**. From the spec: "deviceAddress
+    /// is the device address requested for the acceleration structure if the
+    /// accelerationStructureCaptureReplay feature is being used. If deviceAddress
+    /// is zero, no specific address is requested. If deviceAddress is not zero,
+    /// deviceAddress must be an address retrieved from an identically created
+    /// acceleration structure on the same implementation. The acceleration
+    /// structure must also be placed on an identically created buffer and at the
+    /// same offset."
+    VkDeviceAddress deviceAddress = 0
+  );
   ~AccelerationStructure();
   operator VkAccelerationStructureKHR() const { return mAccelerationStructure; }
+  /// The GPU device this AccelerationStructure is tied to. We are keeping it
+  /// alive as long as this AccelerationStructure is.
+  Device& GetDevice() const;
+  /// The buffer holding this acceleration structure's opaque in-memory representation.
+  Buffer& GetBuffer() const { return *mBuffer; }
 
 private:
-  /// The GPU device this AccelerationStructure is tied to. Keep it alive as long as this AccelerationStructure is.
-  DevicePtr mDevice;
+  /// The buffer holding this acceleration structure's opaque in-memory representation.
+  BufferPtr mBuffer;
+
   /// The raw Vulkan AccelerationStructure handle.
   VkAccelerationStructureKHR mAccelerationStructure = VK_NULL_HANDLE;
 };
