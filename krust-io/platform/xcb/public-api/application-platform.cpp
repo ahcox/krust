@@ -270,7 +270,7 @@ void Krust::IO::ApplicationPlatform::ProcessEvent(const xcb_generic_event_t *eve
       }
 
       case XCB_CLIENT_MESSAGE: {
-        KRUST_LOG_DEBUG << "XCB_CLIENT_MESSAGE recieved. Going down." << endlog;
+        KRUST_LOG_DEBUG << "XCB_CLIENT_MESSAGE recieved. Attempting a clean shutdown." << endlog;
         // Reset the keyboard repeat mode for other apps before we die:
         /// @todo Reset the keyboard in an atexit handler (set_terminate(), at_quick_exit()) so it always runs.
         uint32_t mask = XCB_KB_AUTO_REPEAT_MODE;
