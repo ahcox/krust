@@ -75,7 +75,7 @@ NAME::NAME(Device& device, const Vk##NAME##CreateInfo##SUFFIX& info) : \
 #define KRUST_VKOBJ_DESTRUCTOR_EX(NAME, SUFFIX) \
 NAME::~NAME() \
 {\
-    vkDestroy##NAME##SUFFIX(*mDevice, m##NAME, Internal::sAllocator);\
+    vkDestroy##NAME##SUFFIX(GetDevice(), m##NAME, Internal::sAllocator);\
 }
 
 #define KRUST_VKOBJ_LIFETIME_EX(NAME, SUFFIX) \
@@ -170,8 +170,31 @@ void CommandBuffer::Reset(const VkCommandBufferResetFlags flags, bool deleteKeep
 
 
 // -----------------------------------------------------------------------------
-KRUST_VKOBJ_LIFETIME_EX(AccelerationStructure, KHR);
+// AccelerationStructure
+AccelerationStructure::AccelerationStructure(Buffer& buffer, const VkAccelerationStructureCreateInfoKHR& info) :
+  mBuffer(&buffer)
+{
+  Device& device = buffer.GetDevice();
+  KRUST_CALL_CREATOR_EX(AccelerationStructure, KHR);
+}
 
+KRUST_VKOBJ_DESTRUCTOR_EX(AccelerationStructure, KHR)
+
+AccelerationStructurePtr AccelerationStructure::New(
+    Buffer& buffer,
+    VkDeviceSize offset,
+    VkDeviceSize size,
+    VkAccelerationStructureTypeKHR type,
+    const void* pNext,
+    VkAccelerationStructureCreateFlagsKHR createFlags,
+    VkDeviceAddress deviceAddress
+  ) {
+    const auto createInfo = AccelerationStructureCreateInfoKHR(createFlags, buffer, offset, size, type, deviceAddress);
+    AccelerationStructurePtr as(new AccelerationStructure(buffer, createInfo));
+    return as;
+  }
+
+Device& AccelerationStructure::GetDevice() const { return mBuffer->GetDevice(); }
 
 // -----------------------------------------------------------------------------
 CommandPool::CommandPool(Device & device, VkCommandPoolCreateFlags flags, uint32_t queueFamilyIndex) :
