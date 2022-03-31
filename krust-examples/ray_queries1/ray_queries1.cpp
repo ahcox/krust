@@ -1316,9 +1316,7 @@ public:
       device_mem_type,
       mDefaultPresentQueueFamily
     );
-
-    /// @todo: ...
-    /// > Save the AS structures and the sphere buffer to member vars.
+    /// Save the AS structures and the sphere buffer to member vars.
     if(!tlas || !blas || !sphereBuffer){
       return false;
     }
@@ -1331,6 +1329,9 @@ public:
 
   bool DoPreDeInit()
   {
+    mSphereBuffer.Reset();
+    mBlas.Reset();
+    mTlas.Reset();
     mComputePipeline.Reset();
     mPipelineLayout.Reset();;
     mDescriptorSets.clear();
