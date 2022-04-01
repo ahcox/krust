@@ -47,6 +47,10 @@ const float half_subpixel_dim = subpixel_dim * 0.5f;
 
 layout(local_size_x = 8, local_size_y = 8, local_size_z = 1) in;
 layout(rgba8, set = 0, binding = 0) uniform restrict writeonly image2D framebuffer;
+layout(set = 0, binding = 1) uniform restrict readonly ub_t
+{
+    vec4 spheres[68];
+} ub;
 
 layout(push_constant) uniform frame_params_t
 {
@@ -80,113 +84,9 @@ struct HitRecord {
     bool front_face;
 };
 
-#if USE_FINAL_SCENE == 1
 // Regenerate this using the following easily built code:
 // https://github.com/ahcox/raytracing.github.io/blob/ahc-2021-10-01-dump_scene/src/InOneWeekend/main.cc
 #include "rtow_final_scene.inc.glsl"
-#else
-
-// Our scene (a sphere is {x,y,x,radius}):
-const vec4 spheres[] = {
-    vec4(0,0,-1, 0.5),
-    vec4(0,-100.5,-1, 100),
-
-    vec4(-1, 0, -1, 0.5), // Left ball
-    vec4(1,  0, -1, 0.5),
-#if 0
-    vec4(-1, 1, -1, 0.5),
-    vec4(1,  1, -1, 0.5),
-    vec4(-1, 1.5, -1, 0.5),
-    vec4(1,  1.5, -1, 0.5),
-#endif
-#if 0
-    vec4(vec3(0,-100.5,-1) + normalize(vec3(-1, 88, -1)) * 100, 0.5f),
-    vec4(vec3(0,-100.5,-1) + normalize(vec3(0,  88, -1)) * 100, 0.5f),
-    vec4(vec3(0,-100.5,-1) + normalize(vec3(1,  88, -1)) * 100, 0.5f),
-
-    vec4(vec3(0,-100.5,-1) + normalize(vec3(0.5,  88, -0.5)) * 100, 0.25f),
-    vec4(vec3(0,-100.5,-1) + normalize(vec3(0.25,  88, -0.25)) * 100, 0.125f),
-    vec4(vec3(0,-100.5,-1) + normalize(vec3(0.125,  88, -0.125)) * 100, 0.0625f),
-
-    vec4(vec3(0,-100.5,-1) + normalize(vec3(0.5,  88, 0.5)) * 100, 0.25f),
-    vec4(vec3(0,-100.5,-1) + normalize(vec3(-0.5,  88, 0.5)) * 100, 0.25f),
-    vec4(vec3(0,-100.5,-1) + normalize(vec3(-0.5,  88, -0.5)) * 100, 0.25f),
-#endif
-
-};
-
-// A material for each sphere above (separate arrays keeps this material data out of
-// cache during traversal / intersection):
-const MaterialRef sphere_materials[spheres.length()] = {
-    //{MT_LAMBERTIAN, 9us},
-    {MT_LAMBERTIAN, 10us}, /// Centre ball
-    {MT_LAMBERTIAN, 8us}, /// World
-
-    ///{MT_LAMBERTIAN, 1us},
-    {MT_DIELECTRIC, 1us}, // Left ball
-    {MT_MIRROR, 2us}, // {MT_METAL, 2us},      // Right Ball
-#if 0
-    {MT_MIRROR, 1us},
-    {MT_MIRROR, 2us},
-    {MT_MIRROR, 1us},
-    {MT_MIRROR, 2us},
-#endif
-#if 0
-    {MT_MIRROR, 1us},
-    {MT_MIRROR, 1us},
-    {MT_METAL, 1us},
-
-    {MT_MIRROR, 2us},
-    {MT_MIRROR, 2us},
-    {MT_MIRROR, 2us},
-    {MT_MIRROR, 3us},
-    {MT_MIRROR, 3us},
-    {MT_METAL, 3us},
-#endif
-};
-
-const vec3 lambertian_params[] = {
-    {0.5f, 0.5f, 0.5f}, // Grey albedo
-    {1.0f, 1.0f, 1.0f}, // White albedo
-    {1.0f, 0.0f, 0.0f}, // Primary Red albedo
-    {0.0f, 1.0f, 0.0f}, // Primary Green albedo
-    {0.0f, 0.0f, 1.0f}, // Primary Blue albedo
-    // 5:
-    {1.0f, 0.75f, 0.75f}, // Pastel Red albedo
-    {0.75f, 1.0f, 0.75f}, // Pastel Green albedo
-    {0.75f, 0.75f, 1.0f}, // Pastel Blue albedo
-
-    // 8:
-    {0.8f, 0.8f, 0.0f}, // Yellow ground
-    {0.7f, 0.3f, 0.3f}, // Salmon pink centre ball.
-    {0.1f, 0.2f, 0.5f}, // Dark blue centre ball (Image 15).
-
-};
-
-const vec3 mirror_params[] = {
-    {0.5f, 0.5f, 0.5f},  // Grey albedo
-    {0.8f, 0.8f, 0.8f},  // light grey albedo
-    {0.8f, 0.6f, 0.2f},  // Yellow albedo
-    {0.1f, 0.1f, 0.99f}, // Blue albedo
-};
-
-/// {R,G,B,Fuzziness}
-const vec4 metal_params[] = {
-    {0.5f, 0.5f, 0.5f,  0.1f}, // Grey albedo
-    {0.8f, 0.8f, 0.8f,  0.3f}, // light grey albedo (book left sphere)
-    {0.8f, 0.6f, 0.2f,  1.0f}, // Yellow albedo  (book right sphere)
-    {0.1f, 0.1f, 0.99f, 0.1f}, // Blue albedo
-};
-
-/// {R,G,B, Index of Refraction}
-const vec4 dielectric_params[] = {
-    {0.95f, 0.95f, 0.95f, 1.5f}, // Grey albedo
-    {1.0f, 1.0f, 1.0f,    1.5f}, // (book left sphere)
-    {0.98f, 0.98f, 0.4f,  1.5f}, // Yellow albedo 
-    {0.90f, 0.95f, 0.98f, 1.5f}, // Blue tint albedo
-};
-
-#endif // USE_FINAL_SCENE == 1
 
 /// Traverse our scene, which is just a single list of spheres in worldspace,
 /// and determine the distance to the first hit point.
@@ -194,12 +94,11 @@ const vec4 dielectric_params[] = {
 bool closest_sphere_hit(in vec3 ray_origin, in vec3 ray_dir_unit, in float t_min, inout HitRecord hit)
 {
     bool found_hit = false;
-    for(uint i = 0; i < spheres.length(); ++i)
+    for(uint i = 0; i < ub.spheres.length(); ++i)
     {
-        //float t;
-        //if(sphere_hit(ray_origin, ray_dir_unit, spheres[i], t)){
         float t1, t2;
-        if(sphere_hits(ray_origin, ray_dir_unit, spheres[i], t1, t2)){
+
+        if(sphere_hits(ray_origin, ray_dir_unit, ub.spheres[i], t1, t2)){
 
             if(t1 >= t_min && t1 < hit.t){
                 hit.t = t1;
@@ -223,10 +122,10 @@ bool closest_solid_sphere_hit(in vec3 ray_origin, in vec3 ray_dir_unit, in float
 {
     hit.front_face = true; // Our sphere intersect fails on backfaces currently.
     bool found_hit = false;
-    for(uint i = 0; i < spheres.length(); ++i)
+    for(uint i = 0; i < ub.spheres.length(); ++i)
     {
         float t1, t2;
-        if(sphere_hits(ray_origin, ray_dir_unit, spheres[i], t1, t2)){
+        if(sphere_hits(ray_origin, ray_dir_unit, ub.spheres[i], t1, t2)){
             if(t1 < t_min && t2 > t_min){
                 hit.t = t_min;
                 hit.prim = uint16_t(i);
@@ -385,7 +284,7 @@ vec3 shoot_ray(inout highp uint32_t seed, in vec3 ray_origin, in vec3 ray_dir_un
 #endif
             // Scatter a new ray from the intersection point according to the material
             // properties of the object we have hit:
-            vec4 sphere = spheres[uint(hit.prim)];
+            vec4 sphere = ub.spheres[uint(hit.prim)];
             const vec3 new_ray_origin = ray_origin + ray_dir_unit * hit.t;
             const vec3 surface_norm = (new_ray_origin - sphere.xyz) * ((1.0f / sphere.w) * (hit.front_face ? 1.0f : -1.0f));
             vec3 scatter_attenuation;
@@ -488,7 +387,7 @@ void main()
     // Cheaper Gamma of 2:
     // pixel = linear_to_gamma_2_0(pixel);
     // Show that increasing Y coordinates are visually going down the image:
-    // pixel.r = gl_GlobalInvocationID.y / float(fp.fb_height); pixel.g *= 0.1; pixel.b *= 0.1;
+    // pixel.r *= gl_GlobalInvocationID.y / float(fp.fb_height); pixel.g *= 0.1; pixel.b *= 0.1;
     imageStore(framebuffer, ivec2(gl_GlobalInvocationID.xy), vec4(pixel, 1.0f));
 #endif
 }
