@@ -1118,46 +1118,6 @@ public:
       nullptr // VkSpecializationInfo
     );
 
-    // Define the descriptor and pipeline layouts:
-
-    const auto fbBinding = kr::DescriptorSetLayoutBinding(
-      0, // Binding to the first location
-      VK_DESCRIPTOR_TYPE_STORAGE_IMAGE,
-      1,
-      VK_SHADER_STAGE_COMPUTE_BIT,
-      nullptr // No immutable samplers.
-    );
-
-    auto descriptorSetLayout = kr::DescriptorSetLayout::New(*mGpuInterface, 0, 1, &fbBinding);
-    mPipelineLayout = kr::PipelineLayout::New(*mGpuInterface,
-      0,
-      *descriptorSetLayout,
-      kr::PushConstantRange(VK_SHADER_STAGE_COMPUTE_BIT, 0, sizeof(Pushed))
-      );
-
-    // Construct our compute pipeline:
-    mComputePipeline = kr::ComputePipeline::New(*mGpuInterface, kr::ComputePipelineCreateInfo(
-      0,    // no flags
-      ssci,
-      *mPipelineLayout,
-      VK_NULL_HANDLE, // no base pipeline
-      -1 // No index of a base pipeline.
-    ));
-
-    // Create a descriptor pool and allocate a matching descriptorSet for each image:
-    VkDescriptorPoolSize poolSizes[1] = {{VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, uint32_t(mSwapChainImages.size())}};
-    mDescriptorPool = kr::DescriptorPool::New(*mGpuInterface, 0, uint32_t(mSwapChainImages.size()), uint32_t(1), poolSizes);
-    for(unsigned i = 0; i < mSwapChainImages.size(); ++i)
-    {
-      auto set = kr::DescriptorSet::Allocate(*mDescriptorPool, *descriptorSetLayout);
-      mDescriptorSets.push_back(set);
-      auto imageInfo = kr::DescriptorImageInfo(VK_NULL_HANDLE, mSwapChainImageViews[i], VK_IMAGE_LAYOUT_GENERAL);
-      auto write = kr::WriteDescriptorSet(*set, 0, 0, 1, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, &imageInfo, nullptr, nullptr);
-      vkUpdateDescriptorSets(*mGpuInterface, 1, &write, 0, nullptr);
-    }
-
-    mLinePrinter = std::make_unique<kr::LinePrinter>(*mGpuInterface, kr::span {mSwapChainImageViews});
-
     // Examine heaps and decide on staging and on-device storage types and heaps:
     const auto staging_mem_type = kr::FindFirstMemoryTypeWithProperties(mGpuMemoryProperties, 0xffffffff, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT | VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
     if(!staging_mem_type){
@@ -1170,7 +1130,6 @@ public:
       return false;
     }
 
-
     // Upload the spheres to GPU memory and build the acceleration structures for
     // the scene:
 
@@ -1182,6 +1141,7 @@ public:
       *mCommandPool,
       spheresSpan,
       VK_BUFFER_USAGE_STORAGE_BUFFER_BIT |
+      VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT | // Remove this if we have larger buffers of spheres that don't fit in uniforms.
       VK_BUFFER_USAGE_TRANSFER_SRC_BIT, // So we can download it again for confirmation that it uploaded correctly. Hopefully not an anti-optimisation trigger.
       staging_mem_type,
       device_mem_type,
@@ -1252,7 +1212,6 @@ public:
       mDefaultPresentQueueFamily
     );
 
-
     // Build the top-level AS:
 
     // Put a single instance with an identity transformation into a device-visible
@@ -1272,7 +1231,6 @@ public:
       vkGetAccelerationStructureDeviceAddressKHR(*mGpuInterface, &blasAddressInfo)
     );
     KRUST_ASSERT1(instance.accelerationStructureReference != 0, "Failed to get the address of the BLAS.");
-
 
     auto instanceSpan = kr::span<const VkAccelerationStructureInstanceKHR, kr::dynamic_extent>(&instance, 1);
     auto instanceBuffer = uploadToDeviceBuffer<VkAccelerationStructureInstanceKHR>(
@@ -1323,6 +1281,65 @@ public:
     mSphereBuffer = sphereBuffer;
     mBlas = blas;
     mTlas = tlas;
+
+    // Define the descriptor and pipeline layouts:
+
+    const VkDescriptorSetLayoutBinding bindings[] {
+      // Framebuffer colour buffer as a R/W storage buffer:
+      kr::DescriptorSetLayoutBinding(
+        0, // Binding to the first location
+        VK_DESCRIPTOR_TYPE_STORAGE_IMAGE,
+        1,
+        VK_SHADER_STAGE_COMPUTE_BIT,
+        nullptr // No immutable samplers.
+      ),
+
+      // The sphere positions and radii in a uniform buffer:
+      // It would make more sense to have this in a storage buffer as uniforms and uniform cache are a limited resource.
+      kr::DescriptorSetLayoutBinding(
+        1, // Binding to the second location
+        VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+        1,
+        VK_SHADER_STAGE_COMPUTE_BIT,
+        nullptr // No immutable samplers.
+      )
+    };
+
+    auto descriptorSetLayout = kr::DescriptorSetLayout::New(*mGpuInterface, 0, 2, bindings);
+    mPipelineLayout = kr::PipelineLayout::New(*mGpuInterface,
+      0,
+      *descriptorSetLayout,
+      kr::PushConstantRange(VK_SHADER_STAGE_COMPUTE_BIT, 0, sizeof(Pushed))
+      );
+
+    // Construct our compute pipeline:
+    mComputePipeline = kr::ComputePipeline::New(*mGpuInterface, kr::ComputePipelineCreateInfo(
+      0,    // no flags
+      ssci,
+      *mPipelineLayout,
+      VK_NULL_HANDLE, // no base pipeline
+      -1 // No index of a base pipeline.
+    ));
+
+    // Create a descriptor pool and allocate a matching descriptorSet for each image:
+    VkDescriptorPoolSize poolSizes[1] = {{VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, uint32_t(mSwapChainImages.size())}};
+    mDescriptorPool = kr::DescriptorPool::New(*mGpuInterface, 0, uint32_t(mSwapChainImages.size()), uint32_t(1), poolSizes);
+    for(unsigned i = 0; i < mSwapChainImages.size(); ++i)
+    {
+      auto set = kr::DescriptorSet::Allocate(*mDescriptorPool, *descriptorSetLayout);
+      mDescriptorSets.push_back(set);
+      auto imageInfo  = kr::DescriptorImageInfo(VK_NULL_HANDLE, mSwapChainImageViews[i], VK_IMAGE_LAYOUT_GENERAL);
+      auto bufferInfo = kr::DescriptorBufferInfo(*sphereBuffer, 0,
+       68 * 16 ///< @todo Do not hardcode this.
+      );
+      VkWriteDescriptorSet write[] = {
+        kr::WriteDescriptorSet(*set, 0, 0, 1, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, &imageInfo, nullptr, nullptr),
+        kr::WriteDescriptorSet(*set, 1, 0, 1, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, nullptr, &bufferInfo, nullptr)
+      };
+      vkUpdateDescriptorSets(*mGpuInterface, 2, write, 0, nullptr);
+    }
+
+    mLinePrinter = std::make_unique<kr::LinePrinter>(*mGpuInterface, kr::span {mSwapChainImageViews});
 
     return true;
   }
