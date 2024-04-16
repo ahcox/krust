@@ -40,6 +40,8 @@
 namespace Krust {
 namespace IO {
 
+namespace kr = Krust;
+
 const char* const KRUST_ENGINE_NAME = "Krust";
 const uint32_t KRUST_ENGINE_VERSION_NUMBER = 0;
 
@@ -373,8 +375,28 @@ bool Application::InitVulkanGpus() {
     KRUST_LOG_ERROR << "No GPUs found" << endlog;
     return false;
   }
-  // Just pick the first one for now: (later we probably want to choose one capable of displaying and with the right queue types)
+  // Default to picking the first one:
   mGpu = gpus[0];
+  // Gather data on GPUs and allow derived applications to choose one:
+  // (The default choice is dominated by discrete > integrated > virtual > CPU devices.)
+  // (later we probably want to choose one capable of displaying and with the right queue types)
+  std::vector<VkPhysicalDeviceProperties> gpuProperties;
+  std::vector<VkPhysicalDeviceFeatures2> gpuFeatures;
+  std::vector<VkPhysicalDeviceMemoryProperties> gpuMemoryProperties;
+  for(auto gpu : gpus)
+  {
+    VkPhysicalDeviceProperties properties;
+    vkGetPhysicalDeviceProperties(gpu, &properties);
+    gpuProperties.push_back(properties);
+    auto features = kr::PhysicalDeviceFeatures2();
+    vkGetPhysicalDeviceFeatures2(gpu, &features);
+    gpuFeatures.push_back(features);
+    VkPhysicalDeviceMemoryProperties memoryProperties;
+    vkGetPhysicalDeviceMemoryProperties(gpu, &memoryProperties);
+    gpuMemoryProperties.push_back(memoryProperties);
+  }
+
+  mGpu = gpus[DoChoosePhysicalDevice(gpus, gpuProperties, gpuFeatures, gpuMemoryProperties)];
 
   // Get the info for our GPU:
 
@@ -890,6 +912,125 @@ uint32_t Application::DoChooseVulkanVersion() const
 {
   // We need 1.1 to use the VkPhysicalDeviceFeatures2 configuration mechanism.
   return VK_API_VERSION_1_1;
+}
+
+namespace {
+uint32_t ScorePhysicalDevice(VkPhysicalDevice gpu, const VkPhysicalDeviceProperties& props, const VkPhysicalDeviceFeatures2& feats, const VkPhysicalDeviceMemoryProperties& memProps)
+{
+  uint score = 0;
+
+  if(props.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU)
+  {
+    score += 10000;
+  }
+  else if(props.deviceType == VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU)
+  {
+    score += 9000;
+  }
+  else if(props.deviceType == VK_PHYSICAL_DEVICE_TYPE_VIRTUAL_GPU)
+  {
+    score += 8000;
+  }
+  else if(props.deviceType == VK_PHYSICAL_DEVICE_TYPE_CPU)
+  {
+    score += 7000;
+  }
+  else if(props.deviceType == VK_PHYSICAL_DEVICE_TYPE_OTHER)
+  {
+    score += 6000;
+  }
+  else
+  {
+    KRUST_LOG_WARN << "Unknown device type: " << props.deviceType << endlog;
+  }
+
+  if(props.limits.maxImageDimension2D >= 4096)
+  {
+    score += 1000;
+  }
+  else if(props.limits.maxImageDimension2D >= 2048)
+  {
+    score += 500;
+  }
+  else if(props.limits.maxImageDimension2D >= 1024)
+  {
+    score += 100;
+  }
+
+  if(feats.features.robustBufferAccess)
+  {
+    score += 100;
+  }
+
+  if(feats.features.largePoints)
+  {
+    score += 100;
+  }
+
+  if(feats.features.shaderStorageImageExtendedFormats)
+  {
+    score += 100;
+  }
+
+  if(feats.features.shaderStorageImageMultisample)
+  {
+    score += 100;
+  }
+
+  if(feats.features.sparseBinding)
+  {
+    score += 100;
+  }
+
+  if(feats.features.tessellationShader)
+  {
+    score += 200;
+  }
+
+  if(feats.features.shaderInt16)
+  {
+    score += 200;
+  }
+
+  if(feats.features.shaderInt64)
+  {
+    score += 100;
+  }
+
+  if(feats.features.shaderFloat64)
+  {
+    score += 100;
+  }
+
+  return score;
+}
+}
+
+uint32_t Application::DoChoosePhysicalDevice(span<VkPhysicalDevice> gpus, span<VkPhysicalDeviceProperties> deviceProperties, span<VkPhysicalDeviceFeatures2> features, span<VkPhysicalDeviceMemoryProperties> memoryProperties) const
+{
+  KRUST_ASSERT1(gpus.size() == deviceProperties.size() && gpus.size() == features.size() && gpus.size() == memoryProperties.size(), "Mismatched sizes.");
+  std::vector<uint32_t> scores(gpus.size(), 0);
+  for(unsigned i = 0; i < gpus.size(); ++i)
+  {
+    const VkPhysicalDeviceProperties& props = deviceProperties[i];
+    const VkPhysicalDeviceFeatures2& feats = features[i];
+    const VkPhysicalDeviceMemoryProperties& memProps = memoryProperties[i];
+    scores[i] = ScorePhysicalDevice(gpus[i], props, feats, memProps);
+  }
+
+  // Choose the best GPU:
+  uint32_t bestIndex = 0;
+  uint32_t bestScore = 0;
+  for (size_t i = 0; i < scores.size(); ++i)
+  {
+    if (scores[i] > bestScore)
+    {
+      bestScore = scores[i];
+      bestIndex = i;
+    }
+  }
+
+  return bestIndex;
 }
 
 void Application::DoAddRequiredDeviceExtensions(std::vector<const char*>& extensionNames) const

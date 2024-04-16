@@ -32,6 +32,7 @@
 #include "krust/public-api/krust.h"
 #include "krust/public-api/intrusive-pointer.h"
 #include "krust/public-api/conditional-value.h"
+#include "krust-kernel/public-api/span.h"
 #include <krust/public-api/vulkan_types_and_macros.h>
 #include <vector>
 #include <bitset>
@@ -200,11 +201,14 @@ protected:
 
   /**
    * @name Overridables Template member functions for applications to override
-   * to implement their own behaviours.
+   * to implement their own behaviours. These hooks are called by the Application
+   * base class when it needs some policy guidance from the derived application.
    */
   ///@{
 
   virtual uint32_t DoChooseVulkanVersion() const;
+
+  virtual uint32_t DoChoosePhysicalDevice(span<VkPhysicalDevice> gpus, span<VkPhysicalDeviceProperties> deviceProperties, span<VkPhysicalDeviceFeatures2> features, span<VkPhysicalDeviceMemoryProperties> memoryProperties) const;
 
   /**
    * @brief Allow derived applications to turn on required extensions.
