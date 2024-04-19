@@ -146,6 +146,9 @@ private:
  * > Queues are created along with a logical device during vkCreateDevice.
  * > All queues associated with a logical device are destroyed when
  * > vkDestroyDevice is called on that device.
+ *
+ * @see QueueJanitor A class to keep the vulkan handles for resources in use
+ * by a GPU alive on on the CPU side until the GPU is done with them.
  */
 class Queue : public VulkanObject
 {
