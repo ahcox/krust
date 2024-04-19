@@ -406,6 +406,7 @@ bool Application::InitVulkanGpus() {
 
   DoExtendDeviceFeatureChain(mGpuFeatures);
   vkGetPhysicalDeviceFeatures2(mGpu, &mGpuFeatures);
+  /// @todo Log the extended features down the pNext chain.
   LogVkPhysicalDeviceFeatures(mGpuFeatures.features);
 
   vkGetPhysicalDeviceMemoryProperties(mGpu, &mGpuMemoryProperties);
