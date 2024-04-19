@@ -464,7 +464,7 @@ public:
 
     std::chrono::duration<double> diff = start - mFrameInstant;
     const float fps = 1.0f / diff.count();
-    mAmortisedFPS = (mAmortisedFPS * 7 + fps) * 0.125f;
+    mAmortisedFPS = (mAmortisedFPS * 255 + fps) * (1.0f / 256.0f);
     char buffer[126];
     snprintf(buffer, sizeof(buffer)-1, "FPS: %.1f", mAmortisedFPS);
     mLinePrinter->PrintLine(*commandBuffer, 0, 0, 3, 0, true, true, buffer);
