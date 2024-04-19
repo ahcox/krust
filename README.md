@@ -1,6 +1,6 @@
 Krust
 =====
-<img width="100%" style="width: 100%; max-width: 3840px; margin-left: auto; margin-right: auto;" src="http://ahcox.com/wp-ahcox.com/wp-content/uploads/2014/10/P1127242-1920x540-banner-top.jpg"/>
+<img width="100%" style="width: 100%; max-width: 1280px; margin-left: auto; margin-right: auto;" src="docs/img/banner_ray_queries1.jpg"/>
 
 Note that this is a **work in progress** library, not yet ready for users,
 and this github repo is maybe best viewed as off-site backup for the developer
