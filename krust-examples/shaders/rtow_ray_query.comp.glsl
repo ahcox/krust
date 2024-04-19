@@ -7,6 +7,16 @@
 #include "header.inc.glsl"
 #include "intersections.inc.glsl"
 
+#ifndef GL_EXT_ray_query
+#error "This shader requires the GL_EXT_ray_query extension."
+#endif
+
+// How far to shoot rays before giving up on finding a hit.
+const float c_t_max = 16777216.0f; // Arbitrary number, but happens to be max float in integer precision range: 2^24.
+
+// Disable all culling of instances when passed to rayQueryInitializeEXT().
+const uint CULL_MASK_ALL_INTERSECTED = 0xFF;
+
 // Are spheres solids or just infinitely thin surface shells?
 #ifndef SPHERES_ARE_SOLID
 #define SPHERES_ARE_SOLID 0
@@ -51,6 +61,7 @@ layout(set = 0, binding = 1) uniform restrict readonly ub_t
 {
     vec4 spheres[68];
 } ub;
+layout(set = 0, binding = 2) uniform accelerationStructureEXT sphere_tlas;
 
 layout(push_constant) uniform frame_params_t
 {
@@ -88,36 +99,46 @@ struct HitRecord {
 // https://github.com/ahcox/raytracing.github.io/blob/ahc-2021-10-01-dump_scene/src/InOneWeekend/main.cc
 #include "rtow_final_scene.inc.glsl"
 
-/// Traverse our scene, which is just a single list of spheres in worldspace,
+/// Traverse our scene, which is just a single BLAS of AABBs around spheres in worldspace,
 /// and determine the distance to the first hit point.
 /// @return true if there was a hit, else false.
 bool closest_sphere_hit(in vec3 ray_origin, in vec3 ray_dir_unit, in float t_min, inout HitRecord hit)
 {
     bool found_hit = false;
-    for(uint i = 0; i < ub.spheres.length(); ++i)
+    rayQueryEXT query;
+    rayQueryInitializeEXT(query, sphere_tlas, gl_RayFlagsNoneEXT, CULL_MASK_ALL_INTERSECTED, ray_origin, t_min, ray_dir_unit, c_t_max);
+    bool traversing = true;
+    while (traversing)
     {
-        float t1, t2;
+        traversing = rayQueryProceedEXT(query);
+        uint candidate_type = rayQueryGetIntersectionTypeEXT(query, false /* false = candidate, true = committed*/);
+        if(candidate_type == gl_RayQueryCandidateIntersectionAABBEXT) // The only other candidate type would be a triangle.
+        {
+            int sphere_index = rayQueryGetIntersectionPrimitiveIndexEXT(query, false);
+            float t1, t2;
+            if(sphere_hits(ray_origin, ray_dir_unit, ub.spheres[sphere_index], t1, t2)){
 
-        if(sphere_hits(ray_origin, ray_dir_unit, ub.spheres[i], t1, t2)){
-
-            if(t1 >= t_min && t1 < hit.t){
-                hit.t = t1;
-                hit.prim = uint16_t(i);
-                found_hit = true;
-                hit.front_face = true; /// @note setting front and back faces like this breaks the negative radius sphere in sphere hack of book image 16. That requires generating the front/back status by dotting the ray and surface normal. Rather than copy that, I'll skip image 16 and later have better transparency handling that will allow an air sphere inside a glass one.
+                if(t1 >= t_min && t1 < hit.t){
+                    hit.t = t1;
+                    hit.prim = uint16_t(sphere_index);
+                    found_hit = true;
+                    hit.front_face = true; /// @note setting front and back faces like this breaks the negative radius sphere in sphere hack of book image 16. That requires generating the front/back status by dotting the ray and surface normal. Rather than copy that, I'll skip image 16 and later have better transparency handling that will allow an air sphere inside a glass one.
+                }
+                if(t2 >= t_min && t2 < hit.t){
+                    hit.t = t2;
+                    hit.prim = uint16_t(sphere_index);
+                    found_hit = true;
+                    hit.front_face = false;
+                }
+                rayQueryGenerateIntersectionEXT(query, hit.t);
             }
-            if(t2 >= t_min && t2 < hit.t){
-                hit.t = t2;
-                hit.prim = uint16_t(i);
-                found_hit = true;
-                hit.front_face = false;
-            }
-
         }
     }
+
     return found_hit;
 }
 
+/// @todo Use ray queries like the non-solid version
 bool closest_solid_sphere_hit(in vec3 ray_origin, in vec3 ray_dir_unit, in float t_min, inout HitRecord hit)
 {
     hit.front_face = true; // Our sphere intersect fails on backfaces currently.
@@ -278,6 +299,7 @@ vec3 shoot_ray(inout highp uint32_t seed, in vec3 ray_origin, in vec3 ray_dir_un
         hit.t = MISS;
 
 #if SPHERES_ARE_SOLID
+        #error "SPHERES_ARE_SOLID is not accelerated with ray queries yet."
         if(closest_solid_sphere_hit(ray_origin, ray_dir_unit, 0.001f, hit)){
 #else
         if(closest_sphere_hit(ray_origin, ray_dir_unit, 0.001f, hit)){

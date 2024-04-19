@@ -749,10 +749,10 @@ inline kr::AccelerationStructurePtr buildSingleGeomAABBBLAS(
   );
   kr::CommandBufferPtr commandBuffer = kr::CommandBuffer::New(commandPool, VK_COMMAND_BUFFER_LEVEL_PRIMARY);
   VkCommandBufferBeginInfo begin = kr::CommandBufferBeginInfo(VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT, nullptr);
-  vkBeginCommandBuffer(*commandBuffer, &begin);
+  VK_CALL(vkBeginCommandBuffer, *commandBuffer, &begin);
   vkCmdBuildAccelerationStructuresKHR(*commandBuffer, 1, &build_geo_info, pprangeInfos);
-  vkEndCommandBuffer(*commandBuffer);
-  vkQueueWaitIdle(queue); /// @todo temp, belt and braces.
+  VK_CALL(vkEndCommandBuffer, *commandBuffer);
+  VK_CALL(vkQueueWaitIdle, queue); /// @todo temp, belt and braces.
   const auto submit = kr::SubmitInfo(
     0, // waitSemaphoreCount,
     nullptr, //pWaitSemaphores,
@@ -762,8 +762,8 @@ inline kr::AccelerationStructurePtr buildSingleGeomAABBBLAS(
     0, // signalSemaphoreCount,
     nullptr // pSignalSemaphores
   );
-  vkQueueSubmit(queue, 1, &submit, VK_NULL_HANDLE);
-  vkQueueWaitIdle(queue);
+  VK_CALL(vkQueueSubmit, queue, 1, &submit, VK_NULL_HANDLE);
+  VK_CALL(vkQueueWaitIdle, queue);
   return accelerationStructure;
 }
 
@@ -884,10 +884,10 @@ inline kr::AccelerationStructurePtr buildTLAS(
   );
   kr::CommandBufferPtr commandBuffer = kr::CommandBuffer::New(commandPool, VK_COMMAND_BUFFER_LEVEL_PRIMARY);
   VkCommandBufferBeginInfo begin = kr::CommandBufferBeginInfo(VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT, nullptr);
-  vkBeginCommandBuffer(*commandBuffer, &begin);
+  VK_CALL(vkBeginCommandBuffer, *commandBuffer, &begin);
   vkCmdBuildAccelerationStructuresKHR(*commandBuffer, 1, &build_geo_info, pprangeInfos);
-  vkEndCommandBuffer(*commandBuffer);
-  vkQueueWaitIdle(queue); /// @todo temp, belt and braces.
+  VK_CALL(vkEndCommandBuffer, *commandBuffer);
+  VK_CALL(vkQueueWaitIdle, queue); /// @todo temp, belt and braces.
   const auto submit = kr::SubmitInfo(
     0, // waitSemaphoreCount,
     nullptr, //pWaitSemaphores,
@@ -897,8 +897,8 @@ inline kr::AccelerationStructurePtr buildTLAS(
     0, // signalSemaphoreCount,
     nullptr // pSignalSemaphores
   );
-  vkQueueSubmit(queue, 1, &submit, VK_NULL_HANDLE);
-  vkQueueWaitIdle(queue);
+  VK_CALL(vkQueueSubmit, queue, 1, &submit, VK_NULL_HANDLE);
+  VK_CALL(vkQueueWaitIdle, queue);
   return accelerationStructure;
 }
 
@@ -1282,7 +1282,7 @@ public:
     mBlas = blas;
     mTlas = tlas;
 
-    // Define the descriptor and pipeline layouts:
+    // Define the descriptor and pipeline layouts for the main rendering compute shader:
 
     const VkDescriptorSetLayoutBinding bindings[] {
       // Framebuffer colour buffer as a R/W storage buffer:
@@ -1302,10 +1302,21 @@ public:
         1,
         VK_SHADER_STAGE_COMPUTE_BIT,
         nullptr // No immutable samplers.
+      ),
+
+      // The TLAS built over the spheres in the scene:
+      kr::DescriptorSetLayoutBinding(
+        2, // Binding to the third location
+        VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR,
+        1,
+        VK_SHADER_STAGE_COMPUTE_BIT,
+        nullptr // No immutable samplers.
       )
+
     };
 
-    auto descriptorSetLayout = kr::DescriptorSetLayout::New(*mGpuInterface, 0, 2, bindings);
+    /// @todo Make a kr::DescriptorSetLayout::New / vkCreateDescriptorSetLayout wrapper that takes a span so the count can't be wrong.
+    auto descriptorSetLayout = kr::DescriptorSetLayout::New(*mGpuInterface, 0, 3, bindings);
     mPipelineLayout = kr::PipelineLayout::New(*mGpuInterface,
       0,
       *descriptorSetLayout,
@@ -1332,11 +1343,17 @@ public:
       auto bufferInfo = kr::DescriptorBufferInfo(*sphereBuffer, 0,
        68 * 16 ///< @todo Do not hardcode this.
       );
+      VkAccelerationStructureKHR raw_tlas = *tlas;
+      auto tlasWrite = kr::WriteDescriptorSetAccelerationStructureKHR(1, &raw_tlas);
+      auto tlasWrite2 = kr::WriteDescriptorSet(*set, 2, 0, 1, VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR, nullptr, nullptr, nullptr);
+      tlasWrite2.pNext = &tlasWrite;
       VkWriteDescriptorSet write[] = {
         kr::WriteDescriptorSet(*set, 0, 0, 1, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, &imageInfo, nullptr, nullptr),
-        kr::WriteDescriptorSet(*set, 1, 0, 1, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, nullptr, &bufferInfo, nullptr)
+        kr::WriteDescriptorSet(*set, 1, 0, 1, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, nullptr, &bufferInfo, nullptr),
+        tlasWrite2
       };
-      vkUpdateDescriptorSets(*mGpuInterface, 2, write, 0, nullptr);
+      /// @todo Make a vkUpdateDescriptorSets wrapper that takes a span so the count can't be wrong.
+      vkUpdateDescriptorSets(*mGpuInterface, 3, write, 0, nullptr);
     }
 
     mLinePrinter = std::make_unique<kr::LinePrinter>(*mGpuInterface, kr::span {mSwapChainImageViews});
@@ -1581,7 +1598,7 @@ public:
 
     std::chrono::duration<double> diff = start - mFrameInstant;
     const float fps = 1.0f / diff.count();
-    mAmortisedFPS = (mAmortisedFPS * 7 + fps) * 0.125f;
+    mAmortisedFPS = (mAmortisedFPS * 255 + fps) * (1.0f / 256.0f);
     char buffer[126];
     snprintf(buffer, sizeof(buffer)-1, "FPS: %.1f", mAmortisedFPS);
     mLinePrinter->PrintLine(*commandBuffer, 0, 0, 3, 0, true, true, buffer);
