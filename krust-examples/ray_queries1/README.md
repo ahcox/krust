@@ -4,7 +4,7 @@ title: Compute Shader Ray Tracing With Ray Queries Example 1
 
 # Compute Shader Ray Tracing With Ray Queries Example 1
 
-![Screenshot](screenshots/rtowrq_001.png)
+![Screenshot](screenshots/ray_queries1.jpg)
 
 Runs a simple compute shader directly on swapchain images, binding them as
 storage images.
