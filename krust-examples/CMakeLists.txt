@@ -116,6 +116,17 @@ add_shader_command(spheres_to_aabbs.comp)
 add_custom_target(text_print_shader DEPENDS text_print.comp.spv)
 add_custom_target(spheres_to_aabbs_shader DEPENDS spheres_to_aabbs.comp.spv)
 
+add_executable (ray_queries_orbit
+ray_queries_orbit/ray_queries_orbit.cpp
+  ${KRUST_PUBLIC_API_HEADER_FILES}
+  ${PROJECT_SOURCE_DIR}/krust-examples/shaders/rtow_ray_query.comp.glsl
+  ${PROJECT_SOURCE_DIR}/krust-examples/shaders/text_print.comp.glsl
+  ${PROJECT_SOURCE_DIR}/krust-examples/shaders/spheres_to_aabbs.comp.glsl
+  README.md
+)
+target_include_directories(ray_queries_orbit SYSTEM PRIVATE ${VULKAN_INCLUDE_DIRECTORY})
+target_link_libraries(ray_queries_orbit krust-io krust krust-kernel)
+
 # Diagnostic messages:
 MESSAGE( STATUS "[examples] KRUST_PUBLIC_API_HEADER_FILES: " ${KRUST_PUBLIC_API_HEADER_FILES})
 MESSAGE( STATUS "[examples] VULKAN_INCLUDE_DIRECTORY: " ${VULKAN_INCLUDE_DIRECTORY})
