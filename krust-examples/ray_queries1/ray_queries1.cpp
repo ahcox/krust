@@ -1340,9 +1340,7 @@ public:
       auto set = kr::DescriptorSet::Allocate(*mDescriptorPool, *descriptorSetLayout);
       mDescriptorSets.push_back(set);
       auto imageInfo  = kr::DescriptorImageInfo(VK_NULL_HANDLE, mSwapChainImageViews[i], VK_IMAGE_LAYOUT_GENERAL);
-      auto bufferInfo = kr::DescriptorBufferInfo(*sphereBuffer, 0,
-       68 * 16 ///< @todo Do not hardcode this.
-      );
+      auto bufferInfo = kr::DescriptorBufferInfo(*sphereBuffer, 0, spheresSpan.size_bytes());
       VkAccelerationStructureKHR raw_tlas = *tlas;
       auto tlasWrite = kr::WriteDescriptorSetAccelerationStructureKHR(1, &raw_tlas);
       auto tlasWrite2 = kr::WriteDescriptorSet(*set, 2, 0, 1, VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR, nullptr, nullptr, nullptr);
