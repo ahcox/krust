@@ -903,7 +903,7 @@ inline kr::AccelerationStructurePtr buildTLAS(
 }
 
 const Vec4InMemory g_spheres[] = {
-    {0.f, -1000.f, 0.f, 1000.f},
+    {0.f, -1000.f, 0.f, 10.f},
     {0.f, 1.f, 0.f, 1.f},
     {-4.f, 1.f, 0.f, 1.f},
     {4.f, 1.f, 0.f, 1.f},
