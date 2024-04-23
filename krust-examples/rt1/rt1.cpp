@@ -414,22 +414,22 @@ public:
     const float MOVE_SCALE = mMoveScale;
 
     if(mKeyLeft) {
-      kr::store(kr::load(mPushed.ray_origin) + (-kr::load(mPushed.ray_target_right) * MOVE_SCALE) , mPushed.ray_origin);
+      kr::store(kr::loadf3(mPushed.ray_origin) + (-kr::loadf3(mPushed.ray_target_right) * MOVE_SCALE) , mPushed.ray_origin);
     }
     if(mRightKey) {
-      kr::store(kr::load(mPushed.ray_origin) + (kr::load(mPushed.ray_target_right) * MOVE_SCALE) , mPushed.ray_origin);
+      kr::store(kr::loadf3(mPushed.ray_origin) + (kr::loadf3(mPushed.ray_target_right) * MOVE_SCALE) , mPushed.ray_origin);
     }
     if(mKeyFwd) {
-      kr::store(kr::load(mPushed.ray_origin) + kr::cross(kr::load(mPushed.ray_target_up), kr::load(mPushed.ray_target_right)) * MOVE_SCALE, mPushed.ray_origin);
+      kr::store(kr::loadf3(mPushed.ray_origin) + kr::cross(kr::loadf3(mPushed.ray_target_up), kr::loadf3(mPushed.ray_target_right)) * MOVE_SCALE, mPushed.ray_origin);
     }
     if(mKeyBack) {
-      kr::store(kr::load(mPushed.ray_origin) + kr::cross(kr::load(mPushed.ray_target_right), kr::load(mPushed.ray_target_up)) * MOVE_SCALE, mPushed.ray_origin);
+      kr::store(kr::loadf3(mPushed.ray_origin) + kr::cross(kr::loadf3(mPushed.ray_target_right), kr::loadf3(mPushed.ray_target_up)) * MOVE_SCALE, mPushed.ray_origin);
     }
     if(mKeyUp) {
-      kr::store(kr::load(mPushed.ray_origin) + (kr::load(mPushed.ray_target_up) * MOVE_SCALE) , mPushed.ray_origin);
+      kr::store(kr::loadf3(mPushed.ray_origin) + (kr::loadf3(mPushed.ray_target_up) * MOVE_SCALE) , mPushed.ray_origin);
     }
     if(mKeyDown) {
-      kr::store(kr::load(mPushed.ray_origin) + (kr::load(mPushed.ray_target_up) * -MOVE_SCALE) , mPushed.ray_origin);
+      kr::store(kr::loadf3(mPushed.ray_origin) + (kr::loadf3(mPushed.ray_target_up) * -MOVE_SCALE) , mPushed.ray_origin);
     }
     mPushed.ray_origin[1] = kr::clamp(mPushed.ray_origin[1], -30.0f, 1500.0f);
 
