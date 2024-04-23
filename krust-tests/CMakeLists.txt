@@ -21,9 +21,13 @@ target_link_libraries(krust-test-simple krust-io krust krust-kernel pthread)
 # ToDo: move this test to the krust-gm directory.
 
 add_executable (krust-test-gm
+  krust-test-gm-main.cpp
   krust-test-vec3.cpp
+  krust-test-vec4.cpp
   ${KRUST_PUBLIC_API_HEADER_FILES}
   ${KRUST_GM_PUBLIC_API_HEADER_FILES}
 )
-target_include_directories(krust-test-simple SYSTEM PRIVATE ${VULKAN_INCLUDE_DIRECTORY})
-target_link_libraries(krust-test-simple krust-kernel krust krust-io pthread)
+target_include_directories(krust-test-gm SYSTEM PRIVATE ${VULKAN_INCLUDE_DIRECTORY})
+target_link_libraries(krust-test-gm krust-gm krust-kernel krust krust-io pthread)
+
+include(CTest) # ToDo discover the catch tests automatically and populate vscode test gui (requires catch 2 v3 upgrade?).
