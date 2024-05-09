@@ -1206,7 +1206,7 @@ public:
       0,
       0xff, // "an 8-bit visibility mask for the geometry. The instance may only be hit if rayMask & instance.mask != 0"
       0, // instanceShaderBindingTableRecordOffset (not important for us)
-      0, // flags (e.g. make the instance opaque)
+      VK_GEOMETRY_INSTANCE_FORCE_OPAQUE_BIT_KHR, // flags (e.g. make the instance opaque)
       vkGetAccelerationStructureDeviceAddressKHR(*mGpuInterface, &blasAddressInfo)
     );
     KRUST_ASSERT1(instance.accelerationStructureReference != 0, "Failed to get the address of the BLAS.");
