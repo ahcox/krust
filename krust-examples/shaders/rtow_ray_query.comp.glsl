@@ -1,8 +1,14 @@
-// GLSL Compute shader.
-// Draws spheres sitting on a checkerboard plane with a checkerboard ceiling above and gradient sky behind.
+// GLSL Compute shader using ray queries.
+// Draws spheres and gradient sky behind (rendered as in ray tracing in one weekend
+// although the spheres are not baked-in but delivered in a uniform buffer and
+// acceleration structure).
 #version 460 core
 #extension GL_EXT_ray_query : require
-#extension GL_EXT_ray_flags_primitive_culling : require // May not actually require this: usually we want to hit everything.
+// Require flags for primitive culling as ARM developer best practices document suggest culling AABBs when triangles are used, suggesting we should cull triangles when we use AABBs here.
+// https://developer.arm.com/documentation/101897/0302/Ray-tracing/Ray-query
+// Lets us do gl_RayFlagsSkipTrianglesEXT.
+// https://github.com/KhronosGroup/GLSL/blob/main/extensions/ext/GLSL_EXT_ray_flags_primitive_culling.txt
+#extension GL_EXT_ray_flags_primitive_culling : require
 #extension GL_GOOGLE_include_directive : require
 #include "header.inc.glsl"
 #include "intersections.inc.glsl"
@@ -55,6 +61,7 @@ const float halfpixel_dim = 0.5f;
 const float subpixel_dim = float(double(1.0) / AA);
 const float half_subpixel_dim = subpixel_dim * 0.5f;
 
+layout(primitive_culling); // Apparently having primitive culling enabled is a "layout" (using the culling flags is undefined without this).
 layout(local_size_x = 8, local_size_y = 8, local_size_z = 1) in;
 layout(rgba8, set = 0, binding = 0) uniform restrict writeonly image2D framebuffer;
 layout(set = 0, binding = 1) uniform restrict readonly ub_t
@@ -106,7 +113,7 @@ bool closest_sphere_hit(in vec3 ray_origin, in vec3 ray_dir_unit, in float t_min
 {
     bool found_hit = false;
     rayQueryEXT query;
-    rayQueryInitializeEXT(query, sphere_tlas, gl_RayFlagsNoneEXT, CULL_MASK_ALL_INTERSECTED, ray_origin, t_min, ray_dir_unit, c_t_max);
+    rayQueryInitializeEXT(query, sphere_tlas, gl_RayFlagsOpaqueEXT | gl_RayFlagsSkipTrianglesEXT, CULL_MASK_ALL_INTERSECTED, ray_origin, t_min, ray_dir_unit, c_t_max);
     bool traversing = true;
     while (traversing)
     {
@@ -410,6 +417,8 @@ void main()
     // pixel = linear_to_gamma_2_0(pixel);
     // Show that increasing Y coordinates are visually going down the image:
     // pixel.r *= gl_GlobalInvocationID.y / float(fp.fb_height); pixel.g *= 0.1; pixel.b *= 0.1;
+
+    /// @todo Look into a subgroup barrier here. Would it be advantageous for the memory system for all stores to kick off together, or in some multiple of adjacent invocations less than whole CU? Or just let the hardware handle them as they come?
     imageStore(framebuffer, ivec2(gl_GlobalInvocationID.xy), vec4(pixel, 1.0f));
 #endif
 }
