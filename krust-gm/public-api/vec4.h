@@ -21,7 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 /**
- * @file 3-component vector type, using experimental standard SIMD types when
+ * @file 4-component vector type, using experimental standard SIMD types when
  * available and a scalar fallback otherwise.
  * @note Scalar fallback will be allowed to languish until it is needed.
  */
