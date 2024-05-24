@@ -52,5 +52,14 @@ class Vec4Scalar;
     };
 #endif
 
+constexpr bool operator == (const Vec4InMemory& l, const Vec4InMemory& r)
+{
+    if(l.v[0] != r.v[0]) return false;
+    if(l.v[1] != r.v[1]) return false;
+    if(l.v[2] != r.v[2]) return false;
+    if(l.v[3] != r.v[3]) return false;
+    return true;
+}
+
 }
 #endif // KRUST_GM_PUBLIC_API_VEC4_FWD_H_
