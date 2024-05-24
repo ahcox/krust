@@ -4,8 +4,9 @@
 add_definitions( -DVK_PROTOTYPES )
 
 set(KRUST_THIRDPARTY_CATCH_DIR ${PROJECT_SOURCE_DIR}/thirdparty/catch)
+set(KRUST_THIRDPARTY_GLM_DIR ${PROJECT_SOURCE_DIR}/thirdparty/glm)
 
-include_directories(${KRUST_IO_PUBLIC_API_DIR} ${KRUST_THIRDPARTY_CATCH_DIR})
+include_directories(${KRUST_IO_PUBLIC_API_DIR} ${KRUST_THIRDPARTY_CATCH_DIR} ${KRUST_THIRDPARTY_GLM_DIR})
 
 # Make sure Vulkan functions are exposed in the demos:
 add_definitions( -DVK_PROTOTYPES )
@@ -24,6 +25,7 @@ add_executable (krust-test-gm
   krust-test-gm-main.cpp
   krust-test-vec3.cpp
   krust-test-vec4.cpp
+  krust-test-mat4.cpp
   ${KRUST_PUBLIC_API_HEADER_FILES}
   ${KRUST_GM_PUBLIC_API_HEADER_FILES}
 )
