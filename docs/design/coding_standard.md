@@ -101,13 +101,24 @@ General Code Layout
 -------------------
 Spaces are used exclusively for intra-line whitespace.
 
-Lines are 80 characters wide _from the leftmost non-whitespace character_.
+Lines should be 80 characters wide _from the leftmost non-whitespace character_.
 This gives code a sort of position independence: as nesting depth changes
 through refactoring, lines need not be reformatted to break at an absolute wrap
 column. It also recognizes both that modern editors are capable of scrolling
 left and right to keep the current line in view, and that while current displays
 tend to be wide, that width is often used by developers to pack more columns of
 windows and panels side by side, making a limited line length still valuable.
+For example:
+```
+<------------------------ This line is 80 colums wide ------------------------->
+  <------- This line is 80 colums wide from the leftmost non-space character ---->
+    <--- This line is also 80 colums wide from the leftmost non-space character --->
+```
+
+Indentation should be two spaces wide, again to respect that while monitors are
+typically wide, horizontal space is still precious due to the potential for
+three or four panes breaking up that width in IDEs, especially ones restricted
+to a single main window.
 
 Comments
 ========
