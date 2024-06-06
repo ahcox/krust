@@ -37,20 +37,20 @@ namespace Krust
 {
 class Vec4Scalar;
 
-#if defined(KRUST_GM_BUILD_CONFIG_ENABLE_SIMD)
     /**
      * vec4_inl.h has helper funcs:
      * Vec4 load(&Vec4InMemory vec);
      * void store(Vec4, &Vec4InMemory vec);
      */
+#if defined(KRUST_GM_BUILD_CONFIG_ENABLE_SIMD)
     struct alignas(16) Vec4InMemory {
-        float v[4];
-    };
 #else
     struct Vec4InMemory {
+#endif
+        Vec4InMemory() = default;
+        Vec4InMemory(const float x, const float y, const float z, const float w) : v{x, y, z, w} {}
         float v[4];
     };
-#endif
 
 constexpr bool operator == (const Vec4InMemory& l, const Vec4InMemory& r)
 {
