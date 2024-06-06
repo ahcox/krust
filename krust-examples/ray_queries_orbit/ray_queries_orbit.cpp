@@ -20,8 +20,8 @@
 
 // External includes:
 #include "krust-io/public-api/krust-io.h"
-#include "krust-gm/public-api/vec3_fwd.h"
 #include "krust-gm/public-api/vec3_inl.h"
+#include "krust-gm/public-api/vec4_inl.h"
 #include "krust/public-api/krust.h"
 #include "krust/public-api/queue_janitor.h"
 #include "krust/public-api/line-printer.h"
@@ -86,36 +86,17 @@ void viewVecsFromAngles(
   rightOut = kr::cross(fwdOut, upOut);
 }
 
-using Vec4 = std::experimental::simd<float, std::experimental::simd_abi::fixed_size<4>>;
-class Vec4Scalar;
-
-#if defined(KRUST_GM_BUILD_CONFIG_ENABLE_SIMD)
-
-    struct alignas(16) Vec4InMemory {
-        float v[4];
-    };
-#else
-    struct Vec4InMemory {
-        float v[4];
-    };
-#endif
-
-inline Vec4 load(const Vec4InMemory& vmem)
-{
-    Vec4 vec;
-    vec.copy_from(&vmem.v[0], std::experimental::overaligned<alignof(Vec4InMemory)>);
-    return vec;
-}
-
-inline kr::Vec3 xyz(const Vec4& v4){
+inline kr::Vec3 xyz(const kr::Vec4& v4){
   return kr::make_vec3(v4[0], v4[1], v4[2]);
 }
 
-inline kr::Vec3 xxx(const Vec4& v4){
+inline kr::Vec3 xxx(const kr::Vec4& v4){
   return kr::make_vec3(v4[0], v4[0], v4[0]);
 }
 /// @todo All the swizzles but put them elsewhere.
 
+/// @todo Move the AABBf struct and the spheresToAABBs function to a shared util
+/// module and de-dup the other ray query example.
 struct AABBf {
   float minX;
   float minY;
@@ -125,7 +106,7 @@ struct AABBf {
   float maxZ;
 };
 
-inline std::vector<AABBf> spheresToAABBs(kr::span<const Vec4InMemory, kr::dynamic_extent> spheres)
+inline std::vector<AABBf> spheresToAABBs(kr::span<const kr::Vec4InMemory, kr::dynamic_extent> spheres)
 {
   using kr::Vec3;
 
@@ -134,7 +115,7 @@ inline std::vector<AABBf> spheresToAABBs(kr::span<const Vec4InMemory, kr::dynami
   for(size_t i = 0, end = spheres.size(); i < end; ++i)
   {
     /// @todo Examine the SIMD code generated for this. It might be worse than a scalar version.
-    const Vec4 sphere {load(spheres[i])};
+    const kr::Vec4 sphere {load(spheres[i])};
     const Vec3 centre = xyz(sphere);
     const auto radius = sphere[3];
     const Vec3 min_corner = centre - radius;
@@ -468,6 +449,7 @@ inline bool downloadFromDeviceBuffer(
 /// optimal variant that would upload using mostly resources that were created
 /// once at startup and reused.
 /// @todo FixMe: hoist all this one-time stuff like pipeline creation out of the function so it can be reused to turn many sets of spheres into AABBoxes.
+/// @todo Make an "AABBConverter" class that can be reused for multiple conversions?
 inline kr::BufferPtr spheresToAABBs(
   /// Queue to schedule the upload and compute shader on.
   VkQueue queue,
@@ -902,12 +884,32 @@ inline kr::AccelerationStructurePtr buildTLAS(
   return accelerationStructure;
 }
 
-const Vec4InMemory g_spheres[] = {
+/// The CPU-side buffer of spheres to be uploaded to be rendered on the GPU.
+/// We'll regenerate this on the CPU each frame and then upload it to the GPU
+/// for AABB generation, acceleration structure build, and rendering.
+std::vector<kr::Vec4InMemory> g_spheres {
     {0.f, -1000.f, 0.f, 10.f},
     {0.f, 1.f, 0.f, 1.f},
     {-4.f, 1.f, 0.f, 1.f},
     {4.f, 1.f, 0.f, 1.f},
 };
+
+/// A function to generate a new set of spheres each frame.
+/// The caller clears the vector if desired, this function appends to it.
+void generateSpheres(std::vector<kr::Vec4InMemory>& spheres, const kr::Vec3 centre, const float radius, const unsigned num_children, const unsigned levels)
+{
+  if(levels == 0)
+  {
+    return;
+  }
+  spheres.push_back({centre[0], centre[1], centre[2], radius});
+  for(unsigned child = 0; child < num_children; ++child)
+  {
+    kr::Vec3 child_centre = centre;
+    child_centre[0] += radius + radius * 0.5f;
+    generateSpheres(spheres, child_centre, radius/2, num_children, levels - 1);
+  }
+}
 
 }
 
@@ -1066,12 +1068,15 @@ public:
       return false;
     }
 
+    // Generate a scene of spheres to render:
+    generateSpheres(g_spheres, kr::make_vec3(0.f, 0.f, 0.f), 1.f, 7, 3);
+
     // Upload the spheres to GPU memory and build the acceleration structures for
     // the scene:
 
-    auto spheresSpan = kr::span<const Vec4InMemory, kr::dynamic_extent>(g_spheres);
+    auto spheresSpan = kr::span<const kr::Vec4InMemory, kr::dynamic_extent>(g_spheres);
     auto aabbs = spheresToAABBs(spheresSpan);
-    auto sphereBuffer = uploadToDeviceBuffer<Vec4InMemory>(
+    auto sphereBuffer = uploadToDeviceBuffer<kr::Vec4InMemory>(
       *mGpuInterface,
       *mDefaultQueue,
       *mCommandPool,
@@ -1085,9 +1090,9 @@ public:
       mDefaultDrawingQueueFamily); ///< @todo Should be on a transfer queue (queue with transfer flag set and fewest other flags also set).
 
     KRUST_BEGIN_DEBUG_BLOCK
-    std::vector<Vec4InMemory> roundtriped_spheres;
+    std::vector<kr::Vec4InMemory> roundtriped_spheres;
     roundtriped_spheres.resize(spheresSpan.size());
-    auto downloadedSpheresSpan = kr::span<Vec4InMemory, kr::dynamic_extent>(roundtriped_spheres);
+    auto downloadedSpheresSpan = kr::span<kr::Vec4InMemory, kr::dynamic_extent>(roundtriped_spheres);
     const bool spheresDownloaded = downloadFromDeviceBuffer(
       *mGpuInterface,
       *sphereBuffer,
@@ -1481,23 +1486,24 @@ public:
     mPushed.frame_no = frameNumber;
     const float MOVE_SCALE = mMoveScale;
 
+    /// @todo Factor out the key hhandling and camera code since it is used by three examples now.
     if(mKeyLeft) {
-      kr::store(kr::load(mPushed.ray_origin) + (-kr::load(mPushed.ray_target_right) * MOVE_SCALE) , mPushed.ray_origin);
+      kr::store(kr::loadf3(mPushed.ray_origin) + (-kr::loadf3(mPushed.ray_target_right) * MOVE_SCALE) , mPushed.ray_origin);
     }
     if(mRightKey) {
-      kr::store(kr::load(mPushed.ray_origin) + (kr::load(mPushed.ray_target_right) * MOVE_SCALE) , mPushed.ray_origin);
+      kr::store(kr::loadf3(mPushed.ray_origin) + (kr::loadf3(mPushed.ray_target_right) * MOVE_SCALE) , mPushed.ray_origin);
     }
     if(mKeyFwd) {
-      kr::store(kr::load(mPushed.ray_origin) + kr::cross(kr::load(mPushed.ray_target_up), kr::load(mPushed.ray_target_right)) * MOVE_SCALE, mPushed.ray_origin);
+      kr::store(kr::loadf3(mPushed.ray_origin) + kr::cross(kr::loadf3(mPushed.ray_target_up), kr::loadf3(mPushed.ray_target_right)) * MOVE_SCALE, mPushed.ray_origin);
     }
     if(mKeyBack) {
-      kr::store(kr::load(mPushed.ray_origin) + kr::cross(kr::load(mPushed.ray_target_right), kr::load(mPushed.ray_target_up)) * MOVE_SCALE, mPushed.ray_origin);
+      kr::store(kr::loadf3(mPushed.ray_origin) + kr::cross(kr::loadf3(mPushed.ray_target_right), kr::loadf3(mPushed.ray_target_up)) * MOVE_SCALE, mPushed.ray_origin);
     }
     if(mKeyUp) {
-      kr::store(kr::load(mPushed.ray_origin) + (kr::load(mPushed.ray_target_up) * MOVE_SCALE) , mPushed.ray_origin);
+      kr::store(kr::loadf3(mPushed.ray_origin) + (kr::loadf3(mPushed.ray_target_up) * MOVE_SCALE) , mPushed.ray_origin);
     }
     if(mKeyDown) {
-      kr::store(kr::load(mPushed.ray_origin) + (kr::load(mPushed.ray_target_up) * -MOVE_SCALE) , mPushed.ray_origin);
+      kr::store(kr::loadf3(mPushed.ray_origin) + (kr::loadf3(mPushed.ray_target_up) * -MOVE_SCALE) , mPushed.ray_origin);
     }
     mPushed.ray_origin[1] = kr::clamp(mPushed.ray_origin[1], -30.0f, 1500.0f);
 
