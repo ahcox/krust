@@ -140,7 +140,7 @@ TEST_CASE("Mat4 Template", "[gm]")
   REQUIRE(destroyed == false);
 }
 */
-TEST_CASE("Mat4 assign", "[gm]")
+TEST_CASE("Mat4 assign", "[gm][mat4]")
 {
     kr::Mat4 m1 { kr::make_identity_mat4()};
     auto m2 = m1;
@@ -152,14 +152,14 @@ TEST_CASE("Mat4 assign", "[gm]")
     REQUIRE(m1 == m3);
 }
 
-TEST_CASE("Mat4 identity", "[gm]")
+TEST_CASE("Mat4 identity", "[gm][mat4]")
 {
     const kr::Mat4 m1 = kr::make_identity_mat4();
 
     require_identity(m1);
 }
 
-TEST_CASE("Mat4 load_mat4", "[gm]")
+TEST_CASE("Mat4 load_mat4", "[gm][mat4]")
 {
     const float v[4][4] = {
         {0.0f,  1.0f,  2.0f,  3.0f},
@@ -175,7 +175,7 @@ TEST_CASE("Mat4 load_mat4", "[gm]")
     REQUIRE(m1[3][3] == 15.0f);
 }
 
-TEST_CASE("Mat4 load store load sequence", "[gm]")
+TEST_CASE("Mat4 load store load sequence", "[gm][mat4]")
 {
     const float v[4][4] = {
         {0.0f,  1.0f,  2.0f,  3.0f},
@@ -195,7 +195,7 @@ TEST_CASE("Mat4 load store load sequence", "[gm]")
     require_equal(m1, m3);
 }
 
-TEST_CASE("Mat4 conctenate identities", "[gm]")
+TEST_CASE("Mat4 conctenate identities", "[gm][mat4]")
 {
     const kr::Mat4 m1 = kr::make_identity_mat4();
     const kr::Mat4 m2 = kr::make_identity_mat4();
@@ -204,7 +204,7 @@ TEST_CASE("Mat4 conctenate identities", "[gm]")
     require_equal(m1, m3);
 }
 
-TEST_CASE("Mat4 concatenate fixed", "[gm]")
+TEST_CASE("Mat4 concatenate fixed", "[gm][mat4]")
 {
     const float matrix1[4][4] = {
         {0.0f,  1.0f,  2.0f,  3.0f},
@@ -246,7 +246,7 @@ TEST_CASE("Mat4 concatenate fixed", "[gm]")
     require_equal_row_x_column(m3, glm_m3);
 }
 
-TEST_CASE("Mat4 concatenate randoms", "[gm]")
+TEST_CASE("Mat4 concatenate randoms", "[gm][mat4]")
 {
     for(unsigned rep = 0; rep < 100; ++rep)
     {
@@ -284,7 +284,7 @@ TEST_CASE("Mat4 concatenate randoms", "[gm]")
     }
 }
 
-TEST_CASE("Mat4 Vec4 transform identities", "[gm]")
+TEST_CASE("Mat4 Vec4 transform identities", "[gm][mat4]")
 {
     const kr::Mat4 m1 = kr::make_identity_mat4();
 
@@ -296,7 +296,7 @@ TEST_CASE("Mat4 Vec4 transform identities", "[gm]")
     }
 }
 
-TEST_CASE("Mat4 Vec4 transform 90s", "[gm]")
+TEST_CASE("Mat4 Vec4 transform 90s", "[gm][mat4]")
 {
     // Rotate 90 degrees about the z axis.
     const float matrix1[4][4] = {
@@ -319,7 +319,7 @@ TEST_CASE("Mat4 Vec4 transform 90s", "[gm]")
     require_equal_vec4s(kr::transform(m1, kr::make_vec4(0.0f, 0.0f, -1.0f, 1.0f)),  kr::make_vec4(0.0f, 0.0f, -1.0f, 1.0f));
 }
 
-TEST_CASE("Mat4 Vec4 transform randoms", "[gm]")
+TEST_CASE("Mat4 Vec4 transform randoms", "[gm][mat4]")
 {
     for(unsigned rep = 0; rep < 100; ++rep)
     {
@@ -349,7 +349,7 @@ inline bool fuzzy_equal(const kr::Vec4& l, const kr::Vec4& r)
     return abs(reduce(l - r)) < 0.000001f;
 }
 
-TEST_CASE("Mat4 rotation about x", "[gm]")
+TEST_CASE("Mat4 rotation about x", "[gm][mat4]")
 {
     auto m = kr::make_rotation_x_mat4(M_PI_2);
     REQUIRE(m[0][0] == 1.0f);
@@ -363,4 +363,31 @@ TEST_CASE("Mat4 rotation about x", "[gm]")
 
 }
 
+TEST_CASE("Mat4 append translation", "[gm][mat4]")
+{
+    kr::Mat4 m4 {kr::make_identity_mat4()};
+    kr::Mat4InMemory m4m;
+    kr::make_identity_mat4(m4m);
+    kr::append_translation(m4, 1, 2, 3);
+    kr::append_translation(m4m, 1, 2, 3);
+    kr::Mat4InMemory m4_stored;
+    kr::store(m4, m4_stored);
+    kr::Mat4 m4m_loaded {kr::load_mat4(m4m)};
+    REQUIRE(m4m == m4_stored);
+    REQUIRE(m4 == m4m_loaded);
+    REQUIRE(m4m.rows[0] == kr::Vec4InMemory(1,0,0,1));
+    REQUIRE(m4m.rows[1] == kr::Vec4InMemory(0,1,0,2));
+    REQUIRE(m4m.rows[2] == kr::Vec4InMemory(0,0,1,3));
+    REQUIRE(m4m.rows[3] == kr::Vec4InMemory(0,0,0,1));
+}
+
+TEST_CASE("Mat4 append translation same as concatenating translation", "[gm][mat4]")
+{
+    kr::Vec4 translation = kr::make_vec4(1.223445f, 2.495858f, 3.2948844f, 1.0f);
+    kr::Mat4 m4  {kr::make_identity_mat4()};
+    kr::Mat4 m4t {kr::make_translation_mat4(translation[0], translation[1], translation[2])};
+    kr::Mat4 m4c = kr::concatenate(m4, m4t);
+    kr::append_translation(m4, translation[0], translation[1], translation[2]);
+    REQUIRE(m4 == m4c);
+}
 }

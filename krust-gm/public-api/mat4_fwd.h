@@ -33,14 +33,13 @@ namespace Krust {
  * @brief 4x4 matrix in memory layout.
  * This is useful for declaring member variables and forward declaring functions
  * in headers without pulling in the full SIMD templates everywhere.
- * @todo Move to mat4_fwd.h, a forward declaration header alongside functions
- * which don't need to deal with Mat4s by value.
  */
 struct Mat4;
 struct Mat4InMemory {
   Vec4InMemory rows[4];
 };
 
+bool operator == (const Mat4InMemory& l, const Mat4InMemory& r);
 inline void store(const Mat4 &mat, Mat4InMemory &matmem);
 inline void store(const Mat4 &mat, Vec4InMemory matmem[4]);
 inline void store(const Mat4 &mat, float matmem[4][4]);
@@ -54,6 +53,7 @@ void make_identity_mat4(Mat4InMemory &matmem);
 /// @note This probably doesn't make sense to prototype since calling it non-inlined
 /// implies having a Mat4 somewhere in memory to reference.
 inline void append_translation(Mat4 &m, const float x, const float y, const float z);
+void append_translation(Mat4InMemory &m, const float x, const float y, const float z);
 
 } // namespace Krust
 

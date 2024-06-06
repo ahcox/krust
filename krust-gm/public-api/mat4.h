@@ -25,13 +25,9 @@
  * available and a scalar fallback otherwise.
  * @note Scalar fallback will be allowed to languish until it is needed.
  *
- * @todo SPLIT out the fwd and main headers and cpp. Don't bother with a separate _inl.h like the vector types used. Inline functions at end of main header, non-inline in cpp.
- *
- * @todo mat4 x vec4 multiplication (vector transformation)
- * @todo mat4 x mat4 multiplication (concatenation)
- * @todo rotation matrix
- * @todo translation matrix
- * --- later ---
+ * @todo y-axis rotation matrix
+ * @todo z-axis rotation matrix
+ * @todo arbitrary-axis rotation matrix
  * @todo transpose matrix
  * @todo scaling matrix
  * @note Some of these can at least be started as wrappers around glm functions
@@ -140,7 +136,8 @@ inline Mat4 load_mat4(const Vec4InMemory vmem[4]) {
   return mat;
 }
 
-inline void store(const Mat4 &mat, Mat4InMemory &matmem) {
+inline void store(const Mat4 &mat, Mat4InMemory &matmem)
+{
   store(mat.rows[0], matmem.rows[0]);
   store(mat.rows[1], matmem.rows[1]);
   store(mat.rows[2], matmem.rows[2]);
@@ -237,16 +234,6 @@ inline void append_translation(Mat4 &m, const float x, const float y, const floa
   m.rows[0][3] += x;
   m.rows[1][3] += y;
   m.rows[2][3] += z;
-
-  KRUST_BEGIN_DEBUG_BLOCK
-  {
-    /// @todo This looks wrong. We already modified m above. Why is the assert not firing???
-    const Mat4 translation = make_translation_mat4(x, y, z);
-    const Mat4 d_m = concatenate(m, translation);
-    KRUST_ASSERT4(m == d_m, "Matrix concatenation failed.");
-    KRUST_UNUSED_VAR(d_m);
-  }
-  KRUST_END_DEBUG_BLOCK
 }
 
 /// @brief Make a matrix for rotation around the x-axis.

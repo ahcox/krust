@@ -25,6 +25,15 @@
 
 namespace Krust {
 
+bool operator==(const Mat4InMemory &l, const Mat4InMemory &r)
+{
+  if(l.rows[0] != r.rows[0]) return false;
+  if(l.rows[1] != r.rows[1]) return false;
+  if(l.rows[2] != r.rows[2]) return false;
+  if(l.rows[3] != r.rows[3]) return false;
+  return true;;
+}
+
 void make_identity_mat4(float matmem[4][4]) {
   Mat4 mat{make_identity_mat4()};
   store(mat, matmem);
@@ -33,6 +42,13 @@ void make_identity_mat4(float matmem[4][4]) {
 void make_identity_mat4(Mat4InMemory &matmem) {
   Mat4 mat{make_identity_mat4()};
   store(mat, matmem);
+}
+
+void append_translation(Mat4InMemory &mm, const float x, const float y, const float z)
+{
+    mm.rows[0].v[3] += x;
+    mm.rows[1].v[3] += y;
+    mm.rows[2].v[3] += z;
 }
 
 } // namespace Krust
